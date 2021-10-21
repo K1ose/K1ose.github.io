@@ -6,7 +6,7 @@
   <link href="https://www.jk404.cn/atom.xml" rel="self"/>
   
   <link href="https://www.jk404.cn/"/>
-  <updated>2021-10-21T02:14:32.527Z</updated>
+  <updated>2021-10-21T09:04:53.000Z</updated>
   <id>https://www.jk404.cn/</id>
   
   <author>
@@ -17,11 +17,36 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>plan</title>
+    <link href="https://www.jk404.cn/study/plan"/>
+    <id>https://www.jk404.cn/study/plan</id>
+    <published>2021-10-21T09:04:53.000Z</published>
+    <updated>2021-10-21T09:04:53.000Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="学习计划制定"><a href="#学习计划制定" class="headerlink" title="学习计划制定"></a>学习计划制定</h2><ol><li>《0day安全：软件漏洞分析技术》</li><li>玄武安全实验室日推</li><li>buuoj one kill </li></ol>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;h2 id=&quot;学习计划制定&quot;&gt;&lt;a href=&quot;#学习计划制定&quot; class=&quot;headerlink&quot; title=&quot;学习计划制定&quot;&gt;&lt;/a&gt;学习计划制定&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;《0day安全：软件漏洞分析技术》&lt;/li&gt;
+&lt;li&gt;玄武安全实验室日推&lt;/li&gt;
+&lt;li&gt;bu</summary>
+      
+    
+    
+    
+    <category term="study" scheme="https://www.jk404.cn/categories/study/"/>
+    
+    
+  </entry>
+  
+  <entry>
     <title>Hello</title>
     <link href="https://www.jk404.cn/uncategorized/hello"/>
     <id>https://www.jk404.cn/uncategorized/hello</id>
     <published>2021-10-21T01:51:07.155Z</published>
-    <updated>2021-10-21T02:14:32.527Z</updated>
+    <updated>2021-10-21T09:04:31.249Z</updated>
     
     <content type="html"><![CDATA[<p>This is my first page!</p>]]></content>
     
