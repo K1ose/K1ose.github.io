@@ -318,7 +318,7 @@
 <p><strong>在单处理器应对多线程的情况下，并发是一种模拟态；</strong></p>
 <p>实际上，操作系统会让多线程程序轮流执行，并且每个线程会有设定优先级，这些线程每次被执行一小段时间，这样看起来就是在同时执行。这种不断在处理器上有选择地切换不同线程的行为称为<strong>线程调度（Thread Schedule）</strong>（<strong>优先级调度 + 轮转法</strong>）；<br>这样机制下的线程会存在至少三种状态：</p>
 <ol>
-<li>Running： 线程正在被执行，拥有一段允许执行时间限制，称为时间片（Time Slice），如果时间片用尽，则线程进入Ready态，调度系统选择其他的Ready态线程继续执行；</li>
+<li>Running： 线程正在被执行，拥有一段允许执行时间限制，称为<strong>时间片（Time Slice）</strong>，如果时间片用尽，则线程进入Ready态，调度系统将选择其他的Ready态线程继续执行，这个过程叫做<strong>抢占（Preemption）</strong>；</li>
 <li>Ready： 可启动，但CPU被占用；</li>
 <li>Waiting： 线程在等待某一事件（通常是I/O信号或同步），无法执行，Waiting态结束了就会进入Ready态；</li>
 </ol>
@@ -334,10 +334,17 @@
 <p>总结如下：</p>
 <img src="/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/%E7%9F%A5%E8%AF%86%E5%82%A8%E5%A4%87/priority.jpg" alt="priority" style="zoom: 50%;">
 
-
-
-
-
+<h6 id="不可抢占线程——特权人士"><a href="#不可抢占线程——特权人士" class="headerlink" title="不可抢占线程——特权人士"></a>不可抢占线程——特权人士</h6><p>先前讨论到抢占问题，还有一些线程是不可抢占的，必须等线程自主发出放弃执行的指令，其他线程才能得到执行；<br>放弃执行的指令依据：</p>
+<ol>
+<li>当线程试图等待某事件时（I/O等）；</li>
+<li>线程主动放弃时间片；</li>
+</ol>
+<h4 id="Linux的多线程"><a href="#Linux的多线程" class="headerlink" title="Linux的多线程"></a>Linux的多线程</h4><p>Windows对进程和线程的实现非常标准；</p>
+<ol>
+<li>Windows内核有明确的的线程和进程的概念；</li>
+<li>Windows API中，可以使用明确的API：<code>CreateProcess</code>和<code>CreateThread</code>来创建进程和线程；</li>
+</ol>
+<p>Linux并非如此；<br>Linux内核不存在真正意义上的线程概念；<br>在Linux上，所有执行实体都称为任务（Task），每个任务概念上都类似于一个单线程的进程，具有内存空间、执行实体、文件资源等。但是不同人物之间可以选择共享内存空间，在广义上，内存空间的多个任务构成了一个进程，而这些Task就是这个进程里的线程。</p>
 
         
         
