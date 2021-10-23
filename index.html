@@ -265,7 +265,8 @@
 </ol>
 <p>因此引进了中间层——<strong>虚拟地址(Virtual Address, VA)<strong>，通过</strong>映射</strong>的方法，将进程虚拟地址转换为实际的物理地址，只要搞清楚这个映射关系，就可以很好地管理内存空间；</p>
 <h5 id="虚拟地址真香"><a href="#虚拟地址真香" class="headerlink" title="虚拟地址真香"></a>虚拟地址真香</h5><h6 id="虚拟地址带来什么"><a href="#虚拟地址带来什么" class="headerlink" title="虚拟地址带来什么"></a>虚拟地址带来什么</h6><ol>
-<li><h6 id="地址隔离（Address-Isolation）"><a href="#地址隔离（Address-Isolation）" class="headerlink" title="地址隔离（Address Isolation）"></a><strong>地址隔离（Address Isolation）</strong></h6><p>既然进程们（客户）都这么娇贵，就给他们营造一个环境——<strong>独立的虚拟地址空间（Virtual Address Space）</strong>。独立又虚拟，显然是为了应付和敷衍。在内存空间没那么多的情况，提供虚拟的、独立的大内存空间给进程，在映射后，进程们通过映射关系只能访问自己的地址空间，营造了良好的隔离环境。</p>
+<li><p>地址隔离（Address Isolation）</p>
+<p>既然进程们（客户）都这么娇贵，就给他们营造一个环境——<strong>独立的虚拟地址空间（Virtual Address Space）</strong>。独立又虚拟，显然是为了应付和敷衍。在内存空间没那么多的情况，提供虚拟的、独立的大内存空间给进程，在映射后，进程们通过映射关系只能访问自己的地址空间，营造了良好的隔离环境。</p>
 </li>
 <li><p><strong>分段（Segmentation）</strong></p>
 <p>分段是一种映射的方法，将程序所需的内存空间大小的虚拟空间映射到某个地址空间。因此我们可以说：</p>
