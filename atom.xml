@@ -6,7 +6,7 @@
   <link href="https://www.jk404.cn/atom.xml" rel="self"/>
   
   <link href="https://www.jk404.cn/"/>
-  <updated>2021-10-24T15:34:31.406Z</updated>
+  <updated>2021-10-24T15:43:07.315Z</updated>
   <id>https://www.jk404.cn/</id>
   
   <author>
@@ -15,6 +15,31 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>2021.10.24</title>
+    <link href="https://www.jk404.cn/study/daily/2021-10-24/"/>
+    <id>https://www.jk404.cn/study/daily/2021-10-24/</id>
+    <published>2021-10-24T15:38:22.000Z</published>
+    <updated>2021-10-24T15:43:07.315Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="2021-10-24"><a href="#2021-10-24" class="headerlink" title="2021/10/24"></a>2021/10/24</h1><ol><li>Buuoj有个小比赛，不过现在只放出了一道PWN题，回头做做看；</li><li>学了学《程序员的自我修养》；</li><li>今天周日，没有玄武实验室的日推可以看，虽然有很多是看不懂的，但是总有能看懂的文章吧…</li><li>试着装一个debug的linux内核，qemu+gdb调试，环境可真难配…希望这几天能搞定；</li></ol>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;h1 id=&quot;2021-10-24&quot;&gt;&lt;a href=&quot;#2021-10-24&quot; class=&quot;headerlink&quot; title=&quot;2021/10/24&quot;&gt;&lt;/a&gt;2021/10/24&lt;/h1&gt;&lt;ol&gt;
+&lt;li&gt;Buuoj有个小比赛，不过现在只放出了一道PWN题，回头做做看；</summary>
+      
+    
+    
+    
+    <category term="study" scheme="https://www.jk404.cn/categories/study/"/>
+    
+    <category term="daily" scheme="https://www.jk404.cn/categories/study/daily/"/>
+    
+    
+  </entry>
   
   <entry>
     <title>compile与link</title>
