@@ -83,13 +83,6 @@
   </url>
   
   <url>
-    <loc>https://www.jk404.cn/categories/study/book/</loc>
-    <lastmod>2021-10-25</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
     <loc>https://www.jk404.cn/categories/study/daily/</loc>
     <lastmod>2021-10-25</lastmod>
     <changefreq>daily</changefreq>
@@ -97,7 +90,7 @@
   </url>
   
   <url>
-    <loc>https://www.jk404.cn/categories/CTF/PWN/</loc>
+    <loc>https://www.jk404.cn/categories/study/book/</loc>
     <lastmod>2021-10-25</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -105,6 +98,13 @@
   
   <url>
     <loc>https://www.jk404.cn/categories/welcome/</loc>
+    <lastmod>2021-10-25</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.jk404.cn/categories/CTF/PWN/</loc>
     <lastmod>2021-10-25</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
