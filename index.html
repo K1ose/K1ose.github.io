@@ -148,6 +148,193 @@
 </article>
 
 
+  <article id="post-basic-knowledge" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/CTF/PWN/kernel-pwn/knowledge/basic-knowledge/">basic_knowledge</a>
+    </h1>
+  
+
+
+      </header>
+    
+    <div class="article-meta">
+      
+      <span class="article-date">
+  <i class="fa fa-date"></i>
+  <time class="dt-published" datetime="2021-11-11T12:27:46.000Z" itemprop="datePublished">2021年11月11日</time>
+</span>
+      
+  <div class="article-category">
+    <i class="fa fa-classify"></i>
+    <a class="article-category-link" href="/categories/CTF/">CTF</a> > <a class="article-category-link" href="/categories/CTF/PWN/">PWN</a> > <a class="article-category-link" href="/categories/CTF/PWN/kernel-pwn/">kernel pwn</a> > <a class="article-category-link" href="/categories/CTF/PWN/kernel-pwn/knowledge/">knowledge</a>
+  </div>
+
+      
+      
+<a href="/CTF/PWN/kernel-pwn/knowledge/basic-knowledge/#comments" class="article-comment-link">
+  
+  <i class="fa fa-commt"></i>
+  留言
+</a>
+
+
+    </div>
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="Basic-Knowledge"><a href="#Basic-Knowledge" class="headerlink" title="Basic Knowledge"></a>Basic Knowledge</h1><h2 id="Kernel-Basic"><a href="#Kernel-Basic" class="headerlink" title="Kernel Basic"></a>Kernel Basic</h2><p>kernel也是一个程序：</p>
+<ol>
+<li>用来管理软件发出的数据I/O要求；</li>
+<li>将要求转义为指令；</li>
+<li>交给CPU和计算机中其他组件处理；</li>
+</ol>
+<p>kernel 最主要的功能有两点：</p>
+<ol>
+<li>控制并与硬件进行交互</li>
+<li>提供 application 能运行的环境</li>
+</ol>
+<h3 id="Ring-Model"><a href="#Ring-Model" class="headerlink" title="Ring Model"></a>Ring Model</h3><p>intel CPU 将 CPU 的特权级别分为 4 个级别：Ring 0, Ring 1, Ring 2, Ring 3。</p>
+<p>Ring0 只给 OS 使用，Ring 3 所有程序都可以使用，内层 Ring 可以随便使用外层 Ring 的资源。</p>
+<p>使用 Ring Model 是为了提升系统安全性，例如某个间谍软件作为一个在 Ring 3 运行的用户程序，在不通知用户的时候打开摄像头会被阻止，因为访问硬件需要使用 being 驱动程序保留的 Ring 1 的方法。</p>
+<p>大多数的现代操作系统只使用了 Ring 0 和 Ring 3。</p>
+<h3 id="Loadable-Kernel-Modules-LKMs"><a href="#Loadable-Kernel-Modules-LKMs" class="headerlink" title="Loadable Kernel Modules(LKMs)"></a>Loadable Kernel Modules(LKMs)</h3><p>可加载核心模块（内核模块）就像运行在内核空间的可执行程序，包括：</p>
+<ul>
+<li>驱动程序（Device drivers）<ul>
+<li>设备驱动</li>
+<li>文件系统驱动</li>
+<li>…</li>
+</ul>
+</li>
+<li>内核扩展模块（modules）</li>
+</ul>
+<p>LKMs的文件格式和用户态的可执行程序相同，Linux→ELF，Windows→exe/dll，macOS→MACH-O，因此可以用IDA等工具来分析内核模块；</p>
+<p>模块可以单独编译，但不能单独运行，运行时链接到内核中，作为内核的一部分在内核空间运行；</p>
+<p>大多数CTF中的kernel vulnerability也出现在LKM中；</p>
+<h3 id="相关指令"><a href="#相关指令" class="headerlink" title="相关指令"></a>相关指令</h3><p>insmod：将指定模块加载到内核中；</p>
+<p>rmmod：从内核中卸载指定模块；</p>
+<p>lsmod：列出已加载内核模块；</p>
+<p>modprobe：添加或删除模块，modprobe在加载模块时会查找依赖关系；</p>
+<h3 id="syscall"><a href="#syscall" class="headerlink" title="syscall"></a>syscall</h3><p>用户空间的程序请求操作系统内核高权限服务；</p>
+<h3 id="ioctl"><a href="#ioctl" class="headerlink" title="ioctl"></a>ioctl</h3><p>使用<code>man ioctl</code> 查看手册；</p>
+<p><code>ioctl</code>也是一个系统调用，用于与设备通信；</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">ioctl</span><span class="params">(<span class="keyword">int</span> fd, <span class="keyword">unsigned</span> <span class="keyword">long</span> request, ...)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>第一个参数<code>fd</code>为打开设备返回的文件描述符；</p>
+<p>第二个参数为用户程序对设备的控制命令；</p>
+<p>后面的参数为补充参数，与设备相关；</p>
+<p>使用<code>ioctl</code>使得用户程序可以直接访问设备驱动而不需要知道设备具体细节；</p>
+<h3 id="状态切换"><a href="#状态切换" class="headerlink" title="状态切换"></a>状态切换</h3><h4 id="user-space-to-kernel-space"><a href="#user-space-to-kernel-space" class="headerlink" title="user space to kernel space"></a>user space to kernel space</h4><p>当发生：</p>
+<ol>
+<li>系统调用；</li>
+<li>异常；</li>
+<li>外设产生中断；</li>
+</ol>
+<p>会发生用户态到内核态的切换。</p>
+<p>具体的过程为（x86-64）：</p>
+<ol>
+<li><p>通过<code>swapgs</code>（Swap GS Base Register）切换GS段寄存器，将GS寄存器值和一个特定位置的值进行交换，目的是保存GS值，同时将该位置的值作为内核执行时的GS值使用；详情见：<a target="_blank" rel="noopener" href="https://www.felixcloutier.com/x86/swapgs">https://www.felixcloutier.com/x86/swapgs</a></p>
+</li>
+<li><p>将当前栈顶（用户空间栈顶）记录在 CPU 独占变量区域里，将 CPU 独占区域里记录的内核栈顶放入 rsp/esp。</p>
+<blockquote>
+<p>用户栈与内核栈的交换</p>
+</blockquote>
+</li>
+<li><p>通过 push 保存各寄存器值，代码如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"> ENTRY(entry_SYSCALL_64)</span><br><span class="line"> /* SWAPGS_UNSAFE_STACK是一个宏，x86直接定义为swapgs指令 */</span><br><span class="line"> SWAPGS_UNSAFE_STACK</span><br><span class="line"></span><br><span class="line"> /* 保存栈值，并设置内核栈 */</span><br><span class="line"> movq %rsp, PER_CPU_VAR(rsp_scratch)</span><br><span class="line"> movq PER_CPU_VAR(cpu_current_top_of_stack), %rsp</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">/* 通过push保存寄存器值，形成一个pt_regs结构 */</span><br><span class="line">/* Construct struct pt_regs on stack */</span><br><span class="line">pushq  $__USER_DS      /* pt_regs-&gt;ss */</span><br><span class="line">pushq  PER_CPU_VAR(rsp_scratch)  /* pt_regs-&gt;sp */</span><br><span class="line">pushq  %r11             /* pt_regs-&gt;flags */</span><br><span class="line">pushq  $__USER_CS      /* pt_regs-&gt;cs */</span><br><span class="line">pushq  %rcx             /* pt_regs-&gt;ip */</span><br><span class="line">pushq  %rax             /* pt_regs-&gt;orig_ax */</span><br><span class="line">pushq  %rdi             /* pt_regs-&gt;di */</span><br><span class="line">pushq  %rsi             /* pt_regs-&gt;si */</span><br><span class="line">pushq  %rdx             /* pt_regs-&gt;dx */</span><br><span class="line">pushq  %rcx tuichu    /* pt_regs-&gt;cx */</span><br><span class="line">pushq  $-ENOSYS        /* pt_regs-&gt;ax */</span><br><span class="line">pushq  %r8              /* pt_regs-&gt;r8 */</span><br><span class="line">pushq  %r9              /* pt_regs-&gt;r9 */</span><br><span class="line">pushq  %r10             /* pt_regs-&gt;r10 */</span><br><span class="line">pushq  %r11             /* pt_regs-&gt;r11 */</span><br><span class="line">sub $(6*8), %rsp      /* pt_regs-&gt;bp, bx, r12-15 not saved */</span><br></pre></td></tr></table></figure></li>
+<li><p>通过汇编指令判断是否为 <code>x32_abi</code>；</p>
+</li>
+<li><p>通过系统调用号，跳到全局变量 <code>sys_call_table</code> 相应位置继续执行系统调用。</p>
+</li>
+</ol>
+<h4 id="kernel-space-to-user-space"><a href="#kernel-space-to-user-space" class="headerlink" title="kernel space to user space"></a>kernel space to user space</h4><p>退出时，流程如下：</p>
+<ol>
+<li>通过 <code>swapgs</code> 恢复 GS 值；</li>
+<li>通过 <code>sysretq</code> 或者 <code>iretq</code> 恢复到用户控件继续执行。如果使用 <code>iretq</code> 还需要给出用户空间的一些信息（CS, eflags/rflags, esp/rsp 等）；</li>
+</ol>
+<h3 id="cred结构体"><a href="#cred结构体" class="headerlink" title="cred结构体"></a>cred结构体</h3><p> kernel 记录了进程的权限，更具体的，是用 cred 结构体记录的，每个进程中都有一个 cred 结构，这个结构保存了该进程的权限等信息（uid，gid 等），如果能修改某个进程的 cred，那么也就修改了这个进程的权限。</p>
+<p>结构体定义如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">cred</span> &#123;</span></span><br><span class="line">    <span class="keyword">atomic_t</span>    usage;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> CONFIG_DEBUG_CREDENTIALS</span></span><br><span class="line">    <span class="keyword">atomic_t</span>    subscribers;    <span class="comment">/* number of processes subscribed */</span></span><br><span class="line">    <span class="keyword">void</span>        *put_addr;</span><br><span class="line">    <span class="keyword">unsigned</span>    magic;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> CRED_MAGIC  0x43736564</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> CRED_MAGIC_DEAD 0x44656144</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">    <span class="keyword">kuid_t</span>      uid;        <span class="comment">/* real UID of the task */</span></span><br><span class="line">    <span class="keyword">kgid_t</span>      gid;        <span class="comment">/* real GID of the task */</span></span><br><span class="line">    <span class="keyword">kuid_t</span>      suid;       <span class="comment">/* saved UID of the task */</span></span><br><span class="line">    <span class="keyword">kgid_t</span>      sgid;       <span class="comment">/* saved GID of the task */</span></span><br><span class="line">    <span class="keyword">kuid_t</span>      euid;       <span class="comment">/* effective UID of the task */</span></span><br><span class="line">    <span class="keyword">kgid_t</span>      egid;       <span class="comment">/* effective GID of the task */</span></span><br><span class="line">    <span class="keyword">kuid_t</span>      fsuid;      <span class="comment">/* UID for VFS ops */</span></span><br><span class="line">    <span class="keyword">kgid_t</span>      fsgid;      <span class="comment">/* GID for VFS ops */</span></span><br><span class="line">    <span class="keyword">unsigned</span>    securebits; <span class="comment">/* SUID-less security management */</span></span><br><span class="line">    <span class="keyword">kernel_cap_t</span>    cap_inheritable; <span class="comment">/* caps our children can inherit */</span></span><br><span class="line">    <span class="keyword">kernel_cap_t</span>    cap_permitted;  <span class="comment">/* caps we&#x27;re permitted */</span></span><br><span class="line">    <span class="keyword">kernel_cap_t</span>    cap_effective;  <span class="comment">/* caps we can actually use */</span></span><br><span class="line">    <span class="keyword">kernel_cap_t</span>    cap_bset;   <span class="comment">/* capability bounding set */</span></span><br><span class="line">    <span class="keyword">kernel_cap_t</span>    cap_ambient;    <span class="comment">/* Ambient capability set */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> CONFIG_KEYS</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">char</span>   jit_keyring;    <span class="comment">/* default keyring to attach requested</span></span><br><span class="line"><span class="comment">                     * keys to */</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">key</span> __<span class="title">rcu</span> *<span class="title">session_keyring</span>;</span> <span class="comment">/* keyring inherited over fork */</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">key</span>  *<span class="title">process_keyring</span>;</span> <span class="comment">/* keyring private to this process */</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">key</span>  *<span class="title">thread_keyring</span>;</span> <span class="comment">/* keyring private to this thread */</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">key</span>  *<span class="title">request_key_auth</span>;</span> <span class="comment">/* assumed request_key authority */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> CONFIG_SECURITY</span></span><br><span class="line">    <span class="keyword">void</span>        *security;  <span class="comment">/* subjective LSM security */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">user_struct</span> *<span class="title">user</span>;</span>   <span class="comment">/* real user ID subscription */</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">user_namespace</span> *<span class="title">user_ns</span>;</span> <span class="comment">/* user_ns the caps and keyrings are relative to. */</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">group_info</span> *<span class="title">group_info</span>;</span>  <span class="comment">/* supplementary groups for euid/fsgid */</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">rcu_head</span> <span class="title">rcu</span>;</span>        <span class="comment">/* RCU deletion hook */</span></span><br><span class="line">&#125; __randomize_layout;</span><br></pre></td></tr></table></figure>
+
+<h3 id="内核态函数"><a href="#内核态函数" class="headerlink" title="内核态函数"></a>内核态函数</h3><p>相比用户态库函数，内核态的函数有了一些变化</p>
+<ul>
+<li>printf() -&gt; **printk()**，但需要注意的是 printk() 不一定会把内容显示到终端上，但一定在内核缓冲区里，可以通过 <code>dmesg</code> 查看效果</li>
+<li>memcpy() -&gt;copy_from_user()/copy_to_user()<ul>
+<li>copy_from_user() 实现了将用户空间的数据传送到内核空间；</li>
+<li>copy_to_user() 实现了将内核空间的数据传送到用户空间；</li>
+</ul>
+</li>
+<li>malloc() -&gt; **kmalloc()**，内核态的内存分配函数，和 malloc() 相似，但使用的是 <code>slab/slub 分配器</code></li>
+<li>free() -&gt; **kfree()**，同 kmalloc()</li>
+</ul>
+<p>另外要注意的是，kernel 管理进程，因此 kernel 也记录了进程的权限。kernel 中有两个可以方便的改变权限的函数：</p>
+<ul>
+<li><strong>int commit_creds(struct cred *new)</strong></li>
+<li><strong>struct cred* prepare_kernel_cred(struct task_struct* daemon)</strong></li>
+</ul>
+<p>从函数名也可以看出，执行 <code>commit_creds(prepare_kernel_cred(0))</code> 即可获得 root 权限，0 表示 以 0 号进程作为参考准备新的 credentials。执行 <code>commit_creds(prepare_kernel_cred(0))</code> 也是最常用的提权手段，两个函数的地址都可以在 <code>/proc/kallsyms</code> 中查看（较老的内核版本中是 <code>/proc/ksyms</code>）</p>
+<h3 id="Mitigation"><a href="#Mitigation" class="headerlink" title="Mitigation"></a>Mitigation</h3><blockquote>
+<p>canary, dep, PIE, RELRO 等保护与用户态原理和作用相同</p>
+</blockquote>
+<ul>
+<li>smep: Supervisor Mode Execution Protection，当处理器处于 <code>ring0</code> 模式，执行 <code>用户空间</code> 的代码会触发页错误。（在 arm 中该保护称为 <code>PXN</code>）</li>
+<li>smap: Superivisor Mode Access Protection，类似于 smep，通常是在访问数据时。</li>
+<li>mmap_min_addr:</li>
+</ul>
+<h2 id="CTF"><a href="#CTF" class="headerlink" title="CTF"></a>CTF</h2><p>比赛相关，一般会给以下三个文件</p>
+<ol>
+<li>boot.sh: 一个用于启动 kernel 的 shell 的脚本，多用 qemu，保护措施与 qemu 不同的启动参数有关；</li>
+<li>bzImage: kernel binary；</li>
+<li>rootfs.cpio: 文件系统映像；</li>
+</ol>
+<p>关于qemu的启动参数：</p>
+<p>解释一下 qemu 启动的参数：</p>
+<ul>
+<li>-initrd rootfs.cpio，使用 rootfs.cpio 作为内核启动的文件系统</li>
+<li>-kernel bzImage，使用 bzImage 作为 kernel 映像</li>
+<li>-cpu kvm64,+smep，设置 CPU 的安全选项，这里开启了 smep</li>
+<li>-m 64M，设置虚拟 RAM 为 64M，默认为 128M 其他的选项可以通过 –help 查看。</li>
+</ul>
+<p>本地写好 exploit 后，可以通过 base64 编码等方式把编译好的二进制文件保存到远程目录下，进而拿到 flag。同时可以使用 musl, uclibc 等方法减小 exploit 的体积方便传输。</p>
+<h2 id="Exploit-Aim"><a href="#Exploit-Aim" class="headerlink" title="Exploit Aim"></a>Exploit Aim</h2><h3 id="escalation"><a href="#escalation" class="headerlink" title="escalation"></a>escalation</h3><p>提权</p>
+<h3 id="leakinfo"><a href="#leakinfo" class="headerlink" title="leakinfo"></a>leakinfo</h3><p>泄露敏感信息</p>
+<h3 id="DoS"><a href="#DoS" class="headerlink" title="DoS"></a>DoS</h3><p>内核崩溃</p>
+<h2 id="Defense"><a href="#Defense" class="headerlink" title="Defense"></a>Defense</h2><h3 id="Isolation"><a href="#Isolation" class="headerlink" title="Isolation"></a>Isolation</h3><p>隔离</p>
+<h3 id="Access-Control"><a href="#Access-Control" class="headerlink" title="Access Control"></a>Access Control</h3><p>访问控制</p>
+<h3 id="Detection"><a href="#Detection" class="headerlink" title="Detection"></a>Detection</h3><p>异常检测</p>
+<h3 id="randomization"><a href="#randomization" class="headerlink" title="randomization"></a>randomization</h3><p>随机化</p>
+<h2 id="Exploit-Method"><a href="#Exploit-Method" class="headerlink" title="Exploit Method"></a>Exploit Method</h2><h3 id="Kernel-UAF"><a href="#Kernel-UAF" class="headerlink" title="Kernel UAF"></a>Kernel UAF</h3><h3 id="Kernel-ROP"><a href="#Kernel-ROP" class="headerlink" title="Kernel ROP"></a>Kernel ROP</h3><h3 id="ret2usr"><a href="#ret2usr" class="headerlink" title="ret2usr"></a>ret2usr</h3><h3 id="bypass-SMEP"><a href="#bypass-SMEP" class="headerlink" title="bypass-SMEP"></a>bypass-SMEP</h3><h3 id="Double-Fetch"><a href="#Double-Fetch" class="headerlink" title="Double-Fetch"></a>Double-Fetch</h3><h3 id="userfaultfd"><a href="#userfaultfd" class="headerlink" title="userfaultfd"></a>userfaultfd</h3><h2 id="Not-Only-CTF-Kernel"><a href="#Not-Only-CTF-Kernel" class="headerlink" title="Not Only CTF Kernel"></a>Not Only CTF Kernel</h2><h3 id="进程管理"><a href="#进程管理" class="headerlink" title="进程管理"></a>进程管理</h3><h3 id="驱动"><a href="#驱动" class="headerlink" title="驱动"></a>驱动</h3><h3 id="设备"><a href="#设备" class="headerlink" title="设备"></a>设备</h3><h3 id="文件系统"><a href="#文件系统" class="headerlink" title="文件系统"></a>文件系统</h3><h3 id="内存管理系统"><a href="#内存管理系统" class="headerlink" title="内存管理系统"></a>内存管理系统</h3><h3 id="结构"><a href="#结构" class="headerlink" title="结构"></a>结构</h3><h3 id="系统调用"><a href="#系统调用" class="headerlink" title="系统调用"></a>系统调用</h3><h3 id="内核组件"><a href="#内核组件" class="headerlink" title="内核组件"></a>内核组件</h3><h3 id="网络协议"><a href="#网络协议" class="headerlink" title="网络协议"></a>网络协议</h3><h3 id="认证机制"><a href="#认证机制" class="headerlink" title="认证机制"></a>认证机制</h3>
+        
+        
+          <blockquote id="copyright">
+              <p>原文链接: <a href="https://www.jk404.cn/index.html">https://www.jk404.cn/index.html</a></p>
+              <p>版权声明: 转载请注明出处.</p>
+          </blockquote>
+        
+      
+    </div>
+    <footer class="article-footer">
+      
+        <div class="article-tag-wrap">
+          
+
+          
+          
+
+
+        </div>
+      
+      
+      
+    </footer>
+  </div>
+</article>
+
+
   <article id="post-challenge6-2-init-IDT" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-inner">
     
@@ -949,84 +1136,6 @@
 </article>
 
 
-  <article id="post-challenge2-2-break-at-0x7c00" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/OS/lab1/challenge2-qemu-gdb/challenge2-2-break-at-0x7c00/">challenge2.2:break_at_0x7c00</a>
-    </h1>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      
-      <span class="article-date">
-  <i class="fa fa-date"></i>
-  <time class="dt-published" datetime="2021-11-11T08:13:21.000Z" itemprop="datePublished">2021年11月11日</time>
-</span>
-      
-  <div class="article-category">
-    <i class="fa fa-classify"></i>
-    <a class="article-category-link" href="/categories/OS/">OS</a> > <a class="article-category-link" href="/categories/OS/lab1/">lab1</a> > <a class="article-category-link" href="/categories/OS/lab1/challenge2-qemu-gdb/">challenge2:qemu&gdb</a>
-  </div>
-
-      
-      
-<a href="/OS/lab1/challenge2-qemu-gdb/challenge2-2-break-at-0x7c00/#comments" class="article-comment-link">
-  
-  <i class="fa fa-commt"></i>
-  留言
-</a>
-
-
-    </div>
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <h1 id="challenge2-2-break-at-0x7c00"><a href="#challenge2-2-break-at-0x7c00" class="headerlink" title="challenge2.2:break at 0x7c00"></a>challenge2.2:break at 0x7c00</h1><p>在初始化位置<code>0x7c00</code>设置实地址断点,测试断点正常。</p>
-<p>同理，直接gdbinit修改断点为<code>0x7c00</code>即可；</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ cat tools/gdbinit</span><br><span class="line"></span><br><span class="line">file bin/kernel</span><br><span class="line">target remote :1234</span><br><span class="line">break *0x7c00</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-
-<p>执行make debug，看看断点是否正确，能否正常调试；</p>
-<p>调试信息如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">remote Thread 1 In:                                                                L??   PC: 0x7c00 </span><br><span class="line">0x0000fff0 in ?? ()</span><br><span class="line">Breakpoint 1 at 0x7c00</span><br><span class="line">(gdb) c</span><br><span class="line">Continuing.</span><br><span class="line"></span><br><span class="line">Breakpoint 1, 0x00007c00 in ?? ()</span><br><span class="line">(gdb) x/i $eip</span><br><span class="line">=&gt; 0x7c00:      cli</span><br><span class="line">(gdb) </span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-
-<p>可以看到断点和调试正常；</p>
-
-        
-        
-          <blockquote id="copyright">
-              <p>原文链接: <a href="https://www.jk404.cn/index.html">https://www.jk404.cn/index.html</a></p>
-              <p>版权声明: 转载请注明出处.</p>
-          </blockquote>
-        
-      
-    </div>
-    <footer class="article-footer">
-      
-        <div class="article-tag-wrap">
-          
-
-          
-          
-
-
-        </div>
-      
-      
-      
-    </footer>
-  </div>
-</article>
-
-
 
     <nav id="page-nav">
 
@@ -1045,6 +1154,10 @@
       <ul>
         
           <li>
+            <a href="/CTF/PWN/kernel-pwn/knowledge/basic-knowledge/">basic_knowledge</a>
+          </li>
+        
+          <li>
             <a href="/OS/lab1/challenge6-interrupt-handle/challenge6-2-init-IDT/">challenge6.2:init_IDT</a>
           </li>
         
@@ -1060,10 +1173,6 @@
             <a href="/OS/lab1/challenge5-trace-stackframe/challenge5-trace-stackframe/">challenge5:trace_stackframe</a>
           </li>
         
-          <li>
-            <a href="/OS/lab1/challenge4-load-kernel-elf/challenge4-load-kernel-elf/">challenge4:load_kernel_elf</a>
-          </li>
-        
       </ul>
     </div>
   </div>
@@ -1076,7 +1185,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title"><i class="fa fa-classify"></i> 分类</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/">CTF</a><span class="category-list-count">2</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/">PWN</a><span class="category-list-count">2</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/asisctf/">asisctf</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/asisctf/asisctf2021/">asisctf2021</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/uncategorized/">uncategorized</a><span class="category-list-count">1</span></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/">OS</a><span class="category-list-count">13</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/">lab1</a><span class="category-list-count">13</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge1-what-is-make/">challenge1:what is make</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge2-qemu-gdb/">challenge2:qemu&gdb</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge3-go-into-protected-mode/">challenge3:go into protected mode</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge4-load-kernel-elf/">challenge4:load kernel elf</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge5-trace-stackframe/">challenge5:trace stackframe</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge6-interrupt-handle/">challenge6:interrupt handle</a><span class="category-list-count">3</span></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/study/">study</a><span class="category-list-count">6</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/study/book/">book</a><span class="category-list-count">3</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/">程序员的自我修养：链接、装载与库</a><span class="category-list-count">3</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/study/daily/">daily</a><span class="category-list-count">3</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/welcome/">welcome</a><span class="category-list-count">1</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/">CTF</a><span class="category-list-count">3</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/">PWN</a><span class="category-list-count">3</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/">kernel pwn</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/knowledge/">knowledge</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/uncategorized/">uncategorized</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/">wp</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/asisctf/">asisctf</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/asisctf/asisctf2021/">asisctf2021</a><span class="category-list-count">1</span></li></ul></li></ul></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/">OS</a><span class="category-list-count">13</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/">lab1</a><span class="category-list-count">13</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge1-what-is-make/">challenge1:what is make</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge2-qemu-gdb/">challenge2:qemu&gdb</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge3-go-into-protected-mode/">challenge3:go into protected mode</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge4-load-kernel-elf/">challenge4:load kernel elf</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge5-trace-stackframe/">challenge5:trace stackframe</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge6-interrupt-handle/">challenge6:interrupt handle</a><span class="category-list-count">3</span></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/study/">study</a><span class="category-list-count">6</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/study/book/">book</a><span class="category-list-count">3</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/">程序员的自我修养：链接、装载与库</a><span class="category-list-count">3</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/study/daily/">daily</a><span class="category-list-count">3</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/welcome/">welcome</a><span class="category-list-count">1</span></li></ul>
     </div>
   </div>
 
@@ -1086,7 +1195,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title"><i class="fa fa-archive"></i> 归档</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/">2021年11月</a><span class="archive-list-count">23</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/">2021年11月</a><span class="archive-list-count">24</span></li></ul>
     </div>
   </div>
 

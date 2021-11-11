@@ -82,6 +82,162 @@
 
       <div class="outer">
         <section id="main">
+  <article id="post-compile与link" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/compile%E4%B8%8Elink/">compile与link</a>
+    </h1>
+  
+
+
+      </header>
+    
+    <div class="article-meta">
+      
+      <span class="article-date">
+  <i class="fa fa-date"></i>
+  <time class="dt-published" datetime="2021-10-24T04:42:46.000Z" itemprop="datePublished">2021年10月24日</time>
+</span>
+      
+  <div class="article-category">
+    <i class="fa fa-classify"></i>
+    <a class="article-category-link" href="/categories/study/">study</a> > <a class="article-category-link" href="/categories/study/book/">book</a> > <a class="article-category-link" href="/categories/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/">程序员的自我修养：链接、装载与库</a>
+  </div>
+
+      
+      
+<a href="/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/compile%E4%B8%8Elink/#comments" class="article-comment-link">
+  
+  <i class="fa fa-commt"></i>
+  留言
+</a>
+
+
+    </div>
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="编译和链接"><a href="#编译和链接" class="headerlink" title="编译和链接"></a>编译和链接</h1><p>如果说“编译和链接这几个字不够熟悉， 那说”Build“就再熟悉不过了吧。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc program.c</span><br></pre></td></tr></table></figure>
+
+<p>事实上以上操作涵盖了四个部分：预处理Prepressing、编译compilation、汇编assembly、链接linking；</p>
+<p><img src="/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/compile%E4%B8%8Elink/gcc.jpg" alt="gcc"></p>
+<h2 id="不为人知的动作"><a href="#不为人知的动作" class="headerlink" title="不为人知的动作"></a>不为人知的动作</h2><h3 id="预编译"><a href="#预编译" class="headerlink" title="预编译"></a>预编译</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">gcc -E program.c			// 生成预编译文件</span><br><span class="line">cpp program.c &gt; program.i</span><br></pre></td></tr></table></figure>
+
+<p>预编译主要处理的是源代码文件中<strong>以“#”开头</strong>的预编译指令；</p>
+<p>包括：</p>
+<ol>
+<li>将所有“#define”删除，展开所有<strong>宏定义</strong>；</li>
+<li>处理所有<strong>条件预编译</strong>指令，如#if等；</li>
+<li>处理**#include**预编译指令，被包含的文件插入到该预编译指令的位置；</li>
+<li>删除所有<strong>注释</strong>；</li>
+<li><strong>添加代码行号和文件名标识</strong>，以便于编译时编译器产生调试用的行号信息与用于编译时产生编译错误或警告时能够显示行号；</li>
+<li>保留所有**#pragma**编译器指令；</li>
+</ol>
+<h3 id="编译"><a href="#编译" class="headerlink" title="编译"></a>编译</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc -S program.i -o program.s</span><br></pre></td></tr></table></figure>
+
+<p>编译把预编译处理完的文件进行一系列词法<strong>分析</strong>、语法分析、语义<strong>分析</strong>、优化后产生的<strong>汇编代码</strong>文件；</p>
+<h3 id="汇编"><a href="#汇编" class="headerlink" title="汇编"></a>汇编</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc -c program.s -o program.o</span><br></pre></td></tr></table></figure>
+
+<p>汇编器将汇编代码办成机器可以执行的指令，几乎依据汇编语句对应一条机器指令（翻译）；</p>
+<h3 id="链接"><a href="#链接" class="headerlink" title="链接"></a>链接</h3><p>链接是一个复杂的过程，有许多文件参与进来，下一章详细总结；</p>
+<h2 id="编译器做了啥"><a href="#编译器做了啥" class="headerlink" title="编译器做了啥"></a>编译器做了啥</h2><p>直观地说，编译器是将高级语言翻译成机器语言的一个工具；</p>
+<p><img src="/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/compile%E4%B8%8Elink/complie_step.jpg" alt="complie_step"></p>
+<p><strong>扫描</strong>=&gt;<strong>语法分析</strong>=&gt;<strong>语义分析</strong>=&gt;<strong>源代码优化</strong>=&gt;<strong>代码生成</strong>=&gt;<strong>目标代码优化</strong></p>
+<p>示例代码：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">array[index] = (index + 4) * (2 + 6)</span><br><span class="line">CompilerExpression.c</span><br></pre></td></tr></table></figure>
+
+<h3 id="扫描"><a href="#扫描" class="headerlink" title="扫描"></a>扫描</h3><p><strong>扫描器scanner</strong>做的任务就是<strong>词法分析</strong>，用的是一种类似于<strong>有限状态机（Finite State Machine）</strong>的算法，可以轻松将源代码字符序列分割成一系列的记号（Token），如上代码共有28个非空字符，扫描后产生16个记号，“index”作为标识符为一个记号；</p>
+<p>这些记号会分类，标识符存放到<strong>符号表</strong>，数字、字符串常量存放到<strong>文字表</strong>中；</p>
+<p>一个名为<strong>lex</strong>的程序可以<strong>实现词法扫描</strong>，有了它，编译器开发者只需要改变<strong>词法规则</strong>就可以了；</p>
+<h3 id="语法分析"><a href="#语法分析" class="headerlink" title="语法分析"></a>语法分析</h3><p><strong>语法分析器Grammar Parser</strong>对记号进行<strong>语法分析</strong>，生成<strong>语法树Syntax Tree</strong>，采用的是<strong>上下文无关语法Context-free Grammar</strong>的分析手段；</p>
+<p>语法树是以表达式Expression为节点的树，以上面的代码为例，语法树为：</p>
+<p><img src="/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/compile%E4%B8%8Elink/syntax_tree.jpg" alt="syntax_tree"></p>
+<p>整个语句被看作是<strong>一个赋值表达式</strong>；</p>
+<p>树的<strong>左边</strong>是<strong>数组</strong>表达式，<strong>右边</strong>是<strong>乘法</strong>表达式；</p>
+<p><strong>数组</strong>表达式由<strong>两个符号表达式</strong>组成；</p>
+<p>由于<strong>符号</strong>和<strong>数字</strong>是<strong>最小的表达式</strong>，所以也作为整个<strong>语法树的叶节点</strong>；</p>
+<p>语法分析器需要解决的是<strong>区分表达式的含义</strong>，在<strong>不合法</strong>表达式出现时<strong>要报错</strong>；</p>
+<p>一个名为yacc的工具，根据用户给定的语法规则对几号序列进行解析，构件语法树，对于不同编程语言只需要改变语法规则即可（编译器编译器Compiler Compiler）；</p>
+<h3 id="语义分析器"><a href="#语义分析器" class="headerlink" title="语义分析器"></a>语义分析器</h3><p>顾名思义，<strong>语义分析器Semantic Analyzer</strong>进行<strong>语义分析</strong>，完成了对表达式的<strong>语法层面的分析</strong>，但是并<strong>不了解语句是否真的有意义</strong>；</p>
+<p>语义分析器能分析的语义是<strong>静态语义Static Semantic</strong>，是编译期间就可以确定的语义；</p>
+<p>不能分析动态语义Dynamic Semantic，这是运行期见才能确定的语义；</p>
+<p>语义分析器将语法树的<strong>表达式标识为类型</strong>，上图语法树将转化为：</p>
+<p><img src="/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/compile%E4%B8%8Elink/semantic_tree.jpg" alt="semantic_tree"></p>
+<h3 id="源码级优化器"><a href="#源码级优化器" class="headerlink" title="源码级优化器"></a>源码级优化器</h3><p>源代码级优化器Source Code Optimizer在源代码级别进行优化；</p>
+<p>例如，2+6的结果是确定的，结果8可以被优化保存；</p>
+<p><img src="/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/compile%E4%B8%8Elink/code_optimize.jpg" alt="code_optimize"></p>
+<p>可以看到，优化器将语法树转换成了中间代码Intermediate Code，这已经非常接近目标代码了，但是它一般跟目标机器和运行时环境是无关的，比如没有数据尺寸、变量地址和寄存器名字等；</p>
+<p>中间代码有很多类型，不同编译器中有不同的形式，常见有：</p>
+<ol>
+<li><p>三地址码Three-address Code：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">x = y op z</span><br></pre></td></tr></table></figure>
+
+<p>将变量y和z进行op操作以后，赋值给x；</p>
+<p>上面代码可以转化为以下步骤：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">t1 = 2 + 6</span><br><span class="line">t2 = index + 4</span><br><span class="line">t3 = t2 * t1</span><br><span class="line">array[index] = t3</span><br></pre></td></tr></table></figure>
+
+<p>由于优化程序的作用：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">t2 = index + 4</span><br><span class="line">t2 = t2 * 8</span><br><span class="line">array[index] = t2</span><br></pre></td></tr></table></figure></li>
+<li><p>P-code</p>
+</li>
+</ol>
+<p>中间代码使得<strong>编译器被分为前端和后端</strong>，<strong>前端</strong>负责产生<strong>机器无关的中间代码</strong>，<strong>后端</strong>将中间代码转换成<strong>目标机器代码</strong>；</p>
+<h3 id="代码生成器和目标代码优化器"><a href="#代码生成器和目标代码优化器" class="headerlink" title="代码生成器和目标代码优化器"></a>代码生成器和目标代码优化器</h3><p><strong>代码生成器Code Generator</strong>和<strong>目标代码优化器Target Code Optimizer</strong>属于<strong>编译器后端</strong>；</p>
+<h4 id="代码生成器"><a href="#代码生成器" class="headerlink" title="代码生成器"></a>代码生成器</h4><p>中间代码 =&gt; 目标机器代码（这依赖于目标机器）</p>
+<h4 id="目标代码优化器"><a href="#目标代码优化器" class="headerlink" title="目标代码优化器"></a>目标代码优化器</h4><p>对目标代码进行优化，比如选择合适的寻址方式、使用位移来代替乘法运算等；</p>
+<p>经过这么多的程序，源代码变成了目标代码，但是index和array的地址还未确定，要如何得到它们的地址呢？</p>
+<p>事实上<strong>绝对地址</strong>要在<strong>最终链接的时候才能确定</strong>，因此<strong>编译器完成的工作是将一个源代码文件编译成一个未链接的目标文件，然后链接器最终将目标文件链接起来形成可执行文件</strong>；</p>
+<h2 id="链接器"><a href="#链接器" class="headerlink" title="链接器"></a>链接器</h2><p>计算各个目标地址的过程被叫做<strong>重定位Relocation</strong>；</p>
+<p>假设存在这样的指令：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jmp foo</span><br></pre></td></tr></table></figure>
+
+<p>意思为跳转到foo表示的地址执行，而foo的符号Symbol就尤为重要，当有指令引用了它，只需要记住foo这个地址，直接修正就可以了；因此模块间符号的引用成为了彼此联系且保证程序正确执行的关键；</p>
+<p><img src="/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/compile%E4%B8%8Elink/module_association.jpg" alt="module_association"></p>
+<h2 id="模块拼装——静态链接"><a href="#模块拼装——静态链接" class="headerlink" title="模块拼装——静态链接"></a>模块拼装——静态链接</h2><p>链接Linking就是将<strong>模块组装</strong>起来，各个模块之间相互引用的部分处理好了，程序在引用和调用时就能<strong>找到目标符号确定位置</strong>而不会出错；</p>
+<p>而链接的过程主要包括：</p>
+<ol>
+<li><strong>地址和空间分配</strong></li>
+<li><strong>符号决议</strong>（或是熟知的<strong>符号绑定</strong>，然而这个说法很“动态”）</li>
+<li><strong>重定位</strong></li>
+</ol>
+<p>下图演示了具体流程，每个模块段代码文件.c经过编译器编译成目标文件.o，<strong>目标文件</strong>和<strong>库Library</strong>一起链接形成最终的可执行文件；</p>
+<p><img src="/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/compile%E4%B8%8Elink/static_linking.jpg" alt="static_linking"></p>
+<p>这里的库最常见的就是<strong>运行时库Runtime Library</strong>，是支持程序运行的基本函数的集合，是一组目标文件包，存放了常用代码编译后的目标文件集合；</p>
+<p>讲一个具体的例子就可以了；</p>
+<p>假设<strong>main.c中使用了另个一个模块func.c中的函数func()<strong>，则在调用这个函数时必须要知道</strong>func()函数存放的地址</strong>。但是每个模块是单独编译的，显然<strong>main.c不知道，而func.c知道</strong>，因此main.c会暂时<strong>把这个地址放一放</strong>，等最<strong>后链接的时候让链接器去填充修正</strong>。链接器在链接的时候<strong>根据所引用的符号func</strong>，自动去查找func.c模块中的func函数地址，然后把这些信息<strong>填充修正到main.c模块</strong>中，<strong>这个填充修正的过程正是重定位</strong>，而这个被修正的地方叫<strong>重定位入口</strong>。当然也可以把链接器想成一个裁缝，这是在打补丁；</p>
+
+        
+        
+          <blockquote id="copyright">
+              <p>原文链接: <a href="https://www.jk404.cn/page/3/index.html">https://www.jk404.cn/page/3/index.html</a></p>
+              <p>版权声明: 转载请注明出处.</p>
+          </blockquote>
+        
+      
+    </div>
+    <footer class="article-footer">
+      
+        <div class="article-tag-wrap">
+          
+
+          
+          
+
+
+        </div>
+      
+      
+      
+    </footer>
+  </div>
+</article>
+
+
   <article id="post-知识储备" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-inner">
     
@@ -563,6 +719,10 @@
       <ul>
         
           <li>
+            <a href="/CTF/PWN/kernel-pwn/knowledge/basic-knowledge/">basic_knowledge</a>
+          </li>
+        
+          <li>
             <a href="/OS/lab1/challenge6-interrupt-handle/challenge6-2-init-IDT/">challenge6.2:init_IDT</a>
           </li>
         
@@ -578,10 +738,6 @@
             <a href="/OS/lab1/challenge5-trace-stackframe/challenge5-trace-stackframe/">challenge5:trace_stackframe</a>
           </li>
         
-          <li>
-            <a href="/OS/lab1/challenge4-load-kernel-elf/challenge4-load-kernel-elf/">challenge4:load_kernel_elf</a>
-          </li>
-        
       </ul>
     </div>
   </div>
@@ -594,7 +750,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title"><i class="fa fa-classify"></i> 分类</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/">CTF</a><span class="category-list-count">2</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/">PWN</a><span class="category-list-count">2</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/asisctf/">asisctf</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/asisctf/asisctf2021/">asisctf2021</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/uncategorized/">uncategorized</a><span class="category-list-count">1</span></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/">OS</a><span class="category-list-count">13</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/">lab1</a><span class="category-list-count">13</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge1-what-is-make/">challenge1:what is make</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge2-qemu-gdb/">challenge2:qemu&gdb</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge3-go-into-protected-mode/">challenge3:go into protected mode</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge4-load-kernel-elf/">challenge4:load kernel elf</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge5-trace-stackframe/">challenge5:trace stackframe</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge6-interrupt-handle/">challenge6:interrupt handle</a><span class="category-list-count">3</span></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/study/">study</a><span class="category-list-count">6</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/study/book/">book</a><span class="category-list-count">3</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/">程序员的自我修养：链接、装载与库</a><span class="category-list-count">3</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/study/daily/">daily</a><span class="category-list-count">3</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/welcome/">welcome</a><span class="category-list-count">1</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/">CTF</a><span class="category-list-count">3</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/">PWN</a><span class="category-list-count">3</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/">kernel pwn</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/knowledge/">knowledge</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/uncategorized/">uncategorized</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/">wp</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/asisctf/">asisctf</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/asisctf/asisctf2021/">asisctf2021</a><span class="category-list-count">1</span></li></ul></li></ul></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/">OS</a><span class="category-list-count">13</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/">lab1</a><span class="category-list-count">13</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge1-what-is-make/">challenge1:what is make</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge2-qemu-gdb/">challenge2:qemu&gdb</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge3-go-into-protected-mode/">challenge3:go into protected mode</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge4-load-kernel-elf/">challenge4:load kernel elf</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge5-trace-stackframe/">challenge5:trace stackframe</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge6-interrupt-handle/">challenge6:interrupt handle</a><span class="category-list-count">3</span></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/study/">study</a><span class="category-list-count">6</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/study/book/">book</a><span class="category-list-count">3</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/">程序员的自我修养：链接、装载与库</a><span class="category-list-count">3</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/study/daily/">daily</a><span class="category-list-count">3</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/welcome/">welcome</a><span class="category-list-count">1</span></li></ul>
     </div>
   </div>
 
@@ -604,7 +760,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title"><i class="fa fa-archive"></i> 归档</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/">2021年11月</a><span class="archive-list-count">23</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/">2021年11月</a><span class="archive-list-count">24</span></li></ul>
     </div>
   </div>
 
