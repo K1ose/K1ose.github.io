@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>challenge6.3:interrupt_clock | -K1ose-</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  
+  
+  
+    <link rel="alternate" href="/atom.xml" title="-K1ose-" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">-K1ose-</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">Binary Security Study</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        
+          <a class="main-nav-link" href="/."><i class="fa fa-home"></i> 首页</a>
+        
+          <a class="main-nav-link" href="/archives/"><i class="fa fa-archive"></i> 归档</a>
+        
+          <a class="main-nav-link" href="/about/"><i class="fa fa-user"></i> 关于</a>
+        
+          <a class="main-nav-link" href="/atom.xml"><i class="fa fa-rss"></i> 订阅</a>
+        
+      </nav>
+    </div>
+    <div id="search-form">
+      <div id="result-mask" class="hide"></div>
+      <label><input id="search-key" type="text" autocomplete="off" placeholder="搜索"></label>
+      <div id="result-wrap" class="hide">
+        <div id="search-result"></div>
+      </div>
+      <div class="hide">
+        <template id="search-tpl">
+          <div class="item">
+            <a href="/{path}" title="{title}">
+              <div class="title">{title}</div>
+              <div class="time">{date}</div>
+              <div class="tags">{tags}</div>
+            </a>
+          </div>
+        </template>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-challenge6-3-interrupt-clock" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      challenge6.3:interrupt_clock
+    </h1>
+  
+
+
+      </header>
+    
+    <div class="article-meta">
+      
+      <span class="article-date">
+  <i class="fa fa-date"></i>
+  <time class="dt-published" datetime="2021-11-11T08:29:47.000Z" itemprop="datePublished">2021年11月11日</time>
+</span>
+      
+  <div class="article-category">
+    <i class="fa fa-classify"></i>
+    <a class="article-category-link" href="/categories/OS/">OS</a> > <a class="article-category-link" href="/categories/OS/lab1/">lab1</a> > <a class="article-category-link" href="/categories/OS/lab1/challenge6-interrupt-handle/">challenge6:interrupt handle</a>
+  </div>
+
+      
+        <span class="article-views">
+  <i class="fa fa-views"></i>
+  <i id="busuanzi_container_page_pv">
+      <i id="busuanzi_value_page_pv"></i>
+  </i>
+</span>
+
+      
+      
+<a href="/OS/lab1/challenge6-interrupt-handle/challenge6-3-interrupt-clock/#comments" class="article-comment-link">
+  
+    
+    
+    
+    
+    
+  
+  <i class="fa fa-commt"></i>
+  留言
+</a>
+
+
+    </div>
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="challenge6-3-interrupt-clock"><a href="#challenge6-3-interrupt-clock" class="headerlink" title="challenge6.3:interrupt clock"></a>challenge6.3:interrupt clock</h1><p>完善trap.c中的中断处理函数trap，在对时钟中断进行处理的部分填写trap函数中处理时钟中断的部分，使操作系统每遇到100次时钟中断后，调用print_ticks子程序，向屏幕上打印一行文字”100 ticks”。</p>
+<p>先看一下print_ticks子程序；</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> TICK_NUM 100</span></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">print_ticks</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    cprintf(<span class="string">&quot;%d ticks\n&quot;</span>, TICK_NUM);   <span class="comment">// 打印了TICK_NUM变量</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> DEBUG_GRADE</span></span><br><span class="line">    cprintf(<span class="string">&quot;End of Test.\n&quot;</span>);</span><br><span class="line">    panic(<span class="string">&quot;EOT: kernel seems ok.&quot;</span>);</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<p>再看一下kern/driver/clock.c：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;x86.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;trap.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;picirq.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">/* *</span></span><br><span class="line"><span class="comment"> * Support for time-related hardware gadgets - the 8253 timer,</span></span><br><span class="line"><span class="comment"> * which generates interruptes on IRQ-0.</span></span><br><span class="line"><span class="comment"> * */</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> IO_TIMER1           0x040               <span class="comment">// 8253 Timer #1</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">/* *</span></span><br><span class="line"><span class="comment"> * Frequency of all three count-down timers; (TIMER_FREQ/freq)</span></span><br><span class="line"><span class="comment"> * is the appropriate count to generate a frequency of freq Hz.</span></span><br><span class="line"><span class="comment"> * */</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> TIMER_FREQ      1193182</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> TIMER_DIV(x)    ((TIMER_FREQ + (x) / 2) / (x))</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> TIMER_MODE      (IO_TIMER1 + 3)         <span class="comment">// timer mode port</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> TIMER_SEL0      0x00                    <span class="comment">// select counter 0</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> TIMER_RATEGEN   0x04                    <span class="comment">// mode 2, rate generator</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> TIMER_16BIT     0x30                    <span class="comment">// r/w counter 16 bits, LSB first</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">volatile</span> <span class="keyword">size_t</span> ticks;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* *</span></span><br><span class="line"><span class="comment"> * clock_init - initialize 8253 clock to interrupt 100 times per second,</span></span><br><span class="line"><span class="comment"> * and then enable IRQ_TIMER.</span></span><br><span class="line"><span class="comment"> * */</span></span><br><span class="line"><span class="function"><span class="keyword">void</span></span></span><br><span class="line"><span class="function"><span class="title">clock_init</span><span class="params">(<span class="keyword">void</span>)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// set 8253 timer-chip</span></span><br><span class="line">    outb(TIMER_MODE, TIMER_SEL0 | TIMER_RATEGEN | TIMER_16BIT);</span><br><span class="line">    outb(IO_TIMER1, TIMER_DIV(<span class="number">100</span>) % <span class="number">256</span>);</span><br><span class="line">    outb(IO_TIMER1, TIMER_DIV(<span class="number">100</span>) / <span class="number">256</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// initialize time counter &#x27;ticks&#x27; to zero</span></span><br><span class="line">    ticks = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    cprintf(<span class="string">&quot;++ setup timer interrupts\n&quot;</span>);</span><br><span class="line">    pic_enable(IRQ_TIMER);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+<p>可以看到，在<code>clock_init()</code>中里定义了ticks，根据要求，当ticks每次+1，直到100时即调用print_ticks()函数打印信息；</p>
+<p>于是填充代码，在kern/trap/trap.c中有：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* trap_dispatch - dispatch based on what type of trap occurred */</span></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span></span></span><br><span class="line"><span class="function"><span class="title">trap_dispatch</span><span class="params">(struct trapframe *tf)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">char</span> c;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">switch</span> (tf-&gt;tf_trapno)</span><br><span class="line">    &#123;</span><br><span class="line">    <span class="keyword">case</span> IRQ_OFFSET + IRQ_TIMER:</span><br><span class="line">        <span class="comment">/* LAB1 YOUR CODE : STEP 3 */</span></span><br><span class="line">        <span class="comment">/* handle the timer interrupt */</span></span><br><span class="line">        <span class="comment">/* (1) After a timer interrupt, you should record this event using a global variable (increase it), such as ticks in kern/driver/clock.c</span></span><br><span class="line"><span class="comment">         * (2) Every TICK_NUM cycle, you can print some info using a funciton, such as print_ticks().</span></span><br><span class="line"><span class="comment">         * (3) Too Simple? Yes, I think so!</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        ticks++;</span><br><span class="line">        <span class="keyword">while</span>(ticks % <span class="number">100</span> == <span class="number">0</span>)         <span class="comment">// 100也可以用已经定义的TICK_NUM来替换</span></span><br><span class="line">            print_ticks();</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">    <span class="keyword">case</span> IRQ_OFFSET + IRQ_COM1:</span><br><span class="line">        c = cons_getc();</span><br><span class="line">        cprintf(<span class="string">&quot;serial [%03d] %c\n&quot;</span>, c, c);</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">    <span class="keyword">case</span> IRQ_OFFSET + IRQ_KBD:</span><br><span class="line">        c = cons_getc();</span><br><span class="line">        cprintf(<span class="string">&quot;kbd [%03d] %c\n&quot;</span>, c, c);</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">    <span class="comment">//LAB1 CHALLENGE 1 : YOUR CODE you should modify below codes.</span></span><br><span class="line">    <span class="keyword">case</span> T_SWITCH_TOU:</span><br><span class="line">    <span class="keyword">case</span> T_SWITCH_TOK:</span><br><span class="line">        panic(<span class="string">&quot;T_SWITCH_** ??\n&quot;</span>);</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">    <span class="keyword">case</span> IRQ_OFFSET + IRQ_IDE1:</span><br><span class="line">    <span class="keyword">case</span> IRQ_OFFSET + IRQ_IDE2:</span><br><span class="line">        <span class="comment">/* do nothing */</span></span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">    <span class="keyword">default</span>:</span><br><span class="line">        <span class="comment">// in kernel, it must be a mistake</span></span><br><span class="line">        <span class="keyword">if</span> ((tf-&gt;tf_cs &amp; <span class="number">3</span>) == <span class="number">0</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            print_trapframe(tf);</span><br><span class="line">            panic(<span class="string">&quot;unexpected trap in kernel.\n&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* *</span></span><br><span class="line"><span class="comment"> * trap - handles or dispatches an exception/interrupt. if and when trap() returns,</span></span><br><span class="line"><span class="comment"> * the code in kern/trap/trapentry.S restores the old CPU state saved in the</span></span><br><span class="line"><span class="comment"> * trapframe and then uses the iret instruction to return from the exception.</span></span><br><span class="line"><span class="comment"> * */</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">trap</span><span class="params">(struct trapframe *tf)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// dispatch based on what type of trap occurred</span></span><br><span class="line">    trap_dispatch(tf);</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+<p><code>make qemu</code>查看结果；</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line">100 ticks</span><br><span class="line">100 ticks</span><br><span class="line">100 ticks</span><br><span class="line">100 ticks</span><br><span class="line">100 ticks</span><br><span class="line">100 ticks</span><br><span class="line">100 ticks</span><br><span class="line">100 ticks</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+
+
+
+        
+            <div id="toc-article">
+                
+  <div class="widget-wrap" id="toc-wrap">
+    <h3 class="widget-title"><i class="fa fa-toc"></i> 文章目录</h3>
+    <div class="widget">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#challenge6-3-interrupt-clock"><span class="toc-text">challenge6.3:interrupt clock</span></a></li></ol>
+    </div>
+  </div>
+
+
+            </div>
+        
+        
+          <blockquote id="copyright">
+              <p>原文链接: <a href="https://www.jk404.cn/OS/lab1/challenge6-interrupt-handle/challenge6-3-interrupt-clock/">https://www.jk404.cn/OS/lab1/challenge6-interrupt-handle/challenge6-3-interrupt-clock/</a></p>
+              <p>版权声明: 转载请注明出处.</p>
+          </blockquote>
+        
+      
+    </div>
+    <footer class="article-footer">
+      
+        <div class="article-tag-wrap">
+          
+
+          
+          
+
+
+        </div>
+      
+      
+        
+<nav id="article-nav">
+  
+    <a href="/OS/lab1/challenge6-interrupt-handle/challenge6-2-init-IDT/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">newer</strong>
+      <div class="article-nav-title">
+        
+          challenge6.2:init_IDT
+        
+      </div>
+    </a>
+  
+  
+    <a href="/OS/lab1/challenge6-interrupt-handle/challenge6-1-Interrupt-Descriptor-Table/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">older</strong>
+      <div class="article-nav-title">challenge6.1:Interrupt_Descriptor_Table</div>
+    </a>
+  
+</nav>
+
+      
+      
+        
+
+
+
+
+
+
+
+      
+    </footer>
+  </div>
+</article>
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title"><i class="fa fa-posts"></i> 最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/OS/lab1/challenge6-interrupt-handle/challenge6-2-init-IDT/">challenge6.2:init_IDT</a>
+          </li>
+        
+          <li>
+            <a href="/OS/lab1/challenge6-interrupt-handle/challenge6-3-interrupt-clock/">challenge6.3:interrupt_clock</a>
+          </li>
+        
+          <li>
+            <a href="/OS/lab1/challenge6-interrupt-handle/challenge6-1-Interrupt-Descriptor-Table/">challenge6.1:Interrupt_Descriptor_Table</a>
+          </li>
+        
+          <li>
+            <a href="/OS/lab1/challenge5-trace-stackframe/challenge5-trace-stackframe/">challenge5:trace_stackframe</a>
+          </li>
+        
+          <li>
+            <a href="/OS/lab1/challenge4-load-kernel-elf/challenge4-load-kernel-elf/">challenge4:load_kernel_elf</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title"><i class="fa fa-classify"></i> 分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/">CTF</a><span class="category-list-count">2</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/">PWN</a><span class="category-list-count">2</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/asisctf/">asisctf</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/asisctf/asisctf2021/">asisctf2021</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/uncategorized/">uncategorized</a><span class="category-list-count">1</span></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/">OS</a><span class="category-list-count">13</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/">lab1</a><span class="category-list-count">13</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge1-what-is-make/">challenge1:what is make</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge2-go-into-protected-mode/">challenge2:go into protected mode</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge2-qemu-gdb/">challenge2:qemu&gdb</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge4-load-kernel-elf/">challenge4:load kernel elf</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge5-trace-stackframe/">challenge5:trace stackframe</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge6-interrupt-handle/">challenge6:interrupt handle</a><span class="category-list-count">3</span></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/study/">study</a><span class="category-list-count">6</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/study/book/">book</a><span class="category-list-count">3</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/">程序员的自我修养：链接、装载与库</a><span class="category-list-count">3</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/study/daily/">daily</a><span class="category-list-count">3</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/welcome/">welcome</a><span class="category-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title"><i class="fa fa-archive"></i> 归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/">2021年11月</a><span class="archive-list-count">23</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title"><i class="fa fa-link"></i> 友情链接</h3>
+    <div class="widget">
+      <ul>
+      
+        <li>
+          <a target="_blank" rel="noopener" href="https://www.jk4u.website">J0yce&#39;s Space</a>
+        </li>
+      
+        <li>
+          <a target="_blank" rel="noopener" href="https://buuoj.com/">buuoj</a>
+        </li>
+      
+        <li>
+          <a target="_blank" rel="noopener" href="https://eternalsakura13.com/">Sakura&#39;s Blog</a>
+        </li>
+      
+        <li>
+          <a target="_blank" rel="noopener" href="https://bestwing.me/">Swing&#39;s Blog</a>
+        </li>
+      
+      </ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+        
+      </div>
+      <a id="totop" href="#top"></a>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      <p>
+        <a href="/about/">联系博主</a>
+      </p>
+      
+        <p>
+          <i class="fa fa-visitors"></i>
+          <i> </i>
+          <i class="fa fa-views"></i>
+        </p>
+      
+      <p>
+        <span>Copyright &copy; 2021 K1ose</span>
+      </p>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+<script src="/js/search.json.js"></script>
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+
+  
+<script src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+</body>
+</html>
