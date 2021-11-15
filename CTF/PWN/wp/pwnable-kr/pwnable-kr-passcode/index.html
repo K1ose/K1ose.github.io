@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>pwnable.kr_passcode | -K1ose-</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  
+  
+  
+    <link rel="alternate" href="/atom.xml" title="-K1ose-" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">-K1ose-</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">Binary Security Study</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        
+          <a class="main-nav-link" href="/."><i class="fa fa-home"></i> 首页</a>
+        
+          <a class="main-nav-link" href="/archives/"><i class="fa fa-archive"></i> 归档</a>
+        
+          <a class="main-nav-link" href="/about/"><i class="fa fa-user"></i> 关于</a>
+        
+          <a class="main-nav-link" href="/atom.xml"><i class="fa fa-rss"></i> 订阅</a>
+        
+      </nav>
+    </div>
+    <div id="search-form">
+      <div id="result-mask" class="hide"></div>
+      <label><input id="search-key" type="text" autocomplete="off" placeholder="搜索"></label>
+      <div id="result-wrap" class="hide">
+        <div id="search-result"></div>
+      </div>
+      <div class="hide">
+        <template id="search-tpl">
+          <div class="item">
+            <a href="/{path}" title="{title}">
+              <div class="title">{title}</div>
+              <div class="time">{date}</div>
+              <div class="tags">{tags}</div>
+            </a>
+          </div>
+        </template>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-pwnable-kr-passcode" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      pwnable.kr_passcode
+    </h1>
+  
+
+
+      </header>
+    
+    <div class="article-meta">
+      
+      <span class="article-date">
+  <i class="fa fa-date"></i>
+  <time class="dt-published" datetime="2021-11-15T10:07:11.000Z" itemprop="datePublished">2021年11月15日</time>
+</span>
+      
+  <div class="article-category">
+    <i class="fa fa-classify"></i>
+    <a class="article-category-link" href="/categories/CTF/">CTF</a> > <a class="article-category-link" href="/categories/CTF/PWN/">PWN</a> > <a class="article-category-link" href="/categories/CTF/PWN/wp/">wp</a> > <a class="article-category-link" href="/categories/CTF/PWN/wp/pwnable-kr/">pwnable.kr</a>
+  </div>
+
+      
+        <span class="article-views">
+  <i class="fa fa-views"></i>
+  <i id="busuanzi_container_page_pv">
+      <i id="busuanzi_value_page_pv"></i>
+  </i>
+</span>
+
+      
+      
+<a href="/CTF/PWN/wp/pwnable-kr/pwnable-kr-passcode/#comments" class="article-comment-link">
+  
+    
+    
+    
+    
+    
+  
+  <i class="fa fa-commt"></i>
+  留言
+</a>
+
+
+    </div>
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="passcode"><a href="#passcode" class="headerlink" title="passcode"></a>passcode</h1><h2 id="信息收集"><a href="#信息收集" class="headerlink" title="信息收集"></a>信息收集</h2><p>在ssh连接靶机之后，看文件：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ ls -ll</span><br><span class="line">total 16</span><br><span class="line">-r--r----- 1 root passcode_pwn   48 Jun 26  2014 flag</span><br><span class="line">-r-xr-sr-x 1 root passcode_pwn 7485 Jun 26  2014 passcode</span><br><span class="line">-rw-r--r-- 1 root root          858 Jun 26  2014 passcode.c</span><br></pre></td></tr></table></figure>
+
+<p>查看C文件：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line">$ cat passcode.c </span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">login</span><span class="params">()</span></span>&#123;</span><br><span class="line">	<span class="keyword">int</span> passcode1;</span><br><span class="line">	<span class="keyword">int</span> passcode2;</span><br><span class="line"></span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;enter passcode1 : &quot;</span>);</span><br><span class="line">	<span class="built_in">scanf</span>(<span class="string">&quot;%d&quot;</span>, passcode1);</span><br><span class="line">	fflush(<span class="built_in">stdin</span>);</span><br><span class="line"></span><br><span class="line">	<span class="comment">// ha! mommy told me that 32bit is vulnerable to bruteforcing :)</span></span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;enter passcode2 : &quot;</span>);</span><br><span class="line">    <span class="built_in">scanf</span>(<span class="string">&quot;%d&quot;</span>, passcode2);</span><br><span class="line"></span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;checking...\n&quot;</span>);</span><br><span class="line">	<span class="keyword">if</span>(passcode1==<span class="number">338150</span> &amp;&amp; passcode2==<span class="number">13371337</span>)&#123;</span><br><span class="line">                <span class="built_in">printf</span>(<span class="string">&quot;Login OK!\n&quot;</span>);</span><br><span class="line">                system(<span class="string">&quot;/bin/cat flag&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span>&#123;</span><br><span class="line">                <span class="built_in">printf</span>(<span class="string">&quot;Login Failed!\n&quot;</span>);</span><br><span class="line">		<span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">welcome</span><span class="params">()</span></span>&#123;</span><br><span class="line">	<span class="keyword">char</span> name[<span class="number">100</span>];</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;enter you name : &quot;</span>);</span><br><span class="line">	<span class="built_in">scanf</span>(<span class="string">&quot;%100s&quot;</span>, name);</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;Welcome %s!\n&quot;</span>, name);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;Toddler&#x27;s Secure Login System 1.0 beta.\n&quot;</span>);</span><br><span class="line"></span><br><span class="line">	welcome();</span><br><span class="line">	login();</span><br><span class="line"></span><br><span class="line">	<span class="comment">// something after login...</span></span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;Now I can safely trust you that you have credential :)\n&quot;</span>);</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;	</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>通过objdump来获取汇编信息；</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br></pre></td><td class="code"><pre><span class="line">	c7 04 24 24 9f 04 08 	movl   $0x8049f24,(%esp)</span><br><span class="line"> 804855f:	ff d0                	call   *%eax</span><br><span class="line"> 8048561:	c9                   	leave  </span><br><span class="line"> 8048562:	c3                   	ret    </span><br><span class="line"> 8048563:	90                   	nop</span><br><span class="line"></span><br><span class="line">08048564 &lt;login&gt;:</span><br><span class="line"> 8048564:	55                   	push   %ebp</span><br><span class="line"> 8048565:	89 e5                	mov    %esp,%ebp</span><br><span class="line"> 8048567:	83 ec 28             	sub    $0x28,%esp</span><br><span class="line"> 804856a:	b8 70 87 04 08       	mov    $0x8048770,%eax</span><br><span class="line"> 804856f:	89 04 24             	mov    %eax,(%esp)</span><br><span class="line"> 8048572:	e8 a9 fe ff ff       	call   8048420 &lt;printf@plt&gt;</span><br><span class="line"> 8048577:	b8 83 87 04 08       	mov    $0x8048783,%eax</span><br><span class="line"> 804857c:	8b 55 f0             	mov    -0x10(%ebp),%edx</span><br><span class="line"> 804857f:	89 54 24 04          	mov    %edx,0x4(%esp)</span><br><span class="line"> 8048583:	89 04 24             	mov    %eax,(%esp)</span><br><span class="line"> 8048586:	e8 15 ff ff ff       	call   80484a0 &lt;__isoc99_scanf@plt&gt;</span><br><span class="line"> 804858b:	a1 2c a0 04 08       	mov    0x804a02c,%eax</span><br><span class="line"> 8048590:	89 04 24             	mov    %eax,(%esp)</span><br><span class="line"> 8048593:	e8 98 fe ff ff       	call   8048430 &lt;fflush@plt&gt;</span><br><span class="line"> 8048598:	b8 86 87 04 08       	mov    $0x8048786,%eax</span><br><span class="line"> 804859d:	89 04 24             	mov    %eax,(%esp)</span><br><span class="line"> 80485a0:	e8 7b fe ff ff       	call   8048420 &lt;printf@plt&gt;</span><br><span class="line"> 80485a5:	b8 83 87 04 08       	mov    $0x8048783,%eax</span><br><span class="line"> 80485aa:	8b 55 f4             	mov    -0xc(%ebp),%edx</span><br><span class="line"> 80485ad:	89 54 24 04          	mov    %edx,0x4(%esp)</span><br><span class="line"> 80485b1:	89 04 24             	mov    %eax,(%esp)</span><br><span class="line"> 80485b4:	e8 e7 fe ff ff       	call   80484a0 &lt;__isoc99_scanf@plt&gt;</span><br><span class="line"> 80485b9:	c7 04 24 99 87 04 08 	movl   $0x8048799,(%esp)</span><br><span class="line"> 80485c0:	e8 8b fe ff ff       	call   8048450 &lt;puts@plt&gt;</span><br><span class="line"> 80485c5:	81 7d f0 e6 28 05 00 	cmpl   $0x528e6,-0x10(%ebp)</span><br><span class="line"> 80485cc:	75 23                	jne    80485f1 &lt;login+0x8d&gt;</span><br><span class="line"> 80485ce:	81 7d f4 c9 07 cc 00 	cmpl   $0xcc07c9,-0xc(%ebp)</span><br><span class="line"> 80485d5:	75 1a                	jne    80485f1 &lt;login+0x8d&gt;</span><br><span class="line"> 80485d7:	c7 04 24 a5 87 04 08 	movl   $0x80487a5,(%esp)</span><br><span class="line"> 80485de:	e8 6d fe ff ff       	call   8048450 &lt;puts@plt&gt;</span><br><span class="line"> 80485e3:	c7 04 24 af 87 04 08 	movl   $0x80487af,(%esp)</span><br><span class="line"> 80485ea:	e8 71 fe ff ff       	call   8048460 &lt;system@plt&gt;</span><br><span class="line"> 80485ef:	c9                   	leave  </span><br><span class="line"> 80485f0:	c3                   	ret    </span><br><span class="line"> 80485f1:	c7 04 24 bd 87 04 08 	movl   $0x80487bd,(%esp)</span><br><span class="line"> 80485f8:	e8 53 fe ff ff       	call   8048450 &lt;puts@plt&gt;</span><br><span class="line"> 80485fd:	c7 04 24 00 00 00 00 	movl   $0x0,(%esp)</span><br><span class="line"> 8048604:	e8 77 fe ff ff       	call   8048480 &lt;exit@plt&gt;</span><br><span class="line"></span><br><span class="line">08048609 &lt;welcome&gt;:</span><br><span class="line"> 8048609:	55                   	push   %ebp</span><br><span class="line"> 804860a:	89 e5                	mov    %esp,%ebp</span><br><span class="line"> 804860c:	81 ec 88 00 00 00    	sub    $0x88,%esp</span><br><span class="line"> 8048612:	65 a1 14 00 00 00    	mov    %gs:0x14,%eax</span><br><span class="line"> 8048618:	89 45 f4             	mov    %eax,-0xc(%ebp)</span><br><span class="line"> 804861b:	31 c0                	xor    %eax,%eax</span><br><span class="line"> 804861d:	b8 cb 87 04 08       	mov    $0x80487cb,%eax</span><br><span class="line"> 8048622:	89 04 24             	mov    %eax,(%esp)</span><br><span class="line"> 8048625:	e8 f6 fd ff ff       	call   8048420 &lt;printf@plt&gt;</span><br><span class="line"> 804862a:	b8 dd 87 04 08       	mov    $0x80487dd,%eax</span><br><span class="line"> 804862f:	8d 55 90             	lea    -0x70(%ebp),%edx</span><br><span class="line"> 8048632:	89 54 24 04          	mov    %edx,0x4(%esp)</span><br><span class="line"> 8048636:	89 04 24             	mov    %eax,(%esp)</span><br><span class="line"> 8048639:	e8 62 fe ff ff       	call   80484a0 &lt;__isoc99_scanf@plt&gt;</span><br><span class="line"> 804863e:	b8 e3 87 04 08       	mov    $0x80487e3,%eax</span><br><span class="line"> 8048643:	8d 55 90             	lea    -0x70(%ebp),%edx</span><br><span class="line"> 8048646:	89 54 24 04          	mov    %edx,0x4(%esp)</span><br><span class="line"> 804864a:	89 04 24             	mov    %eax,(%esp)</span><br><span class="line"> 804864d:	e8 ce fd ff ff       	call   8048420 &lt;printf@plt&gt;</span><br><span class="line"> 8048652:	8b 45 f4             	mov    -0xc(%ebp),%eax</span><br><span class="line"> 8048655:	65 33 05 14 00 00 00 	xor    %gs:0x14,%eax</span><br><span class="line"> 804865c:	74 05                	je     8048663 &lt;welcome+0x5a&gt;</span><br><span class="line"> 804865e:	e8 dd fd ff ff       	call   8048440 &lt;__stack_chk_fail@plt&gt;</span><br><span class="line"> 8048663:	c9                   	leave  </span><br><span class="line"> 8048664:	c3                   	ret    </span><br><span class="line"></span><br><span class="line">08048665 &lt;main&gt;:</span><br><span class="line"> 8048665:	55                   	push   %ebp</span><br><span class="line"> 8048666:	89 e5                	mov    %esp,%ebp</span><br><span class="line"> 8048668:	83 e4 f0             	and    $0xfffffff0,%esp</span><br><span class="line"> 804866b:	83 ec 10             	sub    $0x10,%esp</span><br><span class="line"> 804866e:	c7 04 24 f0 87 04 08 	movl   $0x80487f0,(%esp)</span><br><span class="line"> 8048675:	e8 d6 fd ff ff       	call   8048450 &lt;puts@plt&gt;</span><br><span class="line"> 804867a:	e8 8a ff ff ff       	call   8048609 &lt;welcome&gt;</span><br><span class="line"> 804867f:	e8 e0 fe ff ff       	call   8048564 &lt;login&gt;</span><br><span class="line"> 8048684:	c7 04 24 18 88 04 08 	movl   $0x8048818,(%esp)</span><br><span class="line"> 804868b:	e8 c0 fd ff ff       	call   8048450 &lt;puts@plt&gt;</span><br><span class="line"> 8048690:	b8 00 00 00 00       	mov    $0x0,%eax</span><br><span class="line"> 8048695:	c9                   	leave  </span><br><span class="line"> 8048696:	c3                   	ret    </span><br></pre></td></tr></table></figure>
+
+<p>可以看到：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">804862a:	b8 dd 87 04 08       	mov    $0x80487dd,%eax</span><br><span class="line">804862f:	8d 55 90             	lea    -0x70(%ebp),%edx</span><br><span class="line">8048632:	89 54 24 04          	mov    %edx,0x4(%esp)</span><br><span class="line">8048636:	89 04 24             	mov    %eax,(%esp)</span><br><span class="line">8048639:	e8 62 fe ff ff       	call   80484a0 &lt;__isoc99_scanf@plt&gt;</span><br></pre></td></tr></table></figure>
+
+<p>为name开辟了很大的空间，偏移在<code>ebp-0x70</code>；而<code>passcode1</code>在偏移<code>ebp-0x10</code>，passcode2在偏移<code>ebp-0xc</code>；</p>
+<p>因此尝试利用溢出进行覆盖；</p>
+<h2 id="pwn"><a href="#pwn" class="headerlink" title="pwn"></a>pwn</h2>
+        
+            <div id="toc-article">
+                
+  <div class="widget-wrap" id="toc-wrap">
+    <h3 class="widget-title"><i class="fa fa-toc"></i> 文章目录</h3>
+    <div class="widget">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#passcode"><span class="toc-text">passcode</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86"><span class="toc-text">信息收集</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#pwn"><span class="toc-text">pwn</span></a></li></ol></li></ol>
+    </div>
+  </div>
+
+
+            </div>
+        
+        
+          <blockquote id="copyright">
+              <p>原文链接: <a href="https://www.jk404.cn/CTF/PWN/wp/pwnable-kr/pwnable-kr-passcode/">https://www.jk404.cn/CTF/PWN/wp/pwnable-kr/pwnable-kr-passcode/</a></p>
+              <p>版权声明: 转载请注明出处.</p>
+          </blockquote>
+        
+      
+    </div>
+    <footer class="article-footer">
+      
+        <div class="article-tag-wrap">
+          
+
+          
+          
+
+
+        </div>
+      
+      
+        
+<nav id="article-nav">
+  
+  
+    <a href="/CTF/PWN/wp/pwnable-kr/pwnable-kr-flag/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">older</strong>
+      <div class="article-nav-title">pwnable.kr_flag</div>
+    </a>
+  
+</nav>
+
+      
+      
+        
+
+
+
+
+
+
+
+      
+    </footer>
+  </div>
+</article>
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title"><i class="fa fa-posts"></i> 最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/CTF/PWN/wp/pwnable-kr/pwnable-kr-passcode/">pwnable.kr_passcode</a>
+          </li>
+        
+          <li>
+            <a href="/CTF/PWN/wp/pwnable-kr/pwnable-kr-flag/">pwnable.kr_flag</a>
+          </li>
+        
+          <li>
+            <a href="/CTF/PWN/wp/pwnable-kr/pwnable-kr-bof/">pwnable.kr_bof</a>
+          </li>
+        
+          <li>
+            <a href="/CTF/PWN/wp/pwnable-kr/pwnable-kr-col/">pwnable.kr_col</a>
+          </li>
+        
+          <li>
+            <a href="/CTF/PWN/wp/pwnable-kr/pwnable-kr-fd/">pwnable.kr_fd</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title"><i class="fa fa-classify"></i> 分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/">CTF</a><span class="category-list-count">15</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/">PWN</a><span class="category-list-count">15</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/">kernel pwn</a><span class="category-list-count">5</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/knowledge/">knowledge</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/wp/">wp</a><span class="category-list-count">2</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/uncategorized/">uncategorized</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/">wp</a><span class="category-list-count">9</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/asisctf/">asisctf</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/asisctf/asisctf2021/">asisctf2021</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/l3hctf/">l3hctf</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/pwnable-kr/">pwnable.kr</a><span class="category-list-count">5</span></li></ul></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/">OS</a><span class="category-list-count">13</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/">lab1</a><span class="category-list-count">13</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge1-what-is-make/">challenge1:what is make</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge2-qemu-gdb/">challenge2:qemu&gdb</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge3-go-into-protected-mode/">challenge3:go into protected mode</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge4-load-kernel-elf/">challenge4:load kernel elf</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge5-trace-stackframe/">challenge5:trace stackframe</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge6-interrupt-handle/">challenge6:interrupt handle</a><span class="category-list-count">3</span></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/study/">study</a><span class="category-list-count">6</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/study/book/">book</a><span class="category-list-count">3</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/">程序员的自我修养：链接、装载与库</a><span class="category-list-count">3</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/study/daily/">daily</a><span class="category-list-count">3</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/tools/">tools</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/welcome/">welcome</a><span class="category-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title"><i class="fa fa-archive"></i> 归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/">2021年11月</a><span class="archive-list-count">37</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title"><i class="fa fa-link"></i> 友情链接</h3>
+    <div class="widget">
+      <ul>
+      
+        <li>
+          <a target="_blank" rel="noopener" href="https://www.jk4u.website">J0yce&#39;s Space</a>
+        </li>
+      
+        <li>
+          <a target="_blank" rel="noopener" href="https://buuoj.com/">buuoj</a>
+        </li>
+      
+        <li>
+          <a target="_blank" rel="noopener" href="https://eternalsakura13.com/">Sakura&#39;s Blog</a>
+        </li>
+      
+        <li>
+          <a target="_blank" rel="noopener" href="https://bestwing.me/">Swing&#39;s Blog</a>
+        </li>
+      
+      </ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+        
+      </div>
+      <a id="totop" href="#top"></a>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      <p>
+        <a href="/about/">联系博主</a>
+      </p>
+      
+        <p>
+          <i class="fa fa-visitors"></i>
+          <i> </i>
+          <i class="fa fa-views"></i>
+        </p>
+      
+      <p>
+        <span>Copyright &copy; 2021 K1ose</span>
+      </p>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+<script src="/js/search.json.js"></script>
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+
+  
+<script src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+</body>
+</html>
