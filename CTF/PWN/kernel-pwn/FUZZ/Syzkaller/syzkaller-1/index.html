@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>syzkaller_1 | -K1ose-</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  
+  
+  
+    <link rel="alternate" href="/atom.xml" title="-K1ose-" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">-K1ose-</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">Binary Security Study</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        
+          <a class="main-nav-link" href="/."><i class="fa fa-home"></i> 首页</a>
+        
+          <a class="main-nav-link" href="/archives/"><i class="fa fa-archive"></i> 归档</a>
+        
+          <a class="main-nav-link" href="/about/"><i class="fa fa-user"></i> 关于</a>
+        
+          <a class="main-nav-link" href="/atom.xml"><i class="fa fa-rss"></i> 订阅</a>
+        
+      </nav>
+    </div>
+    <div id="search-form">
+      <div id="result-mask" class="hide"></div>
+      <label><input id="search-key" type="text" autocomplete="off" placeholder="搜索"></label>
+      <div id="result-wrap" class="hide">
+        <div id="search-result"></div>
+      </div>
+      <div class="hide">
+        <template id="search-tpl">
+          <div class="item">
+            <a href="/{path}" title="{title}">
+              <div class="title">{title}</div>
+              <div class="time">{date}</div>
+              <div class="tags">{tags}</div>
+            </a>
+          </div>
+        </template>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-syzkaller-1" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      syzkaller_1
+    </h1>
+  
+
+
+      </header>
+    
+    <div class="article-meta">
+      
+      <span class="article-date">
+  <i class="fa fa-date"></i>
+  <time class="dt-published" datetime="2021-11-20T12:44:05.000Z" itemprop="datePublished">2021年11月20日</time>
+</span>
+      
+  <div class="article-category">
+    <i class="fa fa-classify"></i>
+    <a class="article-category-link" href="/categories/CTF/">CTF</a> > <a class="article-category-link" href="/categories/CTF/PWN/">PWN</a> > <a class="article-category-link" href="/categories/CTF/PWN/kernel-pwn/">kernel pwn</a> > <a class="article-category-link" href="/categories/CTF/PWN/kernel-pwn/FUZZ/">FUZZ</a> > <a class="article-category-link" href="/categories/CTF/PWN/kernel-pwn/FUZZ/Syzkaller/">Syzkaller</a>
+  </div>
+
+      
+        <span class="article-views">
+  <i class="fa fa-views"></i>
+  <i id="busuanzi_container_page_pv">
+      <i id="busuanzi_value_page_pv"></i>
+  </i>
+</span>
+
+      
+      
+<a href="/CTF/PWN/kernel-pwn/FUZZ/Syzkaller/syzkaller-1/#comments" class="article-comment-link">
+  
+    
+    
+    
+    
+    
+  
+  <i class="fa fa-commt"></i>
+  留言
+</a>
+
+
+    </div>
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="Syzkaller-1"><a href="#Syzkaller-1" class="headerlink" title="Syzkaller_1"></a>Syzkaller_1</h1><blockquote>
+<p>Syzkaller是Google的安全研究人员开发的内核fuzz工具，也是当前最强大的内核fuzz工具之一。其基本语言是Go，支持akaros/fuchsia/linux/android/freebsd/netbsd/openbsd/windows等系统，不支持Darwin/XNU。</p>
+</blockquote>
+<h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><p><img src="/CTF/PWN/kernel-pwn/FUZZ/Syzkaller/syzkaller-1/syzkaller_1.jpg" alt="原理"></p>
+<p>上图为原理图解。</p>
+<p>syz-manager通过ssh调用syz-fuzzer；</p>
+<p>syz-fuzzer和syz-manager之间通过RPC进行通信；</p>
+<p>syz-fuzzer将输入传给syz-executor，从kernel中读取代码覆盖率信息；</p>
+<p>syz-executor执行syscall系统调用。</p>
+<h2 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a>环境搭建</h2><p>采用<code>ubuntu1804</code>搭建；</p>
+<h3 id="安装依赖"><a href="#安装依赖" class="headerlink" title="安装依赖"></a>安装依赖</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install debootstrap</span><br><span class="line">sudo apt install qemu-kvm</span><br><span class="line">sudo apt-get install subversion</span><br><span class="line">sudo apt-get install git</span><br><span class="line">sudo apt-get install make</span><br><span class="line">sudo apt-get install qemu</span><br><span class="line">sudo apt install libssl-dev libelf-dev</span><br><span class="line">sudo apt-get install flex bison libc6-dev libc6-dev-i386 linux-libc-dev linux-libc-dev:i386 libgmp3-dev libmpfr-dev libmpc-dev</span><br><span class="line">apt-get install g++</span><br><span class="line">apt-get install build-essential</span><br><span class="line">apt install golang-go</span><br><span class="line">apt install gcc</span><br></pre></td></tr></table></figure>
+
+<h3 id="golang版本"><a href="#golang版本" class="headerlink" title="golang版本"></a>golang版本</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ go version</span><br><span class="line">go version go1.10.4 linux/amd64</span><br></pre></td></tr></table></figure>
+
+<p>根据官方的说明，<code>syzkaller</code>需要<code>1.13+</code>的go版本支持，所以需要进行更新；</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get remove golang-go</span><br><span class="line">sudo apt-get remove --auto-remove golang-go</span><br><span class="line">sudo wget https://dl.google.com/go/go1.14.2.linux-amd64.tar.gz</span><br><span class="line">sudo tar -xf go1.14.2.linux-amd64.tar.gz</span><br><span class="line">mkdir gopath</span><br><span class="line">export GOPATH=/root/gopath</span><br><span class="line">export GOROOT=/root/goroot</span><br><span class="line">export PATH=$GOPATH/bin:$PATH</span><br><span class="line">export PATH=$GOROOT/bin:$PATH</span><br></pre></td></tr></table></figure>
+
+<p>再次查看版本；</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># go version</span><br><span class="line">go version go1.14.2 linux/amd64</span><br></pre></td></tr></table></figure>
+
+<h3 id="gcc版本"><a href="#gcc版本" class="headerlink" title="gcc版本"></a>gcc版本</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ gcc --version</span><br><span class="line">gcc (Ubuntu 7.5.0-3ubuntu1~18.04) 7.5.0</span><br></pre></td></tr></table></figure>
+
+<h3 id="syzkaller安装"><a href="#syzkaller安装" class="headerlink" title="syzkaller安装"></a>syzkaller安装</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">unzip syzkaller-master.zip </span><br><span class="line">mv syzkaller-master syzkaller</span><br><span class="line">make</span><br></pre></td></tr></table></figure>
+
+<p>在<code>bin</code>文件中有：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">~/gopath/src/github.com/google/syzkaller/bin# ls</span><br><span class="line">linux_amd64  syz-manager  syz-prog2c  syz-runtest  syz-upgrade</span><br><span class="line">syz-db       syz-mutate   syz-repro   syz-sysgen</span><br></pre></td></tr></table></figure>
+
+<h4 id="拉取linux主线源码"><a href="#拉取linux主线源码" class="headerlink" title="拉取linux主线源码"></a>拉取linux主线源码</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">~ # mkdir source</span><br><span class="line">~ # cd source</span><br><span class="line">~/source # git clone https://mirrors.tuna.tsinghua.edu.cn/git/linux.git</span><br></pre></td></tr></table></figure>
+
+<h4 id="编译"><a href="#编译" class="headerlink" title="编译"></a>编译</h4><p>下载完毕后，会有一个<code>linux</code>文件夹</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cd linux</span><br><span class="line">make CC=&quot;/usr/bin/gcc&quot; defconfig</span><br><span class="line">make CC=&quot;/usr/bin/gcc&quot; kvmconfig </span><br></pre></td></tr></table></figure>
+
+<p>在.config文件中添加</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">CONFIG_KCOV``=``y</span><br><span class="line">CONFIG_DEBUG_INFO``=``y</span><br><span class="line">CONFIG_KASAN``=``y</span><br><span class="line">CONFIG_KASAN_INLINE``=``y</span><br><span class="line">CONFIG_CONFIGFS_FS``=``y</span><br><span class="line">CONFIG_SECURITYFS``=``y</span><br></pre></td></tr></table></figure>
+
+<p>再执行</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">make CC=&quot;/usr/bin/gcc&quot; olddefconfig</span><br><span class="line">make CC=&quot;/usr/bin/gcc&quot; -j64</span><br><span class="line">(Makefile:1846: recipe for target &#x27;drivers&#x27; failed</span><br><span class="line">make: *** [drivers] Error 2failed)</span><br></pre></td></tr></table></figure>
+
+<h4 id="image"><a href="#image" class="headerlink" title="image"></a>image</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install debootstrap</span><br><span class="line">mkdir image</span><br><span class="line">cd image</span><br><span class="line">sudo gedit create-image.sh</span><br></pre></td></tr></table></figure>
+
+<p>输入</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">!/usr/bin/env bash</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> Copyright 2016 syzkaller project authors. All rights reserved.</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> Use of this <span class="built_in">source</span> code is governed by Apache 2 LICENSE that can be found <span class="keyword">in</span> the LICENSE file.</span></span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> create-image.sh creates a minimal Debian Linux image suitable <span class="keyword">for</span> syzkaller.</span></span><br><span class="line"></span><br><span class="line">set -eux</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> Create a minimal Debian distribution <span class="keyword">in</span> a directory.</span></span><br><span class="line">DIR=chroot</span><br><span class="line">PREINSTALL_PKGS=openssh-server,curl,tar,gcc,libc6-dev,time,strace,sudo,less,psmisc,selinux-utils,policycoreutils,checkpolicy,selinux-policy-default,firmware-atheros,debian-ports-archive-keyring</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> If ADD_PACKAGE is not defined as an external environment variable, use our default packages</span></span><br><span class="line">if [ -z $&#123;ADD_PACKAGE+x&#125; ]; then</span><br><span class="line">    ADD_PACKAGE=&quot;make,sysbench,git,vim,tmux,usbutils,tcpdump&quot;</span><br><span class="line">fi</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> Variables affected by options</span></span><br><span class="line">ARCH=$(uname -m)</span><br><span class="line">RELEASE=stretch</span><br><span class="line">FEATURE=minimal</span><br><span class="line">SEEK=2047</span><br><span class="line">PERF=false</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> Display <span class="built_in">help</span> <span class="keyword">function</span></span></span><br><span class="line">display_help() &#123;</span><br><span class="line">    echo &quot;Usage: $0 [option...] &quot; &gt;&amp;2</span><br><span class="line">    echo</span><br><span class="line">    echo &quot;   -a, --arch                 Set architecture&quot;</span><br><span class="line">    echo &quot;   -d, --distribution         Set on which debian distribution to create&quot;</span><br><span class="line">    echo &quot;   -f, --feature              Check what packages to install in the image, options are minimal, full&quot;</span><br><span class="line">    echo &quot;   -s, --seek                 Image size (MB), default 2048 (2G)&quot;</span><br><span class="line">    echo &quot;   -h, --help                 Display help message&quot;</span><br><span class="line">    echo &quot;   -p, --add-perf             Add perf support with this option enabled. Please set envrionment variable \$KERNEL at first&quot;</span><br><span class="line">    echo</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">while true; do</span><br><span class="line">    if [ $# -eq 0 ];then</span><br><span class="line">	echo $#</span><br><span class="line">	break</span><br><span class="line">    fi</span><br><span class="line">    case &quot;$1&quot; in</span><br><span class="line">        -h | --help)</span><br><span class="line">            display_help</span><br><span class="line">            exit 0</span><br><span class="line">            ;;</span><br><span class="line">        -a | --arch)</span><br><span class="line">	    ARCH=$2</span><br><span class="line">            shift 2</span><br><span class="line">            ;;</span><br><span class="line">        -d | --distribution)</span><br><span class="line">	    RELEASE=$2</span><br><span class="line">            shift 2</span><br><span class="line">            ;;</span><br><span class="line">        -f | --feature)</span><br><span class="line">	    FEATURE=$2</span><br><span class="line">            shift 2</span><br><span class="line">            ;;</span><br><span class="line">        -s | --seek)</span><br><span class="line">	    SEEK=$(($2 - 1))</span><br><span class="line">            shift 2</span><br><span class="line">            ;;</span><br><span class="line">        -p | --add-perf)</span><br><span class="line">	    PERF=true</span><br><span class="line">            shift 1</span><br><span class="line">            ;;</span><br><span class="line">        -*)</span><br><span class="line">            echo &quot;Error: Unknown option: $1&quot; &gt;&amp;2</span><br><span class="line">            exit 1</span><br><span class="line">            ;;</span><br><span class="line">        *)  # No more options</span><br><span class="line">            break</span><br><span class="line">            ;;</span><br><span class="line">    esac</span><br><span class="line">done</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> Handle cases <span class="built_in">where</span> qemu and Debian use different arch names</span></span><br><span class="line">case &quot;$ARCH&quot; in</span><br><span class="line">    ppc64le)</span><br><span class="line">        DEBARCH=ppc64el</span><br><span class="line">        ;;</span><br><span class="line">    aarch64)</span><br><span class="line">        DEBARCH=arm64</span><br><span class="line">        ;;</span><br><span class="line">    arm)</span><br><span class="line">        DEBARCH=armel</span><br><span class="line">        ;;</span><br><span class="line">    x86_64)</span><br><span class="line">        DEBARCH=amd64</span><br><span class="line">        ;;</span><br><span class="line">    *)</span><br><span class="line">        DEBARCH=$ARCH</span><br><span class="line">        ;;</span><br><span class="line">esac</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> Foreign architecture</span></span><br><span class="line"></span><br><span class="line">FOREIGN=false</span><br><span class="line">if [ $ARCH != $(uname -m) ]; then</span><br><span class="line">    # i386 on an x86_64 host is exempted, as we can run i386 binaries natively</span><br><span class="line">    if [ $ARCH != &quot;i386&quot; -o $(uname -m) != &quot;x86_64&quot; ]; then</span><br><span class="line">        FOREIGN=true</span><br><span class="line">    fi</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line">if [ $FOREIGN = &quot;true&quot; ]; then</span><br><span class="line">    # Check for according qemu static binary</span><br><span class="line">    if ! which qemu-$ARCH-static; then</span><br><span class="line">        echo &quot;Please install qemu static binary for architecture $ARCH (package &#x27;qemu-user-static&#x27; on Debian/Ubuntu/Fedora)&quot;</span><br><span class="line">        exit 1</span><br><span class="line">    fi</span><br><span class="line">    # Check for according binfmt entry</span><br><span class="line">    if [ ! -r /proc/sys/fs/binfmt_misc/qemu-$ARCH ]; then</span><br><span class="line">        echo &quot;binfmt entry /proc/sys/fs/binfmt_misc/qemu-$ARCH does not exist&quot;</span><br><span class="line">        exit 1</span><br><span class="line">    fi</span><br><span class="line">fi</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> Double check KERNEL when PERF is enabled</span></span><br><span class="line">if [ $PERF = &quot;true&quot; ] &amp;&amp; [ -z $&#123;KERNEL+x&#125; ]; then</span><br><span class="line">    echo &quot;Please set KERNEL environment variable when PERF is enabled&quot;</span><br><span class="line">    exit 1</span><br><span class="line">fi</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> If full feature is chosen, install more packages</span></span><br><span class="line">if [ $FEATURE = &quot;full&quot; ]; then</span><br><span class="line">    PREINSTALL_PKGS=$PREINSTALL_PKGS&quot;,&quot;$ADD_PACKAGE</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line">sudo rm -rf $DIR</span><br><span class="line">sudo mkdir -p $DIR</span><br><span class="line">sudo chmod 0755 $DIR</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 1. debootstrap stage</span></span><br><span class="line"></span><br><span class="line">DEBOOTSTRAP_PARAMS=&quot;--arch=$DEBARCH --include=$PREINSTALL_PKGS --components=main,contrib,non-free $RELEASE $DIR&quot;</span><br><span class="line">if [ $FOREIGN = &quot;true&quot; ]; then</span><br><span class="line">    DEBOOTSTRAP_PARAMS=&quot;--foreign $DEBOOTSTRAP_PARAMS&quot;</span><br><span class="line">fi</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> riscv64 is hosted <span class="keyword">in</span> the debian-ports repository</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> debian-ports doesn<span class="string">&#x27;t include non-free, so we exclude firmware-atheros</span></span></span><br><span class="line">if [ $DEBARCH == &quot;riscv64&quot; ]; then</span><br><span class="line">    DEBOOTSTRAP_PARAMS=&quot;--keyring /usr/share/keyrings/debian-ports-archive-keyring.gpg --exclude firmware-atheros $DEBOOTSTRAP_PARAMS http://deb.debian.org/debian-ports&quot;</span><br><span class="line">fi</span><br><span class="line">sudo debootstrap $DEBOOTSTRAP_PARAMS</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"><span class="string"> 2. debootstrap stage: only necessary if target != host architecture</span></span></span><br><span class="line"></span><br><span class="line">if [ $FOREIGN = &quot;true&quot; ]; then</span><br><span class="line">    sudo cp $(which qemu-$ARCH-static) $DIR/$(which qemu-$ARCH-static)</span><br><span class="line">    sudo chroot $DIR /bin/bash -c &quot;/debootstrap/debootstrap --second-stage&quot;</span><br><span class="line">fi</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"><span class="string"> Set some defaults and enable promtless ssh to the machine for root.</span></span></span><br><span class="line">sudo sed -i &#x27;/^root/ &#123; s/:x:/::/ &#125;&#x27; $DIR/etc/passwd</span><br><span class="line">echo &#x27;T0:23:respawn:/sbin/getty -L ttyS0 115200 vt100&#x27; | sudo tee -a $DIR/etc/inittab</span><br><span class="line">printf &#x27;\nauto eth0\niface eth0 inet dhcp\n&#x27; | sudo tee -a $DIR/etc/network/interfaces</span><br><span class="line">echo &#x27;/dev/root / ext4 defaults 0 0&#x27; | sudo tee -a $DIR/etc/fstab</span><br><span class="line">echo &#x27;debugfs /sys/kernel/debug debugfs defaults 0 0&#x27; | sudo tee -a $DIR/etc/fstab</span><br><span class="line">echo &#x27;securityfs /sys/kernel/security securityfs defaults 0 0&#x27; | sudo tee -a $DIR/etc/fstab</span><br><span class="line">echo &#x27;configfs /sys/kernel/config/ configfs defaults 0 0&#x27; | sudo tee -a $DIR/etc/fstab</span><br><span class="line">echo &#x27;binfmt_misc /proc/sys/fs/binfmt_misc binfmt_misc defaults 0 0&#x27; | sudo tee -a $DIR/etc/fstab</span><br><span class="line">echo -en &quot;127.0.0.1\tlocalhost\n&quot; | sudo tee $DIR/etc/hosts</span><br><span class="line">echo &quot;nameserver 8.8.8.8&quot; | sudo tee -a $DIR/etc/resolve.conf</span><br><span class="line">echo &quot;syzkaller&quot; | sudo tee $DIR/etc/hostname</span><br><span class="line">ssh-keygen -f $RELEASE.id_rsa -t rsa -N &#x27;&#x27;</span><br><span class="line">sudo mkdir -p $DIR/root/.ssh/</span><br><span class="line">cat $RELEASE.id_rsa.pub | sudo tee $DIR/root/.ssh/authorized_keys</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"><span class="string"> Add perf support</span></span></span><br><span class="line">if [ $PERF = &quot;true&quot; ]; then</span><br><span class="line">    cp -r $KERNEL $DIR/tmp/</span><br><span class="line">    BASENAME=$(basename $KERNEL)</span><br><span class="line">    sudo chroot $DIR /bin/bash -c &quot;apt-get update; apt-get install -y flex bison python-dev libelf-dev libunwind8-dev libaudit-dev libslang2-dev libperl-dev binutils-dev liblzma-dev libnuma-dev&quot;</span><br><span class="line">    sudo chroot $DIR /bin/bash -c &quot;cd /tmp/$BASENAME/tools/perf/; make&quot;</span><br><span class="line">    sudo chroot $DIR /bin/bash -c &quot;cp /tmp/$BASENAME/tools/perf/perf /usr/bin/&quot;</span><br><span class="line">    rm -r $DIR/tmp/$BASENAME</span><br><span class="line">fi</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"><span class="string"> Add udev rules for custom drivers.</span></span></span><br><span class="line"><span class="meta">#</span><span class="bash"><span class="string"> Create a /dev/vim2m symlink for the device managed by the vim2m driver</span></span></span><br><span class="line">echo &#x27;ATTR&#123;name&#125;==&quot;vim2m&quot;, SYMLINK+=&quot;vim2m&quot;&#x27; | sudo tee -a $DIR/etc/udev/rules.d/50-udev-default.rules</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"><span class="string"> Build a disk image</span></span></span><br><span class="line">dd if=/dev/zero of=$RELEASE.img bs=1M seek=$SEEK count=1</span><br><span class="line">sudo mkfs.ext4 -F $RELEASE.img</span><br><span class="line">sudo mkdir -p /mnt/$DIR</span><br><span class="line">sudo mount -o loop $RELEASE.img /mnt/$DIR</span><br><span class="line">sudo cp -a $DIR/. /mnt/$DIR/.</span><br><span class="line">sudo umount /mnt/$DIR</span><br></pre></td></tr></table></figure>
+
+<p>赋予执行权限，并执行</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">chmod +x create-image.sh</span><br><span class="line">./create-image.sh</span><br></pre></td></tr></table></figure>
+
+<p>生成了几个文件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">~/source/linux/image# ls</span><br><span class="line">chroot  create-image.sh  stretch.id_rsa  stretch.id_rsa.pub  stretch.img</span><br></pre></td></tr></table></figure>
+
+<h4 id="qemu环境"><a href="#qemu环境" class="headerlink" title="qemu环境"></a>qemu环境</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install qemu-system-x86</span><br></pre></td></tr></table></figure>
+
+
+        
+            <div id="toc-article">
+                
+  <div class="widget-wrap" id="toc-wrap">
+    <h3 class="widget-title"><i class="fa fa-toc"></i> 文章目录</h3>
+    <div class="widget">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Syzkaller-1"><span class="toc-text">Syzkaller_1</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8E%9F%E7%90%86"><span class="toc-text">原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="toc-text">环境搭建</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%89%E8%A3%85%E4%BE%9D%E8%B5%96"><span class="toc-text">安装依赖</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#golang%E7%89%88%E6%9C%AC"><span class="toc-text">golang版本</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#gcc%E7%89%88%E6%9C%AC"><span class="toc-text">gcc版本</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#syzkaller%E5%AE%89%E8%A3%85"><span class="toc-text">syzkaller安装</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%8B%89%E5%8F%96linux%E4%B8%BB%E7%BA%BF%E6%BA%90%E7%A0%81"><span class="toc-text">拉取linux主线源码</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BC%96%E8%AF%91"><span class="toc-text">编译</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#image"><span class="toc-text">image</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#qemu%E7%8E%AF%E5%A2%83"><span class="toc-text">qemu环境</span></a></li></ol></li></ol></li></ol></li></ol>
+    </div>
+  </div>
+
+
+            </div>
+        
+        
+          <blockquote id="copyright">
+              <p>原文链接: <a href="https://www.jk404.cn/CTF/PWN/kernel-pwn/FUZZ/Syzkaller/syzkaller-1/">https://www.jk404.cn/CTF/PWN/kernel-pwn/FUZZ/Syzkaller/syzkaller-1/</a></p>
+              <p>版权声明: 转载请注明出处.</p>
+          </blockquote>
+        
+      
+    </div>
+    <footer class="article-footer">
+      
+        <div class="article-tag-wrap">
+          
+
+          
+          
+
+
+        </div>
+      
+      
+        
+<nav id="article-nav">
+  
+    <a href="/CTF/PWN/kernel-pwn/cve/CVE-2016-5195/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">newer</strong>
+      <div class="article-nav-title">
+        
+          CVE-2016-5195
+        
+      </div>
+    </a>
+  
+  
+    <a href="/CTF/PWN/kernel-pwn/FUZZ/Trinity/trinity-1/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">older</strong>
+      <div class="article-nav-title">trinity_1</div>
+    </a>
+  
+</nav>
+
+      
+      
+        
+
+
+
+
+
+
+
+      
+    </footer>
+  </div>
+</article>
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title"><i class="fa fa-posts"></i> 最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/static-link/">static_link</a>
+          </li>
+        
+          <li>
+            <a href="/CTF/PWN/kernel-pwn/cve/CVE-2016-5195/">CVE-2016-5195</a>
+          </li>
+        
+          <li>
+            <a href="/CTF/PWN/kernel-pwn/FUZZ/Syzkaller/syzkaller-1/">syzkaller_1</a>
+          </li>
+        
+          <li>
+            <a href="/CTF/PWN/kernel-pwn/FUZZ/Trinity/trinity-1/">trinity_1</a>
+          </li>
+        
+          <li>
+            <a href="/CSAPP-lab/bomblab/bomblab/">bomblab</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title"><i class="fa fa-classify"></i> 分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP-lab/">CSAPP-lab</a><span class="category-list-count">3</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP-lab/bomblab/">bomblab</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP-lab/datalab/">datalab</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP-lab/preparelab/">preparelab</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/">CTF</a><span class="category-list-count">20</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/">PWN</a><span class="category-list-count">20</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/">kernel pwn</a><span class="category-list-count">9</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/FUZZ/">FUZZ</a><span class="category-list-count">2</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/FUZZ/Syzkaller/">Syzkaller</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/FUZZ/Trinity/">Trinity</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/cve/">cve</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/knowledge/">knowledge</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/wp/">wp</a><span class="category-list-count">3</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/uncategorized/">uncategorized</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/">wp</a><span class="category-list-count">10</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/asisctf/">asisctf</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/asisctf/asisctf2021/">asisctf2021</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/buuoj/">buuoj</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/l3hctf/">l3hctf</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/pwnable-kr/">pwnable.kr</a><span class="category-list-count">5</span></li></ul></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/">OS</a><span class="category-list-count">13</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/">lab1</a><span class="category-list-count">13</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge1-what-is-make/">challenge1:what is make</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge2-qemu-gdb/">challenge2:qemu&gdb</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge3-go-into-protected-mode/">challenge3:go into protected mode</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge4-load-kernel-elf/">challenge4:load kernel elf</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge5-trace-stackframe/">challenge5:trace stackframe</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge6-interrupt-handle/">challenge6:interrupt handle</a><span class="category-list-count">3</span></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/">PWN</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/Fuzz/">Fuzz</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/Fuzz/AFL/">AFL</a><span class="category-list-count">1</span></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/study/">study</a><span class="category-list-count">7</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/study/book/">book</a><span class="category-list-count">4</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/">程序员的自我修养：链接、装载与库</a><span class="category-list-count">4</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/study/daily/">daily</a><span class="category-list-count">3</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/tools/">tools</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/welcome/">welcome</a><span class="category-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title"><i class="fa fa-archive"></i> 归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/">2021年11月</a><span class="archive-list-count">47</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title"><i class="fa fa-link"></i> 友情链接</h3>
+    <div class="widget">
+      <ul>
+      
+        <li>
+          <a target="_blank" rel="noopener" href="https://www.jk4u.website">J0yce&#39;s Space</a>
+        </li>
+      
+        <li>
+          <a target="_blank" rel="noopener" href="https://buuoj.com/">buuoj</a>
+        </li>
+      
+        <li>
+          <a target="_blank" rel="noopener" href="https://eternalsakura13.com/">Sakura&#39;s Blog</a>
+        </li>
+      
+        <li>
+          <a target="_blank" rel="noopener" href="https://bestwing.me/">Swing&#39;s Blog</a>
+        </li>
+      
+      </ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+        
+      </div>
+      <a id="totop" href="#top"></a>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      <p>
+        <a href="/about/">联系博主</a>
+      </p>
+      
+        <p>
+          <i class="fa fa-visitors"></i>
+          <i> </i>
+          <i class="fa fa-views"></i>
+        </p>
+      
+      <p>
+        <span>Copyright &copy; 2021 K1ose</span>
+      </p>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+<script src="/js/search.json.js"></script>
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+
+  
+<script src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+</body>
+</html>
