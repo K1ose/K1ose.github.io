@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>load | -K1ose-</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  
+  
+  
+    <link rel="alternate" href="/atom.xml" title="-K1ose-" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">-K1ose-</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">Binary Security Study</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        
+          <a class="main-nav-link" href="/."><i class="fa fa-home"></i> 首页</a>
+        
+          <a class="main-nav-link" href="/archives/"><i class="fa fa-archive"></i> 归档</a>
+        
+          <a class="main-nav-link" href="/about/"><i class="fa fa-user"></i> 关于</a>
+        
+          <a class="main-nav-link" href="/atom.xml"><i class="fa fa-rss"></i> 订阅</a>
+        
+      </nav>
+    </div>
+    <div id="search-form">
+      <div id="result-mask" class="hide"></div>
+      <label><input id="search-key" type="text" autocomplete="off" placeholder="搜索"></label>
+      <div id="result-wrap" class="hide">
+        <div id="search-result"></div>
+      </div>
+      <div class="hide">
+        <template id="search-tpl">
+          <div class="item">
+            <a href="/{path}" title="{title}">
+              <div class="title">{title}</div>
+              <div class="time">{date}</div>
+              <div class="tags">{tags}</div>
+            </a>
+          </div>
+        </template>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-load" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      load
+    </h1>
+  
+
+
+      </header>
+    
+    <div class="article-meta">
+      
+      <span class="article-date">
+  <i class="fa fa-date"></i>
+  <time class="dt-published" datetime="2021-11-22T06:22:14.000Z" itemprop="datePublished">2021年11月22日</time>
+</span>
+      
+  <div class="article-category">
+    <i class="fa fa-classify"></i>
+    <a class="article-category-link" href="/categories/study/">study</a> > <a class="article-category-link" href="/categories/study/book/">book</a> > <a class="article-category-link" href="/categories/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/">程序员的自我修养：链接、装载与库</a>
+  </div>
+
+      
+        <span class="article-views">
+  <i class="fa fa-views"></i>
+  <i id="busuanzi_container_page_pv">
+      <i id="busuanzi_value_page_pv"></i>
+  </i>
+</span>
+
+      
+      
+<a href="/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/load/#comments" class="article-comment-link">
+  
+    
+    
+    
+    
+    
+  
+  <i class="fa fa-commt"></i>
+  留言
+</a>
+
+
+    </div>
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="Load"><a href="#Load" class="headerlink" title="Load"></a>Load</h1><h2 id="程序和进程"><a href="#程序和进程" class="headerlink" title="程序和进程"></a>程序和进程</h2><p>程序是静态的可执行文件，进程是动态的运行过程；</p>
+<p>每个程序运行起来后，即进程，都拥有自己独立的虚拟地址空间；</p>
+<p>其中一部分是操作系统内核空间，另一部分是抽象的独立的进程空间；</p>
+<h2 id="程序员角度的装载"><a href="#程序员角度的装载" class="headerlink" title="程序员角度的装载"></a>程序员角度的装载</h2><p>程序执行和数据必须在内存中才能被CPU运行；</p>
+<p>动态装入，程序最常用的部分驻留与内存中，不常用的数据置于磁盘中；</p>
+<h3 id="覆盖装入"><a href="#覆盖装入" class="headerlink" title="覆盖装入"></a>覆盖装入</h3><p>共享则相互覆盖–树型调用</p>
+<h3 id="页映射"><a href="#页映射" class="headerlink" title="页映射"></a>页映射</h3><p>分成若干页，装载和操作的单位是页，一般4KB；</p>
+<p>用到哪一页就装入，考虑算法</p>
+<ol>
+<li>FIFO（先进先出）</li>
+<li>LUR（使用频率）</li>
+</ol>
+<h2 id="操作系统角度的装载"><a href="#操作系统角度的装载" class="headerlink" title="操作系统角度的装载"></a>操作系统角度的装载</h2><h3 id="进程建立"><a href="#进程建立" class="headerlink" title="进程建立"></a>进程建立</h3><ol>
+<li><p>创建一个独立虚拟地址空间，实际上是创建页映射函数，映射到物理地址</p>
+</li>
+<li><p>读取可执行文件的文件头，建立与地址空间的映射关系，这里的粒度<code>0x1000 = 4096 bytes = 4KB</code></p>
+<p>这样的映射关系实际上只保存在一个数据结构中；</p>
+<p><img src="/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/load/elf-vma.png" alt="elf-vma"></p>
+</li>
+<li><p>指令寄存器设置为可执行文件的入口地址，即<code>ELF header</code>中保存的入口地址，启动运行</p>
+<p>此时，控制权转交给了进程，涉及到了用户态和内核态的切换，CPU权限的切换；；</p>
+</li>
+</ol>
+<h3 id="页错误"><a href="#页错误" class="headerlink" title="页错误"></a>页错误</h3><p>完成上面三个步骤后，指令和数据还没有被载入内存，只是完成了载入的映射关系，相当于把路打通了，但是还没有开始通车；</p>
+<p>CPU打算执行这个内存空间后，发现<code>0x08048000-0x08049000</code>根本就是空页面，于是就会触发页错误（page fault），将控制权转交给操作系统，启用专门的处理历程；</p>
+<p>操作系统将查询映射时建立的数据结构，找到对应的空页面地址，计算相应页面在可执行文件中的偏移，然后在物理内存中分配物理页面，将进程中该虚拟页与分配的物理页建立映射关系，然后将控制权交给进程，从页错误中断处继续执行；</p>
+<p>同样，操作系统将会不断地根据页错误来分配物理页面，因为物理空间并非无穷大，所以涉及到内存管理的问题；</p>
+<h2 id="进程虚拟空间分布"><a href="#进程虚拟空间分布" class="headerlink" title="进程虚拟空间分布"></a>进程虚拟空间分布</h2><h3 id="Segment和Section"><a href="#Segment和Section" class="headerlink" title="Segment和Section"></a>Segment和Section</h3><p>合并权限相同的段，以段权限为划分装载，此时就可以将权限段看做一个<code>Segment</code>，因此可以说，一个<code>Segment</code>可能包含多个<code>section</code>，他们的权限相同；</p>
+<p>又可以说，Segment是从装载的角度看，而ELF文件是以Section来存储的；</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">readelf -l sample.elf</span><br></pre></td></tr></table></figure>
+
+<p>可以查看可执行文件段与虚拟空间的映射关系；</p>
+<p>所以Segment是装载角度，而Section是链接角度</p>
+<h3 id="Stack和Heap"><a href="#Stack和Heap" class="headerlink" title="Stack和Heap"></a>Stack和Heap</h3><p>进程执行时还需要堆栈的支持；</p>
+<p>通常情况下，可以用一下命令查看进程的内存空间分布；</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">./sample.elf &amp;</span><br><span class="line">[1] 6666                 // 进程pid</span><br><span class="line">cat /proc/6666/maps</span><br></pre></td></tr></table></figure>
+
+<p>将显示的是，进程的虚拟空间范围，可执行权限，Segment在文件中的偏移，设备主号和次设备号，映像文件的节点号，以及文件路径；</p>
+<p>堆栈、vdso的设备号、节点号为0，表示没有映射文件，是匿名虚拟内存区域；</p>
+<p>vdso位于内核区域，是内核的一个模块，进程通过访问这个虚拟内存区域与内核进行一些通信；</p>
+<p>do_brk将.bss剩余部分放在堆区；</p>
+<h3 id="heap申请最大空间的问题"><a href="#heap申请最大空间的问题" class="headerlink" title="heap申请最大空间的问题"></a>heap申请最大空间的问题</h3><p>堆空间受多种因素影响，并不能完全利用；</p>
+<h3 id="段地址对齐"><a href="#段地址对齐" class="headerlink" title="段地址对齐"></a>段地址对齐</h3><p>以Segment分，每一页0x1000大小，会存在页内碎片；</p>
+<p>通过物理地址映射两份到虚拟地址，实现段合并，来减少碎片产生，此时物理页面可能包含多个section，而映射后虚拟地址也不是页面长度的整数倍；</p>
+<p>同时要解决段地址对齐的问题，对于任何一个可装载的Segment而言：</p>
+<p>p_vaddr / 对齐属性的余数 = p_offset / 对齐属性的余数</p>
+<h3 id="进程栈初始化"><a href="#进程栈初始化" class="headerlink" title="进程栈初始化"></a>进程栈初始化</h3><p>进程运行环境需要栈支持，需要在进程开始前对栈进行初始化；</p>
+<p>假设系统中有两个环境变量：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">HOME=/home/user</span><br><span class="line">PATH=/usr/bin</span><br></pre></td></tr></table></figure>
+
+<p>假设可执行文件为exec，运行命令：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">exec 123</span><br></pre></td></tr></table></figure>
+
+<p>那么初始化的栈是：</p>
+<p><img src="/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/load/init_stack.jpg" alt="init_stack"></p>
+<p>esp指向栈顶，一个bytes表示命令行参数的数量，然后是两个参数的指针，指向<code>exec</code>和<code>123</code>的地址，后面是两个环境变量指针，指向两个环境变量；</p>
+<p>进程启动后，程序库部分把栈信息的参数传递给main，也就是<code>argc</code>和<code>argv</code>，对应参数数量和字符串指针数组；</p>
+<h2 id="内核装载ELF"><a href="#内核装载ELF" class="headerlink" title="内核装载ELF"></a>内核装载ELF</h2><p>在bash下执行一个程序，其过程是什么？</p>
+<h3 id="用户层"><a href="#用户层" class="headerlink" title="用户层"></a>用户层</h3><p>bash进程会调用fork系统调用，创建一个新的进程，然后新的进程调用<code>execve()</code>系统调用执行指定的ELF文件；</p>
+<p>原先的bash进程继续返回等待刚才启动的新进程的结束，然后等待用户输入命令；</p>
+<p>在进入<code>execve()</code>系统调用后，内核才开始真正的装载工作；</p>
+<h3 id="内核层"><a href="#内核层" class="headerlink" title="内核层"></a>内核层</h3><p><code>execve()</code>的入口是<code>sys_execve()</code>，在<code>arch/i386/kernel/Process.c</code>中定义；</p>
+<p>其进行参数的检查和复制之后，会调用<code>do_execve()</code>函数，查找被执行的文件是否存在，如果存在，则先读取前128字节，调用<code>search_binary_handle()</code>去搜索和匹配合适的可执行文件装载处理过程，如果搜索到了对应的处理过程，如ELF文件，就会调用<code>load_elf_binary()</code>进行装载；</p>
+<p><code>load_elf_binary()</code>的主要步骤有：</p>
+<ol>
+<li>检查ELF文件格式有效性；</li>
+<li>寻找动态链接<code>.interp</code>段，设置动态链接路径；</li>
+<li>根据elf header对文件进行映射；</li>
+<li>初始化ELF进程环境，比如进程启动的EDX寄存器的地址应该是<code>DT_FINI</code>的地址；</li>
+<li>将系统调用的返回地址修改为ELF可执行文件的入口地址，该入口取决于链接方式，如果是动态链接，那么入口地址是动态链接器；</li>
+</ol>
+<p><code>load_elf_binary()</code>执行完毕后，返回到<code>do_execve()</code>再返回到<code>sys_execve()</code>；</p>
+<p>当内核态返回到用户态的时候，及系统调用结束并返回，则返回到了入口地址处，新的程序继续执行，可执行文件被加载；</p>
+<h2 id="PE文件装载"><a href="#PE文件装载" class="headerlink" title="PE文件装载"></a>PE文件装载</h2><ul>
+<li>读取文件第一个页，第一个页中有DOS头，PE文件头和段表；</li>
+<li>检查进程空间是否可用，不可用另选一个装载地址（主要针对DLL，因为可执行文件一般都是第一个装载的模块）</li>
+<li>使用段表提供的信息，将所有段进行映射；</li>
+<li>如果装载地址不是目标地址，则进行rebasing；</li>
+<li>装载所有DLL文件；</li>
+<li>对所有导入符号进行解析；</li>
+<li>根据PE头指定的参数，建立初始化堆栈；</li>
+<li>建立主线程并启动进程；</li>
+</ul>
+
+        
+            <div id="toc-article">
+                
+  <div class="widget-wrap" id="toc-wrap">
+    <h3 class="widget-title"><i class="fa fa-toc"></i> 文章目录</h3>
+    <div class="widget">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Load"><span class="toc-text">Load</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%A8%8B%E5%BA%8F%E5%92%8C%E8%BF%9B%E7%A8%8B"><span class="toc-text">程序和进程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%A8%8B%E5%BA%8F%E5%91%98%E8%A7%92%E5%BA%A6%E7%9A%84%E8%A3%85%E8%BD%BD"><span class="toc-text">程序员角度的装载</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A6%86%E7%9B%96%E8%A3%85%E5%85%A5"><span class="toc-text">覆盖装入</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%A1%B5%E6%98%A0%E5%B0%84"><span class="toc-text">页映射</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E8%A7%92%E5%BA%A6%E7%9A%84%E8%A3%85%E8%BD%BD"><span class="toc-text">操作系统角度的装载</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%9B%E7%A8%8B%E5%BB%BA%E7%AB%8B"><span class="toc-text">进程建立</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%A1%B5%E9%94%99%E8%AF%AF"><span class="toc-text">页错误</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%9B%E7%A8%8B%E8%99%9A%E6%8B%9F%E7%A9%BA%E9%97%B4%E5%88%86%E5%B8%83"><span class="toc-text">进程虚拟空间分布</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Segment%E5%92%8CSection"><span class="toc-text">Segment和Section</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Stack%E5%92%8CHeap"><span class="toc-text">Stack和Heap</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#heap%E7%94%B3%E8%AF%B7%E6%9C%80%E5%A4%A7%E7%A9%BA%E9%97%B4%E7%9A%84%E9%97%AE%E9%A2%98"><span class="toc-text">heap申请最大空间的问题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%AE%B5%E5%9C%B0%E5%9D%80%E5%AF%B9%E9%BD%90"><span class="toc-text">段地址对齐</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%9B%E7%A8%8B%E6%A0%88%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="toc-text">进程栈初始化</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%85%E6%A0%B8%E8%A3%85%E8%BD%BDELF"><span class="toc-text">内核装载ELF</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%94%A8%E6%88%B7%E5%B1%82"><span class="toc-text">用户层</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%86%85%E6%A0%B8%E5%B1%82"><span class="toc-text">内核层</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#PE%E6%96%87%E4%BB%B6%E8%A3%85%E8%BD%BD"><span class="toc-text">PE文件装载</span></a></li></ol></li></ol>
+    </div>
+  </div>
+
+
+            </div>
+        
+        
+          <blockquote id="copyright">
+              <p>原文链接: <a href="https://www.jk404.cn/study/book/程序员的自我修养：链接、装载与库/load/">https://www.jk404.cn/study/book/程序员的自我修养：链接、装载与库/load/</a></p>
+              <p>版权声明: 转载请注明出处.</p>
+          </blockquote>
+        
+      
+    </div>
+    <footer class="article-footer">
+      
+        <div class="article-tag-wrap">
+          
+
+          
+          
+
+
+        </div>
+      
+      
+        
+<nav id="article-nav">
+  
+    <a href="/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/dynamic-link/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">newer</strong>
+      <div class="article-nav-title">
+        
+          dynamic_link
+        
+      </div>
+    </a>
+  
+  
+    <a href="/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/PE%E6%96%87%E4%BB%B6/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">older</strong>
+      <div class="article-nav-title">PE文件</div>
+    </a>
+  
+</nav>
+
+      
+      
+        
+
+
+
+
+
+
+
+      
+    </footer>
+  </div>
+</article>
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title"><i class="fa fa-posts"></i> 最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/CTF/PWN/glibc2-23-ptmalloc/">glibc2.23_ptmalloc</a>
+          </li>
+        
+          <li>
+            <a href="/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/dynamic-link/">dynamic_link</a>
+          </li>
+        
+          <li>
+            <a href="/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/load/">load</a>
+          </li>
+        
+          <li>
+            <a href="/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/PE%E6%96%87%E4%BB%B6/">PE文件</a>
+          </li>
+        
+          <li>
+            <a href="/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/static-link/">static_link</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title"><i class="fa fa-classify"></i> 分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP-lab/">CSAPP-lab</a><span class="category-list-count">3</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP-lab/bomblab/">bomblab</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP-lab/datalab/">datalab</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP-lab/preparelab/">preparelab</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/">CTF</a><span class="category-list-count">21</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/">PWN</a><span class="category-list-count">21</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/">kernel pwn</a><span class="category-list-count">9</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/FUZZ/">FUZZ</a><span class="category-list-count">2</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/FUZZ/Syzkaller/">Syzkaller</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/FUZZ/Trinity/">Trinity</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/cve/">cve</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/knowledge/">knowledge</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/wp/">wp</a><span class="category-list-count">3</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/uncategorized/">uncategorized</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/">wp</a><span class="category-list-count">10</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/asisctf/">asisctf</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/asisctf/asisctf2021/">asisctf2021</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/buuoj/">buuoj</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/l3hctf/">l3hctf</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/pwnable-kr/">pwnable.kr</a><span class="category-list-count">5</span></li></ul></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/">OS</a><span class="category-list-count">13</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/">lab1</a><span class="category-list-count">13</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge1-what-is-make/">challenge1:what is make</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge2-qemu-gdb/">challenge2:qemu&gdb</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge3-go-into-protected-mode/">challenge3:go into protected mode</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge4-load-kernel-elf/">challenge4:load kernel elf</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge5-trace-stackframe/">challenge5:trace stackframe</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge6-interrupt-handle/">challenge6:interrupt handle</a><span class="category-list-count">3</span></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/">PWN</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/Fuzz/">Fuzz</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/Fuzz/AFL/">AFL</a><span class="category-list-count">1</span></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/study/">study</a><span class="category-list-count">10</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/study/book/">book</a><span class="category-list-count">7</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/">程序员的自我修养：链接、装载与库</a><span class="category-list-count">7</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/study/daily/">daily</a><span class="category-list-count">3</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/tools/">tools</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/welcome/">welcome</a><span class="category-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title"><i class="fa fa-archive"></i> 归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/">2021年11月</a><span class="archive-list-count">51</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title"><i class="fa fa-link"></i> 友情链接</h3>
+    <div class="widget">
+      <ul>
+      
+        <li>
+          <a target="_blank" rel="noopener" href="https://www.jk4u.website">J0yce&#39;s Space</a>
+        </li>
+      
+        <li>
+          <a target="_blank" rel="noopener" href="https://buuoj.com/">buuoj</a>
+        </li>
+      
+        <li>
+          <a target="_blank" rel="noopener" href="https://eternalsakura13.com/">Sakura&#39;s Blog</a>
+        </li>
+      
+        <li>
+          <a target="_blank" rel="noopener" href="https://bestwing.me/">Swing&#39;s Blog</a>
+        </li>
+      
+      </ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+        
+      </div>
+      <a id="totop" href="#top"></a>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      <p>
+        <a href="/about/">联系博主</a>
+      </p>
+      
+        <p>
+          <i class="fa fa-visitors"></i>
+          <i> </i>
+          <i class="fa fa-views"></i>
+        </p>
+      
+      <p>
+        <span>Copyright &copy; 2021 K1ose</span>
+      </p>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+<script src="/js/search.json.js"></script>
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+
+  
+<script src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+</body>
+</html>
