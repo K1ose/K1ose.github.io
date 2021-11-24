@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>零散知识点 | -K1ose-</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  
+  
+  
+    <link rel="alternate" href="/atom.xml" title="-K1ose-" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">-K1ose-</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">Binary Security Study</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        
+          <a class="main-nav-link" href="/."><i class="fa fa-home"></i> 首页</a>
+        
+          <a class="main-nav-link" href="/archives/"><i class="fa fa-archive"></i> 归档</a>
+        
+          <a class="main-nav-link" href="/about/"><i class="fa fa-user"></i> 关于</a>
+        
+          <a class="main-nav-link" href="/atom.xml"><i class="fa fa-rss"></i> 订阅</a>
+        
+      </nav>
+    </div>
+    <div id="search-form">
+      <div id="result-mask" class="hide"></div>
+      <label><input id="search-key" type="text" autocomplete="off" placeholder="搜索"></label>
+      <div id="result-wrap" class="hide">
+        <div id="search-result"></div>
+      </div>
+      <div class="hide">
+        <template id="search-tpl">
+          <div class="item">
+            <a href="/{path}" title="{title}">
+              <div class="title">{title}</div>
+              <div class="time">{date}</div>
+              <div class="tags">{tags}</div>
+            </a>
+          </div>
+        </template>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-零散知识点" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      零散知识点
+    </h1>
+  
+
+
+      </header>
+    
+    <div class="article-meta">
+      
+      <span class="article-date">
+  <i class="fa fa-date"></i>
+  <time class="dt-published" datetime="2021-11-24T02:47:39.000Z" itemprop="datePublished">2021年11月24日</time>
+</span>
+      
+  <div class="article-category">
+    <i class="fa fa-classify"></i>
+    <a class="article-category-link" href="/categories/CTF/">CTF</a> > <a class="article-category-link" href="/categories/CTF/PWN/">PWN</a>
+  </div>
+
+      
+        <span class="article-views">
+  <i class="fa fa-views"></i>
+  <i id="busuanzi_container_page_pv">
+      <i id="busuanzi_value_page_pv"></i>
+  </i>
+</span>
+
+      
+      
+<a href="/CTF/PWN/%E9%9B%B6%E6%95%A3%E7%9F%A5%E8%AF%86%E7%82%B9/#comments" class="article-comment-link">
+  
+    
+    
+    
+    
+    
+  
+  <i class="fa fa-commt"></i>
+  留言
+</a>
+
+
+    </div>
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="零散的知识点"><a href="#零散的知识点" class="headerlink" title="零散的知识点"></a>零散的知识点</h1><p>一些零散的知识点，用于简单快速回顾；</p>
+<h2 id="函数调用约定"><a href="#函数调用约定" class="headerlink" title="函数调用约定"></a>函数调用约定</h2><p>cdecl（C declaration），C语言的调用约定；</p>
+<p>在x86上有：</p>
+<ol>
+<li>函数实参在线程栈上按照从右至左的顺序依次压栈。</li>
+<li>函数结果保存在寄存器EAX/AX/AL中</li>
+<li>浮点型结果存放在寄存器ST0中</li>
+<li>编译后的函数名前缀以一个<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E4%B8%8B%E5%88%92%E7%BA%BF">下划线字符</a></li>
+<li>调用者负责从线程栈中弹出实参（即清栈）</li>
+<li>8比特或者16比特长的整形实参提升为32比特长。</li>
+<li>受到函数调用影响的寄存器（volatile registers）：EAX, ECX, EDX, ST0 - ST7, ES, GS</li>
+<li>不受函数调用影响的寄存器： EBX, EBP, ESP, EDI, ESI, CS, DS</li>
+<li>RET指令从函数被调用者返回到调用者（实质上是读取寄存器EBP所指的线程栈之处保存的函数返回地址并加载到IP寄存器）</li>
+</ol>
+<p>x86-64上用寄存器传参：</p>
+<p>rdi rsi rdx rcx r8 r9</p>
+<p>而且栈顶之外还有128bytes的红区可以使用，如果够用则不必用rsp开新空间；</p>
+<h2 id="寻址方式"><a href="#寻址方式" class="headerlink" title="寻址方式"></a>寻址方式</h2><p>在x86下：</p>
+<p>32位基址寄存器是：EAX、EBX、ECX、EDX、ESI、EDI、EBP和ESP；<br>32位变址寄存器是：EAX、EBX、ECX、EDX、ESI、EDI和EBP(除ESP之外)。</p>
+<p>段寄存器的规定：</p>
+<ol>
+<li>地址中寄存器的书写顺序决定该寄存器是基址寄存器，还是变址寄存器；<br>如：[EBX+EBP]中的EBX是基址寄存器，EBP是变址寄存器，而[EBP+EBX]中的EBP是基址寄存器，EBX是变址寄存器；</li>
+<li>默认段寄存器的选用取决于基址寄存器；</li>
+<li>基址寄存器是EBP或ESP时，默认的段寄存器是SS，否则，默认的段寄存器是DS；</li>
+<li>在指令中，如果使用段前缀的方式，那么，显式段寄存器优先。</li>
+</ol>
+<h2 id="堆栈及其初始化"><a href="#堆栈及其初始化" class="headerlink" title="堆栈及其初始化"></a>堆栈及其初始化</h2><h3 id="四种堆栈"><a href="#四种堆栈" class="headerlink" title="四种堆栈"></a>四种堆栈</h3><ol>
+<li>系统引导时初始化临时使用的堆栈；</li>
+<li>进入保护模式的时候提供给内核程序初始化的堆栈，也是init进程使用的用户态堆栈；</li>
+<li>内核态堆栈；</li>
+<li>用户态堆栈</li>
+</ol>
+<h3 id="用于初始化的堆栈"><a href="#用于初始化的堆栈" class="headerlink" title="用于初始化的堆栈"></a>用于初始化的堆栈</h3><ol>
+<li>开机时，bootsect设置堆栈；</li>
+<li>进入保护模式时，esp指向user_stack的顶端，内核程序自己使用的堆栈；</li>
+<li>初始化时，通过fock系统调用，main.c被切换到init进程执行，使用内核程序堆栈；</li>
+</ol>
+<h3 id="task的堆栈"><a href="#task的堆栈" class="headerlink" title="task的堆栈"></a>task的堆栈</h3><h4 id="内核态下"><a href="#内核态下" class="headerlink" title="内核态下"></a>内核态下</h4><p>系统调用等任务在内核代码中执行期间用到的堆栈，较小。每当任务从用户代码转移进入内核代码中执行时，任务的内核态栈总是空的。任务内核态堆栈被设置在位于其进程描述符的末端，即与任务的进程描述符（task_struct）放在同一页面内。</p>
+<h4 id="用户态下"><a href="#用户态下" class="headerlink" title="用户态下"></a>用户态下</h4><p>当一个任务（进程）刚被创建时，它的用户态堆栈指针被设置在其地址空间的靠近末端（64MB顶端）部分。实际上末端部分还要包括执行程序的参数和环境变量，然后才是用户堆栈空间。用brk设置program brak，用sbrk来增长堆；</p>
+<h4 id="切换问题"><a href="#切换问题" class="headerlink" title="切换问题"></a>切换问题</h4><p>如果一个中断产生时任务正在用户代码中执行，那么该中断就会引起CPU特权级从3级到0级的变化，此时CPU就会进行用户态堆栈到内核态堆栈的切换操作。<strong>CPU会从当前任务的任务状态段TSS中取得新堆栈的段选择符和偏移值</strong>。因为中断服务程序在内核中，属于0级特权级代码，所以48位的内核态堆栈指针会从TSS的ss0和esp0字段中获得。在定位了新堆栈（内核态堆栈）之后，CPU就会首先把原用户态堆栈指针ss和esp压入内核态堆栈，随后把标志寄存器eflags的内容和返回位置cs、eip压入内核态堆栈。</p>
+<p>内核的系统调用是一个软件中断，因此任务调用系统调用时就会进入内核并执行内核中的中断服务代码。此时内核代码就会使用该任务的内核态堆栈进行操作。同样，当进入内核程序时，由于特权级别发生了改变（从用户态转到内核态），用户态堆栈的堆栈段和堆栈指针以及eflags会被保存在任务的内核态堆栈中。而在执行iret退出内核程序返回到用户程序时，将恢复用户态的堆栈和eflags。</p>
+<p>如果一个任务正在内核态中运行，那么若CPU响应中断就不再需要进行堆栈切换操作，因为此时该任务运行的内核代码已经在使用内核态堆栈，并且不涉及优先级别的变化，所以CPU仅把eflags和中断返回指针cs、eip压入当前内核态堆栈，然后执行中断服务过程。</p>
+<h2 id="程序调试自检"><a href="#程序调试自检" class="headerlink" title="程序调试自检"></a>程序调试自检</h2><p>Windows下程序会调用API函数来检查当前进程是否正在被调试；</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> debugger_present;</span><br><span class="line">HANDLE process = GetCurrentProcess();</span><br><span class="line">CheckRemoteDebuggerPresent(process, &amp;debugger_present);</span><br></pre></td></tr></table></figure>
+
+<p>Linux下的自检方法有：</p>
+<ol>
+<li><p>使用ptrace，来请求trace自己；</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">has_debugger</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> debugger;</span><br><span class="line">    <span class="keyword">if</span> (ptrace(PTRACE_TRACEME, <span class="number">0</span>, <span class="literal">NULL</span>, <span class="literal">NULL</span>) == <span class="number">0</span>) &#123; </span><br><span class="line">        <span class="comment">// return 0 means success, so no debugger is attached</span></span><br><span class="line">        debugger = <span class="number">0</span>;</span><br><span class="line">    &#125; </span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        debugger = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">return</span> debugger;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>即，如果ptrace()函数设置只能被调用一次，后续的调用会失败，如果返回0，说明没有嗲用过，如果失败，则正处于调式；</p>
+</li>
+<li><p>SIGTRAP处理函数sigtrap_handler</p>
+<p>让程序注册一个SIGTRAP处理函数，显式引发一个SIGTRAP信号，这样如果程序被调试，gdb会拦截SIGTRAP，处理函数则不会执行；</p>
+</li>
+<li><p>ppid</p>
+<p>查看父进程状态，通过搜索进程中中是否含有gdb或者ltrace、strace这些trace工具；</p>
+</li>
+</ol>
+<h2 id="虚拟地址-gt-物理地址"><a href="#虚拟地址-gt-物理地址" class="headerlink" title="虚拟地址-&gt;物理地址"></a>虚拟地址-&gt;物理地址</h2><p>48位地址中有：</p>
+<p>8 bit 四级页表偏移</p>
+<p>8 bit 页目录表指针偏移</p>
+<p>8 bit 页目录表偏移</p>
+<p>8 bit 页表偏移</p>
+<p>12 bit 物理地址偏移</p>
+<p>CR0提供了页目录基址物理地址dirbase1；</p>
+<p>根据8bit的四级页表入口偏移offset1，找到对应的页入口地址dirbase1+offset1，其对应内容左移12位（低位补3个0）即为页目录指针表基址dirbase2；</p>
+<p>根据8bit的页目录表指针偏移offset2，找到对一个的指针地址dirbase2+offset2，其对应内容左移12位，即为页目录表基址dirbase3；</p>
+<p>同理，最后可以得到页面物理基地址dirbase5，此时加上12bit的物理地址偏移offset，即可以得到先关的物理地址；</p>
+<p><img src="/CTF/PWN/%E9%9B%B6%E6%95%A3%E7%9F%A5%E8%AF%86%E7%82%B9/va2pa.jpg" alt="va2pa"></p>
+<h2 id="查看端口占用情况"><a href="#查看端口占用情况" class="headerlink" title="查看端口占用情况"></a>查看端口占用情况</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">lsof -i</span><br><span class="line">netstat -tunlp | grep [port number]</span><br></pre></td></tr></table></figure>
+
+<h2 id="elf、load、link"><a href="#elf、load、link" class="headerlink" title="elf、load、link"></a>elf、load、link</h2><h3 id="数据段"><a href="#数据段" class="headerlink" title="数据段"></a>数据段</h3><p>.bss, .data, .rodata，含义；</p>
+<h3 id="结构"><a href="#结构" class="headerlink" title="结构"></a>结构</h3><p>elf header + section + section header table 段表 + 字符串表 + 符号表 + 重定位表，含义？</p>
+<h3 id="section-amp-segment"><a href="#section-amp-segment" class="headerlink" title="section&amp;segment"></a>section&amp;segment</h3><p>二者什么关系呢？</p>
+<p>section是程序文件中分的段，在装载的时候，为了提高效率，会把相同属性secton合并到一个segment里；</p>
+<h3 id="静态链接和动态链接"><a href="#静态链接和动态链接" class="headerlink" title="静态链接和动态链接"></a>静态链接和动态链接</h3><h4 id="静态链接"><a href="#静态链接" class="headerlink" title="静态链接"></a>静态链接</h4><p>优点：</p>
+<ol>
+<li>代码装载速度快，执行速度略快；</li>
+<li>不需要保证用户计算机上lib版本的问题，避免ddl hell；</li>
+</ol>
+<p>缺点：</p>
+<ol>
+<li>文件体积大，资源开销大</li>
+</ol>
+<h4 id="动态链接"><a href="#动态链接" class="headerlink" title="动态链接"></a>动态链接</h4><p>优点：</p>
+<ol>
+<li>节省内存，减少页面交换；</li>
+<li>更换ddl时，只要输出接口不变，就不会有什么影响；</li>
+<li>按照约定就可以调用同一个dll函数；</li>
+<li>适用于大规模软件开发；</li>
+</ol>
+<p>缺点：</p>
+<ol>
+<li>dll不存在则会加载失败</li>
+</ol>
+<h3 id="elf中无函数符号，检测syscall的调用"><a href="#elf中无函数符号，检测syscall的调用" class="headerlink" title="elf中无函数符号，检测syscall的调用"></a>elf中无函数符号，检测syscall的调用</h3><h2 id="在任意进程中修改内存保护属性"><a href="#在任意进程中修改内存保护属性" class="headerlink" title="在任意进程中修改内存保护属性"></a>在任意进程中修改内存保护属性</h2><p>windows中用virtualProtect或者virtualProtectEx；</p>
+<p>linux中修改的api是mprotect或者pkey_mprotect，他们始终在当前的进程空间上运行，修改寄存器然后系统调用10；如果开了seccomp，就通过内核线程，每次出现current pointer的时候指向目标线程task_strct；所以写一个模块获取目标PID和kallsyms的信息，然后调用mprotect</p>
+<h2 id="malloc的过程"><a href="#malloc的过程" class="headerlink" title="malloc的过程"></a>malloc的过程</h2><p><img src="/CTF/PWN/%E9%9B%B6%E6%95%A3%E7%9F%A5%E8%AF%86%E7%82%B9/malloc.jpg" alt="malloc"></p>
+<h2 id="free的过程"><a href="#free的过程" class="headerlink" title="free的过程"></a>free的过程</h2><p><img src="/CTF/PWN/%E9%9B%B6%E6%95%A3%E7%9F%A5%E8%AF%86%E7%82%B9/%E9%9B%B6%E6%95%A3%E7%9F%A5%E8%AF%86%E7%82%B9%5Cfree.jpg" alt="free"></p>
+<h2 id="brk-mmap"><a href="#brk-mmap" class="headerlink" title="brk mmap"></a>brk mmap</h2><p>brk和mmap是系统调用，sbrk只是函数，用来移动堆上界；</p>
+<p>mm_struct里有start_code和end_code，是.text的起止地址，start_data和end_data是数据段的起止地址，start_stack是栈的起始地址，start_brk是堆的起始地址，brk是堆终止地址；</p>
+<p>brk系统调用改变mm_struct里brk的值；</p>
+<p>mmap系统调用新建vm_area_struct，然后把文件结构参数赋值给成员m_file，这样就使得进程读写文件的操作变为读写内存的操作；</p>
+<p>calloc初始化，而malloc不进行初始化；</p>
+<h2 id="C语言安全缺陷"><a href="#C语言安全缺陷" class="headerlink" title="C语言安全缺陷"></a>C语言安全缺陷</h2><p>类型转换</p>
+<p>边界检查</p>
+<p>等等。。</p>
+<h2 id="插桩"><a href="#插桩" class="headerlink" title="插桩"></a>插桩</h2><h2 id="堆喷射"><a href="#堆喷射" class="headerlink" title="堆喷射"></a>堆喷射</h2><p>将Shellcode与大量的slide code（滑板指令）相组合，组成一整个 <strong>注入代码段</strong> ，然后向系统申请大量的内存空间，并反复用 <strong>注入代码段</strong> 填充，然后将程序执行流劫持到内核堆上，使得程序慢慢“滑”向SHellcode。</p>
+<p>Slide code均不会影响shellcode的执行。：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1.NOP指令（\x90）</span><br><span class="line">2.\x0c</span><br><span class="line">3.\x0d</span><br></pre></td></tr></table></figure>
+
+<h2 id="gdb"><a href="#gdb" class="headerlink" title="gdb"></a>gdb</h2><h2 id="fuzz"><a href="#fuzz" class="headerlink" title="fuzz"></a>fuzz</h2><h3 id="afl"><a href="#afl" class="headerlink" title="afl"></a>afl</h3><h3 id="syzkaller"><a href="#syzkaller" class="headerlink" title="syzkaller"></a>syzkaller</h3>
+        
+            <div id="toc-article">
+                
+  <div class="widget-wrap" id="toc-wrap">
+    <h3 class="widget-title"><i class="fa fa-toc"></i> 文章目录</h3>
+    <div class="widget">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%9B%B6%E6%95%A3%E7%9A%84%E7%9F%A5%E8%AF%86%E7%82%B9"><span class="toc-text">零散的知识点</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%87%BD%E6%95%B0%E8%B0%83%E7%94%A8%E7%BA%A6%E5%AE%9A"><span class="toc-text">函数调用约定</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AF%BB%E5%9D%80%E6%96%B9%E5%BC%8F"><span class="toc-text">寻址方式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A0%86%E6%A0%88%E5%8F%8A%E5%85%B6%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="toc-text">堆栈及其初始化</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%9B%E7%A7%8D%E5%A0%86%E6%A0%88"><span class="toc-text">四种堆栈</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%94%A8%E4%BA%8E%E5%88%9D%E5%A7%8B%E5%8C%96%E7%9A%84%E5%A0%86%E6%A0%88"><span class="toc-text">用于初始化的堆栈</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#task%E7%9A%84%E5%A0%86%E6%A0%88"><span class="toc-text">task的堆栈</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%86%85%E6%A0%B8%E6%80%81%E4%B8%8B"><span class="toc-text">内核态下</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%94%A8%E6%88%B7%E6%80%81%E4%B8%8B"><span class="toc-text">用户态下</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%87%E6%8D%A2%E9%97%AE%E9%A2%98"><span class="toc-text">切换问题</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%A8%8B%E5%BA%8F%E8%B0%83%E8%AF%95%E8%87%AA%E6%A3%80"><span class="toc-text">程序调试自检</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%99%9A%E6%8B%9F%E5%9C%B0%E5%9D%80-gt-%E7%89%A9%E7%90%86%E5%9C%B0%E5%9D%80"><span class="toc-text">虚拟地址-&gt;物理地址</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9F%A5%E7%9C%8B%E7%AB%AF%E5%8F%A3%E5%8D%A0%E7%94%A8%E6%83%85%E5%86%B5"><span class="toc-text">查看端口占用情况</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#elf%E3%80%81load%E3%80%81link"><span class="toc-text">elf、load、link</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E6%AE%B5"><span class="toc-text">数据段</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%93%E6%9E%84"><span class="toc-text">结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#section-amp-segment"><span class="toc-text">section&amp;segment</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%9D%99%E6%80%81%E9%93%BE%E6%8E%A5%E5%92%8C%E5%8A%A8%E6%80%81%E9%93%BE%E6%8E%A5"><span class="toc-text">静态链接和动态链接</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%9D%99%E6%80%81%E9%93%BE%E6%8E%A5"><span class="toc-text">静态链接</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8A%A8%E6%80%81%E9%93%BE%E6%8E%A5"><span class="toc-text">动态链接</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#elf%E4%B8%AD%E6%97%A0%E5%87%BD%E6%95%B0%E7%AC%A6%E5%8F%B7%EF%BC%8C%E6%A3%80%E6%B5%8Bsyscall%E7%9A%84%E8%B0%83%E7%94%A8"><span class="toc-text">elf中无函数符号，检测syscall的调用</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9C%A8%E4%BB%BB%E6%84%8F%E8%BF%9B%E7%A8%8B%E4%B8%AD%E4%BF%AE%E6%94%B9%E5%86%85%E5%AD%98%E4%BF%9D%E6%8A%A4%E5%B1%9E%E6%80%A7"><span class="toc-text">在任意进程中修改内存保护属性</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#malloc%E7%9A%84%E8%BF%87%E7%A8%8B"><span class="toc-text">malloc的过程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#free%E7%9A%84%E8%BF%87%E7%A8%8B"><span class="toc-text">free的过程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#brk-mmap"><span class="toc-text">brk mmap</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#C%E8%AF%AD%E8%A8%80%E5%AE%89%E5%85%A8%E7%BC%BA%E9%99%B7"><span class="toc-text">C语言安全缺陷</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8F%92%E6%A1%A9"><span class="toc-text">插桩</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A0%86%E5%96%B7%E5%B0%84"><span class="toc-text">堆喷射</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#gdb"><span class="toc-text">gdb</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#fuzz"><span class="toc-text">fuzz</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#afl"><span class="toc-text">afl</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#syzkaller"><span class="toc-text">syzkaller</span></a></li></ol></li></ol></li></ol>
+    </div>
+  </div>
+
+
+            </div>
+        
+        
+          <blockquote id="copyright">
+              <p>原文链接: <a href="https://www.jk404.cn/CTF/PWN/零散知识点/">https://www.jk404.cn/CTF/PWN/零散知识点/</a></p>
+              <p>版权声明: 转载请注明出处.</p>
+          </blockquote>
+        
+      
+    </div>
+    <footer class="article-footer">
+      
+        <div class="article-tag-wrap">
+          
+
+          
+          
+
+
+        </div>
+      
+      
+        
+<nav id="article-nav">
+  
+    <a href="/CTF/PWN/kernel-pwn/FUZZ/Syzkaller/syzkaller-2-principle/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">newer</strong>
+      <div class="article-nav-title">
+        
+          syzkaller_2_principle
+        
+      </div>
+    </a>
+  
+  
+    <a href="/CTF/PWN/kernel-pwn/Linux-source/Linux-kernel-source-1-directory/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">older</strong>
+      <div class="article-nav-title">Linux kernel source(1):Directory</div>
+    </a>
+  
+</nav>
+
+      
+      
+        
+
+
+
+
+
+
+
+      
+    </footer>
+  </div>
+</article>
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title"><i class="fa fa-posts"></i> 最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/CTF/PWN/kernel-pwn/FUZZ/Syzkaller/syzkaller-2-principle/">syzkaller_2_principle</a>
+          </li>
+        
+          <li>
+            <a href="/CTF/PWN/%E9%9B%B6%E6%95%A3%E7%9F%A5%E8%AF%86%E7%82%B9/">零散知识点</a>
+          </li>
+        
+          <li>
+            <a href="/CTF/PWN/kernel-pwn/Linux-source/Linux-kernel-source-1-directory/">Linux kernel source(1):Directory</a>
+          </li>
+        
+          <li>
+            <a href="/CTF/PWN/kernel-pwn/Linux-source/Linux-kernel-source-2-kernel-boot/">Linux kernel source(2):Kernel Boot</a>
+          </li>
+        
+          <li>
+            <a href="/CTF/PWN/glibc2-23-ptmalloc/">glibc2.23_ptmalloc</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title"><i class="fa fa-classify"></i> 分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP-lab/">CSAPP-lab</a><span class="category-list-count">3</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP-lab/bomblab/">bomblab</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP-lab/datalab/">datalab</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP-lab/preparelab/">preparelab</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/">CTF</a><span class="category-list-count">25</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/">PWN</a><span class="category-list-count">25</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/">kernel pwn</a><span class="category-list-count">12</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/FUZZ/">FUZZ</a><span class="category-list-count">3</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/FUZZ/Syzkaller/">Syzkaller</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/FUZZ/Trinity/">Trinity</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/Linux-source/">Linux source</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/cve/">cve</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/knowledge/">knowledge</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/wp/">wp</a><span class="category-list-count">3</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/uncategorized/">uncategorized</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/">wp</a><span class="category-list-count">10</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/asisctf/">asisctf</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/asisctf/asisctf2021/">asisctf2021</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/buuoj/">buuoj</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/l3hctf/">l3hctf</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/pwnable-kr/">pwnable.kr</a><span class="category-list-count">5</span></li></ul></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/">OS</a><span class="category-list-count">13</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/">lab1</a><span class="category-list-count">13</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge1-what-is-make/">challenge1:what is make</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge2-qemu-gdb/">challenge2:qemu&gdb</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge3-go-into-protected-mode/">challenge3:go into protected mode</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge4-load-kernel-elf/">challenge4:load kernel elf</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge5-trace-stackframe/">challenge5:trace stackframe</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge6-interrupt-handle/">challenge6:interrupt handle</a><span class="category-list-count">3</span></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/">PWN</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/Fuzz/">Fuzz</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/Fuzz/AFL/">AFL</a><span class="category-list-count">1</span></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/study/">study</a><span class="category-list-count">10</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/study/book/">book</a><span class="category-list-count">7</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/">程序员的自我修养：链接、装载与库</a><span class="category-list-count">7</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/study/daily/">daily</a><span class="category-list-count">3</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/tools/">tools</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/welcome/">welcome</a><span class="category-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title"><i class="fa fa-archive"></i> 归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/">2021年11月</a><span class="archive-list-count">55</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title"><i class="fa fa-link"></i> 友情链接</h3>
+    <div class="widget">
+      <ul>
+      
+        <li>
+          <a target="_blank" rel="noopener" href="https://www.jk4u.website">J0yce&#39;s Space</a>
+        </li>
+      
+        <li>
+          <a target="_blank" rel="noopener" href="https://buuoj.com/">buuoj</a>
+        </li>
+      
+        <li>
+          <a target="_blank" rel="noopener" href="https://eternalsakura13.com/">Sakura&#39;s Blog</a>
+        </li>
+      
+        <li>
+          <a target="_blank" rel="noopener" href="https://bestwing.me/">Swing&#39;s Blog</a>
+        </li>
+      
+      </ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+        
+      </div>
+      <a id="totop" href="#top"></a>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      <p>
+        <a href="/about/">联系博主</a>
+      </p>
+      
+        <p>
+          <i class="fa fa-visitors"></i>
+          <i> </i>
+          <i class="fa fa-views"></i>
+        </p>
+      
+      <p>
+        <span>Copyright &copy; 2021 K1ose</span>
+      </p>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+<script src="/js/search.json.js"></script>
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+
+  
+<script src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+</body>
+</html>
