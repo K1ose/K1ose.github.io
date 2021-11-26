@@ -187,13 +187,147 @@
     </div>
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <h1 id="syzkaller-2-原理"><a href="#syzkaller-2-原理" class="headerlink" title="syzkaller(2):原理"></a>syzkaller(2):原理</h1><h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><p><img src="/CTF/PWN/kernel-pwn/FUZZ/Syzkaller/syzkaller-2-principle/syzkaller_1.jpg"></p>
-<p>上图为原理图解。</p>
-<p>syz-manager通过ssh调用syz-fuzzer；</p>
-<p>syz-fuzzer和syz-manager之间通过RPC进行通信；</p>
-<p>syz-fuzzer将输入传给syz-executor，从kernel中读取代码覆盖率信息；</p>
-<p>syz-executor执行syscall系统调用。</p>
+        <h1 id="syzkaller-2-原理与测试"><a href="#syzkaller-2-原理与测试" class="headerlink" title="syzkaller(2):原理与测试"></a>syzkaller(2):原理与测试</h1><h2 id="流程图"><a href="#流程图" class="headerlink" title="流程图"></a>流程图</h2><p><img src="/CTF/PWN/kernel-pwn/FUZZ/Syzkaller/syzkaller-2-principle/syzkaller_1.jpg"></p>
+<p>上图为流程图。</p>
+<p><code>syz-manager</code>通过<code>ssh</code>调用<code>syz-fuzzer</code>；</p>
+<p><code>syz-fuzzer和syz-manager</code>之间通过<code>RPC</code>进行通信；</p>
+<p><code>syz-fuzzer</code>将输入传给<code>syz-executor</code>，从<code>kernel</code>中读取代码覆盖率信息；</p>
+<p><code>syz-executor</code>执行<code>syscall</code>系统调用。</p>
+<h2 id="目录结构"><a href="#目录结构" class="headerlink" title="目录结构"></a>目录结构</h2><table>
+<thead>
+<tr>
+<th align="center">文件/文件名</th>
+<th align="center">说明/用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">Godeps</td>
+<td align="center">golang依赖包管理</td>
+</tr>
+<tr>
+<td align="center">dashbord</td>
+<td align="center">与syzbot相关，syzbot会在fuzz后向内核邮件列表报告发现的错误，内容在<a target="_blank" rel="noopener" href="https://syzkaller.appspot.com上/">https://syzkaller.appspot.com上</a></td>
+</tr>
+<tr>
+<td align="center">docs</td>
+<td align="center">相关文档</td>
+</tr>
+<tr>
+<td align="center">executor</td>
+<td align="center">用于执行系统调用</td>
+</tr>
+<tr>
+<td align="center">pkg</td>
+<td align="center">配置文件目录</td>
+</tr>
+<tr>
+<td align="center">prog</td>
+<td align="center">目标系统信息以及需要执行的系统调用</td>
+</tr>
+<tr>
+<td align="center">sys</td>
+<td align="center">系统调用描述</td>
+</tr>
+</tbody></table>
+<p>在<code>pkg</code>目录中又有如下的结构：</p>
+<ul>
+<li>ast目录：解析并格式化sys文件。</li>
+<li>bisect目录：通过二分查找，编译代码测试确定引入含有漏洞代码的commit和引入修复的commit。</li>
+<li>build目录：包含用于构建内核的辅助函数。</li>
+<li>compiler目录：从文本描述生成系统调用，类型和资源的sys描述。</li>
+<li>config目录：加载配置文件。</li>
+<li>cover目录：提供处理代码覆盖信息的类型。</li>
+<li>csource目录：根据syzkaller程序生成等价的c程序。</li>
+<li>db目录：存储syz-manager和syz-hub中的语料库。</li>
+<li>email目录：解析处理邮件相关功能。</li>
+<li>gce目录：对Google Compute Engine(GCE) API的包装。</li>
+<li>gcs目录：对Google Compute Storage(GCS) API的包装。</li>
+<li>hash目录：提供一些hash函数。</li>
+<li>host目录：检测host是否支持一些特性和特定的系统调用。</li>
+<li>html目录：提供一些web端显示fuzz结果的html页面用的辅助函数。</li>
+<li>ifuzz目录：生成和变异x86机器码。</li>
+<li>instance目录：提供用于测试补丁，镜像和二分查找的临时实例的辅助函数。</li>
+<li>ipc目录：进程间通信。</li>
+<li>kd目录：windows KD调试相关。</li>
+<li>log目录：日志功能。</li>
+<li>mgrconfig目录：管理解析配置文件。</li>
+<li>osutil目录：os和文件操作工具。</li>
+<li>report目录：处理内核输出和检测/提取crash信息并符号化等。</li>
+<li>repro目录：对crash进行复现并进行相关的处理。</li>
+<li>rpctype目录：包含通过系统各部分之间的net/rpc连接传递的消息类型。</li>
+<li>runtest目录：syzkaller程序端到端测试的驱动程序。</li>
+<li>serializer目录：序列化处理。</li>
+<li>signal目录：提供用于处理反馈信号的类型。</li>
+<li>symbolizer目录：处理符号相关信息。</li>
+<li>vcs目录：处理各种库的辅助函数。</li>
+</ul>
+<h2 id="概况"><a href="#概况" class="headerlink" title="概况"></a>概况</h2><h3 id="系统调用模板"><a href="#系统调用模板" class="headerlink" title="系统调用模板"></a>系统调用模板</h3><h4 id="syzkaller-formwork"><a href="#syzkaller-formwork" class="headerlink" title="syzkaller formwork"></a>syzkaller formwork</h4><p><code>syzkaller</code>使用自己的声明式语言描述系统调用模板，可以在<code>docs/syscall_descriptions.md</code>中找到说明；</p>
+<h4 id="formwork-gt-golang-code"><a href="#formwork-gt-golang-code" class="headerlink" title="formwork =&gt; golang code"></a>formwork =&gt; golang code</h4><p>这些系统调用模板被翻译成<code>syzkaller</code>能够执行的代码需要经过两个步骤：</p>
+<ol>
+<li><p>使用<code>syz-extract</code>从<code>linux</code>的源码中提取符号常量值，结果存储在<code>.const</code>文件中；</p>
+<blockquote>
+<p>如：<code>/sys/linux/tty.txt</code>被转换为<code>sys/linux/tty_amd64.const</code>；</p>
+</blockquote>
+</li>
+<li><p>根据<code>syscall formwork</code>和<code>.const</code>文件，使用<code>syz-sysgen</code>生成<code>syzkaller</code>使用的go代码；</p>
+<ul>
+<li><code>assignSyscallNumbers</code>：分配系统调用号，检测不受支持的系统调用并丢弃；</li>
+<li><code>patchConsts</code>：将AST中的常量patch成对应的值；</li>
+<li><code>check</code>：对AST进行语义检查；</li>
+<li><code>genSyscalls</code>：从AST生成prog对象；</li>
+</ul>
+<p>可以在<code>/sys/linux/gen/amd64.go</code>和<code>/executor/syscalls.h</code>中看到结果；</p>
+</li>
+</ol>
+<h4 id="new-syscall-test"><a href="#new-syscall-test" class="headerlink" title="new syscall test"></a>new syscall test</h4><p><code>/sys/linux/sys.txt</code>包含的是常规系统调用的描述；</p>
+<p>子系统的低筒调用描述放在<code>sys/linux/</code>下，即为那些以<code>.txt</code>结尾的文件；</p>
+<blockquote>
+<p>如：bpf、socket子系统…</p>
+</blockquote>
+<p>如果要对新的系统调用进行测试，需要添加新的系统调用的描述，系统调用和参数都可以自己定义，如：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">syscallname <span class="string">&quot;(&quot;</span> [arg [<span class="string">&quot;,&quot;</span> arg]*] <span class="string">&quot;)&quot;</span> [type] [<span class="string">&quot;(&quot;</span> attribute* <span class="string">&quot;)&quot;</span>]</span><br><span class="line">arg = argname type</span><br><span class="line">argname = identifier</span><br><span class="line">type = <span class="keyword">typename</span> [ <span class="string">&quot;[&quot;</span> type-options <span class="string">&quot;]&quot;</span> ]</span><br><span class="line"><span class="keyword">typename</span> = <span class="string">&quot;const&quot;</span> | <span class="string">&quot;intN&quot;</span> | <span class="string">&quot;intptr&quot;</span> | <span class="string">&quot;flags&quot;</span> | <span class="string">&quot;array&quot;</span> | <span class="string">&quot;ptr&quot;</span> |</span><br><span class="line">       <span class="string">&quot;string&quot;</span> | <span class="string">&quot;strconst&quot;</span> | <span class="string">&quot;filename&quot;</span> | <span class="string">&quot;len&quot;</span> |</span><br><span class="line">       <span class="string">&quot;bytesize&quot;</span> | <span class="string">&quot;bytesizeN&quot;</span> | <span class="string">&quot;bitsize&quot;</span> | <span class="string">&quot;vma&quot;</span> | <span class="string">&quot;proc&quot;</span></span><br><span class="line">type-options = [type-opt [<span class="string">&quot;,&quot;</span> type-opt]]</span><br></pre></td></tr></table></figure>
 
+<p>甚至说可以为一个全新的子系统添加系统调用描述，<code>docs</code>目录下的<code>syscall_descriptions_syntax.md</code>中可以找到语法描述；</p>
+<h4 id="update-syscall-formwork"><a href="#update-syscall-formwork" class="headerlink" title="update syscall formwork"></a>update syscall formwork</h4><p>首先拿到内核源码后，先看一下是什么版本的内核；</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat Makefile | head</span><br></pre></td></tr></table></figure>
+
+<p>由下面的信息可以知道是<code>5.16</code>版本的内核；</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">VERSION = 5</span><br><span class="line">PATCHLEVEL = 16</span><br><span class="line">SUBLEVEL = 0</span><br></pre></td></tr></table></figure>
+
+<p>先比较新旧版本<code>uapi/*.h</code>发生了什么变化；</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git diff -U0 v5.15 v5.14 include/uapi/*.h | grep &quot;+++&quot;   # 5.16没有在working tree中，先用5.15看看...</span><br></pre></td></tr></table></figure>
+
+<p>将得到：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">+++ b/include/uapi/asm-generic/siginfo.h</span><br><span class="line">+++ b/include/uapi/asm-generic/socket.h</span><br><span class="line">+++ b/include/uapi/asm-generic/unistd.h</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<p>Linus在linux 3.7版本中接受了David Howell的用来解决递归引用的补丁。递归引用这个问题通常发生在<code>inline</code>函数中：比如头文件A中的<code>inline</code>函数需要头文件中B的<code>struct</code>，但是同时B中也有一个<code>inline</code>函数需要A中的一个<code>struct</code>。所以David Howell把<code>include</code>和<code>arch/xxxxxx/include</code>目录中的内核头文件中有关用户空间API的内容分割出来，放到新的uapi/子目录中相应的地方。</p>
+<p>除了解决递归引用的问题之外，这样做简化了仅供内核使用的头文件的大小，并且使得跟踪内核向用户空间呈现的API的更改变得更容易。对C库维护者、测试项目(如LTP)、文档项目(如man-pages)还有我们利用<code>syzkaller</code>做内核fuzz的人来说有很大的帮助；</p>
+<h2 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h2><h3 id="编译syz-extract-amp-syzsysgen"><a href="#编译syz-extract-amp-syzsysgen" class="headerlink" title="编译syz-extract&amp;syzsysgen"></a>编译syz-extract&amp;syzsysgen</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">make bin/syz-extract</span><br><span class="line">make bin/syz-sysgen</span><br></pre></td></tr></table></figure>
+
+<h3 id="自定义规则"><a href="#自定义规则" class="headerlink" title="自定义规则"></a>自定义规则</h3><p>在<code>syzkaller/sys/linux</code>下，新建<code>proc_operation.txt</code>文件，并加入：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">include &lt;linux/fs.h&gt;</span><br><span class="line"> </span><br><span class="line">open$proc(file ptr[in, string[&quot;/proc/test&quot;]], flags flags[proc_open_flags], mode flags[proc_open_mode]) fd</span><br><span class="line">read$proc(fd fd, buf buffer[out], count len[buf])</span><br><span class="line">write$proc(fd fd, buf buffer[in], count len[buf])</span><br><span class="line">close$proc(fd fd)</span><br><span class="line"> </span><br><span class="line">proc_open_flags = O_RDONLY, O_WRONLY, O_RDWR, O_APPEND, FASYNC, O_CLOEXEC, O_CREAT, O_DIRECT, O_DIRECTORY, O_EXCL, O_LARGEFILE, O_NOATIME, O_NOCTTY, O_NOFOLLOW, O_NONBLOCK, O_PATH, O_SYNC, O_TRUNC, __O_TMPFILE</span><br><span class="line">proc_open_mode = S_IRUSR, S_IWUSR, S_IXUSR, S_IRGRP, S_IWGRP, S_IXGRP, S_IROTH, S_IWOTH, S_IXOTH</span><br></pre></td></tr></table></figure>
+
+<p>参考大师傅们的介绍：<code>$</code>号前的<code>syscallname</code>是系统调用名，<code>$</code>号后的t<code>ype</code>是指特定类型的系统调用。如上文的<code> open$proc</code> 指的就是<code>open</code>这个类调用中<code>proc</code>这个具体的调用，这个名字是由规则编写者确定的，具体行为靠的是后面的参数去确定。 参数的格式如下： <code>ArgumentName ArgumentType[Limit] ArgumentName</code>是指参数名，<code>ArgumentType</code>指的是参数类型，例如上述例子有string、flags等类型。[ ]号中的内容就是具体的类型的值，不指定的时候由<code>syzkaller</code>自动生成，若要指定须在后文指定，以上文为例：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mode flags[proc_open_mode]</span><br><span class="line">proc_open_mode = ...</span><br></pre></td></tr></table></figure>
+
+<p> 因为我们给的例子是通过<code>/proc/test</code>这个内核接口的写操作来触发堆溢出，因此我们需要控制的参数是<code>open</code>函数中的file参数为“/proc/test”即可，其他操作参考sys.txt即可；</p>
+<h3 id="生成-const文件"><a href="#生成-const文件" class="headerlink" title="生成.const文件"></a>生成.const文件</h3><p>调用<code>syz-extract</code>生成<code>.consts</code>文件；</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bin/syz-extract -os linux -sourcedir &quot;/root/source/linux&quot; -arch amd64 proc_operation.txt</span><br></pre></td></tr></table></figure>
+
+<p>文件内容如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"># Code generated by syz-sysgen. DO NOT EDIT.</span><br><span class="line">arches = amd64</span><br><span class="line">FASYNC = amd64:8192</span><br><span class="line">O_APPEND = amd64:1024</span><br><span class="line">O_CLOEXEC = amd64:524288</span><br><span class="line">O_CREAT = amd64:64</span><br><span class="line">O_DIRECT = amd64:16384</span><br><span class="line">O_DIRECTORY = amd64:65536</span><br><span class="line">O_EXCL = amd64:128</span><br><span class="line">O_LARGEFILE = amd64:32768</span><br><span class="line">O_NOATIME = amd64:262144</span><br><span class="line">O_NOCTTY = amd64:256</span><br><span class="line">O_NOFOLLOW = amd64:131072</span><br><span class="line">O_NONBLOCK = amd64:2048</span><br><span class="line">O_PATH = amd64:2097152</span><br><span class="line">O_RDONLY = amd64:0</span><br><span class="line">O_RDWR = amd64:2</span><br><span class="line">O_SYNC = amd64:1052672</span><br><span class="line">O_TRUNC = amd64:512</span><br><span class="line">O_WRONLY = amd64:1</span><br><span class="line">S_IRGRP = amd64:32</span><br><span class="line">S_IROTH = amd64:4</span><br><span class="line">S_IRUSR = amd64:256</span><br><span class="line">S_IWGRP = amd64:16</span><br><span class="line">S_IWOTH = amd64:2</span><br><span class="line">S_IWUSR = amd64:128</span><br><span class="line">S_IXGRP = amd64:8</span><br><span class="line">S_IXOTH = amd64:1</span><br><span class="line">S_IXUSR = amd64:64</span><br><span class="line">__NR_close = amd64:3</span><br><span class="line">__NR_open = amd64:2</span><br><span class="line">__NR_read = amd64:0</span><br><span class="line">__NR_write = amd64:1</span><br><span class="line">__O_TMPFILE = amd64:4194304</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="生成go代码"><a href="#生成go代码" class="headerlink" title="生成go代码"></a>生成go代码</h3><p>运行<code>syz-sysgen</code>，生成<code>syzkaller</code>可以执行的go代码；</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./bin/syz-sysgen</span><br></pre></td></tr></table></figure>
+
+<h3 id="编译syzkaller"><a href="#编译syzkaller" class="headerlink" title="编译syzkaller"></a>编译syzkaller</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">make clean</span><br><span class="line">make all</span><br></pre></td></tr></table></figure>
+
+<h3 id="修改my-cfg"><a href="#修改my-cfg" class="headerlink" title="修改my.cfg"></a>修改my.cfg</h3><p>添加上允许的自定义系统调用；</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&quot;enable_syscalls&quot;: [</span><br><span class="line">                &quot;open$proc&quot;,</span><br><span class="line">                &quot;read$proc&quot;,</span><br><span class="line">                &quot;write$proc&quot;,</span><br><span class="line">                &quot;close$proc&quot;</span><br><span class="line">],</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3>
         
         
           <blockquote id="copyright">
@@ -365,14 +499,35 @@
 <p>brk系统调用改变mm_struct里brk的值；</p>
 <p>mmap系统调用新建vm_area_struct，然后把文件结构参数赋值给成员m_file，这样就使得进程读写文件的操作变为读写内存的操作；</p>
 <p>calloc初始化，而malloc不进行初始化；</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;128K brk</span><br><span class="line">&gt;128k mmap</span><br></pre></td></tr></table></figure>
+
 <h2 id="C语言安全缺陷"><a href="#C语言安全缺陷" class="headerlink" title="C语言安全缺陷"></a>C语言安全缺陷</h2><p>类型转换</p>
 <p>边界检查</p>
 <p>等等。。</p>
-<h2 id="插桩"><a href="#插桩" class="headerlink" title="插桩"></a>插桩</h2><h2 id="堆喷射"><a href="#堆喷射" class="headerlink" title="堆喷射"></a>堆喷射</h2><p>将Shellcode与大量的slide code（滑板指令）相组合，组成一整个 <strong>注入代码段</strong> ，然后向系统申请大量的内存空间，并反复用 <strong>注入代码段</strong> 填充，然后将程序执行流劫持到内核堆上，使得程序慢慢“滑”向SHellcode。</p>
+<h2 id="插桩"><a href="#插桩" class="headerlink" title="插桩"></a>插桩</h2><h3 id="插桩的位置"><a href="#插桩的位置" class="headerlink" title="插桩的位置"></a>插桩的位置</h3><p>a. 程序的第一条语句；b. 分支语句的开始；c. 循环语句的开始；d. 下一个入口语句之前的语句；e. 程序的结束语句；f. 分支语句的结束；g. 循环语句的结束</p>
+<h3 id="插桩的策略"><a href="#插桩的策略" class="headerlink" title="插桩的策略"></a>插桩的策略</h3><p>语句覆盖探针（基本块探针）：在基本块的入口和出口处，分别植入相应的探针，以确定程序执行时该基本块是否被覆盖。 　分支覆盖探针：c/c++语言中，分支由分支点确定。对于每个分支，在其开始处植入一个相应的探针，以确定程序执行时该分支是否被覆盖。 　条件覆盖探针：c/c++语言中，if, swich,while, do-while, for 几种语法结构都支持条件判定，在每个条件表达式的布尔表达式处植入探针，进行变量跟踪取值，以确定其被覆盖情况；</p>
+<p>后续fuzz的过程中会根据这些桩代码进行路径探索，测试</p>
+<h2 id="堆喷射"><a href="#堆喷射" class="headerlink" title="堆喷射"></a>堆喷射</h2><p>将Shellcode与大量的slide code（滑板指令）相组合，组成一整个 <strong>注入代码段</strong> ，然后向系统申请大量的内存空间，并反复用 <strong>注入代码段</strong> 填充，然后将程序执行流劫持到内核堆上，使得程序慢慢“滑”向SHellcode。</p>
 <p>Slide code均不会影响shellcode的执行。：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1.NOP指令（\x90）</span><br><span class="line">2.\x0c</span><br><span class="line">3.\x0d</span><br></pre></td></tr></table></figure>
 
-<h2 id="gdb"><a href="#gdb" class="headerlink" title="gdb"></a>gdb</h2><h2 id="fuzz"><a href="#fuzz" class="headerlink" title="fuzz"></a>fuzz</h2><h3 id="afl"><a href="#afl" class="headerlink" title="afl"></a>afl</h3><h3 id="syzkaller"><a href="#syzkaller" class="headerlink" title="syzkaller"></a>syzkaller</h3>
+<p>SLAB作为用户linux系统内核对于小对象的高速cache。</p>
+<p><code>cat /proc/slabinfo</code> 可以查看当前 slab 对象的分配情况。</p>
+<h2 id="gdb"><a href="#gdb" class="headerlink" title="gdb"></a>gdb</h2><h2 id="fuzz"><a href="#fuzz" class="headerlink" title="fuzz"></a>fuzz</h2><h3 id="afl"><a href="#afl" class="headerlink" title="afl"></a>afl</h3><h3 id="syzkaller"><a href="#syzkaller" class="headerlink" title="syzkaller"></a>syzkaller</h3><h2 id="ret2dir"><a href="#ret2dir" class="headerlink" title="ret2dir"></a>ret2dir</h2><h3 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h3><p>利用return-to-direct-mapped memory(ret2dir)攻击技术绕过SMEP,SMAP,PXN,KERNEXEC,UDEREF,KGuard保护。简单来说，通过利用一个核心区域，直接映射系统的一部分或全部物理内存(用户空间内存映射到physmap，内核可直接访问physmap)，允许攻击者在内核地址空间内访问用户数据；</p>
+<p>内存分配主要有kmalloc和vmalloc两种方式。</p>
+<p>vmalloc 请求 页的倍数大小的内存，要保证虚拟地址连续，物理地址不需要连续</p>
+<p>kmalloc 内存在字节级做分配，要保证 虚拟地址和物理地址都是连续的</p>
+<p>kmalloc是slub分配器使用的方式，kmalloc可在physmap上做内存分配操作。例如分配0x200，则对应kmalloc-512，该内存在physmap里面。</p>
+<p>physmap区域在0xffff888000000000 - 0xffffc87fffffffff这一段，大小为64TB。物理内存直接映射在该虚拟内存空间某地址处，只要知道该基址，做线性加减就完事了，速度和效率都很高</p>
+<h3 id="方法"><a href="#方法" class="headerlink" title="方法"></a>方法</h3><p>从以上可知，1.physmap和RAM是直接的映射关系；2.可通过kmalloc分配的内存地址找到physmap的基址。</p>
+<p>SMAP/SMEP主要是使内核不能直接执行用户态的代码。但用户态分配的内存，会停留在RAM中，这块内存在physmap中也能看到。可通过mmap分配大量的内存，这样找到的概率就会比较大。</p>
+<p>早期的physmap可执行，只需在用户态写好shellcode，然后劫持内核后跳到physmap对应位置即可，不用管SMAP/SMEP。后期加上保护策略，physmap不可执行(W^X)，但可通过ROP方式进行利用</p>
+<h3 id="方式"><a href="#方式" class="headerlink" title="方式"></a>方式</h3><p>mmap大量内存(喷射rop chain等，这样用户数据会映射到内核physmap)，提高命中概率。</p>
+<p>qemu给了128M的内存，mmap出64M的内存，以增大命中率(在用户层喷射数据，这样会映射到内核physmap，这样根据physmap基址搜索的时候才更有可能搜到用户数据)。mmap内存都初始化为字符”K”；</p>
+<p>泄露slab地址，根据内核中的slab地址计算physmap基地址，根据physmap基址搜索映射到内核physmap的用户数据，找出slab的地址，然后在上面做爆破，一个页一个页读取，直到找出KKKKKKKKKKKKKKKK这个子串的内存，找到可能的physmap地址后，调用write_any写这个地址，看看用户态对应的内存有没有被改变，如果随之改变，则说明两者已经对应上了；</p>
+<p>劫持内核执行流到physmap。</p>
+<h3 id="修复"><a href="#修复" class="headerlink" title="修复"></a>修复</h3><p>排他性页框架所有权机制(exclusive page frame ownership scheme)，能以很低的性能损耗缓解ret2dir攻击。</p>
+<h2 id="ret2user"><a href="#ret2user" class="headerlink" title="ret2user"></a>ret2user</h2>
         
         
           <blockquote id="copyright">
