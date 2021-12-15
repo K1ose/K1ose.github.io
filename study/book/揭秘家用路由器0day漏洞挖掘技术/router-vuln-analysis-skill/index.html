@@ -157,14 +157,14 @@
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo chroot ./qemu-mips ./bin/boa</span><br></pre></td></tr></table></figure>
 
 <blockquote>
-<p>结果报错了…</p>
+<p>结果报错了…😅</p>
 <p>chroot: cannot change root directory to ‘./qemu-mips’: Not a directory</p>
 </blockquote>
 <p>考虑使用</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo chroot . ./qemu-mips ./bin/boa</span><br></pre></td></tr></table></figure>
 
 <blockquote>
-<p>又报错了…</p>
+<p>又报错了…😅</p>
 <p>chroot: failed to run command ‘./qemu-mips’: No such file or directory</p>
 </blockquote>
 <p>这次使用<code>qemu-mips-static</code>来执行</p>
