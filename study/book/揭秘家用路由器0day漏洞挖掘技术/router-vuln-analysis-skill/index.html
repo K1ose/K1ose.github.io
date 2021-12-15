@@ -263,8 +263,171 @@
 </li>
 </ul>
 <p>这里跟着写一个使用Qemu指令执行模拟器测试的脚本<code>test_busybox.sh</code></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"># debug</span><br><span class="line"></span><br><span class="line">#!/bin/sh</span><br><span class="line">INPUT = $1</span><br><span class="line">LEN=$(echo -n &quot;$INPUT&quot; | wc -c)</span><br><span class="line">PORT=&quot;6666&quot;</span><br><span class="line">if [ &quot;$LEN&quot; == &quot;0&quot;] || [ &quot;$INPUT&quot; == &quot;-h&quot; ] || [ &quot;$UID&quot; != &quot;0&quot; ]</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> debug</span></span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash">!/bin/sh</span></span><br><span class="line">INPUT = $1												# 脚本的第一个参数为BusyBox的输入参数</span><br><span class="line">LEN=$(echo -n &quot;$INPUT&quot; | wc -c)							# 计算输入参数的长度</span><br><span class="line">PORT=&quot;6666&quot;												# Qemu调试的端口</span><br><span class="line">if [ &quot;$LEN&quot; == &quot;0&quot; ] || [ &quot;$INPUT&quot; == &quot;-h&quot; ] || [ &quot;$UID&quot; != &quot;0&quot; ]	# 判断参数个数、类型是否正确</span><br><span class="line">then</span><br><span class="line">	echo &quot;\nUsage: sudo $0 \n&quot;</span><br><span class="line">	exit 1</span><br><span class="line">fi</span><br><span class="line">cp $(which qemu-mips-static) ./qemu						# 大端序的qemu-mips指令复制到当前目录，将其更改为qemu</span><br><span class="line"><span class="meta">#</span><span class="bash"> 使用qemu指令模式模拟执行BusyBox，相当于执行chroot . ./qemu -E CONTENT_LENGTH=<span class="variable">$LEN</span> -g 6666 /bin/busybox <span class="variable">$INPUT</span></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> -E指定的环境变量在测试CGI脚本才能发挥实际用处，这里只是举例</span></span><br><span class="line">echo &quot;$INPUT&quot; | chroot . ./qemu -E CONTENT_LENGTH=$LEN -g $PORT /bin/busybox 2&gt;/dev/null</span><br><span class="line">rm -rf ./qemu								# 执行完删除模拟程序</span><br></pre></td></tr></table></figure>
 
+<p>运行后，服务器等待IDA remote gdb debugger的对接；</p>
+<p>在IDA中对接的方法不多介绍，主要是对debugger的一些配置；</p>
+<h3 id="IDA脚本基础"><a href="#IDA脚本基础" class="headerlink" title="IDA脚本基础"></a>IDA脚本基础</h3><p>基于对扩展性的考虑，IDA支持自定义脚本插件；</p>
+<ul>
+<li>IDC：内建的脚本语言，和C语言类似，仅适用于GUI版本的IDA；</li>
+<li>IDAPython：插件，支持Python集成式脚本；</li>
+<li>独立脚本插件</li>
+</ul>
+<h4 id="脚本执行"><a href="#脚本执行" class="headerlink" title="脚本执行"></a>脚本执行</h4><ul>
+<li>IDC命令行：<code>File</code>-&gt;<code>IDC Command</code></li>
+<li>独立脚本文件：<code>File</code>-&gt;<code>Script File</code></li>
+<li>Python命令行：<code>File</code>-&gt;<code>Python Command</code></li>
+</ul>
+<h4 id="IDC"><a href="#IDC" class="headerlink" title="IDC"></a>IDC</h4><ul>
+<li><p><code>F1</code>-&gt;<code>Index of IDC Functions</code>可以查看IDC官方文档，支持搜索函数调用等；</p>
+</li>
+<li><p>关于IDC的用法</p>
+<ul>
+<li><p>变量类型：</p>
+<p>没有明确类型，主要有3种：</p>
+<ul>
+<li>整型long</li>
+<li>字符串型</li>
+<li>浮点型</li>
+</ul>
+</li>
+<li><p>变量环境：</p>
+<p>支持全局和局部变量</p>
+<ul>
+<li><p>全局</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 引入全局变量extern</span></span><br><span class="line"><span class="keyword">extern</span> outval;</span><br><span class="line"><span class="keyword">extern</span> outval = <span class="string">&quot;wrong!&quot;</span>		<span class="comment">// 不合法声明，全局变量不能声明时赋值</span></span><br><span class="line"><span class="keyword">static</span> main()&#123;</span><br><span class="line"><span class="keyword">extern</span> inval;					<span class="comment">// 合法</span></span><br><span class="line">outval = <span class="string">&quot;Global String&quot;</span>;		<span class="comment">// 全局变量赋值</span></span><br><span class="line">inval = <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li><p>局部</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 局部变量的声明</span></span><br><span class="line"><span class="keyword">auto</span> addr, reg, val;</span><br><span class="line"><span class="keyword">auto</span> valinit = <span class="number">0</span>;</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><p>表达式</p>
+<p>IDC的表达式语法与C语言十分相似，但是有几点不同：</p>
+<ul>
+<li>复合赋值运算：不支持<code>op=</code>，如<code>+=</code>，<code>-=</code>；</li>
+<li>所有整数操作作为有符号数处理，因此进行移位等比特操作时要对移动的符号位进行处理；</li>
+<li>字符串操作不需要调用函数拼接，可以直接使用<code>+</code>来拼接字符串；</li>
+</ul>
+</li>
+<li><p>预处理指令</p>
+<ul>
+<li><code>#include &lt;头文件&gt;</code></li>
+<li><code>#define &lt;宏&gt;</code></li>
+<li><code>#ifdef &lt;名称&gt; ... #else ... #endif</code>：测试宏存在与否</li>
+<li><code>#undef &lt;名称&gt;</code> ：删除宏</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>需要自定义函数时，应当使用<code>File</code>-&gt;<code>Script File</code>独立加载，这时候可以创建独立的IDC程序文件来提供支持；</p>
+<p>应当满足：</p>
+<ul>
+<li>使用自定义函数；</li>
+<li>至少定义一个没有参数的<code>main</code>函数；</li>
+<li>文件中必须包含<code>idc.idc</code>头文件;</li>
+</ul>
+<p>下面是一个sample；</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;idc.idc&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> DEBUG</span></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="meta">#<span class="meta-keyword">ifdef</span> DEBUG</span></span><br><span class="line">    Message(<span class="string">&quot;DEBUG MODE\n&quot;</span>);</span><br><span class="line">    <span class="meta">#<span class="meta-keyword">else</span></span></span><br><span class="line">    Message(<span class="string">&quot;RELEASE MODE\n&quot;</span>);</span><br><span class="line">    <span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">	Message(<span class="string">&quot;this is a IDC Script File Sample!\n&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li><p>IDC常用函数</p>
+<ul>
+<li>数据访问<ul>
+<li>long Byte(long addr)：从虚拟地址addr处读取一个字节的值；</li>
+<li>long Word(long addr)：从虚拟地址addr处读取两个字节（一个字）的值；</li>
+<li>long Dword(long addr)：从虚拟地址addr处读取两个字节（双字）的值；</li>
+</ul>
+</li>
+<li>赋值<ul>
+<li>long PatchByte(long addr, long val)：将虚拟地址addr处的一个字节的值赋值为val；</li>
+<li>long PatchWord(long addr, long val)：将虚拟地址addr处的两个字节（一个字）的值赋值为val；</li>
+<li>long PatchDword(long addr, long val)：将虚拟地址addr处的两个字节（双字）的值赋值为val；</li>
+</ul>
+</li>
+<li>检测<ul>
+<li>bool isLoaded(long addr)：如果虚拟地址addr包含有效数据，则返回1，否则返回0；</li>
+</ul>
+</li>
+<li>打印<ul>
+<li>void Message(string format,…)</li>
+<li>void print(…)</li>
+<li>void Warning(string format,…)</li>
+</ul>
+</li>
+<li>交互<ul>
+<li>string AskStr(string default, string prompt)：要求用户在消息框中输入字符串；</li>
+<li>string AskFile(long doSave, string mask, string prompt)：要求用户选择文件；</li>
+<li>string AskYN(long default, string prompt)：获取用户选择的<code>Yes</code>或<code>No</code>；</li>
+<li>long ScreenEA()：返回当前光标所在位置的虚拟地址</li>
+<li>bool Jump(long addr)：跳转到反汇编下的指定addr；</li>
+</ul>
+</li>
+<li>字符串操作<ul>
+<li>long atol(string val)：十进制-&gt;整型；</li>
+<li>long xtol(string val)：十六进制-&gt;整型；</li>
+<li>string ltoa(long val, long radix)：指定radix进制返回val的字符串的值；</li>
+<li>long ord(string ch)：返回ch的ASCII码值；</li>
+<li>long strlen(string str)</li>
+<li>long strstr(string str, string search)：返回字符串str中search的索引，若没有则返回<code>-1</code>；</li>
+<li>string substr(string str, long start, long end)：切片，start-&gt;end-1；</li>
+</ul>
+</li>
+<li>函数操作<ul>
+<li>long GetFuntionAttr(long addr, logn attrib)</li>
+<li>string GetFunctionName(long addr)</li>
+<li>long NextFunction(long addr)</li>
+<li>long PrevFunction(long addr)</li>
+</ul>
+</li>
+<li>**代码交叉引用<ul>
+<li>long Rfirst(long form)</li>
+<li>long Rnext(long form, long current)</li>
+<li>long XrefType()</li>
+<li>long RfirstB(long to)</li>
+<li>long RnextB(long to, long current)</li>
+</ul>
+</li>
+<li>**数据交叉引用<ul>
+<li>long Dfirst(long form)</li>
+<li>long Dnext(long form, long current)</li>
+<li>long XrefType()</li>
+<li>long DfirstB(long to)</li>
+<li>long DnextB(long to, long current)</li>
+</ul>
+</li>
+<li>数据库名称<ul>
+<li>string Name(long addr)：返回地址在IDA数据库中的名称，若无则返回空；</li>
+<li>string NameEx(long form, long addr)：返回与addr相关的名称；</li>
+<li>bool MakeNameEx(long addr, string name, long flags)：给addr分配名称name，flags指定属性；</li>
+<li>long LocByName(string name)：返回指定name的addr；</li>
+<li>long LocByNameEx(long funcaddr, string localname)：在包含funcaddr的函数中指定局部名称localname；</li>
+</ul>
+</li>
+<li>数据库搜索<ul>
+<li>long FindCode(long addr, long flags)</li>
+<li>long FindBinary(long addr, long flags, string binary)</li>
+<li>long FindData(long addr, long flags)</li>
+<li>long FindText(long addr, long flags, long row, long column, string text)</li>
+</ul>
+</li>
+<li>数据库操纵<ul>
+<li>void MakeUnkn(long addr, long flags)</li>
+<li>long MakeCode(long addr)</li>
+<li>bool MakeByte(long addr) - MakeWord() - MakeDword()</li>
+<li>bool MakeFunction(long start, long end)</li>
+<li>bool MakeStr(long start, long end)</li>
+</ul>
+</li>
+<li>反汇编组件<ul>
+<li>string GetDisasm(long addr)</li>
+<li>string GetMnem(long addr)：地址的指令的助记符</li>
+<li>string GetOpnd(long addr, long opnum)：指令的指定操作数文本</li>
+<li>long GetOpType(long addr, long opnum)：指令的指定操作数类型</li>
+<li>long GetOperandValue(long addr, long opnum)：指令的指定操作数的值</li>
+<li>string CommentEx(long addr, long type)：注释</li>
+</ul>
+</li>
+</ul>
+<p>一个小demo，用于搜寻危险函数；</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#inclde <span class="meta-string">&lt;idc.idc&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="title">flagCalls</span><span class="params">(func_name)</span></span>&#123;</span><br><span class="line">    <span class="keyword">auto</span> count = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">auto</span> func, xref;</span><br><span class="line">    func_addr = LocByName(func_name);</span><br><span class="line">    <span class="keyword">if</span>(func_addr != Dangerous_func)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
 
         
             <div id="toc-article">
@@ -272,7 +435,7 @@
   <div class="widget-wrap" id="toc-wrap">
     <h3 class="widget-title"><i class="fa fa-toc"></i> 文章目录</h3>
     <div class="widget">
-      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%B7%AF%E7%94%B1%E5%99%A8%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90%E6%8A%80%E8%83%BD"><span class="toc-text">路由器漏洞分析技能</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#D-Link-DIR-605L"><span class="toc-text">D-Link&#x2F;DIR-605L</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BF%AE%E5%A4%8D%E8%B7%AF%E7%94%B1%E5%99%A8%E7%A8%8B%E5%BA%8F%E7%8E%AF%E5%A2%83"><span class="toc-text">修复路由器程序环境</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9B%BA%E4%BB%B6%E5%88%86%E6%9E%90%E4%B8%8E%E8%B0%83%E8%AF%95"><span class="toc-text">固件分析与调试</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#IDA%E5%8F%8D%E6%B1%87%E7%BC%96%E8%B0%83%E8%AF%95"><span class="toc-text">IDA反汇编调试</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%9D%99%E6%80%81%E5%8F%8D%E6%B1%87%E7%BC%96"><span class="toc-text">静态反汇编</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8A%A8%E6%80%81%E8%B0%83%E8%AF%95"><span class="toc-text">动态调试</span></a></li></ol></li></ol></li></ol></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%B7%AF%E7%94%B1%E5%99%A8%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90%E6%8A%80%E8%83%BD"><span class="toc-text">路由器漏洞分析技能</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#D-Link-DIR-605L"><span class="toc-text">D-Link&#x2F;DIR-605L</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BF%AE%E5%A4%8D%E8%B7%AF%E7%94%B1%E5%99%A8%E7%A8%8B%E5%BA%8F%E7%8E%AF%E5%A2%83"><span class="toc-text">修复路由器程序环境</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9B%BA%E4%BB%B6%E5%88%86%E6%9E%90%E4%B8%8E%E8%B0%83%E8%AF%95"><span class="toc-text">固件分析与调试</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#IDA%E5%8F%8D%E6%B1%87%E7%BC%96%E8%B0%83%E8%AF%95"><span class="toc-text">IDA反汇编调试</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%9D%99%E6%80%81%E5%8F%8D%E6%B1%87%E7%BC%96"><span class="toc-text">静态反汇编</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8A%A8%E6%80%81%E8%B0%83%E8%AF%95"><span class="toc-text">动态调试</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#IDA%E8%84%9A%E6%9C%AC%E5%9F%BA%E7%A1%80"><span class="toc-text">IDA脚本基础</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%84%9A%E6%9C%AC%E6%89%A7%E8%A1%8C"><span class="toc-text">脚本执行</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#IDC"><span class="toc-text">IDC</span></a></li></ol></li></ol></li></ol></li></ol>
     </div>
   </div>
 
