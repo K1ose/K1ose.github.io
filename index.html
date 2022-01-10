@@ -187,7 +187,123 @@
     </div>
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <h1 id="Intermediate-Representation"><a href="#Intermediate-Representation" class="headerlink" title="Intermediate Representation"></a>Intermediate Representation</h1>
+        <h1 id="Intermediate-Representation"><a href="#Intermediate-Representation" class="headerlink" title="Intermediate Representation"></a>Intermediate Representation</h1><h2 id="Compilers-amp-Static-Analyzers"><a href="#Compilers-amp-Static-Analyzers" class="headerlink" title="Compilers &amp; Static Analyzers"></a>Compilers &amp; Static Analyzers</h2><p>静态分析和编译器的关系？</p>
+<p><img src="/course/static-program-analysis/static-program-analysis-02-intermediate-representation/compiler_IR.jpg"></p>
+<p>如上图；</p>
+<ol>
+<li>Source Code通过Scanner生成了Tokens，Scanner完成了词法分析，根据正则表达式（Regular Expression）对不合法的词语进行处理，最后将每个合法的词生成一个tokens；</li>
+<li>Paser进行语法分析，也可以称句法分析，根据上下文无关文法（Context-Free Grammar）将无法识别的词句进行处理，生成了AST（抽象语法树）；这里不用上下文敏感文法而言，因为是上下文无关文法用来表述程序语法已经足够，否则将会导致分析编程语言时效率十分低下；</li>
+<li>Type Checker进行语义分析，例如上图中的<code>Apples eat you</code>，编译器进行简单的语义分析，例如类型检查的错误，根据Attribute Grammar的规则来进行处理，最后生成装饰后的抽象语法树（Decorated AST），其中包含检查过的类型信息等；</li>
+<li>前面步骤都通过后，如果编译器需要对程序进行后期优化，还需要使用转换器（Translator）进行转换，转换为中间表现形式IR，通常指的是三地址码。</li>
+<li>之后要使机器执行还需要代码生成器（Code Generator）来生成相应的机器码。</li>
+</ol>
+<p>这里可以简单地称IR生成前为前端，转换器生成IR后为后端。</p>
+<h2 id="AST-vs-IR"><a href="#AST-vs-IR" class="headerlink" title="AST vs. IR"></a>AST vs. IR</h2><p>为什么说通过在三地址码上分析利于静态分析器的分析？为什么不能直接在AST上分析呢？</p>
+<p>下面有一个例子。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">do</span>&#123;</span><br><span class="line">	i = i + <span class="number">1</span>;</span><br><span class="line">&#125;<span class="keyword">while</span>(a[i]&lt;v);</span><br></pre></td></tr></table></figure>
+
+<p>对于上面的代码会有如下的AST；</p>
+<p><img src="/course/static-program-analysis/static-program-analysis-02-intermediate-representation/AST.jpg"></p>
+<div align="center">
+    <p>
+        根节点标识为`do-while`循环；
+    </p>
+    <p>
+        左孩子为body循环体，其中有assign，左孩子为i,右孩子为+，而进行加法操作的则为i和1，表示为i = i + 1；
+    </p>
+    <p>
+        右孩子为条件表达式，>的左孩子为[]，对应的是数组a的下标为i的元素，而比较的另一方为v；
+    </p>
+</div>
+
+<p>对应的IR - 三地址码（”3-address” form）为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1: i = i + 1</span><br><span class="line">2: t1 = a [ i ]</span><br><span class="line">3: if t1 &lt; v goto 1</span><br></pre></td></tr></table></figure>
+
+<p>其中1、2、3标记了语句在程序中的位置。</p>
+<p>生成一个临时变量t1，该变量与v进行比较，如果t1&lt;v，则会goto第一条语句，进入一个循环。</p>
+<p>比较起来有如下的差别：</p>
+<p>AST</p>
+<ul>
+<li>high-level and closed to grammar structure - 更高层并且贴近语法结构</li>
+<li>usually language dependent - 通常依赖不同语言，因为更贴近语法结构，每个语言会有自己不同的语法结构</li>
+<li>suitable for fast type checking - 遍历AST的时候，更方便取类型进行类型检查</li>
+<li>lack of control flow information - 缺少控制流的表达信息</li>
+</ul>
+<p>IR</p>
+<ul>
+<li>low-level and closed to machine code - 更底层并且贴近汇编机器码</li>
+<li>usually language independent - 通常不太依赖高级语言的语法结构，因为更贴近机器码，而很多高级语言都能转化为汇编语言</li>
+<li>compact and uniform - 更加压缩化统一化</li>
+<li>contains control flow information - 能够包含体现控制流的信息</li>
+<li>usually considered as the basis for static analysis - 通常被认为是静态分析的基础</li>
+</ul>
+<h2 id="IR-Three-Address-Code-3AC"><a href="#IR-Three-Address-Code-3AC" class="headerlink" title="IR:Three-Address Code(3AC)"></a>IR:Three-Address Code(3AC)</h2><p>There is at most one operator on the right side of an instruction.</p>
+<p>如果要求只能有两个操作数和一个操作符，例如下面的</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">t1 = a + b +3</span><br></pre></td></tr></table></figure>
+
+<p>需要被转化成：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">t2 = a + b</span><br><span class="line">t1 = t2 + 3</span><br></pre></td></tr></table></figure>
+
+<p>为什么被称作三地址码呢？</p>
+<p>这里的地址并非真实的地址，而是概念上的地址，每个三地址码最多包含三种地址（元素）。</p>
+<p>对于上面的表达式，有：</p>
+<ul>
+<li>Name: a,b</li>
+<li>Constant: 3</li>
+<li>Compiler-generated temporary: t1, t2</li>
+</ul>
+<p>每种指令都有自己对应的三地址码，对于下列的三地址码表达式：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">x = y bop z</span><br><span class="line">x = uop y</span><br><span class="line">x = y</span><br><span class="line">goto L</span><br><span class="line">if x goto L</span><br><span class="line">if x rop y goto L</span><br></pre></td></tr></table></figure>
+
+<p>有如下解释：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">x, y, z: addresses - 上面表达式中的x,y,z可以是name, constant 或者是compiler-generated temporary。</span><br><span class="line">bop: binary arithmetic or logical operation - 二元操作符，即加减运算或者逻辑操作与或非</span><br><span class="line">uop: unary operation(minus, negation, casting) - 一元操作符，即类型转换、取反等等</span><br><span class="line">L: a label to represent a program location - 程序指令的地址标签</span><br><span class="line">rop: relational operator(&gt;, &lt;, ==, &gt;=, &lt;=, etc.) - 比较类型的操作符</span><br><span class="line">goto L: unconditional jump - 无条件跳转</span><br><span class="line">if ... goto L: conditional jump - 满足条件的跳转</span><br></pre></td></tr></table></figure>
+
+<p>这是形式上的三地址码，而真实的三地址码会复杂很多，例如Soot。</p>
+<h2 id="Soot-3AC-in-Real-Static-Analyzer"><a href="#Soot-3AC-in-Real-Static-Analyzer" class="headerlink" title="Soot: 3AC in Real Static Analyzer"></a>Soot: 3AC in Real Static Analyzer</h2><p>Soot是最有名的JAVA静态分析框架；</p>
+<p>Soot’s IR is Jimple - Soot的中间表示层为Jimple，是一种 typed 3-address code；</p>
+<h3 id="For-Loop"><a href="#For-Loop" class="headerlink" title="For Loop"></a>For Loop</h3><p>对于下列的JAVA代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> nju.sa.examples;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ForLoop3AC</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;</span><br><span class="line">		<span class="keyword">int</span> x = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++)</span><br><span class="line">            x = x + <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>下面是这个<code>For Loop</code>类型的三地址码。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">public static void main(java.lang.String[])&#123;</span><br><span class="line">	java.lang.String r0;</span><br><span class="line">	int i1;</span><br><span class="line">	</span><br><span class="line">	r0 := @parameter0: java.lang.String[];  </span><br><span class="line">	i1 = 0;</span><br><span class="line">	</span><br><span class="line">label1:</span><br><span class="line">	if i1 &gt;= 10 goto label2;</span><br><span class="line">	i1 = i1 + 1;</span><br><span class="line">	goto label1;</span><br><span class="line"></span><br><span class="line">label2:</span><br><span class="line">	return;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>对于</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">java.lang.String r0;</span><br><span class="line">int i1;</span><br></pre></td></tr></table></figure>
+
+<p>这里对r0和i1变量进行了声明，<code>java.lang.String</code>和<code>int</code>作为数据类型；</p>
+<ol start="2">
+<li>对于</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">r0 := @parameter0: java.lang.String[];  </span><br><span class="line">i1 = 0;</span><br></pre></td></tr></table></figure>
+
+<p>这里是对已经声明的变量进行赋值操作，但是这里并不是真正赋值，要知道三地址码只是对程序代码进行标记，以利于静态分析器进行分析。</p>
+<p>可以看到的是，对于r0变量的赋值操作，将传入的数组java.lang.String[]中的参数赋值给r0，而对于i1，则是for循环里定义的变量i。</p>
+<ol start="3">
+<li>对于</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">label1:</span><br><span class="line">	if i1 &gt;= 10 goto label2;</span><br><span class="line">	i1 = i1 + 1;</span><br><span class="line">	goto label1;</span><br></pre></td></tr></table></figure>
+
+<p>在标签label1中，存在三条语句。</p>
+<p><code>if i1 &gt;= 10 goto label2</code>，表示变量i1大于等于10时，跳转到label2标签。</p>
+<p>程序流继续向下，i1=i1+1，进行一次增操作。</p>
+<p>最后跳转回label1，继续for循环。</p>
+<p>可以看到，这里的形式非常像汇编代码。</p>
+<ol start="4">
+<li>对于</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">label2:</span><br><span class="line">	return;</span><br></pre></td></tr></table></figure>
+
+<p>则是跳出for循环后，程序运行结束。</p>
+<h3 id="Do-While-Loop"><a href="#Do-While-Loop" class="headerlink" title="Do-While Loop"></a>Do-While Loop</h3><p>对于do-while类型的Java代码，三地址码是什么样子的呢？</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> nju.sa.examples;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DoWhileLoop3AC</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;</span><br><span class="line">        <span class="keyword">int</span>[] arr = <span class="keyword">new</span> <span class="keyword">int</span>[<span class="number">10</span>];</span><br><span class="line">		<span class="keyword">int</span> i = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">do</span>&#123;</span><br><span class="line">            i = i + <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">while</span> (arr[i] &lt; <span class="number">10</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>对应的三地址码为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">public static void main(java.lang.String[])&#123;</span><br><span class="line">	java.lang.String[] r0;</span><br><span class="line">	int[] r1;</span><br><span class="line">	int $i0, i1;</span><br><span class="line">	</span><br><span class="line">	r0 := @parameter0: java.lang.String[]; </span><br><span class="line">    r1 = newarray (int)[10];</span><br><span class="line">    i1 = 0;</span><br><span class="line"></span><br><span class="line">label1:</span><br><span class="line">	i1 = i1 + 1;</span><br><span class="line">	$i0 = r1[i1];</span><br><span class="line">	if $i0 &lt; 10 goto label1;</span><br><span class="line">	return;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>…</p>
+<h2 id="Static-Single-Assignment-SSA"><a href="#Static-Single-Assignment-SSA" class="headerlink" title="Static Single Assignment(SSA)"></a>Static Single Assignment(SSA)</h2><h2 id="Basic-Blocks-BB"><a href="#Basic-Blocks-BB" class="headerlink" title="Basic Blocks(BB)"></a>Basic Blocks(BB)</h2><h2 id="Control-Flow-Graphs-CFG"><a href="#Control-Flow-Graphs-CFG" class="headerlink" title="Control Flow Graphs(CFG)"></a>Control Flow Graphs(CFG)</h2>
         
         
           <blockquote id="copyright">
