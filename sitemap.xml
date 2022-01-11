@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://www.jk404.cn/study/daily/talk/</loc>
+    
+    <lastmod>2022-01-11</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://www.jk404.cn/course/static-program-analysis/static-program-analysis-02-intermediate-representation/</loc>
     
     <lastmod>2022-01-11</lastmod>
@@ -573,20 +580,6 @@
   </url>
   
   <url>
-    <loc>https://www.jk404.cn/categories/study/daily/</loc>
-    <lastmod>2022-01-11</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.jk404.cn/categories/PWN/</loc>
-    <lastmod>2022-01-11</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
     <loc>https://www.jk404.cn/categories/CTF/</loc>
     <lastmod>2022-01-11</lastmod>
     <changefreq>daily</changefreq>
@@ -594,7 +587,7 @@
   </url>
   
   <url>
-    <loc>https://www.jk404.cn/categories/PWN/cve/</loc>
+    <loc>https://www.jk404.cn/categories/study/daily/</loc>
     <lastmod>2022-01-11</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -608,7 +601,7 @@
   </url>
   
   <url>
-    <loc>https://www.jk404.cn/categories/PWN/Fuzz/</loc>
+    <loc>https://www.jk404.cn/categories/PWN/</loc>
     <lastmod>2022-01-11</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -629,7 +622,7 @@
   </url>
   
   <url>
-    <loc>https://www.jk404.cn/categories/CTF/PWN/kernel-pwn/</loc>
+    <loc>https://www.jk404.cn/categories/CTF/PWN/wp/</loc>
     <lastmod>2022-01-11</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -643,7 +636,14 @@
   </url>
   
   <url>
-    <loc>https://www.jk404.cn/categories/CTF/PWN/uncategorized/</loc>
+    <loc>https://www.jk404.cn/categories/CTF/PWN/user-space-pwn/</loc>
+    <lastmod>2022-01-11</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.jk404.cn/categories/CTF/PWN/kernel-pwn/</loc>
     <lastmod>2022-01-11</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -657,14 +657,14 @@
   </url>
   
   <url>
-    <loc>https://www.jk404.cn/categories/CTF/PWN/user-space-pwn/</loc>
+    <loc>https://www.jk404.cn/categories/PWN/Fuzz/</loc>
     <lastmod>2022-01-11</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>https://www.jk404.cn/categories/PWN/Fuzz/AFL/</loc>
+    <loc>https://www.jk404.cn/categories/PWN/cve/</loc>
     <lastmod>2022-01-11</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -685,35 +685,14 @@
   </url>
   
   <url>
-    <loc>https://www.jk404.cn/categories/welcome/</loc>
+    <loc>https://www.jk404.cn/categories/CTF/PWN/uncategorized/</loc>
     <lastmod>2022-01-11</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>https://www.jk404.cn/categories/CTF/PWN/wp/</loc>
-    <lastmod>2022-01-11</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.jk404.cn/categories/golang/</loc>
-    <lastmod>2022-01-11</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.jk404.cn/categories/CTF/PWN/kernel-pwn/knowledge/</loc>
-    <lastmod>2022-01-11</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.jk404.cn/categories/PWN/microcorruption/</loc>
+    <loc>https://www.jk404.cn/categories/CTF/PWN/wp/asisctf/</loc>
     <lastmod>2022-01-11</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -727,7 +706,14 @@
   </url>
   
   <url>
-    <loc>https://www.jk404.cn/categories/CSAPP-lab/preparelab/</loc>
+    <loc>https://www.jk404.cn/categories/CTF/PWN/user-space-pwn/cve/</loc>
+    <lastmod>2022-01-11</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.jk404.cn/categories/CTF/PWN/kernel-pwn/knowledge/</loc>
     <lastmod>2022-01-11</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -741,13 +727,6 @@
   </url>
   
   <url>
-    <loc>https://www.jk404.cn/categories/pwn-college/</loc>
-    <lastmod>2022-01-11</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
     <loc>https://www.jk404.cn/categories/CTF/PWN/kernel-pwn/wp/</loc>
     <lastmod>2022-01-11</lastmod>
     <changefreq>daily</changefreq>
@@ -755,7 +734,154 @@
   </url>
   
   <url>
-    <loc>https://www.jk404.cn/categories/CTF/PWN/user-space-pwn/cve/</loc>
+    <loc>https://www.jk404.cn/categories/PWN/Fuzz/AFL/</loc>
+    <lastmod>2022-01-11</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.jk404.cn/categories/CTF/PWN/kernel-pwn/cve/</loc>
+    <lastmod>2022-01-11</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.jk404.cn/categories/CTF/PWN/kernel-pwn/Linux-source/</loc>
+    <lastmod>2022-01-11</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.jk404.cn/categories/CSAPP-lab/datalab/</loc>
+    <lastmod>2022-01-11</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.jk404.cn/categories/CTF/PWN/wp/asisctf/asisctf2021/</loc>
+    <lastmod>2022-01-11</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.jk404.cn/categories/OS/lab1/challenge2-qemu-gdb/</loc>
+    <lastmod>2022-01-11</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.jk404.cn/categories/OS/lab1/challenge1-what-is-make/</loc>
+    <lastmod>2022-01-11</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.jk404.cn/categories/OS/lab1/challenge4-load-kernel-elf/</loc>
+    <lastmod>2022-01-11</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.jk404.cn/categories/OS/lab1/challenge5-trace-stackframe/</loc>
+    <lastmod>2022-01-11</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.jk404.cn/categories/OS/lab1/challenge3-go-into-protected-mode/</loc>
+    <lastmod>2022-01-11</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.jk404.cn/categories/OS/lab1/challenge6-interrupt-handle/</loc>
+    <lastmod>2022-01-11</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.jk404.cn/categories/welcome/</loc>
+    <lastmod>2022-01-11</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.jk404.cn/categories/golang/</loc>
+    <lastmod>2022-01-11</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.jk404.cn/categories/CTF/PWN/wp/l3hctf/</loc>
+    <lastmod>2022-01-11</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.jk404.cn/categories/golang/start/</loc>
+    <lastmod>2022-01-11</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.jk404.cn/categories/PWN/microcorruption/</loc>
+    <lastmod>2022-01-11</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.jk404.cn/categories/pwn-college/</loc>
+    <lastmod>2022-01-11</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.jk404.cn/categories/CSAPP-lab/preparelab/</loc>
+    <lastmod>2022-01-11</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.jk404.cn/categories/CTF/PWN/wp/pwnable-kr/</loc>
+    <lastmod>2022-01-11</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.jk404.cn/categories/pwn-college/Chapter02-Binary-file/</loc>
+    <lastmod>2022-01-11</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.jk404.cn/categories/pwn-college/Introduciton/</loc>
+    <lastmod>2022-01-11</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.jk404.cn/categories/CTF/PWN/wp/buuoj/</loc>
     <lastmod>2022-01-11</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -769,7 +895,7 @@
   </url>
   
   <url>
-    <loc>https://www.jk404.cn/categories/CTF/PWN/kernel-pwn/cve/</loc>
+    <loc>https://www.jk404.cn/categories/pwn-college/Chapter01-Program-interaction/</loc>
     <lastmod>2022-01-11</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -797,104 +923,6 @@
   </url>
   
   <url>
-    <loc>https://www.jk404.cn/categories/CTF/PWN/kernel-pwn/Linux-source/</loc>
-    <lastmod>2022-01-11</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.jk404.cn/categories/CSAPP-lab/datalab/</loc>
-    <lastmod>2022-01-11</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.jk404.cn/categories/CTF/PWN/wp/asisctf/</loc>
-    <lastmod>2022-01-11</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.jk404.cn/categories/golang/start/</loc>
-    <lastmod>2022-01-11</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.jk404.cn/categories/CTF/PWN/wp/l3hctf/</loc>
-    <lastmod>2022-01-11</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.jk404.cn/categories/OS/lab1/challenge2-qemu-gdb/</loc>
-    <lastmod>2022-01-11</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.jk404.cn/categories/pwn-college/Chapter02-Binary-file/</loc>
-    <lastmod>2022-01-11</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.jk404.cn/categories/pwn-college/Introduciton/</loc>
-    <lastmod>2022-01-11</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.jk404.cn/categories/CTF/PWN/wp/pwnable-kr/</loc>
-    <lastmod>2022-01-11</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.jk404.cn/categories/OS/lab1/challenge1-what-is-make/</loc>
-    <lastmod>2022-01-11</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.jk404.cn/categories/pwn-college/Chapter01-Program-interaction/</loc>
-    <lastmod>2022-01-11</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.jk404.cn/categories/CTF/PWN/wp/buuoj/</loc>
-    <lastmod>2022-01-11</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.jk404.cn/categories/OS/lab1/challenge3-go-into-protected-mode/</loc>
-    <lastmod>2022-01-11</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.jk404.cn/categories/OS/lab1/challenge5-trace-stackframe/</loc>
-    <lastmod>2022-01-11</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
     <loc>https://www.jk404.cn/categories/CTF/PWN/kernel-pwn/FUZZ/Syzkaller/</loc>
     <lastmod>2022-01-11</lastmod>
     <changefreq>daily</changefreq>
@@ -902,28 +930,7 @@
   </url>
   
   <url>
-    <loc>https://www.jk404.cn/categories/OS/lab1/challenge6-interrupt-handle/</loc>
-    <lastmod>2022-01-11</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
     <loc>https://www.jk404.cn/categories/CTF/PWN/kernel-pwn/FUZZ/Trinity/</loc>
-    <lastmod>2022-01-11</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.jk404.cn/categories/OS/lab1/challenge4-load-kernel-elf/</loc>
-    <lastmod>2022-01-11</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.jk404.cn/categories/CTF/PWN/wp/asisctf/asisctf2021/</loc>
     <lastmod>2022-01-11</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
