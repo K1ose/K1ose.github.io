@@ -302,8 +302,10 @@
 </li>
 <li><p>做完工作后，输入</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git add .</span><br><span class="line">git commit -m &quot;first commit&quot; // 自定义</span><br><span class="line">git push -u origin master</span><br></pre></td></tr></table></figure></li>
-<li><p>可能会需要账号密码</p>
+<li><p>可能会需要账号密码，2021/8/13后需要用个人的token来访问仓库。</p>
 </li>
+<li><p>可以用下面的命令来避免每次都要输入token</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git remote set-url origin https://&lt;your_token&gt;@github.com/&lt;USERNAME&gt;/&lt;REPO&gt;.git</span><br></pre></td></tr></table></figure></li>
 <li><p>其他一些git指令：</p>
 </li>
 </ol>
