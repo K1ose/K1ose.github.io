@@ -144,9 +144,9 @@
 <p>How <code>application-specific Data</code> Flows through the <code>Nodes(BBs/statements)</code> and <code>Edges(control flows)</code> of <code>CFG</code>?</p>
 <p>=&gt; different <code>data-flow analysis applications</code> have</p>
 <p>=&gt; different <code>data abstraction</code> and</p>
-<p>=&gt; different <code>flow safe-approximation strateges</code>, i.e.,</p>
+<p>=&gt; different <code>flow safe-approximation strateges</code>, i.e.</p>
 <p>=&gt; different <code>transfer functions</code> and <code>control-flow handlings</code></p>
-<h3 id="Input-amp-Output-States"><a href="#Input-amp-Output-States" class="headerlink" title="Input &amp; Output States"></a>Input &amp; Output States</h3><ul>
+<h2 id="Preliminaries-of-Data-Flow-Analysis"><a href="#Preliminaries-of-Data-Flow-Analysis" class="headerlink" title="Preliminaries of Data Flow Analysis"></a>Preliminaries of Data Flow Analysis</h2><h3 id="Input-amp-Output-States"><a href="#Input-amp-Output-States" class="headerlink" title="Input &amp; Output States"></a>Input &amp; Output States</h3><ul>
 <li>Each execution of anIR statement transforms an ionput state to a new output state</li>
 <li>The input(output) state is associated with the program point before(after) the statement</li>
 </ul>
@@ -160,7 +160,7 @@
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">x = 10;</span><br><span class="line">	---- x = [+] y = [⊥]</span><br><span class="line">y = -1;</span><br><span class="line">	---- x = [+] y = [-]</span><br><span class="line">x = y;</span><br><span class="line">	---- x = [-] y = [-]</span><br><span class="line">x = x / y</span><br><span class="line">	---- x = [+] y = [-]</span><br></pre></td></tr></table></figure>
 
 <h3 id="Nations-for-Transfer-Function’s-Constraints"><a href="#Nations-for-Transfer-Function’s-Constraints" class="headerlink" title="Nations for Transfer Function’s Constraints"></a>Nations for Transfer Function’s Constraints</h3><ul>
-<li><p>Foward Analysis  </p>
+<li><p>Foward Analysis</p>
 <p><img src="/course/static-program-analysis/static-program-analysis-03-data-flow-analysis-1/forward_analysis.jpg"></p>
 <div align="center">使用下面的表示形式来表达上图的Output和input关系</div>
 
@@ -173,14 +173,74 @@
 <p>$$<br>IN[s] = f_s(OUT[s])<br>$$</p>
 </li>
 </ul>
-<h3 id="Notations-for-Control-Flow’s-Constraints"><a href="#Notations-for-Control-Flow’s-Constraints" class="headerlink" title="Notations for Control Flow’s Constraints"></a>Notations for Control Flow’s Constraints</h3><h2 id="Preliminaries-of-Data-Flow-Analysis"><a href="#Preliminaries-of-Data-Flow-Analysis" class="headerlink" title="Preliminaries of Data Flow Analysis"></a>Preliminaries of Data Flow Analysis</h2><h2 id="Reaching-Definitions-Analysis"><a href="#Reaching-Definitions-Analysis" class="headerlink" title="Reaching Definitions Analysis"></a>Reaching Definitions Analysis</h2><h2 id="Live-Variables-Analysis"><a href="#Live-Variables-Analysis" class="headerlink" title="Live Variables Analysis"></a>Live Variables Analysis</h2><h2 id="Available-Expressions-Analysis"><a href="#Available-Expressions-Analysis" class="headerlink" title="Available Expressions Analysis"></a>Available Expressions Analysis</h2>
+<h3 id="Notations-for-Control-Flow’s-Constraints"><a href="#Notations-for-Control-Flow’s-Constraints" class="headerlink" title="Notations for Control Flow’s Constraints"></a>Notations for Control Flow’s Constraints</h3><ul>
+<li><p>Control flow within a BB</p>
+<p><img src="/course/static-program-analysis/static-program-analysis-03-data-flow-analysis-1/withinBB.jpg"><br>$$<br>IN[s_{i+1}] = OUT[s_i], for\space all\space i = 1,\space 2,\space …,\space n-1<br>$$<br>这个表达式表明，在一个Base Block中，每个statement的输入是它上一个statement的输出。</p>
+</li>
+<li><p>Control flow among BBs</p>
+<center>
+    <img src="/course/static-program-analysis/static-program-analysis-03-data-flow-analysis-1/amongBBs1.jpg">
+    <img src="/course/static-program-analysis/static-program-analysis-03-data-flow-analysis-1/amongBBs2.jpg">
+</center>
+
+<p>$$<br>IN[B] = IN[s_1]<br>\<br>OUT[B] = OUT[s_n]<br>\<br>\<br>OUT[B] = f_B(IN[B]), \space f_B = f_{s_n} · … · f_{s_2} · f_{s_1}<br>\<br>IN[B] = ∧_{P \space a\space predecessor\space of\space B}\space OUT[P]<br>\<br>\<br>IN[B] = f_B(OUT[B]), f_B = f_{s_1} · … · f_{s_{n-1}} · f_{s_n}<br>\<br>OUT[B] = ∧_{S \space a\space successor\space of\space B}\space IN[S]<br>$$</p>
+<p>在多个BB之间，存在：</p>
+<ul>
+<li>当前BB的输入为第一个statement的输入</li>
+<li>当前BB的输出为该BB中最后一个statment的输出，即第n个statement的输出</li>
+<li>当P1和P2的OUT为B的IN时，可以用上述的$IN[B] = ∧_{P \space a\space predecessor\space of\space B}\space OUT[P]$表示</li>
+<li>当反向时也有类似的表示</li>
+</ul>
+</li>
+</ul>
+<h2 id="Data-Flow-Analysis-Applications"><a href="#Data-Flow-Analysis-Applications" class="headerlink" title="Data Flow Analysis Applications"></a>Data Flow Analysis Applications</h2><h3 id="Issues-Not-Covered"><a href="#Issues-Not-Covered" class="headerlink" title="Issues Not Covered"></a>Issues Not Covered</h3><p>下面的内容不包括：</p>
+<ul>
+<li>Method Calls - 方法调用<ul>
+<li>Intra-procedural CFG</li>
+<li>Will be introduced in lecture: Inter-procedural Analysis</li>
+</ul>
+</li>
+<li>Aliases - 别名，不同变量名指向相同的地址<ul>
+<li>Variables have no aliases</li>
+<li>Will be introduced imn lecture: Pointer Analysis</li>
+</ul>
+</li>
+</ul>
+<h3 id="Reaching-Definitions-Analysis"><a href="#Reaching-Definitions-Analysis" class="headerlink" title="Reaching Definitions Analysis"></a>Reaching Definitions Analysis</h3><h4 id="Preliminary"><a href="#Preliminary" class="headerlink" title="Preliminary"></a>Preliminary</h4><blockquote>
+<p>一个编译优化</p>
+<p>A definition d at program point p reaches a point q if there is a path from p to q such that d is not “killed” along that path.</p>
+</blockquote>
+<ul>
+<li>A definition of a variable v is a statement that assigns a value to v - 定义就是对v的声明赋值</li>
+<li>Translated as: definition of varibale v at program ponit p reaches point q if there is a path from p to q such that no new definition of v appears on that path - 在p点定义v的位置为d，p-&gt;q的路径中，不能对v有新的定义</li>
+<li>Reaching definitions can be used to detect possible undefined variables. e.g., introduce a dummy definition for each variablev at the entry of CFG, and if the dummy definition of v reaches a point p where v is used, then v may be used before definition (as undefined reaches v) - 一个变量在定义后，CFG前有一个入口结点，给每一个变量引入一个label，变量在程序执行之前是undefined的，如果这个undefined的值到v被使用的地方，则会报未初始化的错误。显然这是一个may analysis，因为程序有可能会执行到这个路径。</li>
+</ul>
+<h4 id="Understanding"><a href="#Understanding" class="headerlink" title="Understanding"></a>Understanding</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">D: v = x op y</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>Data Flow Values/Facts - Abstractoin - 抽象变量的定义</p>
+<ul>
+<li><p>The definitoins of all the variables in a program</p>
+</li>
+<li><p>Can be represented by bit vectors</p>
+<p>e.g., D1, D2, D3, D4, …, D100 - 一百个定义抽象为bit</p>
+</li>
+</ul>
+</li>
+<li><p>Transfer Function - Safe-approximation</p>
+<p><img src="/course/static-program-analysis/static-program-analysis-03-data-flow-analysis-1/understanding_reaching.jpg"><br>$$<br>OUT[B] = gen_B \space ∩ \space (IN[B] - kill_B)<br>$$</p>
+</li>
+<li><p>Control Flow</p>
+</li>
+</ul>
+<h3 id="Live-Variables-Analysis"><a href="#Live-Variables-Analysis" class="headerlink" title="Live Variables Analysis"></a>Live Variables Analysis</h3><h3 id="Available-Expressions-Analysis"><a href="#Available-Expressions-Analysis" class="headerlink" title="Available Expressions Analysis"></a>Available Expressions Analysis</h3>
         
             <div id="toc-article">
                 
   <div class="widget-wrap" id="toc-wrap">
     <h3 class="widget-title"><i class="fa fa-toc"></i> 文章目录</h3>
     <div class="widget">
-      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Data-Flow-Analysis"><span class="toc-text">Data Flow Analysis</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Overview-of-Data-Flow-Analysis"><span class="toc-text">Overview of Data Flow Analysis</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#What-is-Data-Flow-Analysis"><span class="toc-text">What is Data Flow Analysis</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Input-amp-Output-States"><span class="toc-text">Input &amp; Output States</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Nations-for-Transfer-Function%E2%80%99s-Constraints"><span class="toc-text">Nations for Transfer Function’s Constraints</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Notations-for-Control-Flow%E2%80%99s-Constraints"><span class="toc-text">Notations for Control Flow’s Constraints</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Preliminaries-of-Data-Flow-Analysis"><span class="toc-text">Preliminaries of Data Flow Analysis</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Reaching-Definitions-Analysis"><span class="toc-text">Reaching Definitions Analysis</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Live-Variables-Analysis"><span class="toc-text">Live Variables Analysis</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Available-Expressions-Analysis"><span class="toc-text">Available Expressions Analysis</span></a></li></ol></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Data-Flow-Analysis"><span class="toc-text">Data Flow Analysis</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Overview-of-Data-Flow-Analysis"><span class="toc-text">Overview of Data Flow Analysis</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#What-is-Data-Flow-Analysis"><span class="toc-text">What is Data Flow Analysis</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Preliminaries-of-Data-Flow-Analysis"><span class="toc-text">Preliminaries of Data Flow Analysis</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Input-amp-Output-States"><span class="toc-text">Input &amp; Output States</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Nations-for-Transfer-Function%E2%80%99s-Constraints"><span class="toc-text">Nations for Transfer Function’s Constraints</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Notations-for-Control-Flow%E2%80%99s-Constraints"><span class="toc-text">Notations for Control Flow’s Constraints</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Data-Flow-Analysis-Applications"><span class="toc-text">Data Flow Analysis Applications</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Issues-Not-Covered"><span class="toc-text">Issues Not Covered</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Reaching-Definitions-Analysis"><span class="toc-text">Reaching Definitions Analysis</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Preliminary"><span class="toc-text">Preliminary</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Understanding"><span class="toc-text">Understanding</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Live-Variables-Analysis"><span class="toc-text">Live Variables Analysis</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Available-Expressions-Analysis"><span class="toc-text">Available Expressions Analysis</span></a></li></ol></li></ol></li></ol>
     </div>
   </div>
 
