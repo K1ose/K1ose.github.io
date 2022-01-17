@@ -219,6 +219,7 @@
 
 <p>$$<br>OUT[s] = f_s(IN[s])<br>$$</p>
 </li>
+<li></li>
 <li><p>Backward Analysis</p>
 <p><img src="/course/static-program-analysis/static-program-analysis-03-data-flow-analysis-1/backward_analysis.jpg"></p>
 <div align="center">使用下面的表示形式来表达上图的逆向的Output和input关系</div>
@@ -280,13 +281,488 @@
 </li>
 </ul>
 </li>
-<li><p>Transfer Function - Safe-approximation</p>
-<p><img src="/course/static-program-analysis/static-program-analysis-03-data-flow-analysis-1/understanding_reaching.jpg"><br>$$<br>OUT[B] = gen_B \space ∩ \space (IN[B] - kill_B)<br>$$</p>
+<li><p>Transfer Function - Safe-approximation<br>$$<br>OUT[B] = gen_B \space ∪ \space (IN[B] - kill_B)<br>$$</p>
+<img src="/course/static-program-analysis/static-program-analysis-03-data-flow-analysis-1/understanding_reaching.jpg" height="500" width="600">
+
+<p>可以看到d1,d2,…,d7都是定义。</p>
+<ul>
+<li>对于B1：<ul>
+<li>其$gen_{B_1}$为定义i,j,a三个变量的标志d1,d2,d3；</li>
+<li>其$kill_{B_1}$为其他定义i,j,a的其他地方，所以标志为d4,d5,d6,d7；</li>
+</ul>
 </li>
-<li><p>Control Flow</p>
+<li>以此类推，可以得到B2的$gen_{B_2}$和$kill_{B_2}$等；</li>
+</ul>
+</li>
+<li><p>Control Flow<br>$$<br>IN[B]=∪_{P \space a\space predecessor\space of\space B}OUT[P]<br>$$<br>表示了所有其他前驱所汇聚到IN[B]，形成may analysis的一个过程。</p>
 </li>
 </ul>
-<h3 id="Live-Variables-Analysis"><a href="#Live-Variables-Analysis" class="headerlink" title="Live Variables Analysis"></a>Live Variables Analysis</h3><h3 id="Available-Expressions-Analysis"><a href="#Available-Expressions-Analysis" class="headerlink" title="Available Expressions Analysis"></a>Available Expressions Analysis</h3>
+<h4 id="Algorithm"><a href="#Algorithm" class="headerlink" title="Algorithm"></a>Algorithm</h4><ul>
+<li><p>Input: CFG($kill_B$ and $gen_B$ computed for each basic block B)</p>
+</li>
+<li><p>Output: IN[B] and OUT[B] for each basic block B</p>
+</li>
+<li><p>Method:</p>
+<img src="/course/static-program-analysis/static-program-analysis-03-data-flow-analysis-1/algorithm.jpg" height="300" width="500">
+
+<ul>
+<li>第一步，让entry结点的Output为空；</li>
+<li>然后遍历每一个basic block，让每一个bb的Output为空（这里排除了entry，是因为这是一个算法模板，有其他的算法对entry有其他操作，所以初始化时应当分开来进行）；</li>
+<li>只要有任何一个bb的Output发生了变化，则遍历每一个bb，使得bb的Input为Control flow的约束，Output为Transfer function的约束。</li>
+</ul>
+</li>
+</ul>
+<h4 id="Sample"><a href="#Sample" class="headerlink" title="Sample"></a>Sample</h4><p>这里举例说明，存在如下的CFG。</p>
+<img src="/course/static-program-analysis/static-program-analysis-03-data-flow-analysis-1/sample.jpg" height="400/">
+
+<p>这里将对不同变量的定义用颜色区分，可以看到，每一个statement都对应一个D的定义操作。</p>
+<p>这样的CFG可以有下面的代码转化而来：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">D1</span><br><span class="line">D2</span><br><span class="line">do&#123;</span><br><span class="line">	D3</span><br><span class="line">	D4</span><br><span class="line">	if(...)&#123;</span><br><span class="line">		D5</span><br><span class="line">		D6</span><br><span class="line">	&#125;</span><br><span class="line">	else&#123;</span><br><span class="line">		D7</span><br><span class="line">		break</span><br><span class="line">	&#125;</span><br><span class="line">&#125; while(...)</span><br><span class="line">D8</span><br></pre></td></tr></table></figure>
+
+<p>这里将八个Statement，即八个定义操作抽象为bit。0：表示到该点不能reach，1：到该点可以reach；</p>
+<h4 id="1st-traverse"><a href="#1st-traverse" class="headerlink" title="1st-traverse"></a>1st-traverse</h4><p>根据算法，初始化后，所有的Output为空。</p>
+<ul>
+<li><p>进入Entry，没有变量的定义，都不能reach</p>
+<table>
+<thead>
+<tr>
+<th>Step</th>
+<th>Statement</th>
+<th align="center">D1</th>
+<th align="center">D2</th>
+<th align="center">D3</th>
+<th align="center">D4</th>
+<th align="center">D5</th>
+<th align="center">D6</th>
+<th align="center">D7</th>
+<th align="center">D8</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1-Entry</td>
+<td>\</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+</tr>
+</tbody></table>
+</li>
+<li><p>进入第一个Basic Block，B1有两个statement，分别是D1和D2，通过$OUT[B] = gen_B \space ∪ \space (IN[B] - kill_B)$可以得到：</p>
+<ul>
+<li>$gen_{B_1}$ = {D1,D2}，$kill_{B_1}$ = {D4,D5,D7}</li>
+</ul>
+<p>因此，在执行了B1的statement后，有：</p>
+<table>
+<thead>
+<tr>
+<th>Step</th>
+<th>Statement</th>
+<th align="center">D1</th>
+<th align="center">D2</th>
+<th align="center">D3</th>
+<th align="center">D4</th>
+<th align="center">D5</th>
+<th align="center">D6</th>
+<th align="center">D7</th>
+<th align="center">D8</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>2-B1</td>
+<td>D1: x = p + 1<br>D2: y = q + 2</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+</tr>
+</tbody></table>
+</li>
+<li><p>进入B2后，根据$IN[B]=∪_{P \space a\space predecessor\space of\space B}OUT[P]$，找到B2的前驱，一共有两个，分别是B1和B4。B1的<code>OUT[B1]=11000000</code>，B4的<code>OUT[B4]=00000000</code>，两者做或操作，作为<code>IN[B2]</code>，因此<code>IN[B2]=11000000</code>；</p>
+<p>在B2的statement中，存在：1. 引入新变量m；2.对y变量的再次定义，因此有：</p>
+<ul>
+<li>$gen_{B_2}$ = {D3,D4}，$kill_{B_2}$ = {D2}</li>
+</ul>
+<p>因此将进行<code>kill</code>，而D2目前为<code>1</code>，kill掉后为<code>0</code>；</p>
+<p>因此B2的<code>OUT[B2]=10110000</code>，这同时也是B3、B4的<code>IN</code>；</p>
+<table>
+<thead>
+<tr>
+<th>Step</th>
+<th>Statement</th>
+<th align="center">D1</th>
+<th align="center">D2</th>
+<th align="center">D3</th>
+<th align="center">D4</th>
+<th align="center">D5</th>
+<th align="center">D6</th>
+<th align="center">D7</th>
+<th align="center">D8</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>3-B2</td>
+<td>D3: m = k<br>D4: y = q - 1</td>
+<td align="center">1</td>
+<td align="center">0</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+</tr>
+</tbody></table>
+</li>
+<li><p>由于B2有两个分支，这里按顺序先考虑B3；</p>
+<p>B3对变量x进行了重定义，有：</p>
+<ul>
+<li>$gen_{B_3}$ = {D7}，$kill_{B_3}$ = {D1,D5}</li>
+</ul>
+<p>因此对于<code>IN[B3]=10110000</code>，将有<code>OUT[B5]=00110010</code></p>
+<table>
+<thead>
+<tr>
+<th>Step</th>
+<th>Statement</th>
+<th align="center">D1</th>
+<th align="center">D2</th>
+<th align="center">D3</th>
+<th align="center">D4</th>
+<th align="center">D5</th>
+<th align="center">D6</th>
+<th align="center">D7</th>
+<th align="center">D8</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>4-B3</td>
+<td>D7: x = m - 3</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">1</td>
+<td align="center">0</td>
+</tr>
+</tbody></table>
+</li>
+<li><p>对于B4，同样的有：</p>
+<ul>
+<li>$gen_{B_4}$ = {D5,D6}，$kill_{B_4}$ = {D1,D7,D8}</li>
+</ul>
+<p><code>IN[B4]=10110000</code>，将有<code>OUT[B5]=00111100</code>；</p>
+<table>
+<thead>
+<tr>
+<th>Step</th>
+<th>Statement</th>
+<th align="center">D1</th>
+<th align="center">D2</th>
+<th align="center">D3</th>
+<th align="center">D4</th>
+<th align="center">D5</th>
+<th align="center">D6</th>
+<th align="center">D7</th>
+<th align="center">D8</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>5-B4</td>
+<td>D5: x = 4<br>D6: z = 5</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">0</td>
+<td align="center">0</td>
+</tr>
+</tbody></table>
+</li>
+<li><p>对于B5，根据$IN[B]=∪_{P \space a\space predecessor\space of\space B}OUT[P]$，找到其对应的前驱，<code>OUT[B3]</code>、<code>OUT[B4]</code>，进行或操作，得到<code>IN[B5]=00111110</code>;</p>
+<p>同样有：</p>
+<ul>
+<li>$gen_{B_5}$ = {D8}，$kill_{B_5}$ = {D6}</li>
+</ul>
+<p>对于<code>IN[B5]=00111110</code>，有<code>OUT[B5]=00111011</code>；</p>
+<table>
+<thead>
+<tr>
+<th>Step</th>
+<th>Statement</th>
+<th align="center">D1</th>
+<th align="center">D2</th>
+<th align="center">D3</th>
+<th align="center">D4</th>
+<th align="center">D5</th>
+<th align="center">D6</th>
+<th align="center">D7</th>
+<th align="center">D8</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>6-B5</td>
+<td>D8: z = 2p</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">0</td>
+<td align="center">1</td>
+<td align="center">1</td>
+</tr>
+</tbody></table>
+</li>
+<li><p>进入Exit，完成第一次遍历，是否需要再次进行循环的条件是<code>while(changes to any OUT occur)</code>，显然出现了新的OUT，所以仍然需要进行遍历。</p>
+<p><code>Changes occur in OUT[] of B1,B2,B3,B4,B5</code></p>
+<p>这里对每一个Basic Block的情况进行汇总：</p>
+<table>
+<thead>
+<tr>
+<th>BB</th>
+<th>IN[]</th>
+<th>Statement</th>
+<th>$gen_B$</th>
+<th>$kill_B$</th>
+<th align="center">D1</th>
+<th align="center">D2</th>
+<th align="center">D3</th>
+<th align="center">D4</th>
+<th align="center">D5</th>
+<th align="center">D6</th>
+<th align="center">D7</th>
+<th align="center">D8</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>B1</td>
+<td>Entry</td>
+<td>D1: x = p + 1<br>D2: y = q + 2</td>
+<td>{D1,D2}</td>
+<td>{D4,D5,D7}</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td>B2</td>
+<td>B1、B4</td>
+<td>D3: m = k<br>D4: y = q - 1</td>
+<td>{D3,D4}</td>
+<td>{D2}</td>
+<td align="center">1</td>
+<td align="center">0</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td>B3</td>
+<td>B2</td>
+<td>D7: x = m - 3</td>
+<td>{D7}</td>
+<td>{D1,D5}</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">1</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td>B4</td>
+<td>B2</td>
+<td>D5: x = 4<br>D6: z = 5</td>
+<td>{D5,D6}</td>
+<td>{D1,D7,D8}</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">0</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td>B5</td>
+<td>B3、B4</td>
+<td>D8: z = 2p</td>
+<td>{D8}</td>
+<td>{D6}</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">0</td>
+<td align="center">1</td>
+<td align="center">1</td>
+</tr>
+</tbody></table>
+</li>
+</ul>
+<h4 id="2nd-traverse"><a href="#2nd-traverse" class="headerlink" title="2nd-traverse"></a>2nd-traverse</h4><p>在第二次遍历时，</p>
+<ul>
+<li><p>对于B1，OUT是不需要重新计算的；</p>
+</li>
+<li><p>而对于B2而言，其IN分别来自B1、B4，要对他们的IN进行或运算，即<code>IN[B1]=11000000</code>、<code>IN[B4]=00111100</code>，可以得到<code>IN[B2]=11111100</code>，在根据$gen_B$、$kill_B$进行操作后，得到<code>OUT[B2]=10111100</code>；</p>
+</li>
+<li><p>对于B3，其IN为B2的OUT，所以<code>IN[B3]=10111100</code>，<code>OUT[B3]=00110110</code>；</p>
+</li>
+<li><p>对于B4，其IN为B2的OUT，所以<code>IN[B4]=10111100</code>，<code>OUT[B4]=00111100</code>；</p>
+</li>
+<li><p>对于B5，其IN为B3、B4的OUT，所以<code>IN[B5]=00111110</code>，<code>OUT[B5]=00111011</code></p>
+</li>
+<li><p>进入Exit，完成第二次遍历后，检查OUT判断是否要进行第三次循环；</p>
+<table>
+<thead>
+<tr>
+<th>BB</th>
+<th>IN[]</th>
+<th>Statement</th>
+<th>$gen_B$</th>
+<th>$kill_B$</th>
+<th align="center">D1</th>
+<th align="center">D2</th>
+<th align="center">D3</th>
+<th align="center">D4</th>
+<th align="center">D5</th>
+<th align="center">D6</th>
+<th align="center">D7</th>
+<th align="center">D8</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>B1</td>
+<td>Entry</td>
+<td>D1: x = p + 1<br>D2: y = q + 2</td>
+<td>{D1,D2}</td>
+<td>{D4,D5,D7}</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td>B2</td>
+<td>B1、B4</td>
+<td>D3: m = k<br>D4: y = q - 1</td>
+<td>{D3,D4}</td>
+<td>{D2}</td>
+<td align="center">1</td>
+<td align="center">0</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">0</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td>B3</td>
+<td>B2</td>
+<td>D7: x = m - 3</td>
+<td>{D7}</td>
+<td>{D1,D5}</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">0</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td>B4</td>
+<td>B2</td>
+<td>D5: x = 4<br>D6: z = 5</td>
+<td>{D5,D6}</td>
+<td>{D1,D7,D8}</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">0</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td>B5</td>
+<td>B3、B4</td>
+<td>D8: z = 2p</td>
+<td>{D8}</td>
+<td>{D6}</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">0</td>
+<td align="center">1</td>
+<td align="center">1</td>
+</tr>
+</tbody></table>
+<p>可以看到<code>Changes occur in OUT[] of B2,B3</code>，因此需要进行第三次遍历；</p>
+</li>
+</ul>
+<h4 id="3rd-traverse"><a href="#3rd-traverse" class="headerlink" title="3rd-traverse"></a>3rd-traverse</h4><ul>
+<li>遍历结束后，OUT没有变化，因此不需要进行第四次遍历。</li>
+</ul>
+<h3 id="Why-this-algorithm-can-finally-stop"><a href="#Why-this-algorithm-can-finally-stop" class="headerlink" title="Why this algorithm can finally stop?"></a>Why this algorithm can finally stop?</h3><p>Transfer Function:<br>$$<br>OUT[B] = gen_B \space ∪ \space (IN[B] - kill_B)<br>$$</p>
+<ul>
+<li>$gen_B$ and $kill_B$ remain unchanged</li>
+<li>When more facts flow in IN[B], the “more facts” either<ul>
+<li>is killed, or</li>
+<li>flows to OUT[B]（$survivor_B$）</li>
+</ul>
+</li>
+<li>When a fact is added to OUT[B], through either $gen_B$, or $survivor_B$, it stays there forever</li>
+<li>Thus OUt[B] newver shrinks (e.g., 0-&gt;1, or 1-&gt;1)</li>
+<li>As the set of facts i s finite (e.g., all definitions in the program), there must exist a pass of iteration during which nothing is added to any OUT, and then the algorithm terminates</li>
+</ul>
+<h3 id="Safe-to-terminate-by-condition-do-while"><a href="#Safe-to-terminate-by-condition-do-while" class="headerlink" title="Safe to terminate by condition do..while?"></a>Safe to terminate by condition do..while?</h3><p>迭代和Transfer Function的原因，最终算法会到达一个不动点，这个不动点是一个safe-approximation的结果。</p>
+<h4 id="assumption"><a href="#assumption" class="headerlink" title="assumption"></a>assumption</h4><ul>
+<li>对于一个Basic Block，同样的输入会得到同样的输出，即对于输入x，res = $gen_B\space ∪\space x\space -\space kill_B$ ，x不变时，res也不会变。</li>
+<li>对于B1，不需要重复计算IN[B1]和OUT[B1]。</li>
+<li>对于每个Basic Block的OUT中，D如果为1，则表示该定义能够reach到当前BB，否知则否。</li>
+<li>In each data-flow analysis application, we associate with every program point a data-flow value taht represents an abstraction of the set of all possible program states that can be observed for that point. Data-flow analysis is to find a solution to a set of safe-approximation-directed constraints on the IN[s]’s and OUT[s]’s, for all statements s.<ul>
+<li>constraints based on semantics of statements(transfer funcitons)</li>
+<li>constraints based on the flows of control</li>
+</ul>
+</li>
+</ul>
+<h3 id="Live-Variables-Analysis"><a href="#Live-Variables-Analysis" class="headerlink" title="Live Variables Analysis"></a>Live Variables Analysis</h3><h3 id="Available-Expressions-Analysis"><a href="#Available-Expressions-Analysis" class="headerlink" title="Available Expressions Analysis"></a>Available Expressions Analysis</h3><p>Must Analysis</p>
+
         
         
           <blockquote id="copyright">
