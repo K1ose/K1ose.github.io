@@ -261,7 +261,7 @@
 </li>
 </ul>
 <h3 id="Reaching-Definitions-Analysis"><a href="#Reaching-Definitions-Analysis" class="headerlink" title="Reaching Definitions Analysis"></a>Reaching Definitions Analysis</h3><h4 id="Preliminary"><a href="#Preliminary" class="headerlink" title="Preliminary"></a>Preliminary</h4><blockquote>
-<p>一个编译优化</p>
+<p>一个编译优化 - may analysis</p>
 <p>A definition d at program point p reaches a point q if there is a path from p to q such that d is not “killed” along that path.</p>
 </blockquote>
 <ul>
@@ -738,7 +738,7 @@
 <h4 id="3rd-traverse"><a href="#3rd-traverse" class="headerlink" title="3rd-traverse"></a>3rd-traverse</h4><ul>
 <li>遍历结束后，OUT没有变化，因此不需要进行第四次遍历。</li>
 </ul>
-<h3 id="Why-this-algorithm-can-finally-stop"><a href="#Why-this-algorithm-can-finally-stop" class="headerlink" title="Why this algorithm can finally stop?"></a>Why this algorithm can finally stop?</h3><p>Transfer Function:<br>$$<br>OUT[B] = gen_B \space ∪ \space (IN[B] - kill_B)<br>$$</p>
+<h4 id="Why-this-algorithm-can-finally-stop"><a href="#Why-this-algorithm-can-finally-stop" class="headerlink" title="Why this algorithm can finally stop?"></a>Why this algorithm can finally stop?</h4><p>Transfer Function:<br>$$<br>OUT[B] = gen_B \space ∪ \space (IN[B] - kill_B)<br>$$</p>
 <ul>
 <li>$gen_B$ and $kill_B$ remain unchanged</li>
 <li>When more facts flow in IN[B], the “more facts” either<ul>
@@ -750,7 +750,7 @@
 <li>Thus OUt[B] newver shrinks (e.g., 0-&gt;1, or 1-&gt;1)</li>
 <li>As the set of facts i s finite (e.g., all definitions in the program), there must exist a pass of iteration during which nothing is added to any OUT, and then the algorithm terminates</li>
 </ul>
-<h3 id="Safe-to-terminate-by-condition-do-while"><a href="#Safe-to-terminate-by-condition-do-while" class="headerlink" title="Safe to terminate by condition do..while?"></a>Safe to terminate by condition do..while?</h3><p>迭代和Transfer Function的原因，最终算法会到达一个不动点，这个不动点是一个safe-approximation的结果。</p>
+<h4 id="Safe-to-terminate-by-condition-do-while"><a href="#Safe-to-terminate-by-condition-do-while" class="headerlink" title="Safe to terminate by condition do..while?"></a>Safe to terminate by condition do..while?</h4><p>迭代和Transfer Function的原因，最终算法会到达一个不动点，这个不动点是一个safe-approximation的结果。</p>
 <h4 id="assumption"><a href="#assumption" class="headerlink" title="assumption"></a>assumption</h4><ul>
 <li>对于一个Basic Block，同样的输入会得到同样的输出，即对于输入x，res = $gen_B\space ∪\space x\space -\space kill_B$ ，x不变时，res也不会变。</li>
 <li>对于B1，不需要重复计算IN[B1]和OUT[B1]。</li>
@@ -761,7 +761,110 @@
 </ul>
 </li>
 </ul>
-<h3 id="Live-Variables-Analysis"><a href="#Live-Variables-Analysis" class="headerlink" title="Live Variables Analysis"></a>Live Variables Analysis</h3><h3 id="Available-Expressions-Analysis"><a href="#Available-Expressions-Analysis" class="headerlink" title="Available Expressions Analysis"></a>Available Expressions Analysis</h3><p>Must Analysis</p>
+<h3 id="Live-Variables-Analysis"><a href="#Live-Variables-Analysis" class="headerlink" title="Live Variables Analysis"></a>Live Variables Analysis</h3><h4 id="Preliminary-1"><a href="#Preliminary-1" class="headerlink" title="Preliminary"></a>Preliminary</h4><blockquote>
+<p>Live variables analysis tells whether the value of variable v at program point p could be used along some path in CFG starting at p. If so, v is live at p; otherwise, v is dead at p.</p>
+</blockquote>
+<p>v(p) == should not be redefined before usage =&gt; use(v)</p>
+<ul>
+<li>Information of live variables can be used for register allocations.e.g., at some point all registers are full and we need to use one, then we should favor using a register with a dead value. - 如果存放变量的寄存器都被占用了，那么应该首先使用存放dead value的寄存器来存放新的value。</li>
+</ul>
+<h4 id="Understanding-1"><a href="#Understanding-1" class="headerlink" title="Understanding"></a>Understanding</h4><ul>
+<li><p>Data Flow Values/Facts - Abstraction</p>
+<ul>
+<li><p>All the variables in a program</p>
+</li>
+<li><p>Can be represented by bit vectors</p>
+<p>e.g., v1,v2,v3,…,v100 -&gt; 100 bits</p>
+</li>
+</ul>
+</li>
+<li><p>Algorithm Design- Safe-approximation</p>
+<ul>
+<li><p>Transfer Function</p>
+<p>$OUT[B]=∪_{S \space a\space successor\space of\space B}\space IN[B]$</p>
+<p>$IN[B]=use_B\space ∪\space (OUT[B]-def_B)$</p>
+</li>
+<li><p>对Transfer Function的理解</p>
+<ul>
+<li>采取何种分析方式？Backward or Forward？</li>
+<li>已知<code>OUT[B]</code>，何来<code>IN[B]</code>？</li>
+</ul>
+<p>对于下面的例子：</p>
+<img src="/course/static-program-analysis/static-program-analysis-03-data-flow-analysis-1/understanding_live.jpg" height="300" width="500/">
+
+<p>在已知<code>OUT[B]=&#123;v&#125;</code>的情况下，如何去推算<code>IN[B]</code>呢？这里先举几个例子，针对不同的?，有以下内容形成的表格：</p>
+<table>
+<thead>
+<tr>
+<th align="left">?</th>
+<th align="center">$use_B$</th>
+<th align="center">$def_B$</th>
+<th align="center">IsBefore Flag</th>
+<th align="center">IN[B]</th>
+<th align="center">Explanation</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">k = n</td>
+<td align="center">{n}</td>
+<td align="center">{k}</td>
+<td align="center">0</td>
+<td align="center">{v}</td>
+<td align="center">not used, not redefined</td>
+</tr>
+<tr>
+<td align="left">k = v</td>
+<td align="center">{v}</td>
+<td align="center">{k}</td>
+<td align="center">0</td>
+<td align="center">{v}</td>
+<td align="center">used</td>
+</tr>
+<tr>
+<td align="left">v = 2</td>
+<td align="center">{}</td>
+<td align="center">{v}</td>
+<td align="center">0</td>
+<td align="center">{}</td>
+<td align="center">not used, redefined</td>
+</tr>
+<tr>
+<td align="left">v = v - 1</td>
+<td align="center">{v}</td>
+<td align="center">{v}</td>
+<td align="center">1</td>
+<td align="center">{v}</td>
+<td align="center">used before redefined</td>
+</tr>
+<tr>
+<td align="left">v = 2<br>k = v</td>
+<td align="center">{v}</td>
+<td align="center">{v, k}</td>
+<td align="center">0</td>
+<td align="center">{}</td>
+<td align="center">redefined before used</td>
+</tr>
+<tr>
+<td align="left">k = v<br>v = 2</td>
+<td align="center">{v}</td>
+<td align="center">{k, v}</td>
+<td align="center">1</td>
+<td align="center">{v}</td>
+<td align="center">used before redefined</td>
+</tr>
+</tbody></table>
+<p>在redefine之前如果use，那么认为该变量仍然是live的。</p>
+<p>可以看到，其实很多数据流分析的pattern都是$gen_B$和$kill_B$的结构；</p>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="Algorithm-1"><a href="#Algorithm-1" class="headerlink" title="Algorithm"></a>Algorithm</h4><ul>
+<li>INPUT：CFG(def_B and useB computed for each basic block B)</li>
+<li>OUTPUT：IN[B] and OUT[B] for each basic block B</li>
+<li>Method：</li>
+</ul>
+<h3 id="Available-Expressions-Analysis"><a href="#Available-Expressions-Analysis" class="headerlink" title="Available Expressions Analysis"></a>Available Expressions Analysis</h3><p>Must Analysis</p>
 
         
         
