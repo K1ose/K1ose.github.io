@@ -206,62 +206,62 @@
 </thead>
 <tbody><tr>
 <td>0</td>
-<td>zero</td>
+<td><code>zero</code></td>
 <td>值始终为0的寄存器</td>
 </tr>
 <tr>
 <td>1</td>
-<td>$at</td>
+<td><code>$at</code></td>
 <td>保留寄存器</td>
 </tr>
 <tr>
 <td>2~3</td>
-<td>$v0~$v1</td>
+<td><code>$v0</code>~`$v1`</td>
 <td>values，保存表达式或函数返回结果</td>
 </tr>
 <tr>
 <td>4~7</td>
-<td>$a0~$a3</td>
+<td><code>$a0</code>~`$a3`</td>
 <td>arguments，函数的前4个参数</td>
 </tr>
 <tr>
 <td>8~15</td>
-<td>$t0~$t7</td>
+<td><code>$t0</code>~`$t7`</td>
 <td>temporaries，供汇编程序使用的临时寄存器</td>
 </tr>
 <tr>
 <td>16~23</td>
-<td>$s0~$s7</td>
+<td><code>$s0</code>~`$s7`</td>
 <td>saved values，子函数使用时需要先保存源寄存器的值</td>
 </tr>
 <tr>
 <td>24~25</td>
-<td>$t8~$t9</td>
+<td><code>$t8</code>~`$t9`</td>
 <td>temporaries，供汇编程序使用的临时寄存器，对$t0~$t7的补充</td>
 </tr>
 <tr>
 <td>26~27</td>
-<td>$k0~$k1</td>
+<td><code>$k0</code>~`$k1`</td>
 <td>保留，中断处理函数调用</td>
 </tr>
 <tr>
 <td>28</td>
-<td>$gp</td>
+<td><code>$gp</code></td>
 <td>global pointer，全局指针</td>
 </tr>
 <tr>
 <td>29</td>
-<td>$sp</td>
+<td><code>$sp</code></td>
 <td>stack pointer，堆栈指针，指向堆栈的栈顶</td>
 </tr>
 <tr>
 <td>30</td>
-<td>$fp</td>
+<td><code>$fp</code></td>
 <td>frame pointer，保存栈指针</td>
 </tr>
 <tr>
 <td>31</td>
-<td>$ra</td>
+<td><code>$ra</code></td>
 <td>return address，返回地址</td>
 </tr>
 </tbody></table>
@@ -325,31 +325,31 @@
 <li><p>LA(Load Address)，将一个地址或标签存入一个寄存器；</p>
 <p><code>[la $Rd, Label]</code></p>
 <blockquote>
-<p>la $t0, val_1                复制val_1（一个Label）表示的地址到$t0寄存器</p>
+<p>la <code>$t0</code>, val_1                复制val_1（一个Label）表示的地址到$t0寄存器</p>
 </blockquote>
 </li>
 <li><p>LI(Load Immediate)，将一个立即数存入一个通用寄存器；</p>
 <p><code>[li $Rd, imm]</code></p>
 <blockquote>
-<p>li $t1, 40                  寄存器$t1赋值为40，相当于<code>addi $t1, $zero, 40;</code></p>
+<p>li <code>$t1</code>, 40                  寄存器$t1赋值为40，相当于<code>addi $t1, $zero, 40;</code></p>
 </blockquote>
 </li>
 <li><p>LW(Load Word)，从指定地址加载一个word类型的值到一个寄存器中；</p>
 <p><code>[lw $Rt, offset($Rs)]</code></p>
 <blockquote>
-<p>lw $s0, 0($sp)              <code>$s0 = MEM[$sp+0];</code>，取堆栈地址偏移0内存word大小的值到$s0寄存器中</p>
+<p>lw <code>$s0</code>, <code>0($sp)</code>              <code>$s0 = MEM[$sp+0];</code>，取堆栈地址偏移0内存word大小的值到$s0寄存器中</p>
 </blockquote>
 </li>
 <li><p>SW(Store Word)，将源寄存器中的值存入指定的地址；</p>
 <p><code>sw $Rt, offset($Rs)</code></p>
 <blockquote>
-<p>sw $a0, 0($sp)              <code>MEM[$sp+0] = $a0;</code>，将$a0寄存器中的一个word大小的值存入堆栈，且$sp自动抬栈</p>
+<p>sw <code>$a0</code>, <code>0($sp)</code>              <code>MEM[$sp+0] = $a0;</code>，将<code>$a0</code>寄存器中的一个word大小的值存入堆栈，且<code>$sp</code>自动抬栈</p>
 </blockquote>
 </li>
 <li><p>MOVE，用于寄存器之间值的传递；</p>
 <p><code>move $Rt, $Rs</code></p>
 <blockquote>
-<p>move $t5, $t1               <code>$t5 = $t1;</code>，$t5寄存器赋值为$t1寄存器的值</p>
+<p>move <code>$t5</code>, <code>$t1</code>               <code>$t5 = $t1;</code>，<code>$t5</code>寄存器赋值为<code>$t1</code>寄存器的值</p>
 </blockquote>
 </li>
 </ul>

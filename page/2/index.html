@@ -935,9 +935,60 @@
 <p>可以看到，<code>no_stack</code>函数是一个叶子函数，叶子函数不会把寄存器<code>$RA</code>的值保存在栈中，这种情况要如何去修改返回地址呢？</p>
 <p>如果缓冲区足够大，还是可以修改main()函数栈空间中存放的上层函数的返回地址的；</p>
 <h3 id="实践"><a href="#实践" class="headerlink" title="实践"></a>实践</h3><p>vuln_system漏洞程序的源码：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// vuln_system.c</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/stat.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">do_system</span><span class="params">(<span class="keyword">int</span> code, <span class="keyword">char</span> *cmd)</span></span>&#123;</span><br><span class="line">	<span class="keyword">char</span> buf[<span class="number">255</span>];</span><br><span class="line">	<span class="comment">// sleep(1);</span></span><br><span class="line">	system(cmd);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">	<span class="keyword">char</span> buf[<span class="number">256</span>] = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">	<span class="keyword">char</span> ch;</span><br><span class="line">	<span class="keyword">int</span> count = <span class="number">0</span>;</span><br><span class="line">	<span class="keyword">unsigned</span> <span class="keyword">int</span> fileLen = <span class="number">0</span>;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">stat</span> <span class="title">fleData</span>;</span></span><br><span class="line">	FILE *fp;</span><br><span class="line">	<span class="keyword">if</span>(<span class="number">0</span> == stat(<span class="string">&quot;passwd&quot;</span>, &amp;fileData))</span><br><span class="line">		fileLen = fileData.st_size;</span><br><span class="line">	<span class="keyword">else</span></span><br><span class="line">	<span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">	<span class="keyword">if</span>((fp = fopen(<span class="string">&quot;Passwd&quot;</span>, <span class="string">&quot;rb&quot;</span>)) == <span class="literal">NULL</span>)&#123;</span><br><span class="line">		<span class="built_in">printf</span>(<span class="string">&quot;Cannot open file passwd!\n&quot;</span>);</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">	&#125;</span><br><span class="line">    ch = fgetc(fp);</span><br><span class="line">    <span class="keyword">while</span>(count &lt;= fileLen)&#123;</span><br><span class="line">        buf[count++] = ch;</span><br><span class="line">        ch = fgetc(fp)</span><br><span class="line">    &#125;</span><br><span class="line">    buf[--count] = <span class="string">&#x27;\x00&#x27;</span>;</span><br><span class="line">    <span class="keyword">if</span>(!<span class="built_in">strcmp</span>(buf, <span class="string">&#x27;admin&#x27;</span>))&#123;</span><br><span class="line">        do_system(count, <span class="string">&quot;ls -l&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;Invalid Password!\n&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    fclose(fp);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// vuln_system.c</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/stat.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">do_system</span><span class="params">(<span class="keyword">int</span> code, <span class="keyword">char</span> *cmd)</span></span>&#123;</span><br><span class="line">	<span class="keyword">char</span> buf[<span class="number">255</span>];</span><br><span class="line">	<span class="comment">// sleep(1);</span></span><br><span class="line">	system(cmd);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">	<span class="keyword">char</span> buf[<span class="number">256</span>] = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">	<span class="keyword">char</span> ch;</span><br><span class="line">	<span class="keyword">int</span> count = <span class="number">0</span>;</span><br><span class="line">	<span class="keyword">unsigned</span> <span class="keyword">int</span> fileLen = <span class="number">0</span>;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">stat</span> <span class="title">fileData</span>;</span></span><br><span class="line">	FILE *fp;</span><br><span class="line">	<span class="keyword">if</span>(stat(<span class="string">&quot;passwd&quot;</span>, &amp;fileData) == <span class="number">0</span>)</span><br><span class="line">		fileLen = fileData.st_size;</span><br><span class="line">	<span class="keyword">else</span></span><br><span class="line">		<span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">	<span class="keyword">if</span>((fp = fopen(<span class="string">&quot;passwd&quot;</span>, <span class="string">&quot;rb&quot;</span>)) == <span class="literal">NULL</span>)&#123;</span><br><span class="line">		<span class="built_in">printf</span>(<span class="string">&quot;Cannot open file passwd!\n&quot;</span>);</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">	&#125;</span><br><span class="line">    ch = fgetc(fp);</span><br><span class="line">    <span class="keyword">while</span>(count &lt;= fileLen)&#123;</span><br><span class="line">        buf[count++] = ch;</span><br><span class="line">        ch = fgetc(fp);</span><br><span class="line">    &#125;</span><br><span class="line">    buf[--count] = <span class="string">&#x27;\x00&#x27;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span>(!<span class="built_in">strcmp</span>(buf, <span class="string">&quot;adminpwd&quot;</span>))&#123;</span><br><span class="line">        do_system(count, <span class="string">&quot;ls -l&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;Invalid Password!\n&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    fclose(fp);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>上述代码模拟了一个密码获取执行命令的功能，从文件passwd中读取的内容如果为<code>admin</code>则有权限执行<code>ls -l</code>列出当前目录，否则提示密码错误；</p>
+<p>编译一下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mips-gcc -static -g vuln_system.c -o vuln_system</span><br></pre></td></tr></table></figure>
+
+<p>在同目录中创建passwd；</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python -c &quot;print &#x27;a&#x27;*500&quot; &gt; passwd</span><br></pre></td></tr></table></figure>
+
+<p>尝试运行；</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./vuln_system</span><br></pre></td></tr></table></figure>
+
+<p>将得到下面的结果：</p>
+<p>下断点，这里断点下在了<code>do_system</code>之前，然后用下面的命令去attach程序；</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">qemu-mips-static -g 6666 vuln_system</span><br></pre></td></tr></table></figure>
+
+<p>运行到断点处，可以看到passwd中的内容已经在栈中。</p>
+<p><img src="/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/router-vuln-overflow/vuln_system_stack.jpg"></p>
+<p>由于缓冲区溢出，导致原先的<code>$RA</code>被覆盖为<code>0x61616161</code>，因此在返回时报错。</p>
+<p><img src="/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/router-vuln-overflow/ra_error.jpg"></p>
+<p>可以看到，在下面代码中，fp的内容被输入到buf缓冲区中；</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">ch = fgetc(fp);</span><br><span class="line"><span class="keyword">while</span>(count &lt;= fileLen)&#123;</span><br><span class="line">    buf[count++] = ch;</span><br><span class="line">    ch = fgetc(fp);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>调试分析汇编代码：</p>
+<ol>
+<li><p>Basic Block 1</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">.text:00400368 li      $gp, 0x4CF98							# 将0x4CF98存入寄存器$gp</span><br><span class="line">.text:00400370 addu    $gp, $t9								# $gp与$t9的值相加，结果存放在$gp中，为0x0044D300</span><br><span class="line">															# $t9存放的是main的起始地址，也就是0x00400368</span><br><span class="line">.text:00400374 addiu   $sp, -0x1E0      					# 申请栈空间，调试中$sp更新后为0x76FFEC90</span><br><span class="line">.text:00400378 sw      $ra, 0x1E0+ra_offset($sp)			# 调试时，保存$ra寄存器中的返回地址0x00402FD0到																	# 0x76FFEE6C									</span><br><span class="line">.text:0040037C sw      $fp, 0x1E0+fp_offset($sp)			# 保存$fp寄存器中的栈帧地址0到0x76FFEE68</span><br><span class="line">.text:00400380 move    $fp, $sp								# 更新栈帧地址为$sp寄存器，操作后$fp的值为0x76FFEC90</span><br><span class="line">.text:00400384 sw      $gp, 0x1E0+gp_offset($sp)			# 保存$gp寄存器中的全局地址指针0x0044D300到																	# 0x76FFECA0</span><br><span class="line">.text:00400388 addiu   $v0, $fp, 0x1E0+var_1B3				# $v0保存$fp+0x1E0+var_1B3的结果，$v0为0x76FFECBD</span><br><span class="line">.text:0040038C li      $v1, 0x100							# 将0x100存入寄存器$v1</span><br><span class="line">.text:00400390 move    $a0, $v0								# 更新$a0寄存器的值为$v0，即0x76FFECBD，该地址代表buf</span><br><span class="line">.text:00400394 move    $a1, $zero							# 更新$a1寄存器的值为0</span><br><span class="line">.text:00400398 move    $a2, $v1								# 更新$a2寄存器的值为$v1，即0x100</span><br><span class="line">.text:0040039C la      $t9, memset							# 更新$t9寄存器的值为memset函数的地址</span><br><span class="line">.text:004003A0 nop											# nop空指令</span><br><span class="line">.text:004003A4 jalr    $t9 ; memset							# 跳转到$t9寄存器所存地址，即memset函数所在地址</span><br><span class="line">.text:004003A8 nop											# nop空指令</span><br><span class="line">.text:004003AC lw      $gp, 0x1E0+gp_offset($fp)			# 存储0x1E0+gp_offset($fp)代表的地址0x76FFECA0的内															 # 容0x0044D300到$gp寄存器</span><br><span class="line">.text:004003B0 sw      $zero, 0x1E0+var_1B8($fp)			# count，更新0x1E0+var_1B8($fp)代表的地址																	# 0x76FFECB8为0</span><br><span class="line">.text:004003B4 sw      $zero, 0x1E0+var_1BC($fp)			# fileLen，更新0x1E0+var_1BC($fp)代表的地址																	# 0x76FFECB4为0</span><br><span class="line">.text:004003B8 addiu   $v1, $fp, 0x1E0+var_B0				# 更新$v1的值为$fp+0x1E0+var_B0，为0x76FFEDC0</span><br><span class="line">.text:004003BC la      $v0, 0x400000						# 更新$v0的值为0x400000</span><br><span class="line">.text:004003C0 nop											# nop空指令</span><br><span class="line">.text:004003C4 addiu   $a0, $v0, (aPasswd - 0x400000)  		# 更新$a0为&quot;passwd&quot;字符串的地址</span><br><span class="line">.text:004003C8 move    $a1, $v1								# 更新$a1为$v1的值，即0x76FFEDC0</span><br><span class="line">.text:004003CC la      $t9, stat							# 更新$t9为stat函数的地址</span><br><span class="line">.text:004003D0 nop</span><br><span class="line">.text:004003D4 jalr    $t9 ; stat							# 调用跳转</span><br><span class="line">.text:004003D8 nop</span><br><span class="line">.text:004003DC lw      $gp, 0x1E0+gp_offset($fp)			# 存储0x1E0+gp_offset($fp)代表的地址0x76FFECA0的内															 # 容0x0044D300到$gp寄存器</span><br><span class="line">.text:004003E0 bnez    $v0, loc_400714						# 如果寄存器$v0中所存的返回值不等于0，则跳转到0x400714</span><br><span class="line">.text:004003E4 nop</span><br></pre></td></tr></table></figure>
+
+<p>以上的代码是下列代码的汇编表现：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">char</span> buf[<span class="number">256</span>] = &#123;<span class="number">0</span>&#125;;</span><br><span class="line"><span class="keyword">char</span> ch;</span><br><span class="line"><span class="keyword">int</span> count = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">unsigned</span> <span class="keyword">int</span> fileLen = <span class="number">0</span>;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">stat</span> <span class="title">fileData</span>;</span></span><br><span class="line">FILE *fp;</span><br><span class="line"><span class="keyword">if</span>(stat(<span class="string">&quot;passwd&quot;</span>, &amp;fileData) == <span class="number">0</span>)</span><br><span class="line">       [TO DO];</span><br><span class="line">   <span class="keyword">else</span></span><br><span class="line">       [jump to]<span class="keyword">return</span> <span class="number">1</span>;</span><br></pre></td></tr></table></figure>
+
+<p>在满足跳转条件后，会跳转到<code>return 1</code>；</p>
+</li>
+<li><p>Basic Block 2</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">.text:004003E8 lw      $v0, 0x1E0+var_7C($fp)			# 259 -&gt; v0</span><br><span class="line">.text:004003EC nop</span><br><span class="line">.text:004003F0 sw      $v0, 0x1E0+var_1BC($fp)			# v0 -&gt; fileLen，即fileLen被赋值为259</span><br><span class="line">.text:004003F4 la      $v0, 0x400000</span><br><span class="line">.text:004003F8 nop</span><br><span class="line">.text:004003FC addiu   $a0, $v0, (aPasswd - 0x400000)   # &quot;passwd&quot;，第一个参数</span><br><span class="line">.text:00400400 la      $v0, 0x400000</span><br><span class="line">.text:00400404 nop</span><br><span class="line">.text:00400408 addiu   $a1, $v0, (aRb - 0x400000)       # &quot;rb&quot;，第二个参数</span><br><span class="line">.text:0040040C la      $t9, fopen						# 调用fopen函数</span><br><span class="line">.text:00400410 nop</span><br><span class="line">.text:00400414 jalr    $t9 ; fopen						# 跳转</span><br><span class="line">.text:00400418 nop</span><br><span class="line">.text:0040041C lw      $gp, 0x1E0+gp_offset($fp)		# 0x1E0+gp_offset($fp) -&gt; $gp</span><br><span class="line">.text:00400420 sw      $v0, 0x1E0+var_1C0($fp)			# $v0 -&gt; 0x1E0+var_1C0($fp)</span><br><span class="line">.text:00400424 lw      $v0, 0x1E0+var_1C0($fp)			# 0x1E0+var_1C0($fp) -&gt; $v0</span><br><span class="line">.text:00400428 nop</span><br><span class="line">.text:0040042C bnez    $v0, loc_400468					# 如果寄存器$v0中所存的返回值不等于0,则跳转到0x400468</span><br><span class="line">.text:00400430 nop</span><br></pre></td></tr></table></figure>
+
+<p>以上的代码是下列代码的汇编表现：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">fileLen = fileData.st_size;</span><br><span class="line">...</span><br><span class="line"><span class="keyword">if</span>((fp = fopen(<span class="string">&quot;passwd&quot;</span>, <span class="string">&quot;rb&quot;</span>)) == <span class="literal">NULL</span>)&#123;</span><br><span class="line">	[TO DO];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在满足条件时就会跳转，如果未满足条件，则执行了<code>print</code>和<code>exit</code>，程序退出；</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">.text:00400434 la      $v0, 0x400000</span><br><span class="line">.text:00400438 nop</span><br><span class="line">.text:0040043C addiu   $a0, $v0, (aCannotOpenFile - 0x400000)  # &quot;Cannot open file passwd!&quot;</span><br><span class="line">.text:00400440 la      $t9, puts</span><br><span class="line">.text:00400444 nop</span><br><span class="line">.text:00400448 jalr    $t9 ; puts</span><br><span class="line">.text:0040044C nop</span><br><span class="line">.text:00400450 lw      $gp, 0x1E0+gp_offset($fp)</span><br><span class="line">.text:00400454 li      $a0, 1</span><br><span class="line">.text:00400458 la      $t9, exit</span><br><span class="line">.text:0040045C nop</span><br><span class="line">.text:00400460 jalr    $t9 ; exit</span><br><span class="line">.text:00400464 nop</span><br></pre></td></tr></table></figure></li>
+</ol>
+<p>​    由于可以成功打开passwd文件，因此$v0的值最终为0，程序并不会走到这个分支；</p>
+<ol start="3">
+<li><p>Basic Block 3</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">.text:00400468 lw      $v0, 0x1E0+file_discription_offset($fp)	# 0x1E0+file_discription_offset($fp) -&gt; $v0</span><br><span class="line">.text:0040046C nop</span><br><span class="line">.text:00400470 sw      $v0, 0x1E0+var_1C4($fp)					# $v0 -&gt; 0x1E0+var_1C4($fp)</span><br><span class="line">.text:00400474 lw      $v0, 0x1E0+var_1C4($fp)					# 0x1E0+var_1C4($fp) -&gt; $v0</span><br><span class="line">.text:00400478 nop</span><br><span class="line">.text:0040047C lw      $v0, 0x34($v0)							# ($v0+0x34) -&gt; $v0，0x1E0+var_1C4($fp)+0x34</span><br><span class="line">.text:00400480 nop</span><br><span class="line">.text:00400484 beqz    $v0, loc_400518							# if $v0 == 0, jump to 0x400518</span><br><span class="line">.text:00400488 nop</span><br></pre></td></tr></table></figure>
+
+<p>在调试时，0x1E0+var_1C4($fp)+0x34保存的内容为0x2，因此不满足跳转条件；</p>
+</li>
+<li><p>Basic Block 4</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">.text:0040048C lw      $v0, 0x1E0+var_1C4($fp)					# 0x1E0+var_1C4($fp) -&gt; $v0</span><br><span class="line">.text:00400490 nop</span><br><span class="line">.text:00400494 lw      $v1, 0x10($v0)							# ($v0+0x10) -&gt; $v1</span><br><span class="line">.text:00400498 lw      $v0, 0x1E0+var_1C4($fp)					# 0x1E0+var_1C4($fp) -&gt; $v0</span><br><span class="line">.text:0040049C nop</span><br><span class="line">.text:004004A0 lw      $v0, 0x18($v0)							# ($v0+0x18) -&gt; $v0</span><br><span class="line">.text:004004A4 nop</span><br><span class="line">.text:004004A8 sltu    $v0, $v1, $v0							# </span><br><span class="line">.text:004004AC beqz    $v0, loc_4004E8</span><br><span class="line">.text:004004B0</span><br></pre></td></tr></table></figure></li>
+<li><p>4</p>
+</li>
+</ol>
 
         
         
@@ -1891,62 +1942,62 @@
 </thead>
 <tbody><tr>
 <td>0</td>
-<td>zero</td>
+<td><code>zero</code></td>
 <td>值始终为0的寄存器</td>
 </tr>
 <tr>
 <td>1</td>
-<td>$at</td>
+<td><code>$at</code></td>
 <td>保留寄存器</td>
 </tr>
 <tr>
 <td>2~3</td>
-<td>$v0~$v1</td>
+<td><code>$v0</code>~`$v1`</td>
 <td>values，保存表达式或函数返回结果</td>
 </tr>
 <tr>
 <td>4~7</td>
-<td>$a0~$a3</td>
+<td><code>$a0</code>~`$a3`</td>
 <td>arguments，函数的前4个参数</td>
 </tr>
 <tr>
 <td>8~15</td>
-<td>$t0~$t7</td>
+<td><code>$t0</code>~`$t7`</td>
 <td>temporaries，供汇编程序使用的临时寄存器</td>
 </tr>
 <tr>
 <td>16~23</td>
-<td>$s0~$s7</td>
+<td><code>$s0</code>~`$s7`</td>
 <td>saved values，子函数使用时需要先保存源寄存器的值</td>
 </tr>
 <tr>
 <td>24~25</td>
-<td>$t8~$t9</td>
+<td><code>$t8</code>~`$t9`</td>
 <td>temporaries，供汇编程序使用的临时寄存器，对$t0~$t7的补充</td>
 </tr>
 <tr>
 <td>26~27</td>
-<td>$k0~$k1</td>
+<td><code>$k0</code>~`$k1`</td>
 <td>保留，中断处理函数调用</td>
 </tr>
 <tr>
 <td>28</td>
-<td>$gp</td>
+<td><code>$gp</code></td>
 <td>global pointer，全局指针</td>
 </tr>
 <tr>
 <td>29</td>
-<td>$sp</td>
+<td><code>$sp</code></td>
 <td>stack pointer，堆栈指针，指向堆栈的栈顶</td>
 </tr>
 <tr>
 <td>30</td>
-<td>$fp</td>
+<td><code>$fp</code></td>
 <td>frame pointer，保存栈指针</td>
 </tr>
 <tr>
 <td>31</td>
-<td>$ra</td>
+<td><code>$ra</code></td>
 <td>return address，返回地址</td>
 </tr>
 </tbody></table>
@@ -2010,31 +2061,31 @@
 <li><p>LA(Load Address)，将一个地址或标签存入一个寄存器；</p>
 <p><code>[la $Rd, Label]</code></p>
 <blockquote>
-<p>la $t0, val_1                复制val_1（一个Label）表示的地址到$t0寄存器</p>
+<p>la <code>$t0</code>, val_1                复制val_1（一个Label）表示的地址到$t0寄存器</p>
 </blockquote>
 </li>
 <li><p>LI(Load Immediate)，将一个立即数存入一个通用寄存器；</p>
 <p><code>[li $Rd, imm]</code></p>
 <blockquote>
-<p>li $t1, 40                  寄存器$t1赋值为40，相当于<code>addi $t1, $zero, 40;</code></p>
+<p>li <code>$t1</code>, 40                  寄存器$t1赋值为40，相当于<code>addi $t1, $zero, 40;</code></p>
 </blockquote>
 </li>
 <li><p>LW(Load Word)，从指定地址加载一个word类型的值到一个寄存器中；</p>
 <p><code>[lw $Rt, offset($Rs)]</code></p>
 <blockquote>
-<p>lw $s0, 0($sp)              <code>$s0 = MEM[$sp+0];</code>，取堆栈地址偏移0内存word大小的值到$s0寄存器中</p>
+<p>lw <code>$s0</code>, <code>0($sp)</code>              <code>$s0 = MEM[$sp+0];</code>，取堆栈地址偏移0内存word大小的值到$s0寄存器中</p>
 </blockquote>
 </li>
 <li><p>SW(Store Word)，将源寄存器中的值存入指定的地址；</p>
 <p><code>sw $Rt, offset($Rs)</code></p>
 <blockquote>
-<p>sw $a0, 0($sp)              <code>MEM[$sp+0] = $a0;</code>，将$a0寄存器中的一个word大小的值存入堆栈，且$sp自动抬栈</p>
+<p>sw <code>$a0</code>, <code>0($sp)</code>              <code>MEM[$sp+0] = $a0;</code>，将<code>$a0</code>寄存器中的一个word大小的值存入堆栈，且<code>$sp</code>自动抬栈</p>
 </blockquote>
 </li>
 <li><p>MOVE，用于寄存器之间值的传递；</p>
 <p><code>move $Rt, $Rs</code></p>
 <blockquote>
-<p>move $t5, $t1               <code>$t5 = $t1;</code>，$t5寄存器赋值为$t1寄存器的值</p>
+<p>move <code>$t5</code>, <code>$t1</code>               <code>$t5 = $t1;</code>，<code>$t5</code>寄存器赋值为<code>$t1</code>寄存器的值</p>
 </blockquote>
 </li>
 </ul>
