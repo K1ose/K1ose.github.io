@@ -82,6 +82,481 @@
 
       <div class="outer">
         <section id="main">
+  <article id="post-compile与link" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/compile%E4%B8%8Elink/">compile与link</a>
+    </h1>
+  
+
+
+      </header>
+    
+    <div class="article-meta">
+      
+      <span class="article-date">
+  <i class="fa fa-date"></i>
+  <time class="dt-published" datetime="2021-10-24T04:42:46.000Z" itemprop="datePublished">2021年10月24日</time>
+</span>
+      
+  <div class="article-category">
+    <i class="fa fa-classify"></i>
+    <a class="article-category-link" href="/categories/study/">study</a> > <a class="article-category-link" href="/categories/study/book/">book</a> > <a class="article-category-link" href="/categories/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/">程序员的自我修养：链接、装载与库</a>
+  </div>
+
+      
+      
+<a href="/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/compile%E4%B8%8Elink/#comments" class="article-comment-link">
+  
+  <i class="fa fa-commt"></i>
+  留言
+</a>
+
+
+    </div>
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="编译和链接"><a href="#编译和链接" class="headerlink" title="编译和链接"></a>编译和链接</h1><p>如果说“编译和链接这几个字不够熟悉， 那说”Build“就再熟悉不过了吧。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc program.c</span><br></pre></td></tr></table></figure>
+
+<p>事实上以上操作涵盖了四个部分：预处理Prepressing、编译compilation、汇编assembly、链接linking；</p>
+<p><img src="/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/compile%E4%B8%8Elink/gcc.jpg" alt="gcc"></p>
+<h2 id="不为人知的动作"><a href="#不为人知的动作" class="headerlink" title="不为人知的动作"></a>不为人知的动作</h2><h3 id="预编译"><a href="#预编译" class="headerlink" title="预编译"></a>预编译</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">gcc -E program.c			// 生成预编译文件</span><br><span class="line">cpp program.c &gt; program.i</span><br></pre></td></tr></table></figure>
+
+<p>预编译主要处理的是源代码文件中<strong>以“#”开头</strong>的预编译指令；</p>
+<p>包括：</p>
+<ol>
+<li>将所有“#define”删除，展开所有<strong>宏定义</strong>；</li>
+<li>处理所有<strong>条件预编译</strong>指令，如#if等；</li>
+<li>处理**#include**预编译指令，被包含的文件插入到该预编译指令的位置；</li>
+<li>删除所有<strong>注释</strong>；</li>
+<li><strong>添加代码行号和文件名标识</strong>，以便于编译时编译器产生调试用的行号信息与用于编译时产生编译错误或警告时能够显示行号；</li>
+<li>保留所有**#pragma**编译器指令；</li>
+</ol>
+<h3 id="编译"><a href="#编译" class="headerlink" title="编译"></a>编译</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc -S program.i -o program.s</span><br></pre></td></tr></table></figure>
+
+<p>编译把预编译处理完的文件进行一系列词法<strong>分析</strong>、语法分析、语义<strong>分析</strong>、优化后产生的<strong>汇编代码</strong>文件；</p>
+<h3 id="汇编"><a href="#汇编" class="headerlink" title="汇编"></a>汇编</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc -c program.s -o program.o</span><br></pre></td></tr></table></figure>
+
+<p>汇编器将汇编代码办成机器可以执行的指令，几乎依据汇编语句对应一条机器指令（翻译）；</p>
+<h3 id="链接"><a href="#链接" class="headerlink" title="链接"></a>链接</h3><p>链接是一个复杂的过程，有许多文件参与进来，下一章详细总结；</p>
+<h2 id="编译器做了啥"><a href="#编译器做了啥" class="headerlink" title="编译器做了啥"></a>编译器做了啥</h2><p>直观地说，编译器是将高级语言翻译成机器语言的一个工具；</p>
+<p><img src="/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/compile%E4%B8%8Elink/complie_step.jpg" alt="complie_step"></p>
+<p><strong>扫描</strong>=&gt;<strong>语法分析</strong>=&gt;<strong>语义分析</strong>=&gt;<strong>源代码优化</strong>=&gt;<strong>代码生成</strong>=&gt;<strong>目标代码优化</strong></p>
+<p>示例代码：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">array[index] = (index + 4) * (2 + 6)</span><br><span class="line">CompilerExpression.c</span><br></pre></td></tr></table></figure>
+
+<h3 id="扫描"><a href="#扫描" class="headerlink" title="扫描"></a>扫描</h3><p><strong>扫描器scanner</strong>做的任务就是<strong>词法分析</strong>，用的是一种类似于<strong>有限状态机（Finite State Machine）</strong>的算法，可以轻松将源代码字符序列分割成一系列的记号（Token），如上代码共有28个非空字符，扫描后产生16个记号，“index”作为标识符为一个记号；</p>
+<p>这些记号会分类，标识符存放到<strong>符号表</strong>，数字、字符串常量存放到<strong>文字表</strong>中；</p>
+<p>一个名为<strong>lex</strong>的程序可以<strong>实现词法扫描</strong>，有了它，编译器开发者只需要改变<strong>词法规则</strong>就可以了；</p>
+<h3 id="语法分析"><a href="#语法分析" class="headerlink" title="语法分析"></a>语法分析</h3><p><strong>语法分析器Grammar Parser</strong>对记号进行<strong>语法分析</strong>，生成<strong>语法树Syntax Tree</strong>，采用的是<strong>上下文无关语法Context-free Grammar</strong>的分析手段；</p>
+<p>语法树是以表达式Expression为节点的树，以上面的代码为例，语法树为：</p>
+<p><img src="/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/compile%E4%B8%8Elink/syntax_tree.jpg" alt="syntax_tree"></p>
+<p>整个语句被看作是<strong>一个赋值表达式</strong>；</p>
+<p>树的<strong>左边</strong>是<strong>数组</strong>表达式，<strong>右边</strong>是<strong>乘法</strong>表达式；</p>
+<p><strong>数组</strong>表达式由<strong>两个符号表达式</strong>组成；</p>
+<p>由于<strong>符号</strong>和<strong>数字</strong>是<strong>最小的表达式</strong>，所以也作为整个<strong>语法树的叶节点</strong>；</p>
+<p>语法分析器需要解决的是<strong>区分表达式的含义</strong>，在<strong>不合法</strong>表达式出现时<strong>要报错</strong>；</p>
+<p>一个名为yacc的工具，根据用户给定的语法规则对几号序列进行解析，构件语法树，对于不同编程语言只需要改变语法规则即可（编译器编译器Compiler Compiler）；</p>
+<h3 id="语义分析器"><a href="#语义分析器" class="headerlink" title="语义分析器"></a>语义分析器</h3><p>顾名思义，<strong>语义分析器Semantic Analyzer</strong>进行<strong>语义分析</strong>，完成了对表达式的<strong>语法层面的分析</strong>，但是并<strong>不了解语句是否真的有意义</strong>；</p>
+<p>语义分析器能分析的语义是<strong>静态语义Static Semantic</strong>，是编译期间就可以确定的语义；</p>
+<p>不能分析动态语义Dynamic Semantic，这是运行期见才能确定的语义；</p>
+<p>语义分析器将语法树的<strong>表达式标识为类型</strong>，上图语法树将转化为：</p>
+<p><img src="/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/compile%E4%B8%8Elink/semantic_tree.jpg" alt="semantic_tree"></p>
+<h3 id="源码级优化器"><a href="#源码级优化器" class="headerlink" title="源码级优化器"></a>源码级优化器</h3><p>源代码级优化器Source Code Optimizer在源代码级别进行优化；</p>
+<p>例如，2+6的结果是确定的，结果8可以被优化保存；</p>
+<p><img src="/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/compile%E4%B8%8Elink/code_optimize.jpg" alt="code_optimize"></p>
+<p>可以看到，优化器将语法树转换成了中间代码Intermediate Code，这已经非常接近目标代码了，但是它一般跟目标机器和运行时环境是无关的，比如没有数据尺寸、变量地址和寄存器名字等；</p>
+<p>中间代码有很多类型，不同编译器中有不同的形式，常见有：</p>
+<ol>
+<li><p>三地址码Three-address Code：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">x = y op z</span><br></pre></td></tr></table></figure>
+
+<p>将变量y和z进行op操作以后，赋值给x；</p>
+<p>上面代码可以转化为以下步骤：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">t1 = 2 + 6</span><br><span class="line">t2 = index + 4</span><br><span class="line">t3 = t2 * t1</span><br><span class="line">array[index] = t3</span><br></pre></td></tr></table></figure>
+
+<p>由于优化程序的作用：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">t2 = index + 4</span><br><span class="line">t2 = t2 * 8</span><br><span class="line">array[index] = t2</span><br></pre></td></tr></table></figure></li>
+<li><p>P-code</p>
+</li>
+</ol>
+<p>中间代码使得<strong>编译器被分为前端和后端</strong>，<strong>前端</strong>负责产生<strong>机器无关的中间代码</strong>，<strong>后端</strong>将中间代码转换成<strong>目标机器代码</strong>；</p>
+<h3 id="代码生成器和目标代码优化器"><a href="#代码生成器和目标代码优化器" class="headerlink" title="代码生成器和目标代码优化器"></a>代码生成器和目标代码优化器</h3><p><strong>代码生成器Code Generator</strong>和<strong>目标代码优化器Target Code Optimizer</strong>属于<strong>编译器后端</strong>；</p>
+<h4 id="代码生成器"><a href="#代码生成器" class="headerlink" title="代码生成器"></a>代码生成器</h4><p>中间代码 =&gt; 目标机器代码（这依赖于目标机器）</p>
+<h4 id="目标代码优化器"><a href="#目标代码优化器" class="headerlink" title="目标代码优化器"></a>目标代码优化器</h4><p>对目标代码进行优化，比如选择合适的寻址方式、使用位移来代替乘法运算等；</p>
+<p>经过这么多的程序，源代码变成了目标代码，但是index和array的地址还未确定，要如何得到它们的地址呢？</p>
+<p>事实上<strong>绝对地址</strong>要在<strong>最终链接的时候才能确定</strong>，因此<strong>编译器完成的工作是将一个源代码文件编译成一个未链接的目标文件，然后链接器最终将目标文件链接起来形成可执行文件</strong>；</p>
+<h2 id="链接器"><a href="#链接器" class="headerlink" title="链接器"></a>链接器</h2><p>计算各个目标地址的过程被叫做<strong>重定位Relocation</strong>；</p>
+<p>假设存在这样的指令：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jmp foo</span><br></pre></td></tr></table></figure>
+
+<p>意思为跳转到foo表示的地址执行，而foo的符号Symbol就尤为重要，当有指令引用了它，只需要记住foo这个地址，直接修正就可以了；因此模块间符号的引用成为了彼此联系且保证程序正确执行的关键；</p>
+<p><img src="/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/compile%E4%B8%8Elink/module_association.jpg" alt="module_association"></p>
+<h2 id="模块拼装——静态链接"><a href="#模块拼装——静态链接" class="headerlink" title="模块拼装——静态链接"></a>模块拼装——静态链接</h2><p>链接Linking就是将<strong>模块组装</strong>起来，各个模块之间相互引用的部分处理好了，程序在引用和调用时就能<strong>找到目标符号确定位置</strong>而不会出错；</p>
+<p>而链接的过程主要包括：</p>
+<ol>
+<li><strong>地址和空间分配</strong></li>
+<li><strong>符号决议</strong>（或是熟知的<strong>符号绑定</strong>，然而这个说法很“动态”）</li>
+<li><strong>重定位</strong></li>
+</ol>
+<p>下图演示了具体流程，每个模块段代码文件.c经过编译器编译成目标文件.o，<strong>目标文件</strong>和<strong>库Library</strong>一起链接形成最终的可执行文件；</p>
+<p><img src="/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/compile%E4%B8%8Elink/static_linking.jpg" alt="static_linking"></p>
+<p>这里的库最常见的就是<strong>运行时库Runtime Library</strong>，是支持程序运行的基本函数的集合，是一组目标文件包，存放了常用代码编译后的目标文件集合；</p>
+<p>讲一个具体的例子就可以了；</p>
+<p>假设<strong>main.c中使用了另个一个模块func.c中的函数func()<strong>，则在调用这个函数时必须要知道</strong>func()函数存放的地址</strong>。但是每个模块是单独编译的，显然<strong>main.c不知道，而func.c知道</strong>，因此main.c会暂时<strong>把这个地址放一放</strong>，等最<strong>后链接的时候让链接器去填充修正</strong>。链接器在链接的时候<strong>根据所引用的符号func</strong>，自动去查找func.c模块中的func函数地址，然后把这些信息<strong>填充修正到main.c模块</strong>中，<strong>这个填充修正的过程正是重定位</strong>，而这个被修正的地方叫<strong>重定位入口</strong>。当然也可以把链接器想成一个裁缝，这是在打补丁；</p>
+
+        
+        
+          <blockquote id="copyright">
+              <p>原文链接: <a href="https://www.jk404.cn/page/9/index.html">https://www.jk404.cn/page/9/index.html</a></p>
+              <p>版权声明: 转载请注明出处.</p>
+          </blockquote>
+        
+      
+    </div>
+    <footer class="article-footer">
+      
+        <div class="article-tag-wrap">
+          
+
+          
+          
+
+
+        </div>
+      
+      
+      
+    </footer>
+  </div>
+</article>
+
+
+  <article id="post-知识储备" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/%E7%9F%A5%E8%AF%86%E5%82%A8%E5%A4%87/">知识储备</a>
+    </h1>
+  
+
+
+      </header>
+    
+    <div class="article-meta">
+      
+      <span class="article-date">
+  <i class="fa fa-date"></i>
+  <time class="dt-published" datetime="2021-10-23T04:34:08.000Z" itemprop="datePublished">2021年10月23日</time>
+</span>
+      
+  <div class="article-category">
+    <i class="fa fa-classify"></i>
+    <a class="article-category-link" href="/categories/study/">study</a> > <a class="article-category-link" href="/categories/study/book/">book</a> > <a class="article-category-link" href="/categories/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/">程序员的自我修养：链接、装载与库</a>
+  </div>
+
+      
+      
+<a href="/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/%E7%9F%A5%E8%AF%86%E5%82%A8%E5%A4%87/#comments" class="article-comment-link">
+  
+  <i class="fa fa-commt"></i>
+  留言
+</a>
+
+
+    </div>
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="知识储备"><a href="#知识储备" class="headerlink" title="知识储备"></a>知识储备</h1><blockquote>
+<p><em>我就简单写写。            —— K1ose</em></p>
+</blockquote>
+<p>序言强调了基础的重要性，对<strong>数据结构和算法、操作系统、计算机组成原理</strong>等大学基础课程要有足够的掌握；</p>
+<h2 id="将学到什么"><a href="#将学到什么" class="headerlink" title="将学到什么"></a>将学到什么</h2><p>对学习内容有一个初步的认识，清楚了解到能够学习到什么：</p>
+<ol>
+<li>Windows和Linux下的<strong>可执行文件</strong>、<strong>目标文件格式</strong>（PE、ELF）；</li>
+<li>普通C/C++代码<strong>编译生成目标文件的过程</strong>、<strong>程序在目标文件中的存储</strong>；</li>
+<li><strong>目标文件的链接</strong>（静态链接、动态链接的详细解读）与<strong>可执行文件的生成</strong>；</li>
+<li><strong>可执行文件的装载与执行</strong>；</li>
+<li>可执行文件在<strong>虚拟空间中的映射</strong>；</li>
+<li><strong>堆栈</strong>与<strong>函数调用</strong>；</li>
+<li>运行<strong>库</strong>、<strong>Glibc和MSVC CRT的分析实现</strong>；</li>
+<li><strong>系统调用</strong>与<strong>API</strong>；</li>
+</ol>
+<h2 id="认识的开始"><a href="#认识的开始" class="headerlink" title="认识的开始"></a>认识的开始</h2><blockquote>
+<p><em>ANY problem in computer science can be solved by another layer of indirection.</em></p>
+</blockquote>
+<h3 id="从三个关键硬件部件出发"><a href="#从三个关键硬件部件出发" class="headerlink" title="从三个关键硬件部件出发"></a>从三个关键硬件部件出发</h3><ol>
+<li>CPU；</li>
+<li>内存；</li>
+<li>I/O控制芯片；</li>
+</ol>
+<p>I/O：慢吞吞的I/O总线 =&gt; PCI/ISA南北桥构架 =&gt; AGP、PCI Express等<br>CPU：频率上的追求（集成密度） =&gt; CPU数量（SMP，symmetrical multi-processing对称多处理器） =&gt; 打包核心（multi-core Processer多核处理器）<br>内存：物理内存 =&gt; 虚拟内存与映射</p>
+<h3 id="各层次关系——高楼大厦"><a href="#各层次关系——高楼大厦" class="headerlink" title="各层次关系——高楼大厦"></a>各层次关系——高楼大厦</h3><img src="/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/%E7%9F%A5%E8%AF%86%E5%82%A8%E5%A4%87/image1.png" alt="层级结构" style="zoom:50%;">
+
+<p>接口：</p>
+<p>Interface 由下层定义，上层使用；</p>
+<p>中间层对下层进行包装和扩展；</p>
+<p>Operating System API：操作系统<strong>应用程序编程接口</strong>（Application Programming Interface），由运行库提供，开发工具与应用程序都是用这个接口；</p>
+<p>System Call Interface：系统调用接口以<strong>软件中断</strong>的方式提供；</p>
+<p>Hardware Specification：操作系统是<strong>硬件规格</strong>（产商提供）的使用者，开发者通过<strong>硬件规格文档</strong>编写操作系统和驱动程序；</p>
+<h3 id="操作系统——管理员和小帮手"><a href="#操作系统——管理员和小帮手" class="headerlink" title="操作系统——管理员和小帮手"></a>操作系统——管理员和小帮手</h3><p>操作系统功能：</p>
+<ol>
+<li>提供抽象接口（向上向下）；</li>
+<li>管理硬件资源（努力榨干硬件资源）；</li>
+</ol>
+<h4 id="烦人却必须用到的I-O设备"><a href="#烦人却必须用到的I-O设备" class="headerlink" title="烦人却必须用到的I/O设备"></a>烦人却必须用到的I/O设备</h4><p>操作系统是<strong>硬件层的上层</strong>，<strong>对硬件</strong>进行<strong>管理和抽象</strong>；</p>
+<p>对于操作系统上层建筑而言，他们更希望这些硬件拥有统一的访问模式（不然应用程序开发人员还要和硬件打交道——读写硬件端口、处理终端等，这也太痛苦了）；Thanks to the OS，<strong>操作系统</strong>的<strong>驱动程序</strong>将<strong>硬件设备的访问方式</strong>抽象成<strong>对象或系统</strong>，实现的方式是<strong>为硬件产商提供了接口和框架</strong>；</p>
+<p>例如：UNIX中，设备访问形式和访问普通文件一样；磁盘被抽象成普通文件系统等等；</p>
+<p>如果是直接地对硬件进行交互，例如对磁盘进行读取，需要对对应的功能端口进行out value，来调用读取功能，同时还需要关注磁盘的磁片、磁道和扇区的分布，这是非常复杂的，而驱动程序提供了很好的框架去协调解决这个问题。这大大解放了应用程序开发人员的劳动力。</p>
+<h4 id="榨干CPU"><a href="#榨干CPU" class="headerlink" title="榨干CPU"></a>榨干CPU</h4><p>–低效率：如果CPU只能运行一个程序，那么读磁盘的时候，CPU怠工等待；</p>
+<p>–多道程序：添加队列。<br>打比方：一家银行只有一个窗口，但是有多个客户排队队伍，当其中一个队伍排头的客户在办理手续时，需要对自己手头上的资料进行整理（反正需要停一停窗口办理的流程，工作人员不处理他的事务），这是工作人员会去处理其他队列的事务。但是这样就会出现一个问题，如果有很重要的客户需要办理紧急业务，这样的工作机制就会导致致命后果（打开一个文件夹，十分钟后PC机才有反应）；</p>
+<p>–分时系统：协作模式<br>继续打个比方：经由多道程序带来的惨痛经历，大家意识到协作的重要性。这次银行来办理业务的客户素质都很高（或者是银行工作人员熟悉一些业务需要客户自己停下做准备时），工作人员处理业务时会主动停下，让其他人也能办理一下业务，这样其他客户也能办到一定程度的业务。但是不乏一些霸占窗口不放的客户，这样整个办理流程都停止了；</p>
+<p>–多任务系统：管理员模式<br>操作系统管辖所有硬件资源，运行在受硬件保护的级别；<br>应用程序以进程方式运行在较低级别，这些进程空间相互隔离，拥有自己独立的地址空间。通过优先级高低来分配CPU资源，而且给这些进程一定的时间片段来占用CPU，超出了就暂停并将资源分配给其他的进程（抢占式分配）；<br>最后打个比方：通过银行经理的管辖，队伍之间建立了挡板，客户进门时拿取一个优先级牌子，工作人员根据优先级牌子来处理客户的业务，如果规定时间内，客户的问题没有被完全解决，工作人员会转移工作目标；</p>
+<h4 id="榨干内存"><a href="#榨干内存" class="headerlink" title="榨干内存"></a>榨干内存</h4><h5 id="物理地址的痛"><a href="#物理地址的痛" class="headerlink" title="物理地址的痛"></a>物理地址的痛</h5><p>前面说到，CPU允许多进程同时进行（多任务系统），那么在内存分配的早期，以访问物理内存的方式分配给这些进程，将会出现以下问题：</p>
+<ol>
+<li><p><strong>地址空间不隔离</strong></p>
+<p>物理地址被直接访问，大家都在一个域上，这会产生很大的安全隐患，各个进程之间可能会存在相互干扰；</p>
+</li>
+<li><p><strong>内存使用效率低</strong></p>
+<p>设想一下，在物理内存即将用尽时，如果这时需要紧急运行一个程序，那么需要将其他进程数据写到磁盘中，需要时再读取回来。如果只是释放一个进程的空间可能还不够，因为物理地址是连续的，因此还需要再释放相邻的进程，这会导致大量数据交互，影响效率；</p>
+<table>
+<thead>
+<tr>
+<th>内存</th>
+<th>突然运行的程序</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>进程A：data_size = 0x500</td>
+<td>程序C：data_size = 0x1000</td>
+</tr>
+<tr>
+<td>进程B：data_size = 0x1500</td>
+<td></td>
+</tr>
+</tbody></table>
+<p>这时需要释放A、B进程的数据，暂存到磁盘中，以装载程序C的数据；</p>
+</li>
+<li><p><strong>程序运行地址不确定</strong></p>
+<p>程序每次需要装载入内存，由于空间连续，进程又多，因此每次分配到的物理地址不一致，这大大加重了数据重定位的工作（获得数据地址才可以访问或跳转）；</p>
+</li>
+</ol>
+<p>因此引进了中间层——<strong>虚拟地址(Virtual Address, VA)<strong>，通过</strong>映射</strong>的方法，将进程虚拟地址转换为实际的物理地址，只要搞清楚这个映射关系，就可以很好地管理内存空间；</p>
+<h5 id="虚拟地址真香"><a href="#虚拟地址真香" class="headerlink" title="虚拟地址真香"></a>虚拟地址真香</h5><h6 id="虚拟地址带来什么"><a href="#虚拟地址带来什么" class="headerlink" title="虚拟地址带来什么"></a>虚拟地址带来什么</h6><ol>
+<li><p>地址隔离（Address Isolation）</p>
+<p>既然进程们（客户）都这么娇贵，就给他们营造一个环境——<strong>独立的虚拟地址空间（Virtual Address Space）</strong>。独立又虚拟，显然是为了应付和敷衍。在内存空间没那么多的情况，提供虚拟的、独立的大内存空间给进程，在映射后，进程们通过映射关系只能访问自己的地址空间，营造了良好的隔离环境。</p>
+</li>
+<li><p><strong>分段（Segmentation）</strong></p>
+<p>分段是一种映射的方法，将程序所需的内存空间大小的虚拟空间映射到某个地址空间。因此我们可以说：</p>
+<ol>
+<li>分段做到了<strong>地址隔离</strong>；</li>
+<li>对程序来说，虚拟地址空间才是它直接交互的，而<strong>物理地址空间对它而言是透明的</strong>，不必关心被分配到物理地址的哪个位置，因为通过映射，虚拟地址会对应地指向真实存在的物理地址，而这段<strong>物理地址是确定的</strong>。</li>
+</ol>
+<p>但是这种办法依然<strong>没有解决效率的问题</strong>；</p>
+<p>这时候就需要<strong>原子化操作</strong>，<strong>更小粒度地进行内存分割和映射</strong>，于是有了Paging；</p>
+</li>
+<li><p><strong>分页（Paging）</strong></p>
+<ol>
+<li><p>高效</p>
+<p><strong>分页将地址空间人为分成固定大小的页，每一页的大小由硬件决定</strong>（绝大部分是<strong>4KB</strong>/page）；</p>
+<p><code>磁盘页：磁盘中的分页；</code></p>
+<p><code>虚拟页：虚拟地址空间的分页；</code></p>
+<p><code>物理页：物理地址空间的分页；</code></p>
+<p>通过映射，虚拟地址空间的一些分页可能会被分配到同一个物理页中，这就实现了<strong>内存共享</strong>；</p>
+<p>当进程访问不存在的地址（页），就会出现<strong>页错误</strong>（Segment Fault）；</p>
+<p>如果需要访问，则操作系统接管进程，将对应<strong>磁盘页装载入虚拟页</strong>中，并<strong>关联</strong>这两个页（利用这种原子化操作，则可以进行高效存取）；</p>
+</li>
+<li><p>安全</p>
+<p>对每个分页可以设置相应权限，而只有操作系统可以修改这些属性，这也使得操作系统能够保护自己和进程；</p>
+</li>
+</ol>
+</li>
+</ol>
+<h6 id="虚拟地址如何实现"><a href="#虚拟地址如何实现" class="headerlink" title="虚拟地址如何实现"></a>虚拟地址如何实现</h6><p>虚拟存储需要硬件支持，不同CPU不一样，但是几乎都采取了MUU（Memory Management Unit）部件进行映射；</p>
+<p>在页映射模式下，CPU发出的是VA，程序可以识别，经过MUU转换后成为PA；</p>
+<h3 id="线程：当业务窗口越来越多…"><a href="#线程：当业务窗口越来越多…" class="headerlink" title="线程：当业务窗口越来越多…"></a>线程：当业务窗口越来越多…</h3><p>当CPU频率增长停滞后（工作人员个人业务处理能力无法再飞速提高），CPU向多核发展（业务窗口增加）；</p>
+<p>设想一下，当客户的业务可以<strong>同时被多个窗口的工作人员处理</strong>，那么处理的速度也将大大提升；</p>
+<h4 id="hello-thread"><a href="#hello-thread" class="headerlink" title="hello, thread"></a>hello, thread</h4><p>线程（Thread, or Lightweight Process, LWP），是<strong>程序执行流的最小单元</strong>；</p>
+<p>标准的线程由<strong>线程ID</strong>、<strong>当前指令指针（PC）</strong>、<strong>寄存器集合</strong>和<strong>堆栈</strong>组成；</p>
+<p>一个进程可以有一个或多个线程；</p>
+<p>线程之间的关系如图下所示：</p>
+<img src="/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/%E7%9F%A5%E8%AF%86%E5%82%A8%E5%A4%87/thread.jpg" alt="Thread" style="zoom: 50%;">
+
+<p>可以看到他们共享了全局变量和堆的数据；</p>
+<h5 id="线程的访问权限"><a href="#线程的访问权限" class="headerlink" title="线程的访问权限"></a>线程的访问权限</h5><p>线程有自己的独立空间，就像窗口工作人员处理各自负责的任务，但是他们也可以使用共享的客户资料；</p>
+<ol>
+<li>栈</li>
+<li>线程局部存储（Thread Local Storage, TLS）</li>
+<li>寄存器；</li>
+</ol>
+<img src="/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/%E7%9F%A5%E8%AF%86%E5%82%A8%E5%A4%87/permission.jpg" alt="Permission" style="zoom: 50%;">
+
+<h5 id="线程调度"><a href="#线程调度" class="headerlink" title="线程调度"></a>线程调度</h5><p><strong>无论是多处理器的计算机还是单处理器计算机，线程总是“并发”执行的；</strong></p>
+<p>怎么理解这句话呢？按照先前的理解，当存在多个业务窗口以及小于等于窗口数量的队伍的时候，线程并发是可行的。不同的线程运行在不同的处理器上，彼此之间互不干扰。但是当只有一个窗口的时候，或者当队伍数量大于窗口数量的时候，要怎么使得一个窗口处理多个队伍呢？</p>
+<p><strong>在单处理器应对多线程的情况下，并发是一种模拟态；</strong></p>
+<p>实际上，操作系统会让多线程程序轮流执行，并且每个线程会有设定优先级，这些线程每次被执行一小段时间，这样看起来就是在同时执行。这种不断在处理器上有选择地切换不同线程的行为称为<strong>线程调度（Thread Schedule）</strong>（<strong>优先级调度 + 轮转法</strong>）；<br>这样机制下的线程会存在至少三种状态：</p>
+<ol>
+<li>Running： 线程正在被执行，拥有一段允许执行时间限制，称为<strong>时间片（Time Slice）</strong>，如果时间片用尽，则线程进入Ready态，调度系统将选择其他的Ready态线程继续执行，这个过程叫做<strong>抢占（Preemption）</strong>；</li>
+<li>Ready： 可启动，但CPU被占用；</li>
+<li>Waiting： 线程在等待某一事件（通常是I/O信号或同步），无法执行，Waiting态结束了就会进入Ready态；</li>
+</ol>
+<img src="/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/%E7%9F%A5%E8%AF%86%E5%82%A8%E5%A4%87/threetype.jpg" alt="dispatch" style="zoom: 50%;">
+
+<h6 id="线程优先级（Thread-Priority）"><a href="#线程优先级（Thread-Priority）" class="headerlink" title="线程优先级（Thread Priority）"></a>线程优先级（Thread Priority）</h6><p>具有高优先级的线程会更早执行，而低优先级的线程常常要等待到系统中已经没有高优先级的可执行线程存在时才能够执行；<br>在Windows中，通过使用下面函数来设置线程优先级；</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">BOOL WINAPI <span class="title">SetThreadPriority</span><span class="params">(HANDLE hThread, <span class="keyword">int</span> nPriority)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>而在Linux中通过pthread库实现；</p>
+<p>频繁等待的线程——IO密集型线程（IO Bound Thread），容易获得高优先级；</p>
+<p>很少等待的线程——CPU密集型线程（CPU Bound Thread），容易被分配低优先级；</p>
+<p>再这样的机制下，有些线程会出现Starvation的情况，即<strong>线程饿死</strong>的情况，优先级较低的线程总不被执行（特别是CPU密集型的线程得到高优先级后），因此为了避免这种情况发生，频繁等待的线程会逐渐获得更高的优先级；</p>
+<p>总结如下：</p>
+<img src="/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/%E7%9F%A5%E8%AF%86%E5%82%A8%E5%A4%87/priority.jpg" alt="priority" style="zoom: 50%;">
+
+<h6 id="不可抢占线程——特权人士"><a href="#不可抢占线程——特权人士" class="headerlink" title="不可抢占线程——特权人士"></a>不可抢占线程——特权人士</h6><p>先前讨论到抢占问题，还有一些线程是不可抢占的，必须等线程自主发出放弃执行的指令，其他线程才能得到执行；<br>放弃执行的指令依据：</p>
+<ol>
+<li>当线程试图等待某事件时（I/O等）；</li>
+<li>线程主动放弃时间片；</li>
+</ol>
+<h4 id="Linux的多线程"><a href="#Linux的多线程" class="headerlink" title="Linux的多线程"></a>Linux的多线程</h4><p>Windows对进程和线程的实现非常标准；</p>
+<ol>
+<li>Windows内核有明确的的线程和进程的概念；</li>
+<li>Windows API中，可以使用明确的API：<code>CreateProcess</code>和<code>CreateThread</code>来创建进程和线程；</li>
+</ol>
+<p>Linux并非如此；<br>Linux内核不存在真正意义上的线程概念；<br>在Linux上，<strong>所有执行实体都称为任务（Task）</strong>，每个任务概念上都类似于一个单线程的进程，具有内存空间、执行实体、文件资源等。但是<strong>不同任务之间可以选择共享内存空间</strong>，在广义上，<strong>同一个内存空间的多个任务构成了一个进程</strong>，而<strong>这些Task就是这个进程里的线程</strong>。</p>
+<h5 id="创建新任务"><a href="#创建新任务" class="headerlink" title="创建新任务"></a>创建新任务</h5><ol>
+<li>fork - 复制当前进程</li>
+<li>exec - 使用新的可执行映像覆盖当前可执行映像</li>
+<li>clone - 创建子进程并从指定位置开始执行</li>
+</ol>
+<h6 id="fork"><a href="#fork" class="headerlink" title="fork"></a>fork</h6><p>fork()函数可以产生一个和当前进程完全一样的新进程，并和当前进程一样从fork函数里返回；</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">pid_t</span> pid;</span><br><span class="line"><span class="keyword">if</span> (pid == fork())</span><br><span class="line">&#123;</span><br><span class="line">	...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>父进程（原本任务）的fork将返回子进程（新任务）的pid，而子进程（新任务）的fork将返回0；</p>
+<p>fork并不复制父进程的内存空间，而是与子进程共享一个写时复制（Copy on Write, COW）的内存空间；写时复制是指，两个进程（任务）可以同时自由读取内存空间，但是在修改内存空间时，复制一份内存空间以供修改，避免影响到其他任务的使用；（如下图）</p>
+<img src="/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/%E7%9F%A5%E8%AF%86%E5%82%A8%E5%A4%87/cow.jpg" alt="COW" style="zoom: 50%;">
+
+<p>fork只产生原本任务的镜像，配合exec的使用才可以生成新任务；</p>
+<h6 id="exec"><a href="#exec" class="headerlink" title="exec"></a>exec</h6><p>进程使用exec来执行新的可执行文件；</p>
+<h6 id="clone"><a href="#clone" class="headerlink" title="clone"></a>clone</h6><p>clone可以产生新线程，在指定位置开始执行，并且可以选择地共享当前进程的内存空间和文件等；</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">clone</span><span class="params">(<span class="keyword">int</span> (*fn)(<span class="keyword">void</span>*), <span class="keyword">void</span>* child_stack, <span class="keyword">int</span> flags, <span class="keyword">void</span>* arg)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<h4 id="线程安全"><a href="#线程安全" class="headerlink" title="线程安全"></a>线程安全</h4><p>多线程程序在并发时数据一致性很重要，试想线程A要保存的数据被线程B修改，导致结果偏差；</p>
+<h5 id="竞争与原子操作"><a href="#竞争与原子操作" class="headerlink" title="竞争与原子操作"></a>竞争与原子操作</h5><p>举个例子，一下的代码在执行时是否有可能会被调度系统中断；</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">i++;</span><br></pre></td></tr></table></figure>
+
+<p>答案是肯定的，因为这个指令在汇编层面并非一行代码，将这种指令的操作称为非原子的，反之单指令单操作则为原子的（Atomic）；</p>
+<p>这样看来，单指令操作在执行过程中不容易出错，但是原子操作只能对简单的数据结构进行更改，当有复杂的数据结构需要修改，就会十分麻烦；因此，出现了上锁的概念；</p>
+<h5 id="同步与锁"><a href="#同步与锁" class="headerlink" title="同步与锁"></a>同步与锁</h5><p>保证同步，即各个线程对同一数据的访问<strong>同步（Synchronization）</strong>；</p>
+<p>锁Lock是一种非强制的机制，每一个线程在访问数据或资源前首先试图获取（Acquire）锁，访问结束即释放（Release）锁；锁被占用时，若要试图获取，线程会进行等待；</p>
+<h6 id="几种锁"><a href="#几种锁" class="headerlink" title="几种锁"></a>几种锁</h6><p>二元信号量（Binary Semaphore）：0和1表示占用与非占用；</p>
+<p>多元信号量（信号量，Semaphore）：初值为N的信号量允许N个线程并发访问，每有一个线程占用，则减1，反之加1；</p>
+<p>互斥量（Mutex）：信号量可以由非获取锁的进程修改释放，而互斥量则是谁占用谁释放；</p>
+<p>临界区（Critical Section）：信号量与互斥量在系统的任何进程中都是可见的，而临界区作用范围仅限于本进程，其他进程无法获取；</p>
+<p>读写锁：针对读取频繁，偶有写入的情况，读写锁提供两种获取方式：</p>
+<ol>
+<li>共享的（Shared）</li>
+<li>独占的（Exclusive）</li>
+</ol>
+<img src="/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/%E7%9F%A5%E8%AF%86%E5%82%A8%E5%A4%87/rwl.jpg" alt="read-Write lock" style="zoom: 50%;">
+
+<p>条件变量（Condition Variable），作用类似于一个栅栏，可以让一群牛等着进来（许多线程一起等待某个事件发生），当栅栏打开（某个事件发生），所有线程可以一起恢复执行；</p>
+<h5 id="可重入函数"><a href="#可重入函数" class="headerlink" title="可重入函数"></a>可重入函数</h5><p>没有被执行完成的函数想要再次执行，其触发情况有：</p>
+<ol>
+<li>多个线程同时执行这个函数；</li>
+<li>函数自身调用自身；</li>
+</ol>
+<p>这个函数需要满足：</p>
+<ol>
+<li>不使用任何（局部）静态或全局的非const变量；</li>
+<li>不返回任何（局部）静态或全局的非const变量的指针；</li>
+<li>仅依赖于调用方提供的参数；</li>
+<li>不依赖任何单个资源的锁；</li>
+<li>不调用任何不可重入的函数；</li>
+</ol>
+<p>这样的函数是并发安全的；（？）</p>
+<h5 id="过度优化问题"><a href="#过度优化问题" class="headerlink" title="过度优化问题"></a>过度优化问题</h5><p>编译器“过度”优化：变量缓存到寄存器内而不写回、调整操作指令顺序；（使用volatile变量解决）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">x = y = 0;</span><br><span class="line"></span><br><span class="line">Thead1</span><br><span class="line">x = 1;</span><br><span class="line">r1 = y;</span><br><span class="line"></span><br><span class="line">Thead2</span><br><span class="line">y = 1;</span><br><span class="line">r2 = x;</span><br></pre></td></tr></table></figure>
+
+<p>当Thread1和Thread2并发执行时，r1和r2至少一个为1，逻辑上不可能同时为0；</p>
+<p>经过编译器无相关指令调整后，可能变为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">x = y = 0;</span><br><span class="line"></span><br><span class="line">Thead1</span><br><span class="line">r1 = y;</span><br><span class="line">x = 1;</span><br><span class="line"></span><br><span class="line">Thead2</span><br><span class="line">y = 1;</span><br><span class="line">r2 = x;</span><br></pre></td></tr></table></figure>
+
+<p>甚至可能出现r1和r2同时为0的情况；</p>
+<p>CPU“过度”优化的问题：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">volatile</span> T* pInst = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="function">T* <span class="title">GetInstance</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">if</span> (pInst == <span class="literal">NULL</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		lock();</span><br><span class="line">		<span class="keyword">if</span>(pInst == <span class="literal">NULL</span>)</span><br><span class="line">			pInst = <span class="keyword">new</span> T;</span><br><span class="line">		unlock();</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> pInst;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>new包含了两个步骤：</p>
+<ol>
+<li>分配内存；</li>
+<li>调用构造函数；</li>
+</ol>
+<p>所以pInst = new T 包含了三个步骤：</p>
+<ol>
+<li>分配内存；</li>
+<li>在内存位置上调用构造函数；</li>
+<li>将该位置赋值给pInst；</li>
+</ol>
+<p>当CPU调度优化导致步骤2、3颠倒时，该位置在未调用构造函数前将地址返回给pInst，那么如果出现另一个GetInstance的并发调用，此时第一个if内的表达式pInst == NULL将范围false，这个调用会直接返回尚未构造完全的对象地址供用户使用；</p>
+<p>现在并不存在可移植的阻止换序的方法（？），通常是调用CPU提供的barrier指令，这个指令阻止其前面的指令被放到其后面；</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 在POWERPC中提供了&quot;lwsync&quot;指令</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> barrier() __asm__ volatile (<span class="meta-string">&quot;lwsync&quot;</span>)</span></span><br><span class="line"><span class="keyword">volatile</span> T* pInst = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="function">T* <span class="title">GetInstance</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">if</span> (pInst == <span class="literal">NULL</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		lock();</span><br><span class="line">		<span class="keyword">if</span>(pInst == <span class="literal">NULL</span>)</span><br><span class="line">		&#123;</span><br><span class="line">			T* temp = <span class="keyword">new</span> T;</span><br><span class="line">			barrier();</span><br><span class="line">			pInst = temp;</span><br><span class="line">		&#125;</span><br><span class="line">		unlock();</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> pInst;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="多线程内部——用户与内核"><a href="#多线程内部——用户与内核" class="headerlink" title="多线程内部——用户与内核"></a>多线程内部——用户与内核</h4><p>大多数操作系统由内核提供线程支持（内核线程和Linux内核终端kernel_thread不是一回事），有多处理器或调度实现并发；</p>
+<p>用户使用的是用户态的用户线程，而非内核线程；</p>
+<p>内核线程和用户线程使用的数量并非一致；</p>
+<h5 id="三种线程模型"><a href="#三种线程模型" class="headerlink" title="三种线程模型"></a>三种线程模型</h5><h6 id="一对一"><a href="#一对一" class="headerlink" title="一对一"></a>一对一</h6><p>简单说就是<strong>一个用户使用的线程唯一对应一个内核使用的线程</strong>，反过来不一定，一个内核里的线程在用户态<strong>不一定</strong>有对应的线程存在；</p>
+<p>由于和内核线程具有一致的有点，线程之间的并发是真正的并发；</p>
+<p>一般使用<strong>API或系统调用创建的线程为一对一的线程</strong>，例如Linux中的clone，Windows中的API CreateThread；</p>
+<p>缺点：</p>
+<ol>
+<li><p>操作系统<strong>限制了内核线程数量</strong>，导致一对一线程会让<strong>用户线程数量同样受到影响</strong>；</p>
+</li>
+<li><p>许多操作系统<strong>内核线程调度时，上下文切换开销较大</strong>，导致用户线程执行<strong>效率低下</strong>；</p>
+</li>
+</ol>
+<h6 id="多对一"><a href="#多对一" class="headerlink" title="多对一"></a>多对一</h6><p><strong>多个用户线程映射到一个内核线程上</strong>，线程之间的切换由用户态的代码来进行，拥有高效的上下文切换和几乎无限制的线程数量；</p>
+<p>缺点：</p>
+<ol>
+<li>一个用户线程阻塞会导致所有线程无法执行，内核线程也随之阻塞；</li>
+</ol>
+<h6 id="多对多"><a href="#多对多" class="headerlink" title="多对多"></a>多对多</h6><p>将<strong>多个用户线程映射到少数但不止一个内核线程</strong>上；</p>
+
+        
+        
+          <blockquote id="copyright">
+              <p>原文链接: <a href="https://www.jk404.cn/page/9/index.html">https://www.jk404.cn/page/9/index.html</a></p>
+              <p>版权声明: 转载请注明出处.</p>
+          </blockquote>
+        
+      
+    </div>
+    <footer class="article-footer">
+      
+        <div class="article-tag-wrap">
+          
+
+          
+          
+
+
+        </div>
+      
+      
+      
+    </footer>
+  </div>
+</article>
+
+
   <article id="post-hello" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-inner">
     
@@ -244,6 +719,14 @@
       <ul>
         
           <li>
+            <a href="/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/router-vuln-D-link-Dir815/">router_vuln_D-link-Dir815</a>
+          </li>
+        
+          <li>
+            <a href="/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/router-vuln-analysis/">router_vuln_analysis</a>
+          </li>
+        
+          <li>
             <a href="/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/router-vuln-file-system/">router_vuln_file_system</a>
           </li>
         
@@ -253,14 +736,6 @@
         
           <li>
             <a href="/course/static-program-analysis/static-program-analysis-03-data-flow-analysis-1/">static_program_analysis_03-data_flow_analysis_1</a>
-          </li>
-        
-          <li>
-            <a href="/study/daily/talk/">talk</a>
-          </li>
-        
-          <li>
-            <a href="/course/static-program-analysis/static-program-analysis-02-intermediate-representation/">static_program_analysis_02_intermediate-representation</a>
           </li>
         
       </ul>
@@ -275,7 +750,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title"><i class="fa fa-classify"></i> 分类</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP-lab/">CSAPP-lab</a><span class="category-list-count">3</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP-lab/bomblab/">bomblab</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP-lab/datalab/">datalab</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP-lab/preparelab/">preparelab</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/">CTF</a><span class="category-list-count">30</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/">PWN</a><span class="category-list-count">30</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/">kernel pwn</a><span class="category-list-count">13</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/FUZZ/">FUZZ</a><span class="category-list-count">3</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/FUZZ/Syzkaller/">Syzkaller</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/FUZZ/Trinity/">Trinity</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/Linux-source/">Linux source</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/cve/">cve</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/knowledge/">knowledge</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/wp/">wp</a><span class="category-list-count">3</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/uncategorized/">uncategorized</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/user-space-pwn/">user space pwn</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/user-space-pwn/cve/">cve</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/">wp</a><span class="category-list-count">12</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/asisctf/">asisctf</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/asisctf/asisctf2021/">asisctf2021</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/buuoj/">buuoj</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/l3hctf/">l3hctf</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/pwnable-kr/">pwnable.kr</a><span class="category-list-count">7</span></li></ul></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/">OS</a><span class="category-list-count">13</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/">lab1</a><span class="category-list-count">13</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge1-what-is-make/">challenge1:what is make</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge2-qemu-gdb/">challenge2:qemu&gdb</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge3-go-into-protected-mode/">challenge3:go into protected mode</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge4-load-kernel-elf/">challenge4:load kernel elf</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge5-trace-stackframe/">challenge5:trace stackframe</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge6-interrupt-handle/">challenge6:interrupt handle</a><span class="category-list-count">3</span></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/">PWN</a><span class="category-list-count">6</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/Fuzz/">Fuzz</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/Fuzz/AFL/">AFL</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/cve/">cve</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/microcorruption/">microcorruption</a><span class="category-list-count">4</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/course/">course</a><span class="category-list-count">4</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/course/MIT-AI/">MIT-AI</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/course/static-program-analysis/">static_program_analysis</a><span class="category-list-count">3</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/golang/">golang</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/golang/start/">start</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/pwn-college/">pwn.college</a><span class="category-list-count">3</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/pwn-college/Chapter01-Program-interaction/">Chapter01 Program interaction</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/pwn-college/Chapter02-Binary-file/">Chapter02 Binary file</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/pwn-college/Introduciton/">Introduciton</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/study/">study</a><span class="category-list-count">19</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/study/book/">book</a><span class="category-list-count">15</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/">揭秘家用路由器0day漏洞挖掘技术</a><span class="category-list-count">8</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/">程序员的自我修养：链接、装载与库</a><span class="category-list-count">7</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/study/daily/">daily</a><span class="category-list-count">4</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/tools/">tools</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/welcome/">welcome</a><span class="category-list-count">1</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP-lab/">CSAPP-lab</a><span class="category-list-count">3</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP-lab/bomblab/">bomblab</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP-lab/datalab/">datalab</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP-lab/preparelab/">preparelab</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/">CTF</a><span class="category-list-count">30</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/">PWN</a><span class="category-list-count">30</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/">kernel pwn</a><span class="category-list-count">13</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/FUZZ/">FUZZ</a><span class="category-list-count">3</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/FUZZ/Syzkaller/">Syzkaller</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/FUZZ/Trinity/">Trinity</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/Linux-source/">Linux source</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/cve/">cve</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/knowledge/">knowledge</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/wp/">wp</a><span class="category-list-count">3</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/uncategorized/">uncategorized</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/user-space-pwn/">user space pwn</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/user-space-pwn/cve/">cve</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/">wp</a><span class="category-list-count">12</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/asisctf/">asisctf</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/asisctf/asisctf2021/">asisctf2021</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/buuoj/">buuoj</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/l3hctf/">l3hctf</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/pwnable-kr/">pwnable.kr</a><span class="category-list-count">7</span></li></ul></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/">OS</a><span class="category-list-count">13</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/">lab1</a><span class="category-list-count">13</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge1-what-is-make/">challenge1:what is make</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge2-qemu-gdb/">challenge2:qemu&gdb</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge3-go-into-protected-mode/">challenge3:go into protected mode</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge4-load-kernel-elf/">challenge4:load kernel elf</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge5-trace-stackframe/">challenge5:trace stackframe</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge6-interrupt-handle/">challenge6:interrupt handle</a><span class="category-list-count">3</span></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/">PWN</a><span class="category-list-count">6</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/Fuzz/">Fuzz</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/Fuzz/AFL/">AFL</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/cve/">cve</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/microcorruption/">microcorruption</a><span class="category-list-count">4</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/course/">course</a><span class="category-list-count">4</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/course/MIT-AI/">MIT-AI</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/course/static-program-analysis/">static_program_analysis</a><span class="category-list-count">3</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/golang/">golang</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/golang/start/">start</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/pwn-college/">pwn.college</a><span class="category-list-count">3</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/pwn-college/Chapter01-Program-interaction/">Chapter01 Program interaction</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/pwn-college/Chapter02-Binary-file/">Chapter02 Binary file</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/pwn-college/Introduciton/">Introduciton</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/study/">study</a><span class="category-list-count">21</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/study/book/">book</a><span class="category-list-count">17</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/">揭秘家用路由器0day漏洞挖掘技术</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/">程序员的自我修养：链接、装载与库</a><span class="category-list-count">7</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/study/daily/">daily</a><span class="category-list-count">4</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/tools/">tools</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/welcome/">welcome</a><span class="category-list-count">1</span></li></ul>
     </div>
   </div>
 
@@ -285,7 +760,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title"><i class="fa fa-archive"></i> 归档</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/">2022年03月</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/">2021年12月</a><span class="archive-list-count">76</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/">2022年03月</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/">2021年12月</a><span class="archive-list-count">76</span></li></ul>
     </div>
   </div>
 

