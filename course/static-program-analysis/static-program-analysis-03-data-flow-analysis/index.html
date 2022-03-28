@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   
   
-  <title>static_program_analysis_03-data_flow_analysis_1 | -K1ose-</title>
+  <title>static_program_analysis_03-data_flow_analysis | -K1ose-</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   
   
@@ -81,7 +81,7 @@
 </header>
 
       <div class="outer">
-        <section id="main"><article id="post-static-program-analysis-03-data-flow-analysis-1" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+        <section id="main"><article id="post-static-program-analysis-03-data-flow-analysis" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-inner">
     
     
@@ -89,7 +89,7 @@
         
   
     <h1 class="p-name article-title" itemprop="headline name">
-      static_program_analysis_03-data_flow_analysis_1
+      static_program_analysis_03-data_flow_analysis
     </h1>
   
 
@@ -118,7 +118,7 @@
 
       
       
-<a href="/course/static-program-analysis/static-program-analysis-03-data-flow-analysis-1/#comments" class="article-comment-link">
+<a href="/course/static-program-analysis/static-program-analysis-03-data-flow-analysis/#comments" class="article-comment-link">
   
     
     
@@ -151,24 +151,24 @@
 <li>The input(output) state is associated with the program point before(after) the statement</li>
 </ul>
 <p>通俗来讲，对于一个Statement而言，存在输入和输出的状态，使用<code>IN[..]</code>来代表输入状态，<code>OUT[..]</code>来代表输出状态；</p>
-<p><img src="/course/static-program-analysis/static-program-analysis-03-data-flow-analysis-1/Input_Output.jpg"></p>
+<p><img src="/course/static-program-analysis/static-program-analysis-03-data-flow-analysis/Input_Output.jpg"></p>
 <p>当两个Statement相邻时，上一Statement的Output就是下一个Statement的Input，当两个Statement合并到一个Statement时，需要对两个Statement的Output进行Meet操作，如下：</p>
 <p><code>OUT[s1]</code> ^ <code>OUT[s3]</code> = <code>IN[s2]</code></p>
-<p><img src="/course/static-program-analysis/static-program-analysis-03-data-flow-analysis-1/meet.jpg"></p>
+<p><img src="/course/static-program-analysis/static-program-analysis-03-data-flow-analysis/meet.jpg"></p>
 <p>In each data-flow analysis application, we associate with every program point a data-flow value that represents an abstraction of the set of all possible program states taht can be observed for that point.</p>
 <p>例如：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">x = 10;</span><br><span class="line">	---- x = [+] y = [⊥]</span><br><span class="line">y = -1;</span><br><span class="line">	---- x = [+] y = [-]</span><br><span class="line">x = y;</span><br><span class="line">	---- x = [-] y = [-]</span><br><span class="line">x = x / y</span><br><span class="line">	---- x = [+] y = [-]</span><br></pre></td></tr></table></figure>
 
 <h3 id="Nations-for-Transfer-Function’s-Constraints"><a href="#Nations-for-Transfer-Function’s-Constraints" class="headerlink" title="Nations for Transfer Function’s Constraints"></a>Nations for Transfer Function’s Constraints</h3><ul>
 <li><p>Foward Analysis</p>
-<p><img src="/course/static-program-analysis/static-program-analysis-03-data-flow-analysis-1/forward_analysis.jpg"></p>
+<p><img src="/course/static-program-analysis/static-program-analysis-03-data-flow-analysis/forward_analysis.jpg"></p>
 <div align="center">使用下面的表示形式来表达上图的Output和input关系</div>
 
 <p>$$<br>OUT[s] = f_s(IN[s])<br>$$</p>
 </li>
 <li></li>
 <li><p>Backward Analysis</p>
-<p><img src="/course/static-program-analysis/static-program-analysis-03-data-flow-analysis-1/backward_analysis.jpg"></p>
+<p><img src="/course/static-program-analysis/static-program-analysis-03-data-flow-analysis/backward_analysis.jpg"></p>
 <div align="center">使用下面的表示形式来表达上图的逆向的Output和input关系</div>
 
 <p>$$<br>IN[s] = f_s(OUT[s])<br>$$</p>
@@ -176,12 +176,12 @@
 </ul>
 <h3 id="Notations-for-Control-Flow’s-Constraints"><a href="#Notations-for-Control-Flow’s-Constraints" class="headerlink" title="Notations for Control Flow’s Constraints"></a>Notations for Control Flow’s Constraints</h3><ul>
 <li><p>Control flow within a BB</p>
-<p><img src="/course/static-program-analysis/static-program-analysis-03-data-flow-analysis-1/withinBB.jpg"><br>$$<br>IN[s_{i+1}] = OUT[s_i], for\space all\space i = 1,\space 2,\space …,\space n-1<br>$$<br>这个表达式表明，在一个Base Block中，每个statement的输入是它上一个statement的输出。</p>
+<p><img src="/course/static-program-analysis/static-program-analysis-03-data-flow-analysis/withinBB.jpg"><br>$$<br>IN[s_{i+1}] = OUT[s_i], for\space all\space i = 1,\space 2,\space …,\space n-1<br>$$<br>这个表达式表明，在一个Base Block中，每个statement的输入是它上一个statement的输出。</p>
 </li>
 <li><p>Control flow among BBs</p>
 <center>
-    <img src="/course/static-program-analysis/static-program-analysis-03-data-flow-analysis-1/amongBBs1.jpg">
-    <img src="/course/static-program-analysis/static-program-analysis-03-data-flow-analysis-1/amongBBs2.jpg">
+    <img src="/course/static-program-analysis/static-program-analysis-03-data-flow-analysis/amongBBs1.jpg">
+    <img src="/course/static-program-analysis/static-program-analysis-03-data-flow-analysis/amongBBs2.jpg">
 </center>
 
 <p>$$<br>IN[B] = IN[s_1]<br>\<br>OUT[B] = OUT[s_n]<br>\<br>\<br>OUT[B] = f_B(IN[B]), \space f_B = f_{s_n} · … · f_{s_2} · f_{s_1}<br>\<br>IN[B] = ∧_{P \space a\space predecessor\space of\space B}\space OUT[P]<br>\<br>\<br>IN[B] = f_B(OUT[B]), f_B = f_{s_1} · … · f_{s_{n-1}} · f_{s_n}<br>\<br>OUT[B] = ∧_{S \space a\space successor\space of\space B}\space IN[S]<br>$$</p>
@@ -229,7 +229,7 @@
 </ul>
 </li>
 <li><p>Transfer Function - Safe-approximation<br>$$<br>OUT[B] = gen_B \space ∪ \space (IN[B] - kill_B)<br>$$</p>
-<img src="/course/static-program-analysis/static-program-analysis-03-data-flow-analysis-1/understanding_reaching.jpg" height="500" width="600">
+<img src="/course/static-program-analysis/static-program-analysis-03-data-flow-analysis/understanding_reaching.jpg" height="500" width="600">
 
 <p>可以看到d1,d2,…,d7都是定义。</p>
 <ul>
@@ -250,7 +250,7 @@
 <li><p>Output: IN[B] and OUT[B] for each basic block B</p>
 </li>
 <li><p>Method:</p>
-<img src="/course/static-program-analysis/static-program-analysis-03-data-flow-analysis-1/algorithm_0.jpg" height="300" width="500">
+<img src="/course/static-program-analysis/static-program-analysis-03-data-flow-analysis/algorithm_0.jpg" height="300" width="500">
 
 <ul>
 <li>第一步，让entry结点的Output为空；</li>
@@ -260,7 +260,7 @@
 </li>
 </ul>
 <h4 id="Sample"><a href="#Sample" class="headerlink" title="Sample"></a>Sample</h4><p>这里举例说明，存在如下的CFG。</p>
-<img src="/course/static-program-analysis/static-program-analysis-03-data-flow-analysis-1/sample_0.jpg" height="400/">
+<img src="/course/static-program-analysis/static-program-analysis-03-data-flow-analysis/sample_0.jpg" height="400/">
 
 <p>这里将对不同变量的定义用颜色区分，可以看到，每一个statement都对应一个D的定义操作。</p>
 <p>这样的CFG可以有下面的代码转化而来：</p>
@@ -712,7 +712,7 @@
 <p>Live variables analysis tells whether the value of variable v at program point p could be used along some path in CFG starting at p. If so, v is live at p; otherwise, v is dead at p.</p>
 </blockquote>
 <p>v(p) == should not be redefined before usage =&gt; use(v)</p>
-<p><img src="/course/static-program-analysis/static-program-analysis-03-data-flow-analysis-1/live_variable.jpg"></p>
+<p><img src="/course/static-program-analysis/static-program-analysis-03-data-flow-analysis/live_variable.jpg"></p>
 <ul>
 <li>Information of live variables can be used for register allocations.e.g., at some point all registers are full and we need to use one, then we should favor using a register with a dead value. - 如果存放变量的寄存器都被占用了，那么应该首先使用存放dead value的寄存器来存放新的value。</li>
 </ul>
@@ -736,7 +736,7 @@
 <li>已知<code>OUT[B]</code>，何来<code>IN[B]</code>？</li>
 </ul>
 <p>对于下面的例子：</p>
-<img src="/course/static-program-analysis/static-program-analysis-03-data-flow-analysis-1/understanding_live.jpg" height="300" width="500/">
+<img src="/course/static-program-analysis/static-program-analysis-03-data-flow-analysis/understanding_live.jpg" height="300" width="500/">
 
 <p>在已知<code>OUT[B]=&#123;v&#125;</code>的情况下，如何去推算<code>IN[B]</code>呢？</p>
 <p>这里先举几个例子，针对不同的?，有以下内容形成的表格：</p>
@@ -813,11 +813,11 @@
 <li><p>OUTPUT：IN[B] and OUT[B] for each basic block B</p>
 </li>
 <li><p>Method：</p>
-<p><img src="/course/static-program-analysis/static-program-analysis-03-data-flow-analysis-1/algorithm_1.jpg"></p>
+<p><img src="/course/static-program-analysis/static-program-analysis-03-data-flow-analysis/algorithm_1.jpg"></p>
 </li>
 </ul>
 <h4 id="Sample-1"><a href="#Sample-1" class="headerlink" title="Sample"></a>Sample</h4><p>有如下例子：</p>
-<p><img src="/course/static-program-analysis/static-program-analysis-03-data-flow-analysis-1/sample_1.jpg"></p>
+<p><img src="/course/static-program-analysis/static-program-analysis-03-data-flow-analysis/sample_1.jpg"></p>
 <ol>
 <li><p>首先进行初始化，将所有OUT[B]、IN[B]标记为<code>0000000</code>；</p>
 <table>
@@ -1223,12 +1223,12 @@
 <li>Add to OUt the expression <em>x op y</em>(gen)</li>
 <li>Delete from IN any expression involving variable a(kill)</li>
 </ul>
-<p><img src="/course/static-program-analysis/static-program-analysis-03-data-flow-analysis-1/understanding_available_expreesion_0.jpg"></p>
+<p><img src="/course/static-program-analysis/static-program-analysis-03-data-flow-analysis/understanding_available_expreesion_0.jpg"></p>
 <p>Transfer Function:<br>$$<br>OUT[B]=gen_B \space ∪ \space (IN[B]-kill_B)<br>$$</p>
 <p>$$<br>IN[B]=∩_{P \space a \space predecessor \space of \space B}OUT[P]<br>$$</p>
 <p>由于must analysis，需要对IN[B]采取$∩$的方法；</p>
 <p>对于：</p>
-<p><img src="/course/static-program-analysis/static-program-analysis-03-data-flow-analysis-1/understanding_available_expreesion_1.jpg"></p>
+<p><img src="/course/static-program-analysis/static-program-analysis-03-data-flow-analysis/understanding_available_expreesion_1.jpg"></p>
 <ol>
 <li><p>在$a=e^{16}*x$后，$OUT[B]$={$e^{16}*x$}；</p>
 </li>
@@ -1240,8 +1240,8 @@
 <p>有一个问题就是，其中x的值发生了变化，如何避免这种错误发生呢？如果将a, b, c都替换成t，这样一来从a-&gt;c的两个分支，无论走哪个分支，如果t的值被覆盖，也能由自身继承，因此达到了must的效果；</p>
 </li>
 </ul>
-<h4 id="Algorithm-2"><a href="#Algorithm-2" class="headerlink" title="Algorithm"></a>Algorithm</h4><p><img src="/course/static-program-analysis/static-program-analysis-03-data-flow-analysis-1/algorithm_2.jpg"></p>
-<h4 id="Sample-2"><a href="#Sample-2" class="headerlink" title="Sample"></a>Sample</h4><p><img src="/course/static-program-analysis/static-program-analysis-03-data-flow-analysis-1/sample_2.jpg"></p>
+<h4 id="Algorithm-2"><a href="#Algorithm-2" class="headerlink" title="Algorithm"></a>Algorithm</h4><p><img src="/course/static-program-analysis/static-program-analysis-03-data-flow-analysis/algorithm_2.jpg"></p>
+<h4 id="Sample-2"><a href="#Sample-2" class="headerlink" title="Sample"></a>Sample</h4><p><img src="/course/static-program-analysis/static-program-analysis-03-data-flow-analysis/sample_2.jpg"></p>
 <p>对于如上的例子，进行分析：</p>
 <ol>
 <li><p>首先初始化，将所有basic block的OUT[B]设置为11111， entry设置为00000；</p>
@@ -1538,7 +1538,7 @@
         
         
           <blockquote id="copyright">
-              <p>原文链接: <a href="https://www.jk404.cn/course/static-program-analysis/static-program-analysis-03-data-flow-analysis-1/">https://www.jk404.cn/course/static-program-analysis/static-program-analysis-03-data-flow-analysis-1/</a></p>
+              <p>原文链接: <a href="https://www.jk404.cn/course/static-program-analysis/static-program-analysis-03-data-flow-analysis/">https://www.jk404.cn/course/static-program-analysis/static-program-analysis-03-data-flow-analysis/</a></p>
               <p>版权声明: 转载请注明出处.</p>
           </blockquote>
         
