@@ -146,6 +146,73 @@
 </article>
 
 
+  <article id="post-ue4-01-introduction" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/UE4/LowPoly/ue4-01-introduction/">ue4_01_introduction</a>
+    </h1>
+  
+
+
+      </header>
+    
+    <div class="article-meta">
+      
+      <span class="article-date">
+  <i class="fa fa-date"></i>
+  <time class="dt-published" datetime="2022-03-26T05:15:02.000Z" itemprop="datePublished">2022年03月26日</time>
+</span>
+      
+  <div class="article-category">
+    <i class="fa fa-classify"></i>
+    <a class="article-category-link" href="/categories/UE4/">UE4</a> > <a class="article-category-link" href="/categories/UE4/LowPoly/">LowPoly</a>
+  </div>
+
+      
+      
+<a href="/UE4/LowPoly/ue4-01-introduction/#comments" class="article-comment-link">
+  
+  <i class="fa fa-commt"></i>
+  留言
+</a>
+
+
+    </div>
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="01-Introduction"><a href="#01-Introduction" class="headerlink" title="01_Introduction"></a>01_Introduction</h1><h2 id="Low-Poly"><a href="#Low-Poly" class="headerlink" title="Low Poly"></a>Low Poly</h2>
+        
+        
+          <blockquote id="copyright">
+              <p>原文链接: <a href="https://www.jk404.cn/index.html">https://www.jk404.cn/index.html</a></p>
+              <p>版权声明: 转载请注明出处.</p>
+          </blockquote>
+        
+      
+    </div>
+    <footer class="article-footer">
+      
+        <div class="article-tag-wrap">
+          
+
+          
+          
+
+
+        </div>
+      
+      
+      
+    </footer>
+  </div>
+</article>
+
+
   <article id="post-router-vuln-D-link-Dir815" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-inner">
     
@@ -840,7 +907,7 @@
 <li><p>Output: IN[B] and OUT[B] for each basic block B</p>
 </li>
 <li><p>Method:</p>
-<img src="/course/static-program-analysis/static-program-analysis-03-data-flow-analysis-1/algorithm.jpg" height="300" width="500">
+<img src="/course/static-program-analysis/static-program-analysis-03-data-flow-analysis-1/algorithm_0.jpg" height="300" width="500">
 
 <ul>
 <li>第一步，让entry结点的Output为空；</li>
@@ -850,14 +917,14 @@
 </li>
 </ul>
 <h4 id="Sample"><a href="#Sample" class="headerlink" title="Sample"></a>Sample</h4><p>这里举例说明，存在如下的CFG。</p>
-<img src="/course/static-program-analysis/static-program-analysis-03-data-flow-analysis-1/sample.jpg" height="400/">
+<img src="/course/static-program-analysis/static-program-analysis-03-data-flow-analysis-1/sample_0.jpg" height="400/">
 
 <p>这里将对不同变量的定义用颜色区分，可以看到，每一个statement都对应一个D的定义操作。</p>
 <p>这样的CFG可以有下面的代码转化而来：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">D1</span><br><span class="line">D2</span><br><span class="line">do&#123;</span><br><span class="line">	D3</span><br><span class="line">	D4</span><br><span class="line">	if(...)&#123;</span><br><span class="line">		D5</span><br><span class="line">		D6</span><br><span class="line">	&#125;</span><br><span class="line">	else&#123;</span><br><span class="line">		D7</span><br><span class="line">		break</span><br><span class="line">	&#125;</span><br><span class="line">&#125; while(...)</span><br><span class="line">D8</span><br></pre></td></tr></table></figure>
 
 <p>这里将八个Statement，即八个定义操作抽象为bit。0：表示到该点不能reach，1：到该点可以reach；</p>
-<h4 id="1st-traverse"><a href="#1st-traverse" class="headerlink" title="1st-traverse"></a>1st-traverse</h4><p>根据算法，初始化后，所有的Output为空。</p>
+<h5 id="1st-traverse"><a href="#1st-traverse" class="headerlink" title="1st-traverse"></a>1st-traverse</h5><p>根据算法，初始化后，所有的Output为空。</p>
 <ul>
 <li><p>进入Entry，没有变量的定义，都不能reach</p>
 <table>
@@ -1162,7 +1229,7 @@
 </tbody></table>
 </li>
 </ul>
-<h4 id="2nd-traverse"><a href="#2nd-traverse" class="headerlink" title="2nd-traverse"></a>2nd-traverse</h4><p>在第二次遍历时，</p>
+<h5 id="2nd-traverse"><a href="#2nd-traverse" class="headerlink" title="2nd-traverse"></a>2nd-traverse</h5><p>在第二次遍历时，</p>
 <ul>
 <li><p>对于B1，OUT是不需要重新计算的；</p>
 </li>
@@ -1272,10 +1339,10 @@
 <p>可以看到<code>Changes occur in OUT[] of B2,B3</code>，因此需要进行第三次遍历；</p>
 </li>
 </ul>
-<h4 id="3rd-traverse"><a href="#3rd-traverse" class="headerlink" title="3rd-traverse"></a>3rd-traverse</h4><ul>
+<h5 id="3rd-traverse"><a href="#3rd-traverse" class="headerlink" title="3rd-traverse"></a>3rd-traverse</h5><ul>
 <li>遍历结束后，OUT没有变化，因此不需要进行第四次遍历。</li>
 </ul>
-<h4 id="Why-this-algorithm-can-finally-stop"><a href="#Why-this-algorithm-can-finally-stop" class="headerlink" title="Why this algorithm can finally stop?"></a>Why this algorithm can finally stop?</h4><p>Transfer Function:<br>$$<br>OUT[B] = gen_B \space ∪ \space (IN[B] - kill_B)<br>$$</p>
+<h5 id="Why-this-algorithm-can-finally-stop"><a href="#Why-this-algorithm-can-finally-stop" class="headerlink" title="Why this algorithm can finally stop?"></a>Why this algorithm can finally stop?</h5><p>Transfer Function:<br>$$<br>OUT[B] = gen_B \space ∪ \space (IN[B] - kill_B)<br>$$</p>
 <ul>
 <li>$gen_B$ and $kill_B$ remain unchanged</li>
 <li>When more facts flow in IN[B], the “more facts” either<ul>
@@ -1285,10 +1352,10 @@
 </li>
 <li>When a fact is added to OUT[B], through either $gen_B$, or $survivor_B$, it stays there forever</li>
 <li>Thus OUt[B] newver shrinks (e.g., 0-&gt;1, or 1-&gt;1)</li>
-<li>As the set of facts i s finite (e.g., all definitions in the program), there must exist a pass of iteration during which nothing is added to any OUT, and then the algorithm terminates</li>
+<li>As the set of facts is finite (e.g., all definitions in the program), there must exist a pass of iteration during which nothing is added to any OUT, and then the algorithm terminates</li>
 </ul>
-<h4 id="Safe-to-terminate-by-condition-do-while"><a href="#Safe-to-terminate-by-condition-do-while" class="headerlink" title="Safe to terminate by condition do..while?"></a>Safe to terminate by condition do..while?</h4><p>迭代和Transfer Function的原因，最终算法会到达一个不动点，这个不动点是一个safe-approximation的结果。</p>
-<h4 id="assumption"><a href="#assumption" class="headerlink" title="assumption"></a>assumption</h4><ul>
+<h5 id="Safe-to-terminate-by-condition-do-while"><a href="#Safe-to-terminate-by-condition-do-while" class="headerlink" title="Safe to terminate by condition do..while?"></a>Safe to terminate by condition do..while?</h5><p>迭代和Transfer Function的原因，最终算法会到达一个不动点，这个不动点是一个safe-approximation的结果。</p>
+<h5 id="assumption"><a href="#assumption" class="headerlink" title="assumption"></a>assumption</h5><ul>
 <li>对于一个Basic Block，同样的输入会得到同样的输出，即对于输入x，res = $gen_B\space ∪\space x\space -\space kill_B$ ，x不变时，res也不会变。</li>
 <li>对于B1，不需要重复计算IN[B1]和OUT[B1]。</li>
 <li>对于每个Basic Block的OUT中，D如果为1，则表示该定义能够reach到当前BB，否知则否。</li>
@@ -1302,6 +1369,7 @@
 <p>Live variables analysis tells whether the value of variable v at program point p could be used along some path in CFG starting at p. If so, v is live at p; otherwise, v is dead at p.</p>
 </blockquote>
 <p>v(p) == should not be redefined before usage =&gt; use(v)</p>
+<p><img src="/course/static-program-analysis/static-program-analysis-03-data-flow-analysis-1/live_variable.jpg"></p>
 <ul>
 <li>Information of live variables can be used for register allocations.e.g., at some point all registers are full and we need to use one, then we should favor using a register with a dead value. - 如果存放变量的寄存器都被占用了，那么应该首先使用存放dead value的寄存器来存放新的value。</li>
 </ul>
@@ -1315,13 +1383,11 @@
 </li>
 </ul>
 </li>
-<li><p>Algorithm Design- Safe-approximation</p>
+<li><p>Safe-approximation</p>
 <ul>
 <li><p>Transfer Function</p>
-<p>$OUT[B]=∪_{S \space a\space successor\space of\space B}\space IN[B]$</p>
-<p>$IN[B]=use_B\space ∪\space (OUT[B]-def_B)$</p>
-</li>
-<li><p>对Transfer Function的理解</p>
+<p>由：<br>$$<br>OUT[B]=∪_{S \space a\space successor\space of\space B}\space IN[B]<br>$$</p>
+<p>得到：<br>$$<br>IN[B]=use_B\space ∪\space (OUT[B]-def_B)<br>$$<br>对Transfer Function的理解：</p>
 <ul>
 <li>采取何种分析方式？Backward or Forward？</li>
 <li>已知<code>OUT[B]</code>，何来<code>IN[B]</code>？</li>
@@ -1329,7 +1395,8 @@
 <p>对于下面的例子：</p>
 <img src="/course/static-program-analysis/static-program-analysis-03-data-flow-analysis-1/understanding_live.jpg" height="300" width="500/">
 
-<p>在已知<code>OUT[B]=&#123;v&#125;</code>的情况下，如何去推算<code>IN[B]</code>呢？这里先举几个例子，针对不同的?，有以下内容形成的表格：</p>
+<p>在已知<code>OUT[B]=&#123;v&#125;</code>的情况下，如何去推算<code>IN[B]</code>呢？</p>
+<p>这里先举几个例子，针对不同的?，有以下内容形成的表格：</p>
 <table>
 <thead>
 <tr>
@@ -1392,16 +1459,726 @@
 </tbody></table>
 <p>在redefine之前如果use，那么认为该变量仍然是live的。</p>
 <p>可以看到，其实很多数据流分析的pattern都是$gen_B$和$kill_B$的结构；</p>
+<p><em>因此，对于$IN[B]$的推算，由$OUT[B]-def_B$可以去掉那些重定义的value，但是如果在重定义前使用了这些变量，则需要加回来$use_B$，由此才得到$IN[B]$</em></p>
 </li>
 </ul>
 </li>
 </ul>
 <h4 id="Algorithm-1"><a href="#Algorithm-1" class="headerlink" title="Algorithm"></a>Algorithm</h4><ul>
-<li>INPUT：CFG(def_B and useB computed for each basic block B)</li>
-<li>OUTPUT：IN[B] and OUT[B] for each basic block B</li>
-<li>Method：</li>
+<li><p>INPUT：CFG(def_B and useB computed for each basic block B)</p>
+</li>
+<li><p>OUTPUT：IN[B] and OUT[B] for each basic block B</p>
+</li>
+<li><p>Method：</p>
+<p><img src="/course/static-program-analysis/static-program-analysis-03-data-flow-analysis-1/algorithm_1.jpg"></p>
+</li>
 </ul>
+<h4 id="Sample-1"><a href="#Sample-1" class="headerlink" title="Sample"></a>Sample</h4><p>有如下例子：</p>
+<p><img src="/course/static-program-analysis/static-program-analysis-03-data-flow-analysis-1/sample_1.jpg"></p>
+<ol>
+<li><p>首先进行初始化，将所有OUT[B]、IN[B]标记为<code>0000000</code>；</p>
+<table>
+<thead>
+<tr>
+<th align="center">x</th>
+<th align="center">y</th>
+<th align="center">z</th>
+<th align="center">p</th>
+<th align="center">q</th>
+<th align="center">m</th>
+<th align="center">k</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+</tr>
+</tbody></table>
+</li>
+<li><p>根据Backward和transfer function($IN[B]=use_B\space ∪\space (OUT[B]-def_B)$)进行推算；</p>
+<p>简单理解就是，对于$def_B$进行kill操作（标0），对于$use_B$进行gen操作（标1）；</p>
+<ul>
+<li><p>对于B5而言，有：</p>
+<p>​    $use_B$={p}, $def_B$={z}, $OUT[B]={0000000}$</p>
+<p>得到：</p>
+<table>
+<thead>
+<tr>
+<th align="center">Basic Block</th>
+<th align="left">Statement</th>
+<th align="center">$OUT[B_i]$</th>
+<th align="center">$use_B$</th>
+<th align="center">$def_B$</th>
+<th align="center">x</th>
+<th align="center">y</th>
+<th align="center">z</th>
+<th align="center">p</th>
+<th align="center">q</th>
+<th align="center">m</th>
+<th align="center">k</th>
+<th align="center">$IN[B_i]$</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">B5</td>
+<td align="left">z = 2p</td>
+<td align="center">000 0000</td>
+<td align="center">{p}</td>
+<td align="center">{z}</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center">0</td>
+<td align="center">1</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center">000 1000</td>
+</tr>
+</tbody></table>
+</li>
+<li><p>对于B4而言，B4有两个后继{B5, B2}，其$OUT[B4]$为$IN[B2]$和$IN[B5]$的Union，有：</p>
+<p>​    $use_B$={y}, $def_B$={x, q}, $OUT[B4]=0000000 ∪ 0001000 = 0001000$</p>
+<p>得到：</p>
+<table>
+<thead>
+<tr>
+<th align="center">Basic Block</th>
+<th align="left">Statement</th>
+<th align="center">$OUT[B_i]$</th>
+<th align="center">$use_B$</th>
+<th align="center">$def_B$</th>
+<th align="center">x</th>
+<th align="center">y</th>
+<th align="center">z</th>
+<th align="center">p</th>
+<th align="center">q</th>
+<th align="center">m</th>
+<th align="center">k</th>
+<th align="center">$IN[B_i]$</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">B4</td>
+<td align="left">x = 4<br>q = y</td>
+<td align="center">000 1000</td>
+<td align="center">{y}</td>
+<td align="center">{x, q}</td>
+<td align="center">0</td>
+<td align="center">1</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center">0</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center">010 1000</td>
+</tr>
+</tbody></table>
+</li>
+<li><p>对于B3而言，有：</p>
+<p>​    $use_B$={x}, $def_B$={x}, $OUT[B3]=0001000$</p>
+<p>得到：</p>
+<table>
+<thead>
+<tr>
+<th align="center">Basic Block</th>
+<th align="left">Statement</th>
+<th align="center">$OUT[B_i]$</th>
+<th align="center">$use_B$</th>
+<th align="center">$def_B$</th>
+<th align="center">x</th>
+<th align="center">y</th>
+<th align="center">z</th>
+<th align="center">p</th>
+<th align="center">q</th>
+<th align="center">m</th>
+<th align="center">k</th>
+<th align="center">$IN[B_i]$</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">B3</td>
+<td align="left">x = x - 3</td>
+<td align="center">000 1000</td>
+<td align="center">{x}</td>
+<td align="center">{x}</td>
+<td align="center">0</td>
+<td align="center">1</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center">0</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center">100 1000</td>
+</tr>
+</tbody></table>
+</li>
+<li><p>对于B2而言，B2有两个后继，为{B3, B4}，因此其$OUT_[B2]$为$IN[B3]$和$IN[B4]$的Union，有：</p>
+<p>​    $use_B$={k, m}, $def_B$={m, y}, $OUT[B2]=1101000$</p>
+<p>得到：</p>
+<table>
+<thead>
+<tr>
+<th align="center">Basic Block</th>
+<th align="left">Statement</th>
+<th align="center">$OUT[B_i]$</th>
+<th align="center">$use_B$</th>
+<th align="center">$def_B$</th>
+<th align="center">x</th>
+<th align="center">y</th>
+<th align="center">z</th>
+<th align="center">p</th>
+<th align="center">q</th>
+<th align="center">m</th>
+<th align="center">k</th>
+<th align="center">$IN[B_i]$</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">B2</td>
+<td align="left">m = k<br>y = m - 1</td>
+<td align="center">110 1000</td>
+<td align="center">{k, m}</td>
+<td align="center">{m, y}</td>
+<td align="center"></td>
+<td align="center">0</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center">0</td>
+<td align="center">1</td>
+<td align="center">100 1001</td>
+</tr>
+</tbody></table>
+</li>
+<li><p>对于B1而言，有：</p>
+<p>​    $use_B$={p, q, z}, $def_B$={x, y}, $OUT[B1]=1001001$</p>
+<p>得到：</p>
+<table>
+<thead>
+<tr>
+<th align="center">Basic Block</th>
+<th align="left">Statement</th>
+<th align="center">$OUT[B_i]$</th>
+<th align="center">$use_B$</th>
+<th align="center">$def_B$</th>
+<th align="center">x</th>
+<th align="center">y</th>
+<th align="center">z</th>
+<th align="center">p</th>
+<th align="center">q</th>
+<th align="center">m</th>
+<th align="center">k</th>
+<th align="center">$IN[B_i]$</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">B1</td>
+<td align="left">x = p + 1<br>y = q + z</td>
+<td align="center">100 1001</td>
+<td align="center">{p, q, z}</td>
+<td align="center">{x, y}</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center">001 1101</td>
+</tr>
+</tbody></table>
+</li>
+</ul>
+<p>由此第一次推算结束了。</p>
+<p>那么是否需要进行第二次的推算呢？判断条件是<em>changes to any IN[B] occur</em>，所以仍然需要进行循环推算；</p>
+</li>
+<li><p>第二次推算继续：</p>
+<p>根据推算规则：<br>$$<br>IN[B]=use_B\space ∪\space (OUT[B]-def_B)<br>$$<br>对于每一个Basic Block，其中的Statment都是不变的，意味着$use_B$和$def_B$是不变的， 因此当$OUT[B]$不变时，$IN[B]$也不会变；</p>
+<ul>
+<li><p>对于B5而言，依然不变：</p>
+<table>
+<thead>
+<tr>
+<th align="center">Basic Block</th>
+<th align="left">Statement</th>
+<th align="center">$OUT[B_i]$</th>
+<th align="center">$use_B$</th>
+<th align="center">$def_B$</th>
+<th align="center">x</th>
+<th align="center">y</th>
+<th align="center">z</th>
+<th align="center">p</th>
+<th align="center">q</th>
+<th align="center">m</th>
+<th align="center">k</th>
+<th align="center">$IN[B_i]$</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">B5</td>
+<td align="left">z = 2p</td>
+<td align="center">000 0000</td>
+<td align="center">{p}</td>
+<td align="center">{z}</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center">0</td>
+<td align="center">1</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center">000 1000</td>
+</tr>
+</tbody></table>
+</li>
+<li><p>对于B3而言，由于$IN[B5]$不变，其前驱的Basic Block如若只有一个后继，那么该Basic Block的IN[B]不变，意味着B3的$OUT[B]$也不会变。</p>
+<table>
+<thead>
+<tr>
+<th align="center">Basic Block</th>
+<th align="left">Statement</th>
+<th align="center">$OUT[B_i]$</th>
+<th align="center">$use_B$</th>
+<th align="center">$def_B$</th>
+<th align="center">x</th>
+<th align="center">y</th>
+<th align="center">z</th>
+<th align="center">p</th>
+<th align="center">q</th>
+<th align="center">m</th>
+<th align="center">k</th>
+<th align="center">$IN[B_i]$</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">B3</td>
+<td align="left">x = x - 3</td>
+<td align="center">000 1000</td>
+<td align="center">{x}</td>
+<td align="center">{x}</td>
+<td align="center">0</td>
+<td align="center">1</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center">0</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center">100 1000</td>
+</tr>
+</tbody></table>
+</li>
+<li><p>对于B4而言，其有两个后继B2、B5，根据规则有：</p>
+<p>​    $use_B$={y}, $def_B$={x, q}, $OUT[B4]=1001001 ∪ 0001000 = 1001001$</p>
+<table>
+<thead>
+<tr>
+<th align="center">Basic Block</th>
+<th align="left">Statement</th>
+<th align="center">$OUT[B_i]$</th>
+<th align="center">$use_B$</th>
+<th align="center">$def_B$</th>
+<th align="center">x</th>
+<th align="center">y</th>
+<th align="center">z</th>
+<th align="center">p</th>
+<th align="center">q</th>
+<th align="center">m</th>
+<th align="center">k</th>
+<th align="center">$IN[B_i]$</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">B4</td>
+<td align="left">x = 4<br>q = y</td>
+<td align="center">100 1001</td>
+<td align="center">{y}</td>
+<td align="center">{x, q}</td>
+<td align="center">0</td>
+<td align="center">1</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center">0</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center">010 1001</td>
+</tr>
+</tbody></table>
+</li>
+<li><p>对于B2而言，B2有两个后继，为{B3, B4}，因此其$OUT_[B2]$为$IN[B3]$和$IN[B4]$的Union，有：</p>
+<p>​    $use_B$={k, m}, $def_B$={m, y}, $OUT[B2]=1101001$</p>
+<p>得到：</p>
+<table>
+<thead>
+<tr>
+<th align="center">Basic Block</th>
+<th align="left">Statement</th>
+<th align="center">$OUT[B_i]$</th>
+<th align="center">$use_B$</th>
+<th align="center">$def_B$</th>
+<th align="center">x</th>
+<th align="center">y</th>
+<th align="center">z</th>
+<th align="center">p</th>
+<th align="center">q</th>
+<th align="center">m</th>
+<th align="center">k</th>
+<th align="center">$IN[B_i]$</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">B2</td>
+<td align="left">m = k<br>y = m - 1</td>
+<td align="center">110 1001</td>
+<td align="center">{k, m}</td>
+<td align="center">{m, y}</td>
+<td align="center"></td>
+<td align="center">0</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center">0</td>
+<td align="center">1</td>
+<td align="center">100 1001</td>
+</tr>
+</tbody></table>
+</li>
+<li><p>对于B1而言，$IN[B2]$没有变化，意味着$OUT[B1]$没有变化，因此$IN[B1]$不变；</p>
+</li>
+</ul>
+<p>对于本次遍历而言，变化的$IN[B]$有$IN[B4]$，因此还需要进行第三次的循环遍历；</p>
+</li>
+<li><p>根据规则，只有$IN[B4]$，即只有$OUT[B2]$发生变化，根据上一次遍历中对$IN[B2]$的推算没有变化，因此这次遍历不会产生IN[B]的变化，由此循环结束；得到的Final analysis result为对于每个Basic Block，其IN[B]中对应变量标记如果为1，则代表在进入当前Basic Block前，该变量为live；</p>
+</li>
+</ol>
 <h3 id="Available-Expressions-Analysis"><a href="#Available-Expressions-Analysis" class="headerlink" title="Available Expressions Analysis"></a>Available Expressions Analysis</h3><p>Must Analysis</p>
+<h4 id="Preliminary-2"><a href="#Preliminary-2" class="headerlink" title="Preliminary"></a>Preliminary</h4><blockquote>
+<p>An expreesion $x \space op \space y$ is available at program point p if (1) all paths from the entry to p must pass through the evaluation of $x \space op \space y$, and (2) after the last evaluation of $x \space op \space y$, there is no redefinitoin of x or y.</p>
+</blockquote>
+<ul>
+<li>This definitoin means at program p, we can replace expression <em>x op y</em> by the result of its last evaluation</li>
+<li>The information of available expressions can be used for detecting global common subexpressions.</li>
+</ul>
+<h4 id="Undestanding"><a href="#Undestanding" class="headerlink" title="Undestanding"></a>Undestanding</h4><p>Abstraction:</p>
+<ul>
+<li>Data Flow Values/Facts<ul>
+<li>All the expressions in a program</li>
+<li>Can be represented by bit vectors</li>
+</ul>
+</li>
+</ul>
+<p>Safe-approximation</p>
+<ul>
+<li><p>Forward?</p>
+</li>
+<li><p>A sample =&gt;</p>
+<ul>
+<li>Add to OUt the expression <em>x op y</em>(gen)</li>
+<li>Delete from IN any expression involving variable a(kill)</li>
+</ul>
+<p><img src="/course/static-program-analysis/static-program-analysis-03-data-flow-analysis-1/understanding_available_expreesion_0.jpg"></p>
+<p>Transfer Function:<br>$$<br>OUT[B]=gen_B \space ∪ \space (IN[B]-kill_B)<br>$$</p>
+<p>$$<br>IN[B]=∩_{P \space a \space predecessor \space of \space B}OUT[P]<br>$$</p>
+<p>由于must analysis，需要对IN[B]采取$∩$的方法；</p>
+<p>对于：</p>
+<p><img src="/course/static-program-analysis/static-program-analysis-03-data-flow-analysis-1/understanding_available_expreesion_1.jpg"></p>
+<ol>
+<li><p>在$a=e^{16}*x$后，$OUT[B]$={$e^{16}*x$}；</p>
+</li>
+<li><p>在经过对x的赋值后，由于对x的引用，OUT[B]被置空，但是在对b的定义中使用了$b=e^{16}*x$后，重新gen；</p>
+</li>
+<li><p>最终在$c=e^{16}*x$的Basic Block前，IN[B]为{$e^{16}*x$}；</p>
+</li>
+</ol>
+<p>有一个问题就是，其中x的值发生了变化，如何避免这种错误发生呢？如果将a, b, c都替换成t，这样一来从a-&gt;c的两个分支，无论走哪个分支，如果t的值被覆盖，也能由自身继承，因此达到了must的效果；</p>
+</li>
+</ul>
+<h4 id="Algorithm-2"><a href="#Algorithm-2" class="headerlink" title="Algorithm"></a>Algorithm</h4><p><img src="/course/static-program-analysis/static-program-analysis-03-data-flow-analysis-1/algorithm_2.jpg"></p>
+<h4 id="Sample-2"><a href="#Sample-2" class="headerlink" title="Sample"></a>Sample</h4><p><img src="/course/static-program-analysis/static-program-analysis-03-data-flow-analysis-1/sample_2.jpg"></p>
+<p>对于如上的例子，进行分析：</p>
+<ol>
+<li><p>首先初始化，将所有basic block的OUT[B]设置为11111， entry设置为00000；</p>
+</li>
+<li><p>开始循环</p>
+<ul>
+<li><p>对于B1而言，有：</p>
+<p>​    $gen_B$={$p-1$}, $kill_B$={y}, IN[B]=00000</p>
+<p>得到：</p>
+<table>
+<thead>
+<tr>
+<th align="center">Basic Block</th>
+<th align="center">$IN[B_i]$</th>
+<th align="center">$gen_B$</th>
+<th align="center">$kill_B$</th>
+<th align="center">$p-1$</th>
+<th align="center">$z/5$</th>
+<th align="center">$2*y$</th>
+<th align="center">$e^7*x$</th>
+<th align="center">$y+3$</th>
+<th align="center">$OUT[B_i]$</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">B1</td>
+<td align="center">00000</td>
+<td align="center">{$p-1$}</td>
+<td align="center">{y}</td>
+<td align="center">1</td>
+<td align="center"></td>
+<td align="center">0</td>
+<td align="center"></td>
+<td align="center">0</td>
+<td align="center">10000</td>
+</tr>
+</tbody></table>
+</li>
+<li><p>对于B2而言，IN[B2] = 11111 ∩ 10000 = 10000，有：</p>
+<p>​    $gen_B$={$z/5$, $e^7*x$}, $kill_B$={k, p}</p>
+<p>得到：</p>
+<table>
+<thead>
+<tr>
+<th align="center">Basic Block</th>
+<th align="center">$IN[B_i]$</th>
+<th align="center">$gen_B$</th>
+<th align="center">$kill_B$</th>
+<th align="center">$p-1$</th>
+<th align="center">$z/5$</th>
+<th align="center">$2*y$</th>
+<th align="center">$e^7*x$</th>
+<th align="center">$y+3$</th>
+<th align="center">$OUT[B_i]$</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">B2</td>
+<td align="center">10000</td>
+<td align="center">{$z/5$, $e^7*x$}</td>
+<td align="center">{k, p}</td>
+<td align="center">0</td>
+<td align="center">1</td>
+<td align="center"></td>
+<td align="center">1</td>
+<td align="center"></td>
+<td align="center">01010</td>
+</tr>
+</tbody></table>
+</li>
+<li><p>对于B3而言，有：</p>
+<p>​    $gen_B$={$y+3$}, $kill_B$={z}, IN[B]=01010</p>
+<p>得到：</p>
+<table>
+<thead>
+<tr>
+<th align="center">Basic Block</th>
+<th align="center">$IN[B_i]$</th>
+<th align="center">$gen_B$</th>
+<th align="center">$kill_B$</th>
+<th align="center">$p-1$</th>
+<th align="center">$z/5$</th>
+<th align="center">$2*y$</th>
+<th align="center">$e^7*x$</th>
+<th align="center">$y+3$</th>
+<th align="center">$OUT[B_i]$</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">B3</td>
+<td align="center">01010</td>
+<td align="center">{$y+3$}</td>
+<td align="center">{z}</td>
+<td align="center"></td>
+<td align="center">0</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center">1</td>
+<td align="center">00011</td>
+</tr>
+</tbody></table>
+</li>
+<li><p>对于B4而言，有：</p>
+<p>​    $gen_B$={$2<em>y$, $e^7</em>x$}, $kill_B$={x, q}, IN[B]=01010</p>
+<p>得到：</p>
+<table>
+<thead>
+<tr>
+<th align="center">Basic Block</th>
+<th align="center">$IN[B_i]$</th>
+<th align="center">$gen_B$</th>
+<th align="center">$kill_B$</th>
+<th align="center">$p-1$</th>
+<th align="center">$z/5$</th>
+<th align="center">$2*y$</th>
+<th align="center">$e^7*x$</th>
+<th align="center">$y+3$</th>
+<th align="center">$OUT[B_i]$</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">B4</td>
+<td align="center">01010</td>
+<td align="center">{$2<em>y$, $e^7</em>x$}</td>
+<td align="center">{x, q}</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center"></td>
+<td align="center">01110</td>
+</tr>
+</tbody></table>
+</li>
+<li><p>对于B5而言，有：</p>
+<p>​    $gen_B$={$e^7*x$, $z/5$}, $kill_B$={m, y}, IN[B] = 01110 ∩ 00011 = 00010</p>
+<p>得到：</p>
+<table>
+<thead>
+<tr>
+<th align="center">Basic Block</th>
+<th align="center">$IN[B_i]$</th>
+<th align="center">$gen_B$</th>
+<th align="center">$kill_B$</th>
+<th align="center">$p-1$</th>
+<th align="center">$z/5$</th>
+<th align="center">$2*y$</th>
+<th align="center">$e^7*x$</th>
+<th align="center">$y+3$</th>
+<th align="center">$OUT[B_i]$</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">B5</td>
+<td align="center">00010</td>
+<td align="center">{$e^7*x$, $z/5$}</td>
+<td align="center">{m, y}</td>
+<td align="center"></td>
+<td align="center">1</td>
+<td align="center">0</td>
+<td align="center">1</td>
+<td align="center">0</td>
+<td align="center">01010</td>
+</tr>
+</tbody></table>
+</li>
+</ul>
+<p>由于OUT[B]发生了变化，再次进入循环；</p>
+<ul>
+<li><p>对于B1而言，由于IN[B]不变，所以OUT[B]没变；</p>
+</li>
+<li><p>对于B2而言，由于IN[B2] = 10000 ∩ 01110 = 00000，有：</p>
+<table>
+<thead>
+<tr>
+<th align="center">Basic Block</th>
+<th align="center">$IN[B_i]$</th>
+<th align="center">$gen_B$</th>
+<th align="center">$kill_B$</th>
+<th align="center">$p-1$</th>
+<th align="center">$z/5$</th>
+<th align="center">$2*y$</th>
+<th align="center">$e^7*x$</th>
+<th align="center">$y+3$</th>
+<th align="center">$OUT[B_i]$</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">B2</td>
+<td align="center">00000</td>
+<td align="center">{$z/5$, $e^7*x$}</td>
+<td align="center">{k, p}</td>
+<td align="center">0</td>
+<td align="center">1</td>
+<td align="center"></td>
+<td align="center">1</td>
+<td align="center"></td>
+<td align="center">01010</td>
+</tr>
+</tbody></table>
+<p>结果没变；</p>
+</li>
+<li><p>对于B3而言，IN[B]没变，所以OUT[B]没变；</p>
+</li>
+<li><p>对于B4而言，IN[B]没变，所以OUT[B]没变；</p>
+</li>
+<li><p>对于B5而言，IN[B]= 00011 ∩ 01110 = 00010，没变，所以OUT[B]没变；</p>
+</li>
+</ul>
+<p>由于OUT[B]没有发生变化，因此循环结束；</p>
+</li>
+</ol>
+<h3 id="Analysis-Comparison"><a href="#Analysis-Comparison" class="headerlink" title="Analysis Comparison"></a>Analysis Comparison</h3><table>
+<thead>
+<tr>
+<th align="center"></th>
+<th align="center">Reaching Definitions</th>
+<th align="center">Live Variables</th>
+<th align="center">Available Expressions</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">Domain</td>
+<td align="center">definition(set of definitions)</td>
+<td align="center">value(set of variables)</td>
+<td align="center">x op y(set of expressions)</td>
+</tr>
+<tr>
+<td align="center">Direction</td>
+<td align="center">Forward</td>
+<td align="center">Backward</td>
+<td align="center">Forward</td>
+</tr>
+<tr>
+<td align="center">May/Must</td>
+<td align="center">May</td>
+<td align="center">May</td>
+<td align="center">Must</td>
+</tr>
+<tr>
+<td align="center">Boundary</td>
+<td align="center">entry.out(OUT[entry]=∅)</td>
+<td align="center">exit.in(IN[exit]=∅)</td>
+<td align="center">entry.out(OUT[entry]=∅)</td>
+</tr>
+<tr>
+<td align="center">Initialization</td>
+<td align="center">OUT =&gt; 0(OUT[B]=∅)</td>
+<td align="center">IN =&gt; 0(IN[B]=∅)</td>
+<td align="center">OUT =&gt; 1(OUT[B]=∪)</td>
+</tr>
+<tr>
+<td align="center">Transfer Function</td>
+<td align="center">$OUT[B]=gen_B+(IN[B]-kill_B)$<br>$IN[B]=∪_{P \space a\space predecessor\space of\space B}OUT[P]$</td>
+<td align="center">$IN[B]=use_B+(OUT[B]-def_B)$<br>$OUT[B]=∪_{P \space a\space predecessor\space of\space B}IN[P]$</td>
+<td align="center">$OUT[B]=gen_B+(IN[B]-kill_B)$<br>$IN[B]=∩_{P \space a\space predecessor\space of\space B}OUT[P]$</td>
+</tr>
+<tr>
+<td align="center">Meet</td>
+<td align="center">OUT not change(∪)</td>
+<td align="center">IN not change(∪)</td>
+<td align="center">OUt not change(∩)</td>
+</tr>
+</tbody></table>
+<h2 id="Summary"><a href="#Summary" class="headerlink" title="Summary"></a>Summary</h2><ul>
+<li>Overview of Data Flow Analysis</li>
+<li>Preliminaries of Data Flow Analysis</li>
+<li>Three kinds of Analysis<ul>
+<li>Reaching Definitions Analysis</li>
+<li>Live Variables Analysis</li>
+<li>Available Expressions Analysis</li>
+</ul>
+</li>
+<li>Key Point<ul>
+<li>Understand the three data flow analysis</li>
+<li>Can tell the differences and similarities of the three data flow analyses(the front form)</li>
+<li>Understand the iterative algorithm and can tell why it is able to terminate(OUT&amp;IN,why the progess can stop?)</li>
+</ul>
+</li>
+</ul>
 
         
         
@@ -2110,75 +2887,6 @@
 </article>
 
 
-  <article id="post-microcorruption-3-Hanoi" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/PWN/microcorruption/microcorruption-3-Hanoi/">microcorruption-3-Hanoi</a>
-    </h1>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      
-      <span class="article-date">
-  <i class="fa fa-date"></i>
-  <time class="dt-published" datetime="2021-12-22T10:40:09.000Z" itemprop="datePublished">2021年12月22日</time>
-</span>
-      
-  <div class="article-category">
-    <i class="fa fa-classify"></i>
-    <a class="article-category-link" href="/categories/PWN/">PWN</a> > <a class="article-category-link" href="/categories/PWN/microcorruption/">microcorruption</a>
-  </div>
-
-      
-      
-<a href="/PWN/microcorruption/microcorruption-3-Hanoi/#comments" class="article-comment-link">
-  
-  <i class="fa fa-commt"></i>
-  留言
-</a>
-
-
-    </div>
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <h1 id="Hanoi"><a href="#Hanoi" class="headerlink" title="Hanoi"></a>Hanoi</h1><p>多了一个login函数，其实功能相似，题目提示密码是8-16位，接下来继续看关键函数<code>test_password_valid</code>；</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">4454 &lt;test_password_valid&gt;</span><br><span class="line">4454:  0412           push	r4</span><br><span class="line">4456:  0441           mov	sp, r4</span><br><span class="line">4458:  2453           incd	r4</span><br><span class="line">445a:  2183           decd	sp</span><br><span class="line">445c:  c443 fcff      mov.b	#0x0, -0x4(r4)</span><br><span class="line">4460:  3e40 fcff      mov	#0xfffc, r14</span><br><span class="line">4464:  0e54           add	r4, r14</span><br><span class="line">4466:  0e12           push	r14</span><br><span class="line">4468:  0f12           push	r15</span><br><span class="line">446a:  3012 7d00      push	#0x7d</span><br><span class="line">446e:  b012 7a45      call	#0x457a &lt;INT&gt;</span><br><span class="line">4472:  5f44 fcff      mov.b	-0x4(r4), r15</span><br><span class="line">4476:  8f11           sxt	r15</span><br><span class="line">4478:  3152           add	#0x8, sp</span><br><span class="line">447a:  3441           pop	r4</span><br><span class="line">447c:  3041           ret</span><br></pre></td></tr></table></figure>
-
-        
-        
-          <blockquote id="copyright">
-              <p>原文链接: <a href="https://www.jk404.cn/index.html">https://www.jk404.cn/index.html</a></p>
-              <p>版权声明: 转载请注明出处.</p>
-          </blockquote>
-        
-      
-    </div>
-    <footer class="article-footer">
-      
-        <div class="article-tag-wrap">
-          
-
-          
-          
-
-
-        </div>
-      
-      
-      
-    </footer>
-  </div>
-</article>
-
-
 
     <nav id="page-nav">
 
@@ -2197,6 +2905,10 @@
       <ul>
         
           <li>
+            <a href="/UE4/LowPoly/ue4-01-introduction/">ue4_01_introduction</a>
+          </li>
+        
+          <li>
             <a href="/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/router-vuln-D-link-Dir815/">router_vuln_D-link-Dir815</a>
           </li>
         
@@ -2212,10 +2924,6 @@
             <a href="/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/router-vuln-shellcode/">router_vuln_shellcode</a>
           </li>
         
-          <li>
-            <a href="/course/static-program-analysis/static-program-analysis-03-data-flow-analysis-1/">static_program_analysis_03-data_flow_analysis_1</a>
-          </li>
-        
       </ul>
     </div>
   </div>
@@ -2228,7 +2936,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title"><i class="fa fa-classify"></i> 分类</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP-lab/">CSAPP-lab</a><span class="category-list-count">3</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP-lab/bomblab/">bomblab</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP-lab/datalab/">datalab</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP-lab/preparelab/">preparelab</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/">CTF</a><span class="category-list-count">30</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/">PWN</a><span class="category-list-count">30</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/">kernel pwn</a><span class="category-list-count">13</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/FUZZ/">FUZZ</a><span class="category-list-count">3</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/FUZZ/Syzkaller/">Syzkaller</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/FUZZ/Trinity/">Trinity</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/Linux-source/">Linux source</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/cve/">cve</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/knowledge/">knowledge</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/wp/">wp</a><span class="category-list-count">3</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/uncategorized/">uncategorized</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/user-space-pwn/">user space pwn</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/user-space-pwn/cve/">cve</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/">wp</a><span class="category-list-count">12</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/asisctf/">asisctf</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/asisctf/asisctf2021/">asisctf2021</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/buuoj/">buuoj</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/l3hctf/">l3hctf</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/pwnable-kr/">pwnable.kr</a><span class="category-list-count">7</span></li></ul></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/">OS</a><span class="category-list-count">13</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/">lab1</a><span class="category-list-count">13</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge1-what-is-make/">challenge1:what is make</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge2-qemu-gdb/">challenge2:qemu&gdb</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge3-go-into-protected-mode/">challenge3:go into protected mode</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge4-load-kernel-elf/">challenge4:load kernel elf</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge5-trace-stackframe/">challenge5:trace stackframe</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge6-interrupt-handle/">challenge6:interrupt handle</a><span class="category-list-count">3</span></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/">PWN</a><span class="category-list-count">6</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/Fuzz/">Fuzz</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/Fuzz/AFL/">AFL</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/cve/">cve</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/microcorruption/">microcorruption</a><span class="category-list-count">4</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/course/">course</a><span class="category-list-count">4</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/course/MIT-AI/">MIT-AI</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/course/static-program-analysis/">static_program_analysis</a><span class="category-list-count">3</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/golang/">golang</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/golang/start/">start</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/pwn-college/">pwn.college</a><span class="category-list-count">3</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/pwn-college/Chapter01-Program-interaction/">Chapter01 Program interaction</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/pwn-college/Chapter02-Binary-file/">Chapter02 Binary file</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/pwn-college/Introduciton/">Introduciton</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/study/">study</a><span class="category-list-count">21</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/study/book/">book</a><span class="category-list-count">17</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/">揭秘家用路由器0day漏洞挖掘技术</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/">程序员的自我修养：链接、装载与库</a><span class="category-list-count">7</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/study/daily/">daily</a><span class="category-list-count">4</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/tools/">tools</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/welcome/">welcome</a><span class="category-list-count">1</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP-lab/">CSAPP-lab</a><span class="category-list-count">3</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP-lab/bomblab/">bomblab</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP-lab/datalab/">datalab</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP-lab/preparelab/">preparelab</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/">CTF</a><span class="category-list-count">30</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/">PWN</a><span class="category-list-count">30</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/">kernel pwn</a><span class="category-list-count">13</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/FUZZ/">FUZZ</a><span class="category-list-count">3</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/FUZZ/Syzkaller/">Syzkaller</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/FUZZ/Trinity/">Trinity</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/Linux-source/">Linux source</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/cve/">cve</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/knowledge/">knowledge</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/wp/">wp</a><span class="category-list-count">3</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/uncategorized/">uncategorized</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/user-space-pwn/">user space pwn</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/user-space-pwn/cve/">cve</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/">wp</a><span class="category-list-count">12</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/asisctf/">asisctf</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/asisctf/asisctf2021/">asisctf2021</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/buuoj/">buuoj</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/l3hctf/">l3hctf</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/pwnable-kr/">pwnable.kr</a><span class="category-list-count">7</span></li></ul></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/">OS</a><span class="category-list-count">13</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/">lab1</a><span class="category-list-count">13</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge1-what-is-make/">challenge1:what is make</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge2-qemu-gdb/">challenge2:qemu&gdb</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge3-go-into-protected-mode/">challenge3:go into protected mode</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge4-load-kernel-elf/">challenge4:load kernel elf</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge5-trace-stackframe/">challenge5:trace stackframe</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge6-interrupt-handle/">challenge6:interrupt handle</a><span class="category-list-count">3</span></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/">PWN</a><span class="category-list-count">6</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/Fuzz/">Fuzz</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/Fuzz/AFL/">AFL</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/cve/">cve</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/microcorruption/">microcorruption</a><span class="category-list-count">4</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/UE4/">UE4</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/UE4/LowPoly/">LowPoly</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/course/">course</a><span class="category-list-count">4</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/course/MIT-AI/">MIT-AI</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/course/static-program-analysis/">static_program_analysis</a><span class="category-list-count">3</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/golang/">golang</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/golang/start/">start</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/pwn-college/">pwn.college</a><span class="category-list-count">3</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/pwn-college/Chapter01-Program-interaction/">Chapter01 Program interaction</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/pwn-college/Chapter02-Binary-file/">Chapter02 Binary file</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/pwn-college/Introduciton/">Introduciton</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/study/">study</a><span class="category-list-count">21</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/study/book/">book</a><span class="category-list-count">17</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/">揭秘家用路由器0day漏洞挖掘技术</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/">程序员的自我修养：链接、装载与库</a><span class="category-list-count">7</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/study/daily/">daily</a><span class="category-list-count">4</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/tools/">tools</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/welcome/">welcome</a><span class="category-list-count">1</span></li></ul>
     </div>
   </div>
 
@@ -2238,7 +2946,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title"><i class="fa fa-archive"></i> 归档</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/">2022年03月</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/">2021年12月</a><span class="archive-list-count">76</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/">2022年03月</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/">2021年12月</a><span class="archive-list-count">76</span></li></ul>
     </div>
   </div>
 
