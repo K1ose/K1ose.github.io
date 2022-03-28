@@ -146,6 +146,73 @@
 </article>
 
 
+  <article id="post-static-program-analysis-04-data-flow-analysis-foundations" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/course/static-program-analysis/static-program-analysis-04-data-flow-analysis-foundations/">static_program_analysis_04_data_flow_analysis_foundations</a>
+    </h1>
+  
+
+
+      </header>
+    
+    <div class="article-meta">
+      
+      <span class="article-date">
+  <i class="fa fa-date"></i>
+  <time class="dt-published" datetime="2022-03-28T06:19:58.000Z" itemprop="datePublished">2022年03月28日</time>
+</span>
+      
+  <div class="article-category">
+    <i class="fa fa-classify"></i>
+    <a class="article-category-link" href="/categories/course/">course</a> > <a class="article-category-link" href="/categories/course/static-program-analysis/">static_program_analysis</a>
+  </div>
+
+      
+      
+<a href="/course/static-program-analysis/static-program-analysis-04-data-flow-analysis-foundations/#comments" class="article-comment-link">
+  
+  <i class="fa fa-commt"></i>
+  留言
+</a>
+
+
+    </div>
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="Data-Flow-Analysis-–-Foundations"><a href="#Data-Flow-Analysis-–-Foundations" class="headerlink" title="Data Flow Analysis – Foundations"></a>Data Flow Analysis – Foundations</h1>
+        
+        
+          <blockquote id="copyright">
+              <p>原文链接: <a href="https://www.jk404.cn/index.html">https://www.jk404.cn/index.html</a></p>
+              <p>版权声明: 转载请注明出处.</p>
+          </blockquote>
+        
+      
+    </div>
+    <footer class="article-footer">
+      
+        <div class="article-tag-wrap">
+          
+
+          
+          
+
+
+        </div>
+      
+      
+      
+    </footer>
+  </div>
+</article>
+
+
   <article id="post-ue4-01-introduction" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-inner">
     
@@ -2597,296 +2664,6 @@
 </article>
 
 
-  <article id="post-static-program-analysis-01-introduction" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/course/static-program-analysis/static-program-analysis-01-introduction/">static_program_analysis_01_introduction</a>
-    </h1>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      
-      <span class="article-date">
-  <i class="fa fa-date"></i>
-  <time class="dt-published" datetime="2022-01-10T03:15:41.000Z" itemprop="datePublished">2022年01月10日</time>
-</span>
-      
-  <div class="article-category">
-    <i class="fa fa-classify"></i>
-    <a class="article-category-link" href="/categories/course/">course</a> > <a class="article-category-link" href="/categories/course/static-program-analysis/">static_program_analysis</a>
-  </div>
-
-      
-      
-<a href="/course/static-program-analysis/static-program-analysis-01-introduction/#comments" class="article-comment-link">
-  
-  <i class="fa fa-commt"></i>
-  留言
-</a>
-
-
-    </div>
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <h1 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h1><h2 id="Links"><a href="#Links" class="headerlink" title="Links"></a>Links</h2><p><a target="_blank" rel="noopener" href="https://pascal-group.bitbucket.io/teaching.html">official link</a></p>
-<h2 id="PL-amp-Static-Analysis"><a href="#PL-amp-Static-Analysis" class="headerlink" title="PL &amp; Static Analysis"></a>PL &amp; Static Analysis</h2><h3 id="What-is-Program-Languages"><a href="#What-is-Program-Languages" class="headerlink" title="What is Program Languages"></a>What is Program Languages</h3><ul>
-<li>Theory - 理论<ul>
-<li>Language Design - 语言设计</li>
-<li>Type System - 类型系统</li>
-<li>Semantics and Logics - 语义和逻辑</li>
-<li>…</li>
-</ul>
-</li>
-<li>Environment - 环境<ul>
-<li>Compilers - 编译器</li>
-<li>Runtime System - 运行时系统</li>
-<li>…</li>
-</ul>
-</li>
-<li>Application - 应用<ul>
-<li>Program Analysis - <strong>程序分析</strong></li>
-<li>Program Verification - 程序验证</li>
-<li>Program synthesis - 程序合成</li>
-<li>…</li>
-</ul>
-</li>
-</ul>
-<h3 id="Background"><a href="#Background" class="headerlink" title="Background"></a>Background</h3><p>过去几十年，语言的核心没有变化，但是语言应用的环境，即语言写的程序和环境变得越来越复杂。</p>
-<h3 id="Challenge"><a href="#Challenge" class="headerlink" title="Challenge"></a>Challenge</h3><p>如何保证复杂程序的可靠性、安全性和其他性能？</p>
-<h2 id="Why-we-learn-static-analysis"><a href="#Why-we-learn-static-analysis" class="headerlink" title="Why we learn static analysis?"></a>Why we learn static analysis?</h2><h3 id="Application"><a href="#Application" class="headerlink" title="Application"></a>Application</h3><h4 id="Program-Reliability"><a href="#Program-Reliability" class="headerlink" title="Program Reliability"></a>Program Reliability</h4><ul>
-<li>Null pointer derefernce</li>
-<li>memory leak</li>
-<li>…</li>
-</ul>
-<h4 id="Program-Security"><a href="#Program-Security" class="headerlink" title="Program Security"></a>Program Security</h4><ul>
-<li>Private information leak</li>
-<li>Injection attack</li>
-<li>…</li>
-</ul>
-<h4 id="Compiler-Optimization"><a href="#Compiler-Optimization" class="headerlink" title="Compiler Optimization"></a>Compiler Optimization</h4><ul>
-<li>Dead code elimination - 死代码移除</li>
-<li>Code motion - 代码移动</li>
-<li>…</li>
-</ul>
-<h4 id="Program-Understanding"><a href="#Program-Understanding" class="headerlink" title="Program Understanding"></a>Program Understanding</h4><ul>
-<li>IDE call hierarchy - 调用层次</li>
-<li>type indication</li>
-<li>Debug</li>
-<li>…</li>
-</ul>
-<h3 id="Market-of-Static-Analysis"><a href="#Market-of-Static-Analysis" class="headerlink" title="Market of Static Analysis"></a>Market of Static Analysis</h3><p>任何与编程相关的方向都会涉及静态分析，尤其在大厂：</p>
-<ul>
-<li>Programming Languages</li>
-<li>Software Engineering</li>
-<li>Systems</li>
-<li>Security</li>
-<li>…</li>
-</ul>
-<h3 id="Understanding"><a href="#Understanding" class="headerlink" title="Understanding"></a>Understanding</h3><ul>
-<li>理解编程语言</li>
-<li>写出更好的程序</li>
-</ul>
-<h2 id="What-is-Static-Analysis"><a href="#What-is-Static-Analysis" class="headerlink" title="What is Static Analysis?"></a>What is Static Analysis?</h2><h3 id="Static-Analysis"><a href="#Static-Analysis" class="headerlink" title="Static Analysis"></a>Static Analysis</h3><p>Static analysis analyzes a prgram P to resaon about its behaviors and determines whether it satisfies some properties before running P.</p>
-<p>在运行程序P前需要分析程序的行为特征以及确定它是否满足一些属性。</p>
-<ul>
-<li>Does P contain any private information leaks?</li>
-<li>Does P derefernce any null pointers?</li>
-<li>Are all the cast operations in P safe?</li>
-<li>Can v1 and v2 in P point to the same memory location?</li>
-<li>Will certain assert statements in P fail?</li>
-<li>Is this piece of code in P dead(so that it could be eliminated)?</li>
-<li>…</li>
-</ul>
-<h3 id="Rice-theority"><a href="#Rice-theority" class="headerlink" title="Rice theority"></a>Rice theority</h3><p>但是莱斯定理表示，不存在方法能够准确地判断出以上的所有答案。</p>
-<blockquote>
-<p>“Any non-trivial property of the behavior of programs in a recursively enumerable language is undecidable.”</p>
-<p>r.e. =&gt; recursively enumerable 递归可枚举 =&gt; recognizable by a Turing-machine</p>
-</blockquote>
-<blockquote>
-<p>“A property is trival if either it is not satisfied by any r.e languagem, or if it is satisfied by all r.e. languages; otherwise it is non-trivial.”</p>
-<p>non-trivial property ~= interesting property </p>
-<p>​                     ~= the properties related with run-time behaviors of programs</p>
-<p>如果这个性质与运行行为相关，都是interesting properties，反之则为non-trivial properties.</p>
-</blockquote>
-<p>不存在Perfect static analysis[^1]，例如对于程序中有无存在空指针，没有静态分析能够给出确切答案。</p>
-<h3 id="Sound-amp-Complete"><a href="#Sound-amp-Complete" class="headerlink" title="Sound &amp; Complete"></a>Sound &amp; Complete</h3><p>一个Perfect Static Analysis满足Sound和Complete。</p>
-<p><img src="/course/static-program-analysis/static-program-analysis-01-introduction/sound_complete.jpg"></p>
-<div align="center">
-    <p>
-        Sound & Complete
-    </p>
-    <p>
-        例如空指针引用，当程序动态运行时，存在十个空指针引用异常。
-    </p>
-    <p>
-        Truth：Perfect Static Analysis要做到十个空指针引用异常全部都能判断出来。
-    </p>
-    <p>
-        Sound：包含Truth，即十个空指针都能判断出来，也可能判断出不存在的异常。
-    </p>
-    <p>
-        Complete：被Truth包含，判断出的异常一定是十个空指针引用异常中的几个。
-    </p>
-</div>
-
-<p>既然不存在既满足Sound又满足Complete，即能完完全全表示Truth的Perfect Static Analysis存在，就需要进行一定程度的妥协，转化为Useful Static Analysis。</p>
-<ul>
-<li>Compromise Soundness - 妥协Soundness，产生漏报，false negatives</li>
-<li>Compromise Completeness - 妥协Completeness，产生误报，false positives &lt;- 绝大部分静态分析都会采取这个方案，Sound but not fully-precise。</li>
-</ul>
-<h3 id="Necessity-of-Soundness"><a href="#Necessity-of-Soundness" class="headerlink" title="Necessity of Soundness"></a>Necessity of Soundness</h3><ul>
-<li>Soundness is critical to a collection of important(static-analysis) applications such as compiler optimization and program verification.</li>
-</ul>
-<p>Soundness，所有Input覆盖到的所有路径分支都能被包含。</p>
-<p>以下用一个例子来表述，存在下列代码：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 存在两个处理分支</span></span><br><span class="line"><span class="comment">// 1</span></span><br><span class="line">B b = <span class="keyword">new</span> B();</span><br><span class="line">a.fld = b;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 2</span></span><br><span class="line">C c = <span class="keyword">new</span> C();</span><br><span class="line">a.fld = c;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 当存在一条语句，进行强制类型转换cast</span></span><br><span class="line">B tempb = (B) a.fld;</span><br></pre></td></tr></table></figure>
-
-<p>当执行处理分支1后，执行<code>B tempb = (B) a.fld;</code>，程序是可以正常执行的。</p>
-<p>当执行处理分支2后，执行<code>B tempb = (B) a.fld;</code>，程序会抛出强制类型转换错误的异常。</p>
-<p>如果没有覆盖到分支2的执行路径，会得出<code>Safe Cast</code>的结论，则这个静态分析是Unsound Static Analysis；</p>
-<p>反之如果全部路径全部覆盖到了，检测出了强制类型转换的错误，会得出<code>Unsafe Cast</code>的结论， 则这个静态分析是相对Sound的；</p>
-<ul>
-<li>Soundness is also preferable to other(static-analysis) applications for which soundness is not demanded, e.g., bug detection, as better soundness implies more bugs could be found.</li>
-</ul>
-<p>因此应该尽量保证Sound，可以牺牲一些精度。</p>
-<h3 id="Example"><a href="#Example" class="headerlink" title="Example?"></a>Example?</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(input)</span><br><span class="line">	x = <span class="number">1</span>;</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">	x = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// x = ?</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">1. 结论一：while input is true, x = 1; while input is false, x = 0;</span></span><br><span class="line"><span class="comment">2. 结论二：x = 0 or x = 1;</span></span><br><span class="line"><span class="comment">3. 结论三：x = 0 or x = 1 or x = 2 or x = 3;</span></span><br><span class="line"><span class="comment">4. 结论四：x = -1 or x = 0;</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
-
-<p>上述结论中，结论一、二和三都是正确的，其中结论三是soundness的，虽然其包含了误报，但是也包含了truth，而结论四没有包含truth，因此不是soundness，是错误的。</p>
-<p>结论一、二的区别在于，结论一还需要维护一些条件值，耗费更多，而结论二仅仅给出结果即可，耗费更少；</p>
-<p>因此这也需要静态分析能够达到：</p>
-<p>ensure (or get close to) soundness, while making godd trade-offs between analysis precision and analysis speed.</p>
-<p>在分析精度和速度之间有一个好的权衡。</p>
-<h2 id="How-to-conclude-Static-Analysis"><a href="#How-to-conclude-Static-Analysis" class="headerlink" title="How to conclude Static Analysis"></a>How to conclude Static Analysis</h2><h3 id="Two-aspect"><a href="#Two-aspect" class="headerlink" title="Two aspect"></a>Two aspect</h3><ul>
-<li>Abstraction - 具体事物的抽象化</li>
-<li>Over-approximation - 近似<ul>
-<li>Transfer functions</li>
-<li>Control flows</li>
-</ul>
-</li>
-</ul>
-<h3 id="Example-1"><a href="#Example-1" class="headerlink" title="Example?"></a>Example?</h3><p>Determine the sign(+, -, 0) of all the variables of a given program.</p>
-<p><img src="/course/static-program-analysis/static-program-analysis-01-introduction/abstract_sample.jpg"></p>
-<p>在判断value符号的例子中，value本身的数值并不关键。</p>
-<h4 id="Abstraction"><a href="#Abstraction" class="headerlink" title="Abstraction"></a>Abstraction</h4><p>对于这些value，可以用抽象的方法，将concrete的数值转变成对应的abstrat符号，例如<code>v=1000</code>可以抽象到<code>&#39;+&#39;</code>，以此类推。</p>
-<p>可以注意到其中的两个表达式：</p>
-<ul>
-<li><code>v = e ? 1:-1</code></li>
-<li><code>v = w / 0</code></li>
-</ul>
-<p>这两个表达式的结果并不能直接用<code>&#39;+&#39;</code>、<code>&#39;-&#39;</code>、<code>&#39;0&#39;</code>来表示，所以构造了两个类型的符号：</p>
-<ul>
-<li>‘T’ -&gt; Top：在此处代表unknown</li>
-<li>‘⊥’ -&gt; Bottom：在此处代表undefined</li>
-</ul>
-<h4 id="Over-approximation"><a href="#Over-approximation" class="headerlink" title="Over-approximation"></a>Over-approximation</h4><h5 id="Transfer-Functions"><a href="#Transfer-Functions" class="headerlink" title="Transfer Functions"></a>Transfer Functions</h5><ul>
-<li>In static analysis, transfer functions define how to evaluate different program statements on abstract values.</li>
-<li>Transfer funcitons are defined according to “analysis problem” and the “semantics” of different program statements.</li>
-</ul>
-<p>转化函数根据不同程序语句的“分析问题”和“语义”，定义了如何处理计算这些抽象值的规则。</p>
-<p>例如，对于如上的符号规则，可以有如下的transfer functions：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">[+] + [+] = [+]</span><br><span class="line">[-] + [-] = [-]</span><br><span class="line">[0] + [0] = [0]</span><br><span class="line">[+] + [-] = [T]</span><br><span class="line"></span><br><span class="line">[+] / [+] = [+]</span><br><span class="line">[-] / [-] = [+]</span><br><span class="line">[T] / [0] = [⊥]</span><br><span class="line">[+] / [-] = [-]</span><br><span class="line"></span><br><span class="line">...</span><br></pre></td></tr></table></figure>
-
-<p>根据这套规则，现在有一个程序，其中有如下的值：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">x = 10;</span><br><span class="line">y = -1;</span><br><span class="line">z = 0;</span><br><span class="line">a = x+y;</span><br><span class="line">b = z/y;</span><br><span class="line">c = a/b;</span><br><span class="line">p = arr[y];</span><br><span class="line">q = arr[a];</span><br></pre></td></tr></table></figure>
-
-<p>经过抽象后，有：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">x = [+]</span><br><span class="line">y = [-]</span><br><span class="line">z = [0]</span><br><span class="line">a = [T]</span><br><span class="line">b = [0]</span><br><span class="line">c = [⊥] -&gt; 除0错误</span><br><span class="line">p = [⊥] -&gt; 数组索引为负</span><br><span class="line">q = [⊥] -&gt; 过度近似产生误报</span><br></pre></td></tr></table></figure>
-
-<p>第6、7行的静态分析是有效的，可以查出确切的错误。</p>
-<p>第8行在a为正数的时候是正确的，a为负数的时候是错误的，所以可能会产生误报。</p>
-<h5 id="Control-Flows"><a href="#Control-Flows" class="headerlink" title="Control Flows"></a>Control Flows</h5><p>程序执行控制流。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">x = 1;</span><br><span class="line">if(input)</span><br><span class="line">	y = 10;</span><br><span class="line">else</span><br><span class="line">	y = -1;</span><br><span class="line">z = x + y;</span><br></pre></td></tr></table></figure>
-
-<p>对于这个程序逻辑，当input=true时，会存在<code>x = 1, y = 10</code>，在input=false时，会存在<code>x = 1, y = -1</code>；</p>
-<p>所有程序执行流汇聚的点，必须抽象；</p>
-<h2 id="Teaching-Plan"><a href="#Teaching-Plan" class="headerlink" title="Teaching Plan"></a>Teaching Plan</h2><ol>
-<li>Introduciton</li>
-<li>Intermediate Representation</li>
-<li>Data Flow Analysis - Applications</li>
-<li>Data Flow Analysis - Foundations(I)</li>
-<li>Data Flow Analysis - Foundations(II)</li>
-<li>Inter-procedural Analysis</li>
-<li>CFL-Reachability and IFDS</li>
-<li>Soundness and Soundiness</li>
-<li>Pointer Analysis - Foundations(I)</li>
-<li>Pointer Analysis - Foundations(II)</li>
-<li>Pointer Analysis - Context Sensitivity</li>
-<li>Modern Pointer Analysis</li>
-<li>Static Analysis for Security</li>
-<li>Datalog-Based Analysis</li>
-<li>Abstract Interpretation</li>
-<li>Course Summary</li>
-</ol>
-<h2 id="Coding-Assignment"><a href="#Coding-Assignment" class="headerlink" title="Coding Assignment"></a>Coding Assignment</h2><ul>
-<li>Assignment 1:Constant Propagation<ul>
-<li>Statically compute and propagate constant values in program</li>
-<li>Intra-procedural analysis</li>
-</ul>
-</li>
-<li>Assignment 2:Dead Code Elimination<ul>
-<li>Based on constant propagation, eliminate dead code in program</li>
-<li><code>b = true; if (b) &#123;...&#125; else&#123;/*dead code*/&#125;</code></li>
-</ul>
-</li>
-<li>Assignment 3:Class Hierarchy Analysis<ul>
-<li>Build a call graph via class hierarchy analysis</li>
-<li>Enable inter-procedural constant propagation</li>
-</ul>
-</li>
-<li>Assignment 4:Pointer Analysis<ul>
-<li>Build a call graph via pointer analysis</li>
-<li>Enable more precise inter-procedural constant propagation</li>
-</ul>
-</li>
-<li>Assignment 5:Context-Sensitive Pointer Analysis<ul>
-<li>Build a call graph via C.S. pointer analysis</li>
-<li>Enable more precise inter-procedural constant propagation</li>
-</ul>
-</li>
-</ul>
-<h2 id="Important-Point"><a href="#Important-Point" class="headerlink" title="Important Point"></a>Important Point</h2><ul>
-<li>What are the differences between static analysis and (dynamic) testing?</li>
-<li>Understand soundess, completeness, false negatives and false positives.</li>
-<li>Why soundness is usually required by static analysis?</li>
-<li>How to understand abstraction and over-approximation?</li>
-</ul>
-<h2 id="Footer"><a href="#Footer" class="headerlink" title="Footer"></a>Footer</h2><p>[^1]:Can determine whether P satisfies such non-trivial properties, i.e.,giving exact answer:Yes or No.</p>
-
-        
-        
-          <blockquote id="copyright">
-              <p>原文链接: <a href="https://www.jk404.cn/index.html">https://www.jk404.cn/index.html</a></p>
-              <p>版权声明: 转载请注明出处.</p>
-          </blockquote>
-        
-      
-    </div>
-    <footer class="article-footer">
-      
-        <div class="article-tag-wrap">
-          
-
-          
-          
-
-
-        </div>
-      
-      
-      
-    </footer>
-  </div>
-</article>
-
-
 
     <nav id="page-nav">
 
@@ -2905,6 +2682,10 @@
       <ul>
         
           <li>
+            <a href="/course/static-program-analysis/static-program-analysis-04-data-flow-analysis-foundations/">static_program_analysis_04_data_flow_analysis_foundations</a>
+          </li>
+        
+          <li>
             <a href="/UE4/LowPoly/ue4-01-introduction/">ue4_01_introduction</a>
           </li>
         
@@ -2920,10 +2701,6 @@
             <a href="/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/router-vuln-file-system/">router_vuln_file_system</a>
           </li>
         
-          <li>
-            <a href="/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/router-vuln-shellcode/">router_vuln_shellcode</a>
-          </li>
-        
       </ul>
     </div>
   </div>
@@ -2936,7 +2713,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title"><i class="fa fa-classify"></i> 分类</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP-lab/">CSAPP-lab</a><span class="category-list-count">3</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP-lab/bomblab/">bomblab</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP-lab/datalab/">datalab</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP-lab/preparelab/">preparelab</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/">CTF</a><span class="category-list-count">30</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/">PWN</a><span class="category-list-count">30</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/">kernel pwn</a><span class="category-list-count">13</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/FUZZ/">FUZZ</a><span class="category-list-count">3</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/FUZZ/Syzkaller/">Syzkaller</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/FUZZ/Trinity/">Trinity</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/Linux-source/">Linux source</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/cve/">cve</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/knowledge/">knowledge</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/wp/">wp</a><span class="category-list-count">3</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/uncategorized/">uncategorized</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/user-space-pwn/">user space pwn</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/user-space-pwn/cve/">cve</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/">wp</a><span class="category-list-count">12</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/asisctf/">asisctf</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/asisctf/asisctf2021/">asisctf2021</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/buuoj/">buuoj</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/l3hctf/">l3hctf</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/pwnable-kr/">pwnable.kr</a><span class="category-list-count">7</span></li></ul></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/">OS</a><span class="category-list-count">13</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/">lab1</a><span class="category-list-count">13</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge1-what-is-make/">challenge1:what is make</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge2-qemu-gdb/">challenge2:qemu&gdb</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge3-go-into-protected-mode/">challenge3:go into protected mode</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge4-load-kernel-elf/">challenge4:load kernel elf</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge5-trace-stackframe/">challenge5:trace stackframe</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge6-interrupt-handle/">challenge6:interrupt handle</a><span class="category-list-count">3</span></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/">PWN</a><span class="category-list-count">6</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/Fuzz/">Fuzz</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/Fuzz/AFL/">AFL</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/cve/">cve</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/microcorruption/">microcorruption</a><span class="category-list-count">4</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/UE4/">UE4</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/UE4/LowPoly/">LowPoly</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/course/">course</a><span class="category-list-count">4</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/course/MIT-AI/">MIT-AI</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/course/static-program-analysis/">static_program_analysis</a><span class="category-list-count">3</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/golang/">golang</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/golang/start/">start</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/pwn-college/">pwn.college</a><span class="category-list-count">3</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/pwn-college/Chapter01-Program-interaction/">Chapter01 Program interaction</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/pwn-college/Chapter02-Binary-file/">Chapter02 Binary file</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/pwn-college/Introduciton/">Introduciton</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/study/">study</a><span class="category-list-count">21</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/study/book/">book</a><span class="category-list-count">17</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/">揭秘家用路由器0day漏洞挖掘技术</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/">程序员的自我修养：链接、装载与库</a><span class="category-list-count">7</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/study/daily/">daily</a><span class="category-list-count">4</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/tools/">tools</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/welcome/">welcome</a><span class="category-list-count">1</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP-lab/">CSAPP-lab</a><span class="category-list-count">3</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP-lab/bomblab/">bomblab</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP-lab/datalab/">datalab</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP-lab/preparelab/">preparelab</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/">CTF</a><span class="category-list-count">30</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/">PWN</a><span class="category-list-count">30</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/">kernel pwn</a><span class="category-list-count">13</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/FUZZ/">FUZZ</a><span class="category-list-count">3</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/FUZZ/Syzkaller/">Syzkaller</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/FUZZ/Trinity/">Trinity</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/Linux-source/">Linux source</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/cve/">cve</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/knowledge/">knowledge</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/wp/">wp</a><span class="category-list-count">3</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/uncategorized/">uncategorized</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/user-space-pwn/">user space pwn</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/user-space-pwn/cve/">cve</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/">wp</a><span class="category-list-count">12</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/asisctf/">asisctf</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/asisctf/asisctf2021/">asisctf2021</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/buuoj/">buuoj</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/l3hctf/">l3hctf</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/pwnable-kr/">pwnable.kr</a><span class="category-list-count">7</span></li></ul></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/">OS</a><span class="category-list-count">13</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/">lab1</a><span class="category-list-count">13</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge1-what-is-make/">challenge1:what is make</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge2-qemu-gdb/">challenge2:qemu&gdb</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge3-go-into-protected-mode/">challenge3:go into protected mode</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge4-load-kernel-elf/">challenge4:load kernel elf</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge5-trace-stackframe/">challenge5:trace stackframe</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge6-interrupt-handle/">challenge6:interrupt handle</a><span class="category-list-count">3</span></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/">PWN</a><span class="category-list-count">6</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/Fuzz/">Fuzz</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/Fuzz/AFL/">AFL</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/cve/">cve</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/microcorruption/">microcorruption</a><span class="category-list-count">4</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/UE4/">UE4</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/UE4/LowPoly/">LowPoly</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/course/">course</a><span class="category-list-count">5</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/course/MIT-AI/">MIT-AI</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/course/static-program-analysis/">static_program_analysis</a><span class="category-list-count">4</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/golang/">golang</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/golang/start/">start</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/pwn-college/">pwn.college</a><span class="category-list-count">3</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/pwn-college/Chapter01-Program-interaction/">Chapter01 Program interaction</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/pwn-college/Chapter02-Binary-file/">Chapter02 Binary file</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/pwn-college/Introduciton/">Introduciton</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/study/">study</a><span class="category-list-count">21</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/study/book/">book</a><span class="category-list-count">17</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/">揭秘家用路由器0day漏洞挖掘技术</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/">程序员的自我修养：链接、装载与库</a><span class="category-list-count">7</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/study/daily/">daily</a><span class="category-list-count">4</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/tools/">tools</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/welcome/">welcome</a><span class="category-list-count">1</span></li></ul>
     </div>
   </div>
 
@@ -2946,7 +2723,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title"><i class="fa fa-archive"></i> 归档</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/">2022年03月</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/">2021年12月</a><span class="archive-list-count">76</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/">2022年03月</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/">2021年12月</a><span class="archive-list-count">76</span></li></ul>
     </div>
   </div>
 

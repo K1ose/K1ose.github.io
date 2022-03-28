@@ -6,7 +6,7 @@
   <link href="https://www.jk404.cn/atom.xml" rel="self"/>
   
   <link href="https://www.jk404.cn/"/>
-  <updated>2022-03-26T05:19:19.798Z</updated>
+  <updated>2022-03-28T06:20:40.475Z</updated>
   <id>https://www.jk404.cn/</id>
   
   <author>
@@ -15,6 +15,30 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>static_program_analysis_04_data_flow_analysis_foundations</title>
+    <link href="https://www.jk404.cn/course/static-program-analysis/static-program-analysis-04-data-flow-analysis-foundations/"/>
+    <id>https://www.jk404.cn/course/static-program-analysis/static-program-analysis-04-data-flow-analysis-foundations/</id>
+    <published>2022-03-28T06:19:58.000Z</published>
+    <updated>2022-03-28T06:20:40.475Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="Data-Flow-Analysis-–-Foundations"><a href="#Data-Flow-Analysis-–-Foundations" class="headerlink" title="Data Flow Analysis – Foundations"></a>Data Flow Analysis – Foundations</h1>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;h1 id=&quot;Data-Flow-Analysis-–-Foundations&quot;&gt;&lt;a href=&quot;#Data-Flow-Analysis-–-Foundations&quot; class=&quot;headerlink&quot; title=&quot;Data Flow Analysis – Foundat</summary>
+      
+    
+    
+    
+    <category term="course" scheme="https://www.jk404.cn/categories/course/"/>
+    
+    <category term="static_program_analysis" scheme="https://www.jk404.cn/categories/course/static-program-analysis/"/>
+    
+    
+  </entry>
   
   <entry>
     <title>ue4_01_introduction</title>
@@ -479,32 +503,6 @@
       
     <summary type="html">&lt;h1 id=&quot;路由器后门漏洞&quot;&gt;&lt;a href=&quot;#路由器后门漏洞&quot; class=&quot;headerlink&quot; title=&quot;路由器后门漏洞&quot;&gt;&lt;/a&gt;路由器后门漏洞&lt;/h1&gt;&lt;p&gt;通过后门，可以直接控制路由器，进一步发起DNS劫持、窃取信息等攻击行为；&lt;/p&gt;
 &lt;h2 id=&quot;关</summary>
-      
-    
-    
-    
-    <category term="study" scheme="https://www.jk404.cn/categories/study/"/>
-    
-    <category term="book" scheme="https://www.jk404.cn/categories/study/book/"/>
-    
-    <category term="揭秘家用路由器0day漏洞挖掘技术" scheme="https://www.jk404.cn/categories/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/"/>
-    
-    
-  </entry>
-  
-  <entry>
-    <title>router-vuln-web</title>
-    <link href="https://www.jk404.cn/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/router-vuln-web/"/>
-    <id>https://www.jk404.cn/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/router-vuln-web/</id>
-    <published>2021-12-16T05:55:18.000Z</published>
-    <updated>2021-12-16T06:11:36.682Z</updated>
-    
-    <content type="html"><![CDATA[<h1 id="路由器Web漏洞"><a href="#路由器Web漏洞" class="headerlink" title="路由器Web漏洞"></a>路由器Web漏洞</h1><p>家用路由器通常都有web管理服务，可以通过管理界面去配置路由器，而这也导致了路由器遭受类似于网站的攻击。</p><h2 id="XSS漏洞"><a href="#XSS漏洞" class="headerlink" title="XSS漏洞"></a>XSS漏洞</h2><p>跨站脚本攻击，Cross Site Scripting，入侵者在远程Web页面的HTML代码中插入具有恶意目的的数据，当浏览器载入该页面时，插入其中的脚本被解释执行。</p><h3 id="路由器相关"><a href="#路由器相关" class="headerlink" title="路由器相关"></a>路由器相关</h3><p>假设路由器管理网页中包含一个反射型XSS，可以构件一个利用这个XSS漏洞的URL，将其通过邮件或QQ消息发送给受害者，引诱受害者点击这个URL，从而访问路由器网页。访问路由器网页后，恶意代码在浏览器中执行，会将路由器网页的会话Cookie发送给攻击者，导致不知情的情况下泄露了路由器Cookie，从而攻击者可以获得路由器访问权限。</p><h2 id="CSRF"><a href="#CSRF" class="headerlink" title="CSRF"></a>CSRF</h2><p>跨站请求伪造，Cross-Site Request Forgery，是一种对网站的恶意利用。通过伪装来自受信任用户的请求达到利用受信任的网站的目的。</p><h3 id="路由器相关-1"><a href="#路由器相关-1" class="headerlink" title="路由器相关"></a>路由器相关</h3><p>只要存在网页，就可能实现CSRF，其能够直接修改路由器参数；</p><p>共接着构造一个针对路由器的CSRF链接，欺骗受害者点击该链接，其功能是修改路由器iDNS为一个伪造的DNS服务器，这样，受害者访问正常网页时，因为DNS劫持而降所有网络访问数据发送给攻击者，攻击者可以监控受害者的所有网络访问行为；</p><h2 id="认证"><a href="#认证" class="headerlink" title="认证"></a>认证</h2><p>早期的IE和现在的Chrome、Firefox都可以使用一种比较特殊的URL访问方法实现路由器认证，如<a href="http://admin:admin@192.168.0.1,这种方法只要知道用户名和密码就可以不用手工输入用户名和密码完成路由器的直接认证;/">http://admin:admin@192.168.0.1，这种方法只要知道用户名和密码就可以不用手工输入用户名和密码完成路由器的直接认证；</a></p><p>由此可以伪造方法：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;img src=&quot;http://admin:admin@192.168.0.1&quot;&gt;</span><br></pre></td></tr></table></figure><p>或者用<code>&lt;iframe&gt;、&lt;/iframe&gt;</code>来隐藏</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;iframe src=http://admin:admin@192.168.0.1 width=0 height=0 frameborder=0&gt;</span><br><span class="line">&lt;/iframe&gt;</span><br></pre></td></tr></table></figure><p>当用户点击超链接、浏览器自动请求资源，即自动访问了该src内容；</p><h3 id="路由器相关-2"><a href="#路由器相关-2" class="headerlink" title="路由器相关"></a>路由器相关</h3><p>XSS和CSRF都需要受害者登陆路由器，而如果受害者没有登陆，那么即使XS和CSRF攻击成立，也无法修改路由器配置（固有权限），利用基础认证的漏洞，可以使未登录状态瞬间变为已登陆装填，从而结合XSS或CSRF对路由进行进一步攻击；</p>]]></content>
-    
-    
-      
-      
-    <summary type="html">&lt;h1 id=&quot;路由器Web漏洞&quot;&gt;&lt;a href=&quot;#路由器Web漏洞&quot; class=&quot;headerlink&quot; title=&quot;路由器Web漏洞&quot;&gt;&lt;/a&gt;路由器Web漏洞&lt;/h1&gt;&lt;p&gt;家用路由器通常都有web管理服务，可以通过管理界面去配置路由器，而这也导致了路由器遭受类似于</summary>
       
     
     
