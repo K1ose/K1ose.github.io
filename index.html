@@ -146,6 +146,85 @@
 </article>
 
 
+  <article id="post-ctf-susctf2022-rain" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/CTF/PWN/wp/susctf2022/ctf-susctf2022-rain/">ctf_susctf2022_rain</a>
+    </h1>
+  
+
+
+      </header>
+    
+    <div class="article-meta">
+      
+      <span class="article-date">
+  <i class="fa fa-date"></i>
+  <time class="dt-published" datetime="2022-03-28T15:18:53.000Z" itemprop="datePublished">2022年03月28日</time>
+</span>
+      
+  <div class="article-category">
+    <i class="fa fa-classify"></i>
+    <a class="article-category-link" href="/categories/CTF/">CTF</a> > <a class="article-category-link" href="/categories/CTF/PWN/">PWN</a> > <a class="article-category-link" href="/categories/CTF/PWN/wp/">wp</a> > <a class="article-category-link" href="/categories/CTF/PWN/wp/susctf2022/">susctf2022</a>
+  </div>
+
+      
+      
+<a href="/CTF/PWN/wp/susctf2022/ctf-susctf2022-rain/#comments" class="article-comment-link">
+  
+  <i class="fa fa-commt"></i>
+  留言
+</a>
+
+
+    </div>
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="SUSCTF-Rain"><a href="#SUSCTF-Rain" class="headerlink" title="SUSCTF-Rain"></a>SUSCTF-Rain</h1><h2 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h2><p>checksec；</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ checksec rain </span><br><span class="line">[*] &#x27;/home/klose/ctf/pwn/file/adworld/susctf2022/rain/rain&#x27;</span><br><span class="line">    Arch:     amd64-64-little</span><br><span class="line">    RELRO:    Full RELRO</span><br><span class="line">    Stack:    Canary found</span><br><span class="line">    NX:       NX enabled</span><br><span class="line">    PIE:      No PIE (0x400000)</span><br></pre></td></tr></table></figure>
+
+<p>IDA64分析</p>
+<p>看一下题目给的libc.so.6用的libc版本；</p>
+<p><img src="/CTF/PWN/wp/susctf2022/ctf-susctf2022-rain/libc_version.jpg"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+        
+        
+          <blockquote id="copyright">
+              <p>原文链接: <a href="https://www.jk404.cn/index.html">https://www.jk404.cn/index.html</a></p>
+              <p>版权声明: 转载请注明出处.</p>
+          </blockquote>
+        
+      
+    </div>
+    <footer class="article-footer">
+      
+        <div class="article-tag-wrap">
+          
+
+          
+          
+
+
+        </div>
+      
+      
+      
+    </footer>
+  </div>
+</article>
+
+
   <article id="post-static-program-analysis-04-data-flow-analysis-foundations" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-inner">
     
@@ -186,13 +265,284 @@
     <div class="e-content article-entry" itemprop="articleBody">
       
         <h1 id="Data-Flow-Analysis-–-Foundations"><a href="#Data-Flow-Analysis-–-Foundations" class="headerlink" title="Data Flow Analysis – Foundations"></a>Data Flow Analysis – Foundations</h1><h2 id="Contents"><a href="#Contents" class="headerlink" title="Contents"></a>Contents</h2><ul>
-<li>Iterative Algorithm, another view</li>
-<li>Partial Order</li>
-<li>Upper and Lower Bounds</li>
-<li>Lattice, Semilattice, Complete and Product Lattice</li>
-<li>Data Flow Analysis Framework via Lattice</li>
-<li>Monotonicity and Fixed Point Theorem</li>
+<li><p>Iterative Algorithm, another view</p>
+</li>
+<li><p>Partial Order</p>
+</li>
+<li><p>Upper and Lower Bounds</p>
+</li>
+<li><p>Lattice, Semilattice, Complete and Product Lattice</p>
+</li>
+<li><p>Data Flow Analysis Framework via Lattice</p>
+</li>
+<li><p>Monotonicity and Fixed Point Theorem</p>
+</li>
+<li><p>Relate Iterative Algorithm to Fixed Point Theorem</p>
+</li>
+<li><p>May/Must Analysis, A Lattice View</p>
+</li>
+<li><p>Distributivity and MOP</p>
+</li>
+<li><p>Constant Propagation</p>
+</li>
+<li><p>Worklist Algorithm</p>
+</li>
 </ul>
+<p>涉及到：数学理论和证明，内容概念抽象而繁杂。</p>
+<h2 id="Iterative-algorithm"><a href="#Iterative-algorithm" class="headerlink" title="Iterative algorithm"></a>Iterative algorithm</h2><blockquote>
+<p>This general iterative algorithm produces a soluiton to data flow analysis.</p>
+</blockquote>
+<h3 id="For-May-amp-Forward-Analysis"><a href="#For-May-amp-Forward-Analysis" class="headerlink" title="For May&amp;Forward  Analysis"></a>For May&amp;Forward  Analysis</h3><ul>
+<li>OUT[entry] = ∅</li>
+<li>OUT[B]=∅</li>
+<li>$OUT[B] = IN[B]=∪_{P \space a \space predecessor \space of \space B}OUT[P], \space gen_B \space ∪ \space (IN[B] - kill_B) $</li>
+</ul>
+<p><img src="/course/static-program-analysis/static-program-analysis-04-data-flow-analysis-foundations/May&Forword_Analysis.jpg"></p>
+<p>这是上一节课所总结的内容，现在从另一个角度来分析；</p>
+<h4 id="View-Iterative-Algorithm-in-Another-Way"><a href="#View-Iterative-Algorithm-in-Another-Way" class="headerlink" title="View Iterative Algorithm in Another Way"></a>View Iterative Algorithm in Another Way</h4><ul>
+<li><p>Given a CFG(program) with k nodes, the iterative alogrithm updates OUT[n] for every node n in each iteration</p>
+</li>
+<li><p>Assume the domain of the values in data flow analysis is V, then we can define a k-tuple.<br>$$<br>(OUT[n_1], OUT[n_2], … ,OUT[n_k])<br>$$<br>as an element of set ($V_1 × V_2 × …×V_k$) denoted as $V^k$, to hold the values of the analysis after each iteration.</p>
+</li>
+<li><p>Each iteration can be considered as taking an action to map an elemtn of $V^k$ to a new element of $V^k$, through applying the transfer functions and control-flow handing, abstracted as a function $F:V^k$-&gt;$V^k$</p>
+</li>
+<li><p>Then the algorithm outputs a series of k-tuples is the same as the last one in two consecutive iterations.</p>
+</li>
+</ul>
+<h4 id="Sample"><a href="#Sample" class="headerlink" title="Sample"></a>Sample</h4><p><img src="/course/static-program-analysis/static-program-analysis-04-data-flow-analysis-foundations/sample_0.jpg"></p>
+<p>可以看到：</p>
+<ul>
+<li><p>红色部分的代码可以视为初始化的过程；</p>
+<p><code>init</code> =&gt; (⊥, ⊥, …, ⊥) = $X_0$</p>
+<p>(⊥, ⊥, …, ⊥)是一个k-tuple，用bottom表示其元素；</p>
+</li>
+<li><p>黄色部分的代码作为迭代的条件</p>
+<p>when</p>
+<p>​    <code>iter i</code> =&gt; (${v_1}^i,{v_2}^i,…,{v_k}^i$) = $F(X_{i-1})$</p>
+<p>exists</p>
+<p>​    <code>iter i+1</code> =&gt; (${v_1}^{i},{v_2}^{i},…,{v_k}^{i}$) = $F(X_i)$</p>
+<p>即：</p>
+<p>​    $X_i = X_{i+1}$ =&gt; $X_i=X_{i+1}=F(X_i)$</p>
+<p>则达到不动点，退出循环；</p>
+</li>
+<li><p>绿色部分的代码迭代的操作</p>
+<p><code>iter 1</code> =&gt; (${v_1}^1,{v_2}^1,…,{v_k}^1$) = $X_1$ = $F(X_0)$</p>
+<p><code>iter 2</code> =&gt; (${v_1}^2,{v_2}^2,…,{v_k}^2$) = $X_2$ = $F(X_1)$</p>
+<p>…</p>
+<p><code>iter i</code> =&gt; (${v_1}^i,{v_2}^i,…,{v_k}^i$) = $X_i$ = $F(X_{i-1})$</p>
+</li>
+</ul>
+<p>由此得到的结论是：</p>
+<p>$X$ is a fixed point of function $F$ if $X=F(X)$ =&gt; The iterative algorithm reaches a fixed point.</p>
+<p>partial means for a pair of set elements in P, they could be incomparable; in other words, not necessary that every pair of set elements must statisfy the ordering $\sqsubseteq$. 不一定所有元素都需要满足.</p>
+<h2 id="Some-Question"><a href="#Some-Question" class="headerlink" title="Some Question"></a>Some Question</h2><p>The iterative alogrithm (or the IN/OUT equation system) produces a solution to a data flow analysis</p>
+<ul>
+<li><p>Is the algorithm guaranteed to terminate orreach the fixed point, or does it always have a soluiton?</p>
+<p>所有的data flow的分析都可以使用吗，一定都能达到不动点吗？</p>
+</li>
+<li><p>If so, is there only one solution or only one fixed point? If more than one, is our solution the best one(most precise)?</p>
+<p>如果不动点成立，它只有一个吗，是最精确的吗？</p>
+</li>
+<li><p>When will the algorithm reach the fixed point, or when can we get the solution?</p>
+<p>什么时候能到不动点？</p>
+</li>
+</ul>
+<h3 id="Partial-Order"><a href="#Partial-Order" class="headerlink" title="Partial Order"></a>Partial Order</h3><blockquote>
+<p>偏序集poset(PartiallyOrdered set), We define poset as a pair(P, $\sqsubseteq$) where $\sqsubseteq$ is a binary relation that defines a partial ordering over P, and $\sqsubseteq$ has the following properties:</p>
+<p>​    (1) <em>Reflexivity自反性</em>: $\forall x \in P, x \sqsubseteq x$</p>
+<p>​    (2) <em>Antisymmetry反对称性</em>$\forall x,y \in P,x \sqsubseteq y \land y \sqsubseteq x $ =&gt; $x=y$</p>
+<p>​    (3) <em>Transitivity传递性</em>$\forall x,y,z \in P, x \sqsubseteq y \land y \sqsubseteq z$ =&gt; $x \sqsubseteq z$</p>
+<p>满足这三个性质的set为poset</p>
+</blockquote>
+<h4 id="Sample-1"><a href="#Sample-1" class="headerlink" title="Sample 1"></a>Sample 1</h4><p>Is ($S, \sqsubseteq$) a poset where S is a set of integers and $\sqsubseteq$ representes $\leq$ (less than or equal to)?</p>
+<p>当S是整数集合时，S是poset吗？</p>
+<p>(1) <em>Reflexivity</em>: 1 &lt;= 1, 2 &lt;= 2</p>
+<p>(2) <em>Antisymmetry</em>: 1 &lt;= 1 $\land$ 1 &lt;= 1 then 1 = 1</p>
+<p>(3) <em>Transitivity</em>: 1 &lt;= 2 $\land$ 2 &lt;= 3 then 1 &lt;= 3</p>
+<p>因此$S$为opset；</p>
+<h4 id="Sample-2"><a href="#Sample-2" class="headerlink" title="Sample 2"></a>Sample 2</h4><p>Is ($S, \sqsubseteq$) a poset where S is a set of integers and $\sqsubseteq$ representes $&lt;$ (less than)?</p>
+<p>当S是整数集合时，S是poset吗？</p>
+<p>(1) <em>Reflexivity</em>: 1 &lt; 1, 2 &lt; 2    —-不满足</p>
+<h4 id="Sample-3"><a href="#Sample-3" class="headerlink" title="Sample 3"></a>Sample 3</h4><p>Is ($S, \sqsubseteq$) a poset where S is a set of <code>English words</code> and $\sqsubseteq$ representes the <code>substring</code> relation, i.e., $s1\sqsubseteq s2$ means s1 <code>is a substring</code> of s2?</p>
+<p>当S是满足上述条件的英文单词集合，S是opset吗？</p>
+<p>S such as :</p>
+<p><img src="/course/static-program-analysis/static-program-analysis-04-data-flow-analysis-foundations/sample_1.jpg"></p>
+<p>(1) <em>Reflexivity</em>: 每个string是否为自己的substring？符合</p>
+<p>(2) <em>Antisymmetry</em>: string是自己的substring，反过来还是。符合</p>
+<p>(3) <em>Transitivity</em>: in $\in$ sing, sing $\in$ singing =&gt; in $\in$ singing 符合</p>
+<h3 id="Upper-amp-Lower-Bounds"><a href="#Upper-amp-Lower-Bounds" class="headerlink" title="Upper &amp; Lower Bounds"></a>Upper &amp; Lower Bounds</h3><blockquote>
+<p>Given a poset(P,$\sqsubseteq$) and its subset S that S $\subseteq$ P, we say that u $\in$ P is an upper bound of S, if $\forall x \in S, x \sqsubseteq u$.Similarly, we say that l $\in$ P is an lower bound of S, if $\forall x \in S, l \sqsubseteq x$.</p>
+</blockquote>
+<h4 id="Sample-1-1"><a href="#Sample-1-1" class="headerlink" title="Sample 1"></a>Sample 1</h4><p><img src="/course/static-program-analysis/static-program-analysis-04-data-flow-analysis-foundations/sample_2.jpg"></p>
+<p>对于S：</p>
+<p>upper bound =&gt; {a, b, c}</p>
+<p>lower bound =&gt; {}</p>
+<blockquote>
+<p>We define the <code>least upper bound 最小上界</code>(lub or join) of S, written $\sqcup$S, if for every upper bound of S, say u,  $\sqcup$S $\sqsubseteq$ u. Similarly, We define the <code>greatest lower bound 最大下界</code>(glb or meet) of S, written $\sqcap$S, if for every upper bound of S, say l, l $\sqsubseteq$ $\sqcap$S.</p>
+</blockquote>
+<h4 id="Sample-2-1"><a href="#Sample-2-1" class="headerlink" title="Sample 2"></a>Sample 2</h4><p><img src="/course/static-program-analysis/static-program-analysis-04-data-flow-analysis-foundations/sample_3.jpg"></p>
+<p>对于S：</p>
+<p>upper bound =&gt; {a, b, c}, {a, b}</p>
+<p>least upper bound (join or lub,) =&gt; {a, b}</p>
+<p>lower bound =&gt; {}</p>
+<p>greast lower bound (meet or glb, ) =&gt; {}</p>
+<h4 id="Properties"><a href="#Properties" class="headerlink" title="Properties"></a>Properties</h4><ul>
+<li><p>Not every poset has <code>lub</code> or <code>glb</code></p>
+</li>
+<li><p>But if a poset has lub or glb, it will be unique</p>
+<blockquote>
+<p><em>Proof.</em></p>
+<p>​    assume $g_1$ and $g_2$ are both glbs of poset P according to the definition of glb<br>$$<br>g_1 \sqsubseteq (g_2 = \sqcap P) ,\space  g_2 \sqsubseteq(g_1 = \sqcap P)<br>$$<br>​    by the <em><code>antisymetry</code></em> of partiallyordered set =&gt; $\sqsubseteq g_1=g_2$</p>
+</blockquote>
+</li>
+</ul>
+<h3 id="Lattice"><a href="#Lattice" class="headerlink" title="Lattice"></a>Lattice</h3><blockquote>
+<p>Given a poset(P, $\sqsubseteq$), $\forall a, b \in P, if \space a \sqcup b$ and $a \sqcap b$ exists, then (P, $\sqsubseteq$) is called a lattice.</p>
+<p>A poset is a lattice if every pair of its elements has a least upper bound and ag reatest lower bound.</p>
+</blockquote>
+<h4 id="Sample-1-2"><a href="#Sample-1-2" class="headerlink" title="Sample 1"></a>Sample 1</h4><p>Is(S, $\sqsubseteq$) a lattice where S is a set of integers and $\sqsubseteq$ represents &lt;= (less than or equal to)?</p>
+<p>The $\sqcap$ operator means “min”, The $\sqcup$ operator means “max”. so yes.</p>
+<h4 id="Sample-2-2"><a href="#Sample-2-2" class="headerlink" title="Sample 2"></a>Sample 2</h4><p>Is ($S, \sqsubseteq$) a lattice where S is a set of <code>English words</code> and $\sqsubseteq$ representes the <code>substring</code> relation, i.e., $s1\sqsubseteq s2$ means s1 <code>is a substring</code> of s2?</p>
+<p><img src="/course/static-program-analysis/static-program-analysis-04-data-flow-analysis-foundations/sample_1.jpg"></p>
+<p>必须要满足任意元素的最小上界和最大下界都存在，但是pin和sin显然没有共同的最小上界。 so no.</p>
+<h4 id="Sample-3-1"><a href="#Sample-3-1" class="headerlink" title="Sample 3"></a>Sample 3</h4><p><img src="/course/static-program-analysis/static-program-analysis-04-data-flow-analysis-foundations/jk404\source_posts\static-program-analysis-04-data-flow-analysis-foundations\sample_4.jpg" alt="sample_4"></p>
+<p>The $\sqcap$ operator means $\cap$, The $\sqcup$ operator means $\cup$. so yes.</p>
+<h3 id="Semilattice"><a href="#Semilattice" class="headerlink" title="Semilattice"></a>Semilattice</h3><blockquote>
+<p>Given a poset(P, $\sqsubseteq$), $\forall a, b \in P$,</p>
+<p>if only $a \sqcup b$ exists, then (P, $\sqsubseteq$) is called a join semilattice.</p>
+<p>if only $a \sqcap b$ exists, then (P, $\sqsubseteq$) is called a meet semilattice.</p>
+</blockquote>
+<h3 id="Complete-Lattice"><a href="#Complete-Lattice" class="headerlink" title="Complete Lattice"></a>Complete Lattice</h3><blockquote>
+<p>Given a lattice(P, $\sqsubseteq$), for arbitrary subset S of P, if $\sqcup S$ and $\sqcap S$ exist, then (P, $\sqsubseteq$) is call a complete lattice.</p>
+<p>All subsets of a lattice have a least upper bound and a greatest lower bound.</p>
+</blockquote>
+<h4 id="Sample-1-3"><a href="#Sample-1-3" class="headerlink" title="Sample 1"></a>Sample 1</h4><p>Is(S, $\sqsubseteq$) a <code>complete lattice</code> where S is a set of integers and $\sqsubseteq$ represents &lt;= (less than or equal to)?</p>
+<p>For a subset $S^+$ including all positive integers, it has no $\sqcup S^+$($+\infty$)</p>
+<p>整数集本身是无穷的，无边界的。</p>
+<h4 id="Sample-2-3"><a href="#Sample-2-3" class="headerlink" title="Sample 2"></a>Sample 2</h4><p><img src="/course/static-program-analysis/static-program-analysis-04-data-flow-analysis-foundations/jk404\source_posts\static-program-analysis-04-data-flow-analysis-foundations\sample_4.jpg" alt="sample_4"></p>
+<p>Yes. The definition of bounds implies that the bounds are not necessarily in the subsets(but they must be in the lattice)</p>
+<h4 id="Top-amp-Bottom"><a href="#Top-amp-Bottom" class="headerlink" title="Top &amp; Bottom"></a>Top &amp; Bottom</h4><blockquote>
+<p>Every complete lattice (P, $\sqsubseteq$) has </p>
+<ul>
+<li><p>a greatest element T = $\sqcup P$ called top </p>
+</li>
+<li><p>a least elemtent ⊥ = $\sqcap P$ called bottom</p>
+</li>
+</ul>
+<p>Every finite lattice (P is finite) is a complete lattice. 有穷格是完全格，但是完全格不一定是有穷格（0,1之间的实数集）。</p>
+</blockquote>
+<h3 id="Product-Lattice"><a href="#Product-Lattice" class="headerlink" title="Product Lattice"></a>Product Lattice</h3><blockquote>
+<p>Given lattices $L_1=(P_1, \sqsubseteq_1),L_2=(P_2,\sqsubseteq_2),…,L_n=(P_n,\sqsubseteq_n)$, if for all i, $(P_i, \sqsubseteq_i)$has $\sqcup_i$(least upper bound) and $\sqcap_i$(greatest lower bound), then we can have a <code>product lattice</code> $L^n = (P, \sqsubseteq)$ that is defined by:</p>
+<ul>
+<li>值域：$ P = P_1 × P_2 × \space … \space × P_n$</li>
+<li>two element to opset：$(x_1, \space … \space x_n ) \sqsubseteq (y_1, \space … \space y_n)$ &lt;=&gt; $(x_1 \sqsubseteq y_1) \and … \and (x_n \sqsubseteq y_n)$</li>
+<li>下界关系：$(x_1, \space … \space x_n ) \sqcup (y_1, \space … \space y_n)$ = $(x_1 \sqcup_1 y_1, … , (x_n \sqcup_n y_n)$</li>
+<li>上界关系：$(x_1, \space … \space x_n ) \sqcap (y_1, \space … \space y_n)$ = $(x_1 \sqcap_1 y1 , … , (x_n \sqcap_n y_n)$</li>
+</ul>
+<p>A product lattice is a lattice</p>
+<p>If a product lattice L is a product of complete lattices, then L is also complete</p>
+</blockquote>
+<h3 id="Data-Flow-Analysis-Framework-via-Lattice"><a href="#Data-Flow-Analysis-Framework-via-Lattice" class="headerlink" title="Data Flow Analysis Framework via Lattice"></a>Data Flow Analysis Framework via Lattice</h3><blockquote>
+<p>A data flow analysis framework (D, L, F) consists of:</p>
+<ul>
+<li><em>D</em>：a <code>direction</code> of data flow: forwards or backwards</li>
+<li><em>L</em>：a <code>lattice</code> including domain of the values V and a meet $\sqcap$ or join $\sqcup$ operator</li>
+<li><em>F</em>：a family of <code>transfer funcitons</code> from V to V</li>
+</ul>
+</blockquote>
+<h4 id="Sample-1"><a href="#Sample-1" class="headerlink" title="Sample"></a>Sample</h4><p><img src="/course/static-program-analysis/static-program-analysis-04-data-flow-analysis-foundations/sample_5.jpg"></p>
+<p>对于如上的例子，先看左边，</p>
+<ul>
+<li><p>假设已知：</p>
+<ul>
+<li><p>Direction: Forward</p>
+</li>
+<li><p>Merge: Union</p>
+</li>
+<li><p>OUT[s1]={a}， OUT[s3]={b}</p>
+</li>
+</ul>
+<p>可以得到：</p>
+<ul>
+<li>IN[s2]={a,b}；</li>
+</ul>
+</li>
+</ul>
+<p>那么以上操作对应右侧，有：</p>
+<ul>
+<li>May Analysis从bottom开始：<ul>
+<li>初始化空{}，对应a,b,c的subset为{0,0,0}；</li>
+<li>OUT[s1],OUT[s3]得到的IN[S2]={a,b}，是一个向上汇聚的过程</li>
+</ul>
+</li>
+</ul>
+<p>而由IN到OUT需要做一个<code>F: tansfer function</code>操作；</p>
+<blockquote>
+<p>Data flow analysis can be seen as iteratively applying transfer functions and meet/join operations on the values of a lattice</p>
+</blockquote>
+<h2 id="Review-the-questions"><a href="#Review-the-questions" class="headerlink" title="Review the questions"></a>Review the questions</h2><ul>
+<li><p>Is the algorithm guaranteed to terminate orreach the fixed point, or does it always have a soluiton?</p>
+<p>所有的data flow的分析都可以使用吗，一定都能达到不动点吗？</p>
+<ul>
+<li>Recall “OUT never shrinks” It is about monotonicity. Lattice上的单调性问题。</li>
+<li>关联问题？</li>
+</ul>
+</li>
+<li><p>If so, is there only one solution or only one fixed point? If more than one, is our solution the best one(most precise)?</p>
+<p>如果不动点成立，它只有一个吗，是最精确的吗？</p>
+<ul>
+<li>对于$X=F(X)$的函数不动点，一个函数可以有多个不动点。还有一个问题待解决。Iterative algorithm 从初始化开始递归，需要走到哪一个不动点？哪一个精确呢？</li>
+</ul>
+</li>
+<li><p>When will the algorithm reach the fixed point, or when can we get the solution?</p>
+<p>什么时候能到不动点？</p>
+</li>
+</ul>
+<h3 id="Monotonicity"><a href="#Monotonicity" class="headerlink" title="Monotonicity"></a>Monotonicity</h3><blockquote>
+<p>A function f: L -&gt; L (L is a lattice) is monotonic if $\forall x, y \in L, x \sqsubseteq y$ =&gt; $f(x) \sqsubseteq f(y)$</p>
+</blockquote>
+<h3 id="Fixed-Point-Theorem"><a href="#Fixed-Point-Theorem" class="headerlink" title="Fixed-Point Theorem"></a>Fixed-Point Theorem</h3><blockquote>
+<p>Given a complete lattice(L, $\sqsubseteq$), if:</p>
+<p>​    f: L -&gt; L is monotonic &amp; L is finite, </p>
+<p>前提是：全格 + 单调 + 有限</p>
+<p>then, </p>
+<p>the least fixed point of f can be found by iterating</p>
+<ul>
+<li>$f(⊥), f(f(⊥)), … ,f^k(⊥)$ until a fixed point is reached</li>
+</ul>
+<p>单调 + 由⊥迭代 =&gt; 最小不动点</p>
+<p>the greastest fixed point of f can be found by iterating</p>
+<ul>
+<li>$f($T$)$, $f(f($T$))$, … ,$f^k($T$)$ until a fixed point is reached</li>
+</ul>
+<p>单调 + 由T迭代 =&gt; 最大不动点</p>
+</blockquote>
+<p>若要证明最小不动点成立，需要证明：</p>
+<ul>
+<li>不动点存在</li>
+<li>不动点最小</li>
+</ul>
+<p>若要证明最大不动点成立，需要证明：</p>
+<ul>
+<li>不动点存在</li>
+<li>不动点最大</li>
+</ul>
+<h4 id="Existence-of-Fixed-Point"><a href="#Existence-of-Fixed-Point" class="headerlink" title="Existence of Fixed Point"></a>Existence of Fixed Point</h4><p>如何证明不动点的存在？</p>
+<blockquote>
+<p><em>Proofs.</em></p>
+<p>Bt the definition of ⊥ and f: L -&gt; L, we have<br>$$<br>⊥ \sqsubseteq f(⊥),\space f(⊥) \in L<br>$$<br>As f is monotonic, we have<br>$$<br>f(⊥) \sqsubseteq f(f(⊥)) = f^2(⊥),\space f(⊥) \sqsubseteq f^2(⊥)<br>$$</p>
+<p>$$<br> f(⊥) \in L, \space f^2(⊥) \in L<br>$$</p>
+<p>Similarly (by repeatedly applying f), we have<br>$$<br>⊥ \sqsubseteq f(⊥) \sqsubseteq f^2(⊥) \sqsubseteq … \sqsubseteq f^i(⊥)<br>$$<br>As L is finite, for some k, we have<br>$$<br>f^{Fix} = f^k(⊥) = f^{k+1}(⊥)<br>$$<br>Thus, the fixed point exists.</p>
+</blockquote>
+<h4 id="Least-Fixed-Point"><a href="#Least-Fixed-Point" class="headerlink" title="Least Fixed Point"></a>Least Fixed Point</h4><p>证明最小不动点？</p>
+<blockquote>
+<p><em>Proof.</em></p>
+<p>Assume we have another fixed point x, i.e., x = f(x)</p>
+<p>By the definition of ⊥, we have ⊥ $\sqsubseteq $ x</p>
+<p>Induction begins:</p>
+<p>As f is monotonic, we have<br>$$<br>f(⊥) \sqsubseteq f(x)<br>$$<br>Assume $f^i(⊥) \sqsubseteq f^i(x)$, as f is monotonic, we have<br>$$<br>f^{i+1}(⊥) \sqsubseteq f^{i+1}(x)<br>$$<br>Thus by induction, we have<br>$$<br>f^i(⊥) \sqsubseteq f^i(x)<br>$$<br>Thus $f^i(⊥) \sqsubseteq f^i(x)=x$, then we have<br>$$<br>f^{Fix}=f^k(⊥) \sqsubseteq x<br>$$<br>Thus the fied point is the least.</p>
+</blockquote>
+<h4 id="Greatest-Fixed-Point"><a href="#Greatest-Fixed-Point" class="headerlink" title="Greatest Fixed Point"></a>Greatest Fixed Point</h4><p>参考最小不动点的证明，可以得到：<br>$$<br>x \sqsubseteq f^k(⊥)=f^{Fix}<br>$$</p>
 
         
         
@@ -2367,311 +2717,6 @@
 </article>
 
 
-  <article id="post-static-program-analysis-02-intermediate-representation" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/course/static-program-analysis/static-program-analysis-02-intermediate-representation/">static_program_analysis_02_intermediate-representation</a>
-    </h1>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      
-      <span class="article-date">
-  <i class="fa fa-date"></i>
-  <time class="dt-published" datetime="2022-01-10T11:07:47.000Z" itemprop="datePublished">2022年01月10日</time>
-</span>
-      
-  <div class="article-category">
-    <i class="fa fa-classify"></i>
-    <a class="article-category-link" href="/categories/course/">course</a> > <a class="article-category-link" href="/categories/course/static-program-analysis/">static_program_analysis</a>
-  </div>
-
-      
-      
-<a href="/course/static-program-analysis/static-program-analysis-02-intermediate-representation/#comments" class="article-comment-link">
-  
-  <i class="fa fa-commt"></i>
-  留言
-</a>
-
-
-    </div>
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <h1 id="Intermediate-Representation"><a href="#Intermediate-Representation" class="headerlink" title="Intermediate Representation"></a>Intermediate Representation</h1><h2 id="Compilers-amp-Static-Analyzers"><a href="#Compilers-amp-Static-Analyzers" class="headerlink" title="Compilers &amp; Static Analyzers"></a>Compilers &amp; Static Analyzers</h2><p>静态分析和编译器的关系？</p>
-<p><img src="/course/static-program-analysis/static-program-analysis-02-intermediate-representation/compiler_IR.jpg"></p>
-<p>如上图；</p>
-<ol>
-<li>Source Code通过Scanner生成了Tokens，Scanner完成了词法分析，根据正则表达式（Regular Expression）对不合法的词语进行处理，最后将每个合法的词生成一个tokens；</li>
-<li>Paser进行语法分析，也可以称句法分析，根据上下文无关文法（Context-Free Grammar）将无法识别的词句进行处理，生成了AST（抽象语法树）；这里不用上下文敏感文法而言，因为是上下文无关文法用来表述程序语法已经足够，否则将会导致分析编程语言时效率十分低下；</li>
-<li>Type Checker进行语义分析，例如上图中的<code>Apples eat you</code>，编译器进行简单的语义分析，例如类型检查的错误，根据Attribute Grammar的规则来进行处理，最后生成装饰后的抽象语法树（Decorated AST），其中包含检查过的类型信息等；</li>
-<li>前面步骤都通过后，如果编译器需要对程序进行后期优化，还需要使用转换器（Translator）进行转换，转换为中间表现形式IR，通常指的是三地址码。</li>
-<li>之后要使机器执行还需要代码生成器（Code Generator）来生成相应的机器码。</li>
-</ol>
-<p>这里可以简单地称IR生成前为前端，转换器生成IR后为后端。</p>
-<h2 id="AST-vs-IR"><a href="#AST-vs-IR" class="headerlink" title="AST vs. IR"></a>AST vs. IR</h2><p>为什么说通过在三地址码上分析利于静态分析器的分析？为什么不能直接在AST上分析呢？</p>
-<p>下面有一个例子。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">do</span>&#123;</span><br><span class="line">	i = i + <span class="number">1</span>;</span><br><span class="line">&#125;<span class="keyword">while</span>(a[i]&lt;v);</span><br></pre></td></tr></table></figure>
-
-<p>对于上面的代码会有如下的AST；</p>
-<p><img src="/course/static-program-analysis/static-program-analysis-02-intermediate-representation/AST.jpg"></p>
-<div align="center">
-    <p>
-        根节点标识为`do-while`循环；
-    </p>
-    <p>
-        左孩子为body循环体，其中有assign，左孩子为i,右孩子为+，而进行加法操作的则为i和1，表示为i = i + 1；
-    </p>
-    <p>
-        右孩子为条件表达式，>的左孩子为[]，对应的是数组a的下标为i的元素，而比较的另一方为v；
-    </p>
-</div>
-
-<p>对应的IR - 三地址码（”3-address” form）为：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1: i = i + 1</span><br><span class="line">2: t1 = a [ i ]</span><br><span class="line">3: if t1 &lt; v goto 1</span><br></pre></td></tr></table></figure>
-
-<p>其中1、2、3标记了语句在程序中的位置。</p>
-<p>生成一个临时变量t1，该变量与v进行比较，如果t1&lt;v，则会goto第一条语句，进入一个循环。</p>
-<p>比较起来有如下的差别：</p>
-<p>AST</p>
-<ul>
-<li>high-level and closed to grammar structure - 更高层并且贴近语法结构</li>
-<li>usually language dependent - 通常依赖不同语言，因为更贴近语法结构，每个语言会有自己不同的语法结构</li>
-<li>suitable for fast type checking - 遍历AST的时候，更方便取类型进行类型检查</li>
-<li>lack of control flow information - 缺少控制流的表达信息</li>
-</ul>
-<p>IR</p>
-<ul>
-<li>low-level and closed to machine code - 更底层并且贴近汇编机器码</li>
-<li>usually language independent - 通常不太依赖高级语言的语法结构，因为更贴近机器码，而很多高级语言都能转化为汇编语言</li>
-<li>compact and uniform - 更加压缩化统一化</li>
-<li>contains control flow information - 能够包含体现控制流的信息</li>
-<li>usually considered as the basis for static analysis - 通常被认为是静态分析的基础</li>
-</ul>
-<h2 id="IR-Three-Address-Code-3AC"><a href="#IR-Three-Address-Code-3AC" class="headerlink" title="IR:Three-Address Code(3AC)"></a>IR:Three-Address Code(3AC)</h2><p>There is at most one operator on the right side of an instruction.</p>
-<p>如果要求只能有两个操作数和一个操作符，例如下面的</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">t1 = a + b +3</span><br></pre></td></tr></table></figure>
-
-<p>需要被转化成：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">t2 = a + b</span><br><span class="line">t1 = t2 + 3</span><br></pre></td></tr></table></figure>
-
-<p>为什么被称作三地址码呢？</p>
-<p>这里的地址并非真实的地址，而是概念上的地址，每个三地址码最多包含三种地址（元素）。</p>
-<p>对于上面的表达式，有：</p>
-<ul>
-<li>Name: a,b</li>
-<li>Constant: 3</li>
-<li>Compiler-generated temporary: t1, t2</li>
-</ul>
-<p>每种指令都有自己对应的三地址码，对于下列的三地址码表达式：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">x = y bop z</span><br><span class="line">x = uop y</span><br><span class="line">x = y</span><br><span class="line">goto L</span><br><span class="line">if x goto L</span><br><span class="line">if x rop y goto L</span><br></pre></td></tr></table></figure>
-
-<p>有如下解释：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">x, y, z: addresses - 上面表达式中的x,y,z可以是name, constant 或者是compiler-generated temporary。</span><br><span class="line">bop: binary arithmetic or logical operation - 二元操作符，即加减运算或者逻辑操作与或非</span><br><span class="line">uop: unary operation(minus, negation, casting) - 一元操作符，即类型转换、取反等等</span><br><span class="line">L: a label to represent a program location - 程序指令的地址标签</span><br><span class="line">rop: relational operator(&gt;, &lt;, ==, &gt;=, &lt;=, etc.) - 比较类型的操作符</span><br><span class="line">goto L: unconditional jump - 无条件跳转</span><br><span class="line">if ... goto L: conditional jump - 满足条件的跳转</span><br></pre></td></tr></table></figure>
-
-<p>这是形式上的三地址码，而真实的三地址码会复杂很多，例如Soot。</p>
-<h2 id="Soot-3AC-in-Real-Static-Analyzer"><a href="#Soot-3AC-in-Real-Static-Analyzer" class="headerlink" title="Soot: 3AC in Real Static Analyzer"></a>Soot: 3AC in Real Static Analyzer</h2><p>Soot是最有名的JAVA静态分析框架；</p>
-<p>Soot’s IR is Jimple - Soot的中间表示层为Jimple，是一种 typed 3-address code；</p>
-<h3 id="For-Loop"><a href="#For-Loop" class="headerlink" title="For Loop"></a>For Loop</h3><p>对于下列的JAVA代码：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> nju.sa.examples;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ForLoop3AC</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;</span><br><span class="line">		<span class="keyword">int</span> x = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++)</span><br><span class="line">            x = x + <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>下面是这个<code>For Loop</code>类型的三地址码。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">public static void main(java.lang.String[])&#123;</span><br><span class="line">	java.lang.String r0;</span><br><span class="line">	int i1;</span><br><span class="line">	</span><br><span class="line">	r0 := @parameter0: java.lang.String[];  </span><br><span class="line">	i1 = 0;</span><br><span class="line">	</span><br><span class="line">label1:</span><br><span class="line">	if i1 &gt;= 10 goto label2;</span><br><span class="line">	i1 = i1 + 1;</span><br><span class="line">	goto label1;</span><br><span class="line"></span><br><span class="line">label2:</span><br><span class="line">	return;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<ol>
-<li>对于</li>
-</ol>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">java.lang.String r0;</span><br><span class="line">int i1;</span><br></pre></td></tr></table></figure>
-
-<p>这里对r0和i1变量进行了声明，<code>java.lang.String</code>和<code>int</code>作为数据类型；</p>
-<ol start="2">
-<li>对于</li>
-</ol>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">r0 := @parameter0: java.lang.String[];  </span><br><span class="line">i1 = 0;</span><br></pre></td></tr></table></figure>
-
-<p>这里是对已经声明的变量进行赋值操作，但是这里并不是真正赋值，要知道三地址码只是对程序代码进行标记，以利于静态分析器进行分析。</p>
-<p>可以看到的是，对于r0变量的赋值操作，将传入的数组java.lang.String[]中的参数赋值给r0，而对于i1，则是for循环里定义的变量i。</p>
-<ol start="3">
-<li>对于</li>
-</ol>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">label1:</span><br><span class="line">	if i1 &gt;= 10 goto label2;</span><br><span class="line">	i1 = i1 + 1;</span><br><span class="line">	goto label1;</span><br></pre></td></tr></table></figure>
-
-<p>在标签label1中，存在三条语句。</p>
-<p><code>if i1 &gt;= 10 goto label2</code>，表示变量i1大于等于10时，跳转到label2标签。</p>
-<p>程序流继续向下，i1=i1+1，进行一次增操作。</p>
-<p>最后跳转回label1，继续for循环。</p>
-<p>可以看到，这里的形式非常像汇编代码。</p>
-<ol start="4">
-<li>对于</li>
-</ol>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">label2:</span><br><span class="line">	return;</span><br></pre></td></tr></table></figure>
-
-<p>则是跳出for循环后，程序运行结束。</p>
-<h3 id="Do-While-Loop"><a href="#Do-While-Loop" class="headerlink" title="Do-While Loop"></a>Do-While Loop</h3><p>对于do-while类型的Java代码，三地址码是什么样子的呢？</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> nju.sa.examples;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DoWhileLoop3AC</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;</span><br><span class="line">        <span class="keyword">int</span>[] arr = <span class="keyword">new</span> <span class="keyword">int</span>[<span class="number">10</span>];</span><br><span class="line">		<span class="keyword">int</span> i = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">do</span>&#123;</span><br><span class="line">            i = i + <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">while</span> (arr[i] &lt; <span class="number">10</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>对应的三地址码为：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">public static void main(java.lang.String[])&#123;</span><br><span class="line">	java.lang.String[] r0;</span><br><span class="line">	int[] r1;</span><br><span class="line">	int $i0, i1;</span><br><span class="line">	</span><br><span class="line">	r0 := @parameter0: java.lang.String[]; </span><br><span class="line">    r1 = newarray (int)[10];</span><br><span class="line">    i1 = 0;</span><br><span class="line"></span><br><span class="line">label1:</span><br><span class="line">	i1 = i1 + 1;</span><br><span class="line">	$i0 = r1[i1];</span><br><span class="line">	if $i0 &lt; 10 goto label1;</span><br><span class="line">	return;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>分析可以人为分成两部分考虑：</p>
-<ol>
-<li><p>变量的声明与初始化；</p>
-</li>
-<li><p>程序流；</p>
-</li>
-</ol>
-<p>首先按照惯例，会先对变量进行声明，有<code>r0</code>:传入的数组元素，<code>r1</code>定义的一个int型数组，<code>$i0</code>是一个，<code>i1</code>是一个int型的变量。接着就是对这些变量的赋值。其中可以看到在对数组进行初始化的时候，<code>r1 = newarray (int)[10]</code>，其实看起来就很像C++里的<code>new int[10]</code>的方式。</p>
-<p>在label1标签中，i1累加1，变量$i0被赋值为r1数组中的元素，然后拿该元素与10进行比较，如果小于10就进入循环，否则return。</p>
-<h3 id="Method-Call"><a href="#Method-Call" class="headerlink" title="Method Call"></a>Method Call</h3><p>函数调用的三地址码如何呢？</p>
-<p>对于下列示例</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> nju.sa.examples;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 字符串拼接</span></span><br><span class="line"><span class="keyword">public</span> calss MethodCall3AC&#123;</span><br><span class="line">	<span class="function">String <span class="title">foo</span><span class="params">(String para1, String par2)</span></span>&#123;</span><br><span class="line">		<span class="keyword">return</span> para1 + <span class="string">&quot; &quot;</span> + para2;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;</span><br><span class="line">		MethodCall3AC mc = <span class="keyword">new</span> MethodCall3AC();</span><br><span class="line">		String result = mc.foo(<span class="string">&quot;hello&quot;</span>, <span class="string">&quot;world&quot;</span>);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>foo有如下的三地址码</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">java.lang.String foo(java.lang.String, java.lang.String)&#123;</span><br><span class="line">	nju.sa.examples.MethodCall3AC r0;</span><br><span class="line">	java.lang.String r1, r2, $r7;</span><br><span class="line">	java.lang.StringBuilder $r3, $r4, $r5, $r6;</span><br><span class="line">	</span><br><span class="line">	r0 := @this: nju.sa.examples.MethodCall3AC;</span><br><span class="line">	r1 := @parameter0: java.lang.String;</span><br><span class="line">	r2 := @parameter1: java.lang.String;</span><br><span class="line">	$r3 = new java.lang.StringBuilder;</span><br><span class="line">	</span><br><span class="line">	specialinvoke $r3.&lt;java.lang.StringBuilder: void &lt;init&gt;()&gt;();</span><br><span class="line">	$r4 = virtualinvoke $r3.&lt;java.lang.StringBuilder: java.lang.StringBuilder append(java.lang.String)&gt;(r1);</span><br><span class="line">	$r5 = virtualinvoke $r4.&lt;java.lang.StringBuilder: java.lang.StringBuilder append(java.lang.String)&gt;(&quot; &quot;);</span><br><span class="line">	$r6 = virtualinvoke $r5.&lt;java.lang.StringBuilder: java.lang.StringBuilder append(java.lang.String)&gt;(r1);</span><br><span class="line">	$r7 = virtualinvoke $r6.&lt;java.lang.StringBuilder: java.lang.String toString()&gt;();</span><br><span class="line">	</span><br><span class="line">	return $r7;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>还是一样，分为两部分考虑，变量声明和初始化。</p>
-<p><code>r0 := @this: nju.sa.examples.MethodCall3AC</code>，r0指向了当前类。</p>
-<p><code>r1, r2</code>为String类型。</p>
-<p><code>$r3</code>实际上是调用了StringBuilder类，这是Java用来进行字符串操作的类。</p>
-<p>用<code>specialinvoke</code>来调用<code>$r3</code>的构造函数（上面<code>$r3</code>是StringBuilder类的一个实例）。<code>&lt;java.lang.StringBuilder: void &lt;init&gt;()&gt;</code>是一个<code>Method Signature</code>，<code>Method Signature</code>一般格式为<code>class name: return type, method name(parameter1 type, parameter2 type ...)</code>；例如这个例子中，<code>java.lang.StringBuilder</code>为class name，void为返回类型，这里面并没有参数。</p>
-<p>同理的，下面的操作是不断进行字符串拼接，<code>virtualinvoke</code>用来调用method，这里的method显然是<code>append()</code>。</p>
-<p>再来看看main的三地址码；</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">public static void main(java.lang.String[])&#123;</span><br><span class="line">	java.lang.String[] r0;</span><br><span class="line">	nju.sa.examples.MethodCall3AC $r3;</span><br><span class="line">	</span><br><span class="line">	r0 := @parameter0: java.lang.String[];</span><br><span class="line">	$r3 = new nju.sa.examples.MethodCall3AC;</span><br><span class="line">	</span><br><span class="line">	specialinvoke $r3.&lt;nju.sa.examples.MethodCall3AC: void &lt;init&gt;()&gt;();</span><br><span class="line">	virtualinvoke $r3.&lt;nju.sa.examples.MethodCall3AC: java.lang.String foo(java.lang.String, java.lang.String)&gt;(&quot;hello&quot;,&quot;world&quot;);</span><br><span class="line">	return;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>同样的，new一个类的实例<code>$r3</code>，<code>specialinvoke</code>调用该类的构造函数，<code>virtualinvoke</code>调用该类的函数<code>foo()</code>，对应的参数是两个字符串类型的parameter：<code>&quot;hello&quot;</code>，<code>&quot;world&quot;</code>；</p>
-<h3 id="Class"><a href="#Class" class="headerlink" title="Class"></a>Class</h3><p>对于下面的代码</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> nju.sa.examples;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Class3AC</span></span>&#123;</span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">double</span> pi = <span class="number">3.14</span>;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;</span><br><span class="line">	</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>有如下的三地址码；</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">public class nju.sa.exampels.Class3AC extends java.lang.Object&#123;</span><br><span class="line">	public static final double pi;</span><br><span class="line">	</span><br><span class="line">	public void &lt;init&gt;()&#123;</span><br><span class="line">		nju.sa.exampels.Class3AC r0;</span><br><span class="line">		r0 := @this: nju.sa.examples.Class3AC;</span><br><span class="line">		specialinvoke r0.&lt;java.lang.Objet: void &lt;init&gt;()&gt;();</span><br><span class="line">		return;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	public static void main(java.lang.String[])&#123;</span><br><span class="line">		java.lang.String[] r0;</span><br><span class="line">		r0 := @parameter0: java.lang.String[];</span><br><span class="line">		return;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	public static void &lt;clinit&gt;()&#123;</span><br><span class="line">		&lt;nju.sa.examples.Class3AC: double pi&gt; = 3.14;</span><br><span class="line">		return;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>首先是对pi的一个声明；</p>
-<p>然后是默认生成的<code>&lt;init&gt;</code>构造函数；</p>
-<p>其中有一个<code>clinit</code>,它是一个类的静态初始化函数，在引用一个变量时，会将这个变量加载，可以看到，在类<code>Class3AC</code>中，定义了static类型的一个变量pi，所以pi这个变量会通过<code>clinit</code>加载进来。</p>
-<h2 id="Static-Single-Assignment-SSA"><a href="#Static-Single-Assignment-SSA" class="headerlink" title="Static Single Assignment(SSA)"></a>Static Single Assignment(SSA)</h2><p>** Optional material</p>
-<h3 id="What-is-SSA"><a href="#What-is-SSA" class="headerlink" title="What is SSA"></a>What is SSA</h3><p>另一种AR的格式，SSA-Static Single Assignment；</p>
-<p>All assignments in SSA are to varuiables with distinct names</p>
-<ul>
-<li>Give each definition a fresh name - 每个定义都有独自的名字</li>
-<li>Propagate fresh name to subsequent uses</li>
-<li>Every varible has exactly one definitoin - 每个变量都有确切的一个定义</li>
-</ul>
-<p>例如：<br>在3AC中，有：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">p = a + b</span><br><span class="line">q = p - c</span><br><span class="line">p = q * d</span><br><span class="line">p = e - p</span><br><span class="line">q = p + q</span><br></pre></td></tr></table></figure>
-
-<p>而在SSA中，则有：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">p1 = a + b</span><br><span class="line">q1 = p1 - c</span><br><span class="line">p2 = q1 * d</span><br><span class="line">p3 = e - p2</span><br><span class="line">q2 = p3 + q1</span><br></pre></td></tr></table></figure>
-
-<p>What if a varibale use is at control flow merges?</p>
-<p>对于控制流的汇合处，如何判断引用的是x0还是x1呢？</p>
-<p><img src="/course/static-program-analysis/static-program-analysis-02-intermediate-representation/SSA.jpg"></p>
-<p>SSA引入了∅的概念：</p>
-<ul>
-<li>A sepcial merge operator, ∅ (called phi-funciton), is introduced to select the values at merge nodes.</li>
-<li>∅(x0, x1) has the value x0 if the control flow passes through the true part of the conditional and the value x1 otherwise.</li>
-</ul>
-<p><img src="/course/static-program-analysis/static-program-analysis-02-intermediate-representation/SSA1.jpg"></p>
-<p>新建了一个变量x2，如果走了x0的分支，则x2的值为x0，反之则反。</p>
-<h3 id="Why-SSA"><a href="#Why-SSA" class="headerlink" title="Why SSA"></a>Why SSA</h3><ul>
-<li>Flow infortmation is indirectly incorporated into the unique variable names - 程序流间接包含了独特的变量名<ul>
-<li>May help deliver some simpler analyses, e.g., flow-insensitive analysis gains paartial precision of flow-sensitive analysis via SSA</li>
-</ul>
-</li>
-<li>Define-and-Use pairs are explicit - 变量很明确<ul>
-<li>Enable more effective data facts storage and propagation in some on-demand tasks</li>
-<li>Some optimization tasks perform better on SSA(e.g., conditional constant propagation, global value numbering)</li>
-</ul>
-</li>
-</ul>
-<h3 id="Why-not-SSA"><a href="#Why-not-SSA" class="headerlink" title="Why not SSA"></a>Why not SSA</h3><ul>
-<li>SSA may introduce too many variables and phi-functions - 引入了太多的变量和∅</li>
-<li>May introduce inefficiency problem when translating to machine code(due to copy operations) - 转换为机器码太冗杂</li>
-</ul>
-<h2 id="Control-Flow-Analysis"><a href="#Control-Flow-Analysis" class="headerlink" title="Control Flow Analysis"></a>Control Flow Analysis</h2><ul>
-<li>Usually refer to building Control Flow Graph </li>
-<li>Control Flow Graph node -&gt; Basic Blocks</li>
-</ul>
-<p>Input: 3AC of Program P -&gt; </p>
-<p>Intermediation: Basic Blocks -&gt; </p>
-<p>Output: CFG of Program P)</p>
-<p>通常在控制流程图上进行静态分析，而每一个流程图的结点是Basic Block；</p>
-<h3 id="Basic-Blocks-BB"><a href="#Basic-Blocks-BB" class="headerlink" title="Basic Blocks(BB)"></a>Basic Blocks(BB)</h3><ul>
-<li>Basic Blocks are maximal sequences of consecutive three-address instructions with the properties that<ul>
-<li>It can be entered only at the beginning, i.e., the fisrt instruction in the block</li>
-<li>It can be exited only at the end, i.e., the last instruction in the block</li>
-</ul>
-</li>
-</ul>
-<p>Basic Blocks出入口分别对应basic block中的第一条指令和最后一条指令。</p>
-<p>对于下面的3AC，如何建立basic block呢？</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">x = input</span><br><span class="line">y = x - 1</span><br><span class="line">z = x * y</span><br><span class="line">if z &lt; x goto 7</span><br><span class="line">p = x / y</span><br><span class="line">q = p + y</span><br><span class="line">a = q</span><br><span class="line">b = x + a</span><br><span class="line">c = 2a - b</span><br><span class="line">if p == q goto 12</span><br><span class="line">goto 3</span><br><span class="line">return</span><br></pre></td></tr></table></figure>
-
-<p>那么根据bb的性质，Basic Blocks出入口分别对应basic block中的第一条指令和最后一条指令，并且bb应当是maximal的，所以按照goto来区分会比较容易。</p>
-<p>举例说，1、2可以组成一个bb，但是3不能添加到这个bb中，因为在第11行的指令为<code>goto 3</code>，这样bb的一个入口就为bb中的第3行了，这和bb的性质相违背。</p>
-<p>因此最后的bb集为：</p>
-<p><img src="/course/static-program-analysis/static-program-analysis-02-intermediate-representation/bb.jpg"></p>
-<p>总结的规则为：</p>
-<ol>
-<li>Determine the leaders in P (1)<ol>
-<li>Any target instruction of a conditional or unconditional jump is a leader (3, 5, 7)</li>
-<li>Any instruction that immediately follows a conditional or unconditional jump is a leader (5, 11, 12)</li>
-</ol>
-</li>
-<li>Build BBs for P<ol>
-<li>A BB consists of a leader and all its subsequent instructions until the next leader</li>
-</ol>
-</li>
-</ol>
-<h3 id="Control-Flow-Graphs-CFG"><a href="#Control-Flow-Graphs-CFG" class="headerlink" title="Control Flow Graphs(CFG)"></a>Control Flow Graphs(CFG)</h3><p>BBs + edge = Graphs</p>
-<p>两个规则：</p>
-<ol>
-<li>顺序</li>
-<li>有条件goto，无条件goto且goto的目标与当前指令不相邻</li>
-<li>Entry + End</li>
-</ol>
-<p><img src="/course/static-program-analysis/static-program-analysis-02-intermediate-representation/graph.jpg"></p>
-<h2 id="Important-Point"><a href="#Important-Point" class="headerlink" title="Important Point"></a>Important Point</h2><ul>
-<li>The relation between compilers and static analyzers</li>
-<li>Understand 3AC and its common forms (in IR jimple)</li>
-<li>How to build basic blocks on top of IR?</li>
-<li>How to construct control flow graphs on top of BBs?</li>
-</ul>
-
-        
-        
-          <blockquote id="copyright">
-              <p>原文链接: <a href="https://www.jk404.cn/index.html">https://www.jk404.cn/index.html</a></p>
-              <p>版权声明: 转载请注明出处.</p>
-          </blockquote>
-        
-      
-    </div>
-    <footer class="article-footer">
-      
-        <div class="article-tag-wrap">
-          
-
-          
-          
-
-
-        </div>
-      
-      
-      
-    </footer>
-  </div>
-</article>
-
-
 
     <nav id="page-nav">
 
@@ -2690,6 +2735,10 @@
       <ul>
         
           <li>
+            <a href="/CTF/PWN/wp/susctf2022/ctf-susctf2022-rain/">ctf_susctf2022_rain</a>
+          </li>
+        
+          <li>
             <a href="/course/static-program-analysis/static-program-analysis-04-data-flow-analysis-foundations/">static_program_analysis_04_data_flow_analysis_foundations</a>
           </li>
         
@@ -2705,10 +2754,6 @@
             <a href="/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/router-vuln-analysis/">router_vuln_analysis</a>
           </li>
         
-          <li>
-            <a href="/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/router-vuln-file-system/">router_vuln_file_system</a>
-          </li>
-        
       </ul>
     </div>
   </div>
@@ -2721,7 +2766,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title"><i class="fa fa-classify"></i> 分类</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP-lab/">CSAPP-lab</a><span class="category-list-count">3</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP-lab/bomblab/">bomblab</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP-lab/datalab/">datalab</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP-lab/preparelab/">preparelab</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/">CTF</a><span class="category-list-count">30</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/">PWN</a><span class="category-list-count">30</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/">kernel pwn</a><span class="category-list-count">13</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/FUZZ/">FUZZ</a><span class="category-list-count">3</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/FUZZ/Syzkaller/">Syzkaller</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/FUZZ/Trinity/">Trinity</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/Linux-source/">Linux source</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/cve/">cve</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/knowledge/">knowledge</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/wp/">wp</a><span class="category-list-count">3</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/uncategorized/">uncategorized</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/user-space-pwn/">user space pwn</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/user-space-pwn/cve/">cve</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/">wp</a><span class="category-list-count">12</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/asisctf/">asisctf</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/asisctf/asisctf2021/">asisctf2021</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/buuoj/">buuoj</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/l3hctf/">l3hctf</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/pwnable-kr/">pwnable.kr</a><span class="category-list-count">7</span></li></ul></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/">OS</a><span class="category-list-count">13</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/">lab1</a><span class="category-list-count">13</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge1-what-is-make/">challenge1:what is make</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge2-qemu-gdb/">challenge2:qemu&gdb</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge3-go-into-protected-mode/">challenge3:go into protected mode</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge4-load-kernel-elf/">challenge4:load kernel elf</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge5-trace-stackframe/">challenge5:trace stackframe</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge6-interrupt-handle/">challenge6:interrupt handle</a><span class="category-list-count">3</span></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/">PWN</a><span class="category-list-count">6</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/Fuzz/">Fuzz</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/Fuzz/AFL/">AFL</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/cve/">cve</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/microcorruption/">microcorruption</a><span class="category-list-count">4</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/UE4/">UE4</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/UE4/LowPoly/">LowPoly</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/course/">course</a><span class="category-list-count">5</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/course/MIT-AI/">MIT-AI</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/course/static-program-analysis/">static_program_analysis</a><span class="category-list-count">4</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/golang/">golang</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/golang/start/">start</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/pwn-college/">pwn.college</a><span class="category-list-count">3</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/pwn-college/Chapter01-Program-interaction/">Chapter01 Program interaction</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/pwn-college/Chapter02-Binary-file/">Chapter02 Binary file</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/pwn-college/Introduciton/">Introduciton</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/study/">study</a><span class="category-list-count">21</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/study/book/">book</a><span class="category-list-count">17</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/">揭秘家用路由器0day漏洞挖掘技术</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/">程序员的自我修养：链接、装载与库</a><span class="category-list-count">7</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/study/daily/">daily</a><span class="category-list-count">4</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/tools/">tools</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/welcome/">welcome</a><span class="category-list-count">1</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP-lab/">CSAPP-lab</a><span class="category-list-count">3</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP-lab/bomblab/">bomblab</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP-lab/datalab/">datalab</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP-lab/preparelab/">preparelab</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/">CTF</a><span class="category-list-count">31</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/">PWN</a><span class="category-list-count">31</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/">kernel pwn</a><span class="category-list-count">13</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/FUZZ/">FUZZ</a><span class="category-list-count">3</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/FUZZ/Syzkaller/">Syzkaller</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/FUZZ/Trinity/">Trinity</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/Linux-source/">Linux source</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/cve/">cve</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/knowledge/">knowledge</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/wp/">wp</a><span class="category-list-count">3</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/uncategorized/">uncategorized</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/user-space-pwn/">user space pwn</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/user-space-pwn/cve/">cve</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/">wp</a><span class="category-list-count">13</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/asisctf/">asisctf</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/asisctf/asisctf2021/">asisctf2021</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/buuoj/">buuoj</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/l3hctf/">l3hctf</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/pwnable-kr/">pwnable.kr</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/susctf2022/">susctf2022</a><span class="category-list-count">1</span></li></ul></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/">OS</a><span class="category-list-count">13</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/">lab1</a><span class="category-list-count">13</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge1-what-is-make/">challenge1:what is make</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge2-qemu-gdb/">challenge2:qemu&gdb</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge3-go-into-protected-mode/">challenge3:go into protected mode</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge4-load-kernel-elf/">challenge4:load kernel elf</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge5-trace-stackframe/">challenge5:trace stackframe</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge6-interrupt-handle/">challenge6:interrupt handle</a><span class="category-list-count">3</span></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/">PWN</a><span class="category-list-count">6</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/Fuzz/">Fuzz</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/Fuzz/AFL/">AFL</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/cve/">cve</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/microcorruption/">microcorruption</a><span class="category-list-count">4</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/UE4/">UE4</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/UE4/LowPoly/">LowPoly</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/course/">course</a><span class="category-list-count">5</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/course/MIT-AI/">MIT-AI</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/course/static-program-analysis/">static_program_analysis</a><span class="category-list-count">4</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/golang/">golang</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/golang/start/">start</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/pwn-college/">pwn.college</a><span class="category-list-count">3</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/pwn-college/Chapter01-Program-interaction/">Chapter01 Program interaction</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/pwn-college/Chapter02-Binary-file/">Chapter02 Binary file</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/pwn-college/Introduciton/">Introduciton</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/study/">study</a><span class="category-list-count">21</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/study/book/">book</a><span class="category-list-count">17</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/">揭秘家用路由器0day漏洞挖掘技术</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/">程序员的自我修养：链接、装载与库</a><span class="category-list-count">7</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/study/daily/">daily</a><span class="category-list-count">4</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/tools/">tools</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/welcome/">welcome</a><span class="category-list-count">1</span></li></ul>
     </div>
   </div>
 
@@ -2731,7 +2776,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title"><i class="fa fa-archive"></i> 归档</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/">2022年03月</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/">2021年12月</a><span class="archive-list-count">76</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/">2022年03月</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/">2021年12月</a><span class="archive-list-count">76</span></li></ul>
     </div>
   </div>
 
