@@ -341,6 +341,10 @@
 <p>这里借助<code>insert(0x86, &quot;babeface&quot;)</code>申请掉最后一个tcachebins中的chunk，随后申请位于unsorted bin中的chunk；</p>
 <p><img src="/CTF/PWN/wp/susctf2022/ctf-susctf2022-happytree/leak_libc_base.jpg"></p>
 <p>可以看到，fd被新的content覆盖，而bk没有被清空，使用show(0x87)，即可得到该地址。利用main_arena和__malloc_hook之间相差0x10的关系，从而找到了libc_base，由此便可以得到其他的可利用函数地址；</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[+] __malloc_hook =&gt; 0x7f1a7bf13c30</span><br><span class="line">[+] libc_base =&gt; 0x7f1a7bb28000</span><br><span class="line">[+] __free_hook =&gt; 0x7f1a7bf158e8</span><br><span class="line">[+] one_gadget[0] =&gt; 0x7f1a7bb77365</span><br><span class="line">[+] one_gadget[1] =&gt; 0x7f1a7bb773c2</span><br><span class="line">[+] one_gadget[2] =&gt; 0x7f1a7bc3245c</span><br></pre></td></tr></table></figure>
+
+<h2 id="利用"><a href="#利用" class="headerlink" title="利用"></a>利用</h2><p>拿到了泄露出的地址，接下来需要进行利用。</p>
+<p>前面获得了堆的地址(heap base)，</p>
 
         
         
@@ -848,7 +852,119 @@
 <p>thus $x \sqcup z \sqsubseteq y \sqcup z$</p>
 </blockquote>
 <p>同理可证meet；</p>
-<h2 id="When-will-the-algorithm-reach-the-fixed-point"><a href="#When-will-the-algorithm-reach-the-fixed-point" class="headerlink" title="When will the algorithm reach the fixed point?"></a>When will the algorithm reach the fixed point?</h2>
+<h2 id="When-will-the-algorithm-reach-the-fixed-point"><a href="#When-will-the-algorithm-reach-the-fixed-point" class="headerlink" title="When will the algorithm reach the fixed point?"></a>When will the algorithm reach the fixed point?</h2><blockquote>
+<p>The height of a lattice $h$ is the length of the longest path from Top to Bottom in the lattice. </p>
+</blockquote>
+<p><img src="/course/static-program-analysis/static-program-analysis-04-data-flow-analysis-foundations/sample_4.jpg"></p>
+<p>对于上图的例子而言，其高度$h=3$；</p>
+<p>现在需要求得到不动点需要的迭代次数$i$；</p>
+<p><img src="/course/static-program-analysis/static-program-analysis-04-data-flow-analysis-foundations/when_to_fix_point.jpg"></p>
+<p>在每次迭代中，假设往一个方向上的每一次迭代只有一个结点的变化，例如0-&gt;1。</p>
+<p>假设lattice高度为h，而结点个数为k，最坏情况下，相当于每一个结点从空到”满”，从bottom-&gt;top，每一个结点需要处理h次，则需要的迭代次数为h*k；</p>
+<h2 id="May-amp-Must-Analysis-from-a-lattice-view"><a href="#May-amp-Must-Analysis-from-a-lattice-view" class="headerlink" title="May&amp;Must Analysis from a lattice view"></a>May&amp;Must Analysis from a lattice view</h2><p>通过lattice的角度，用图例说明上述结论。</p>
+<p><img src="/course/static-program-analysis/static-program-analysis-04-data-flow-analysis-foundations/lattice_view_sample_0.jpg"></p>
+<p>假设lattice是一个product lattice。</p>
+<h3 id="May-Analysis"><a href="#May-Analysis" class="headerlink" title="May Analysis"></a>May Analysis</h3><p>目的是：unsafe result -&gt; safe result</p>
+<p>例如，Reaching Definition中：</p>
+<p>程序开始时即为bottom，处于unsafe result（No definitions can reach所有变量都初始化了，因为作为一个查询错误的程序，所以如果一开始就表述结果为没有错误，就是一个unsafe的结果）。</p>
+<p>当处于safe result（All definitions may reach），即查错程序认为程序的变量都有出现了reach的问题，但这是Safe but useless  result。因为作为查错程序，需要找出Truth。</p>
+<p>查错程序停留在Truth时，即为所需要求得的result。</p>
+<p><img src="/course/static-program-analysis/static-program-analysis-04-data-flow-analysis-foundations/lattice_view_sample_1.jpg"></p>
+<p>假设一个lattice为上图左边部分所示，{a,c}为Truth，那么Truth上即为safe，而Truth下为unsafe。那么如何知道有没有进入到Safe域。</p>
+<p>在求解步骤中存在很多不动点，但是may analysis所求的是最小不动点。</p>
+<p><img src="/course/static-program-analysis/static-program-analysis-04-data-flow-analysis-foundations/lattice_view_sample_2.jpg"></p>
+<p>处于精确度的考虑，最小不动点与Truth最相近，因此Least Fixed Point在Fixed Points中最为准确。</p>
+<h3 id="Must-Analysis"><a href="#Must-Analysis" class="headerlink" title="Must Analysis"></a>Must Analysis</h3><p>目的是：unsafe result -&gt; safe result</p>
+<p>以expressions available的优化程序为例，Top的初始为unsafe(All expressions must be available)，这就相当于程序还没有开始分析优化，就断定所有expression都available，都可以使用，所以是unsafe。</p>
+<p>当运行到bottom时，是safe的，相当于所有expression都是不可用，这是一种safe的情况，但是没有相当于不需要再做优化，因此相当于一个safe but useless result。</p>
+<p>因为Must Analysis允许漏报，但是不允许误报。如果处于unsafe域，在expressions availble检查中，如果误报，则程序分析会导致错误。</p>
+<p><img src="/course/static-program-analysis/static-program-analysis-04-data-flow-analysis-foundations/lattice_view_sample_3.jpg"></p>
+<p>针对与该分析，must Analysis时，到达最大不动点时，进入safe域，最接近truth，因此最为精确。</p>
+<p><img src="/course/static-program-analysis/static-program-analysis-04-data-flow-analysis-foundations/lattice_view_may_must.jpg"></p>
+<h2 id="How-Precise-is-our-solution"><a href="#How-Precise-is-our-solution" class="headerlink" title="How Precise is our solution?"></a>How Precise is our solution?</h2><ul>
+<li><p>Meet-Over-All-Paths Solution (MOP)</p>
+<blockquote>
+<p>A path P from Entry to S：</p>
+<p>​    P = Entry -&gt; S1 -&gt; S2 -&gt; … -&gt; Si ；</p>
+<p>$F_P$作为transfer function，对每一个Statement，得出一个OUT，作为下一个statement的IN；</p>
+</blockquote>
+<p>MOP理解起来就是，把多条所有Path的结果join/meet =&gt; $MOP[S_i]= \sqcup /\sqcap $</p>
+<p>$F_P(OUT[Entry])$</p>
+<p>有一些路径不会执行，有一些程序会有循环没有边界，有一些程序路径数量很多，无穷枚举，这些结果不应该被join/meet；</p>
+<p>举一个例子：OUR Iterative Alogrithm vs. MOP</p>
+<p><img src="/course/static-program-analysis/static-program-analysis-04-data-flow-analysis-foundations/MOP_sample_0.jpg"></p>
+<p>上图是Iterative Alogrithm的做法，merge时join后在使用transfer function处理；</p>
+<p>而对于MOP，可以得到</p>
+<p>$MOP[S_4]=f_{S_3}(f_{S_1}(OUT[Entry])) \sqcup f_{S_3}(f_{S_2}(OUT[Entry]))$</p>
+<p>相当于merge时，先transfer function处理各个分支，再join；</p>
+<p>即表示为：<br>$$<br>Ours=F(x \sqcup y)<br>$$</p>
+<p>$$<br>MOP=F(x)\sqcup F(y)<br>$$</p>
+<p>他们之间的关系是什么？</p>
+<p><img src="/course/static-program-analysis/static-program-analysis-04-data-flow-analysis-foundations/association.jpg"></p>
+<p>得到$MOP \sqsubseteq Ours$；</p>
+<p>当F is distributive，F具有分配性，$F(x \sqcup y)=F(x) \sqcup F(y)$，则有$MOP=Ours$</p>
+<p>对于bit-vector or Gen/kill problems，Ours 几乎和MOP一样准；</p>
+<p>一个例子：</p>
+<p>[Constant Propagation]</p>
+<p>Given a variable x at program point p, determine whether x is <em>guaranteed</em> to hold a constant value at p.    – must analysis</p>
+<ul>
+<li><p>The OUT of each node in CFG, includes a set of pairs (x,v) where x is a variable and v is the value held by x after that node.</p>
+<blockquote>
+<p>A data flow analysis framework(D, L, F)consits of:</p>
+<ul>
+<li>D: a direction of data flow =&gt; [fowards]</li>
+<li>L: a lattice including domain of the values V and a meet or join operator</li>
+<li>F: a family of transfer functions from V to V</li>
+</ul>
+</blockquote>
+<ul>
+<li><p>Lattice</p>
+<ul>
+<li><p>Domain of the values V</p>
+<p><img src="/course/static-program-analysis/static-program-analysis-04-data-flow-analysis-foundations/constant_propagation_domain.jpg"></p>
+<p>UNDEF: undefined</p>
+<p>NAC: not a constant</p>
+</li>
+<li><p>Meet Operator</p>
+<p>NAC $\sqcap$ v = NAC</p>
+<p>UNDEF $\sqcap$ v = v</p>
+<p>c $\sqcap$ v = ?</p>
+<ul>
+<li>c $\sqcap$ c = c</li>
+<li>c1 $\sqcap$ c2 = NAC</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>transfer function</p>
+<p><img src="/course/static-program-analysis/static-program-analysis-04-data-flow-analysis-foundations/cosntant_propagation_transfer_function.jpg"></p>
+</li>
+</ul>
+</li>
+<li><p>Nondistributivity</p>
+<p>一个例子：</p>
+<p><img src="/course/static-program-analysis/static-program-analysis-04-data-flow-analysis-foundations/constant_propagation_nondistributivity.jpg"></p>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="Worklist-Alogrithm-an-optimization-of-Iterative-Algorithm"><a href="#Worklist-Alogrithm-an-optimization-of-Iterative-Algorithm" class="headerlink" title="Worklist Alogrithm, an optimization of Iterative Algorithm"></a>Worklist Alogrithm, an optimization of Iterative Algorithm</h2><p>Iterative Algorithm在OUT没有变化时才会停止迭代，而worklist algorithm则相反，只处理那些OUT变化的node;</p>
+<p><img src="/course/static-program-analysis/static-program-analysis-04-data-flow-analysis-foundations/worklist_algorithm.jpg"></p>
+<p>对于Forward Analysis而言，将所有的bb放到worklist中，只要worklist不是空的，则选择一个worklist中的bb来进行transfer操作，如果操作后OUT变化了，则说明后面的bb的IN可能变化了，则将其所有后继加入到worklist中。</p>
+<h2 id="Summary"><a href="#Summary" class="headerlink" title="Summary"></a>Summary</h2><ul>
+<li>Iterative Algorithm, another view</li>
+<li>partial order</li>
+<li>upper and lower bounds</li>
+<li>lattice, semilattice, complete and product lattice</li>
+<li>data flow analysis framework via lattice</li>
+<li>monotonicity and fixed point theorem</li>
+<li>relate iterative algorithm to fixed point theorem</li>
+<li>may/must analysis, a lattice view</li>
+<li>MOP and distributivity</li>
+<li>constant propagation</li>
+<li>worklist algorithm</li>
+</ul>
+
         
         
           <blockquote id="copyright">

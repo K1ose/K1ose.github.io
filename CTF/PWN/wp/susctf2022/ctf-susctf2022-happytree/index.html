@@ -229,6 +229,10 @@
 <p>这里借助<code>insert(0x86, &quot;babeface&quot;)</code>申请掉最后一个tcachebins中的chunk，随后申请位于unsorted bin中的chunk；</p>
 <p><img src="/CTF/PWN/wp/susctf2022/ctf-susctf2022-happytree/leak_libc_base.jpg"></p>
 <p>可以看到，fd被新的content覆盖，而bk没有被清空，使用show(0x87)，即可得到该地址。利用main_arena和__malloc_hook之间相差0x10的关系，从而找到了libc_base，由此便可以得到其他的可利用函数地址；</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[+] __malloc_hook =&gt; 0x7f1a7bf13c30</span><br><span class="line">[+] libc_base =&gt; 0x7f1a7bb28000</span><br><span class="line">[+] __free_hook =&gt; 0x7f1a7bf158e8</span><br><span class="line">[+] one_gadget[0] =&gt; 0x7f1a7bb77365</span><br><span class="line">[+] one_gadget[1] =&gt; 0x7f1a7bb773c2</span><br><span class="line">[+] one_gadget[2] =&gt; 0x7f1a7bc3245c</span><br></pre></td></tr></table></figure>
+
+<h2 id="利用"><a href="#利用" class="headerlink" title="利用"></a>利用</h2><p>拿到了泄露出的地址，接下来需要进行利用。</p>
+<p>前面获得了堆的地址(heap base)，</p>
 
         
             <div id="toc-article">
@@ -236,7 +240,7 @@
   <div class="widget-wrap" id="toc-wrap">
     <h3 class="widget-title"><i class="fa fa-toc"></i> 文章目录</h3>
     <div class="widget">
-      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#SUSCTF2022-happytree"><span class="toc-text">SUSCTF2022-happytree</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86"><span class="toc-text">信息收集</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%86%E6%9E%90"><span class="toc-text">分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B3%84%E9%9C%B2"><span class="toc-text">泄露</span></a></li></ol></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#SUSCTF2022-happytree"><span class="toc-text">SUSCTF2022-happytree</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86"><span class="toc-text">信息收集</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%86%E6%9E%90"><span class="toc-text">分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B3%84%E9%9C%B2"><span class="toc-text">泄露</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%A9%E7%94%A8"><span class="toc-text">利用</span></a></li></ol></li></ol>
     </div>
   </div>
 
