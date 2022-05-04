@@ -82,6 +82,468 @@
 
       <div class="outer">
         <section id="main">
+  <article id="post-MIT-AI-0x01" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/course/MIT-AI/MIT-AI-0x01/">MIT_AI_0x01</a>
+    </h1>
+  
+
+
+      </header>
+    
+    <div class="article-meta">
+      
+      <span class="article-date">
+  <i class="fa fa-date"></i>
+  <time class="dt-published" datetime="2021-12-12T14:08:37.000Z" itemprop="datePublished">2021年12月12日</time>
+</span>
+      
+  <div class="article-category">
+    <i class="fa fa-classify"></i>
+    <a class="article-category-link" href="/categories/course/">course</a> > <a class="article-category-link" href="/categories/course/MIT-AI/">MIT-AI</a>
+  </div>
+
+      
+      
+<a href="/course/MIT-AI/MIT-AI-0x01/#comments" class="article-comment-link">
+  
+  <i class="fa fa-commt"></i>
+  留言
+</a>
+
+
+    </div>
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="What-is-AI？"><a href="#What-is-AI？" class="headerlink" title="What is AI？"></a>What is AI？</h1><p>给人工智能一个定义</p>
+<p>ALGORITHMS enabled by CONSTRAINTS exposed by REPRESENTATON that support MODEL targeted at THINKING + PERCEPTION + ACTION</p>
+<p>人工智能是关于算法通过如下呈现的约束条件得以实现针对思维、感知和行动的模型。</p>
+<p>GENERATE&amp;TEST（测试生成）</p>
+<p><img src="/course/MIT-AI/MIT-AI-0x01/generateandtest.jpg"></p>
+<p>RUMPELSTILTSKIN法则：当对一个事物命名后，就能对它产生影响</p>
+<p>trivial&amp;simple，微不足道和简单存在的差别，微不足道代表价值意义小，而简单的事情也可能有很重要的意义。</p>
+
+        
+        
+          <blockquote id="copyright">
+              <p>原文链接: <a href="https://www.jk404.cn/page/4/index.html">https://www.jk404.cn/page/4/index.html</a></p>
+              <p>版权声明: 转载请注明出处.</p>
+          </blockquote>
+        
+      
+    </div>
+    <footer class="article-footer">
+      
+        <div class="article-tag-wrap">
+          
+
+          
+          
+
+
+        </div>
+      
+      
+      
+    </footer>
+  </div>
+</article>
+
+
+  <article id="post-router-vuln-analysis-skill" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/router-vuln-analysis-skill/">router_vuln_analysis_skill</a>
+    </h1>
+  
+
+
+      </header>
+    
+    <div class="article-meta">
+      
+      <span class="article-date">
+  <i class="fa fa-date"></i>
+  <time class="dt-published" datetime="2021-12-12T07:22:21.000Z" itemprop="datePublished">2021年12月12日</time>
+</span>
+      
+  <div class="article-category">
+    <i class="fa fa-classify"></i>
+    <a class="article-category-link" href="/categories/study/">study</a> > <a class="article-category-link" href="/categories/study/book/">book</a> > <a class="article-category-link" href="/categories/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/">揭秘家用路由器0day漏洞挖掘技术</a>
+  </div>
+
+      
+      
+<a href="/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/router-vuln-analysis-skill/#comments" class="article-comment-link">
+  
+  <i class="fa fa-commt"></i>
+  留言
+</a>
+
+
+    </div>
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="路由器漏洞分析技能"><a href="#路由器漏洞分析技能" class="headerlink" title="路由器漏洞分析技能"></a>路由器漏洞分析技能</h1><h2 id="D-Link-DIR-605L"><a href="#D-Link-DIR-605L" class="headerlink" title="D-Link/DIR-605L"></a>D-Link/DIR-605L</h2><h3 id="修复路由器程序环境"><a href="#修复路由器程序环境" class="headerlink" title="修复路由器程序环境"></a>修复路由器程序环境</h3><ul>
+<li>运行程序，定位异常函数</li>
+<li>分析函数，编写相同功能函数，伪造流程和数据，封装到新动态库</li>
+<li>使用LD_PRELOAD环境变量加载新的动态库来劫持程序中的异常函数，使目标程序执行动态库中的函数</li>
+</ul>
+<h4 id="固件分析与调试"><a href="#固件分析与调试" class="headerlink" title="固件分析与调试"></a>固件分析与调试</h4><ul>
+<li><p>固件下载</p>
+<p>D-Link官网下载固件，我用IDM下载<code>ftp://ftp2.dlink.com/PRODUCTS/DIR-605L/REVA/DIR-605L_FIRMWARE_1.13.ZIP</code>，解压后可以得到：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">~/iot_pwn/D-link/DIR-605L_FIRMWARE_1.13$ ls</span><br><span class="line">DIR-605L_FIRMWARE_1.13.zip  dir605L_FW_113.bin  DIR-605L_RELEASENOTES_1.13B06_EN_US.PDF</span><br></pre></td></tr></table></figure></li>
+<li><p>文件系统提取</p>
+<p>使用binwalk提取文件系统<code>_dir605L_FW_113.bin.extracted</code>；</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">binwalk -e dir605L_FW_113.bin</span><br><span class="line">...</span><br><span class="line"></span><br><span class="line">~/iot_pwn/D-link/DIR-605L_FIRMWARE_1.13$ ls | grep extracted</span><br><span class="line">_dir605L_FW_113.bin.extracted</span><br></pre></td></tr></table></figure></li>
+<li><p>找到目标Web服务器程序<code>boa</code></p>
+<p>其位于<code>_dir605L_FW_113.bin.extracted/squashfs-root-0/bin/boa</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">~/iot_pwn/D-link/DIR-605L_FIRMWARE_1.13/_dir605L_FW_113.bin.extracted$ find ./ -name boa</span><br><span class="line">./squashfs-root-0/bin/boa</span><br><span class="line">./squashfs-root-0/etc/boa</span><br></pre></td></tr></table></figure></li>
+<li><p>编写劫持函数动态库</p>
+<ul>
+<li><p>首先拷贝qemu-mips到文件系统根目录</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cp $(qemu-mips) ./</span><br></pre></td></tr></table></figure></li>
+<li><p>切换根目录并执行</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo chroot ./qemu-mips ./bin/boa</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>结果报错了…😅</p>
+<p>chroot: cannot change root directory to ‘./qemu-mips’: Not a directory</p>
+</blockquote>
+<p>考虑使用</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo chroot . ./qemu-mips ./bin/boa</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>又报错了…😅</p>
+<p>chroot: failed to run command ‘./qemu-mips’: No such file or directory</p>
+</blockquote>
+<p>这次使用<code>qemu-mips-static</code>来执行</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"># 安装依赖</span><br><span class="line">sudo apt-get install qemu binfmt-support qemu-user-static</span><br><span class="line"></span><br><span class="line"># 拷贝qemu-mips-static到当前目录</span><br><span class="line">cp $(which qemu-mips-static) ./</span><br><span class="line"></span><br><span class="line"># 执行</span><br><span class="line">sudo chroot . ./qemu-mips-static ./bin/boa</span><br></pre></td></tr></table></figure>
+
+<p>这次成功了，结果如下：</p>
+<blockquote>
+<p>Initialize AP MIB failed!<br>Segmentation fault (core dumped)</p>
+</blockquote>
+</li>
+<li><p>接着，使用<code>ida</code>对<code>/bin/boa</code>进行调试分析；</p>
+<ul>
+<li><p>搜索字符串<code>Initialize AP MIB failed!</code>所在位置，简单说就是<code>ALT+t</code>，输入需要搜索到字符串，选择<code>Find all occurences</code>即可；</p>
+<p><img src="/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/router-vuln-analysis-skill/TextSearch.jpg"></p>
+</li>
+<li><p>接着找到处在<code>websAspInit</code>函数中的对应字符串位置；</p>
+<p><img src="/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/router-vuln-analysis-skill/HereUR.jpg"></p>
+</li>
+<li><p>双击即可；</p>
+<p><img src="/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/router-vuln-analysis-skill/Instruction.jpg"></p>
+</li>
+<li><p>在terminal中执行</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo chroot . ./qemu-mips-static -g 6666 ./bin/boa</span><br></pre></td></tr></table></figure></li>
+<li><p>接下来进行断点调试，在该字符串puts的地方下断点，即<code>0x0041823C</code>；</p>
+</li>
+<li><p>选择<code>Debugger</code>-&gt;<code>Select debuuger...</code>-&gt;<code>Remote GDB debugger</code>，并在<code>Debugger</code>-&gt;<code>Process options...</code>中设置对应的<code>hostname</code>和<code>port</code>；</p>
+<p><img src="/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/router-vuln-analysis-skill/ProcessOptions.jpg"></p>
+</li>
+<li><p>选择<code>Debugger</code>-&gt;<code>Attach to process...</code>，并选择<code>OK</code>，即可进入到调试界面；</p>
+<p><img src="/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/router-vuln-analysis-skill/AttachToProcess.jpg"></p>
+</li>
+<li><p>选择继续执行，程序执行到断点处时停止，观察执行流的过程</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">LOAD:0041821C jalr    $t9 ; _apmib_init</span><br><span class="line">LOAD:00418220 nop</span><br><span class="line">LOAD:00418224 lw      $gp, 0x38+var_28($sp)</span><br><span class="line">LOAD:00418228 bnez    $v0, loc_418250					# 跳转指令</span><br><span class="line">LOAD:0041822C nop</span><br><span class="line"></span><br><span class="line">LOAD:00418230 la      $a0, 0x490000</span><br><span class="line">LOAD:00418234 la      $t9, _puts</span><br><span class="line">LOAD:00418238 nop</span><br><span class="line">LOAD:0041823C jalr    $t9 ; _puts</span><br><span class="line">LOAD:00418240 addiu   $a0, (aInitializeApMi - 0x490000)  # &quot;Initialize AP MIB failed!&quot;</span><br></pre></td></tr></table></figure>
+
+<p>可以看到这里进行了一次判断跳转，观察到<code>apmib_init</code>函数的返回值（保存在<code>$v0</code>寄存器中）为0，跳转后执行<code>puts</code>函数，程序崩溃退出；</p>
+</li>
+<li><p>查找关于<code>ampib_init</code>函数的库文件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ sudo grep -rn apmib_init</span><br><span class="line">Binary file bin/setfirewall matches</span><br><span class="line">Binary file bin/flash matches</span><br><span class="line">Binary file bin/boa.id0 matches</span><br><span class="line">Binary file bin/boa matches</span><br><span class="line">Binary file etc/boa/core matches</span><br><span class="line">Binary file lib/apmib.so matches</span><br></pre></td></tr></table></figure>
+
+<p>这里看到匹配到了<code>lib/apmib.so</code>文件，将之用ida打开分析，找到对应的<code>ampib_init</code>函数；</p>
+<p><img src="/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/router-vuln-analysis-skill/ApmibInit.jpg"></p>
+<p>这里仅仅是一小部分的汇编代码，事实上，<code>amplib_init</code>有着比较复杂的函数功能，但是其内部处理流程对模糊测试并没有影响，因此可以尝试伪造<code>amplib_init</code>的值返回为<code>1</code>，使程序执行流能够走向另一个分支，即跳转到<code>0x00418250</code>的地址；</p>
+<p><img src="/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/router-vuln-analysis-skill/Jump.jpg"></p>
+</li>
+<li><p>如何进行劫持程序流呢？这里需要伪造一个新的<code>amplib_init</code>，以供程序执行；</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// fake_apmib_init.c</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">apmib_init</span><span class="params">(<span class="keyword">void</span>)</span></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>使用下列命令编译生成动态库，将生成的<code>apmib-ld.so</code>文件放入<code>lib</code>文件夹中；</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mips-linux-gcc -Wall -fPIC -shared fake_apmib_init.c -o apmib-ld.so</span><br></pre></td></tr></table></figure>
+
+<p>当然这里需要注意mips-linux-gcc的全局环境问题；</p>
+</li>
+<li><p>使用<code>LD_PRELOAD</code>环境变量加载<code>apmib-ld.so</code>，劫持<code>apmib.so</code>中的<code>apmib_init()</code>函数，命令如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo chroot . ./qemu-mips-static -E LD_PRELOAD=&quot;/apmib-ld.so&quot; ./bin/boa</span><br></pre></td></tr></table></figure>
+
+<p>得到的是另外一个错误提示。</p>
+<blockquote>
+<p>Create chklist file error!<br>Create chklist file error!<br>Segmentation fault (core dumped)</p>
+</blockquote>
+</li>
+<li><p>虽然原先的程序执行流程被修改了，但是新的<code>segmentation fault</code>出现了，于是在此基础上继续进行断点调试；</p>
+<p>显然还得先运行qemu来等待远程gdb的接入：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo chroot . ./qemu-mips-static -E LD_PRELOAD=&quot;/apmib-ld.so&quot; -g 6666 ./bin/boa</span><br></pre></td></tr></table></figure></li>
+<li><p>在<code>_apmib_init</code>处下断点，<code>F8</code>单步执行，可以看到经过劫持动态库到<code>apmib-ld.so</code>后，程序执行流跳转到另外的分支，并且最终在<code>_apmib_get</code>处产生异常；</p>
+<p><img src="/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/router-vuln-analysis-skill/ApmibGet.jpg"></p>
+</li>
+<li><p>由此还需要劫持<code>_apmib_get</code>函数，需要对该函数功能进行分析，同样使用IDA查看<code>apmib.so</code>文件，找到<code>apmib_get</code>函数的位置，同样进行分析，可以通过程序执行流程图看到函数还是有很复杂的执行逻辑的；</p>
+<p><img src="/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/router-vuln-analysis-skill/ApmibGetHijack.jpg"></p>
+</li>
+<li><p>最终的劫持代码为：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// fake_ampib.c</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MIB_IP_ADDR 170</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MIB_HW_VER 0x250</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MIB_CAPTCHA 0x2C1</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">apmib_init</span><span class="params">(<span class="keyword">void</span>)</span></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">fork</span><span class="params">(<span class="keyword">void</span>)</span></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">apmib_get</span><span class="params">(<span class="keyword">int</span> code, <span class="keyword">int</span> *value)</span></span>&#123;</span><br><span class="line">    <span class="keyword">switch</span>(code)&#123;</span><br><span class="line">        <span class="keyword">case</span> MIB_HW_VER:</span><br><span class="line">            *value = <span class="number">0xF1</span>;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> MIP_IP_ADDR:</span><br><span class="line">            *value = <span class="number">0x7F000001</span>;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> MIB_CAPTCHA:</span><br><span class="line">            *value = <span class="number">1</span>;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> ;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>使用下面的编译命令，并将生成的文件<code>final-apmib-ld.so</code>放在文件系统根目录下；</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mips-linux-gcc -Wall -fPIC -shared final_fake_apmib.c -o final-apmib-ld.so</span><br></pre></td></tr></table></figure></li>
+<li><p>接着执行/bin/boa，看<code>segmentation fault</code>的问题是否解决；</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo chroot . ./qemu-mips-static -E LD_PRELOAD=&quot;/final-apmib-ld.so&quot; ./bin/boa</span><br></pre></td></tr></table></figure>
+
+<p>可以看到，问题已经解决，程序可以正常执行，没有崩溃；</p>
+<p><img src="/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/router-vuln-analysis-skill/FinalStatus.jpg" alt="FinalStatus"></p>
+</li>
+<li><p>使用<code>netstat</code>可以看到开启了一个<code>80</code>端口的Web服务，这表示Web服务器boa已经成功运行了；</p>
+<blockquote>
+<p>$ netstat -anto | grep 80<br>tcp        0      0 0.0.0.0:80      0.0.0.0:*     LISTEN      off (0.00/0/0)</p>
+</blockquote>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="IDA反汇编调试"><a href="#IDA反汇编调试" class="headerlink" title="IDA反汇编调试"></a>IDA反汇编调试</h3><h4 id="静态反汇编"><a href="#静态反汇编" class="headerlink" title="静态反汇编"></a>静态反汇编</h4><p>这个不多阐述…</p>
+<h4 id="动态调试"><a href="#动态调试" class="headerlink" title="动态调试"></a>动态调试</h4><ul>
+<li><p>运行IDA Pro界面的计算机为调试器客户端；</p>
+</li>
+<li><p>运行Qemu界面的则为调试器服务端；</p>
+</li>
+</ul>
+<p>这里跟着写一个使用Qemu指令执行模拟器测试的脚本<code>test_busybox.sh</code></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> debug</span></span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash">!/bin/sh</span></span><br><span class="line">INPUT = $1												# 脚本的第一个参数为BusyBox的输入参数</span><br><span class="line">LEN=$(echo -n &quot;$INPUT&quot; | wc -c)							# 计算输入参数的长度</span><br><span class="line">PORT=&quot;6666&quot;												# Qemu调试的端口</span><br><span class="line">if [ &quot;$LEN&quot; == &quot;0&quot; ] || [ &quot;$INPUT&quot; == &quot;-h&quot; ] || [ &quot;$UID&quot; != &quot;0&quot; ]	# 判断参数个数、类型是否正确</span><br><span class="line">then</span><br><span class="line">	echo &quot;\nUsage: sudo $0 \n&quot;</span><br><span class="line">	exit 1</span><br><span class="line">fi</span><br><span class="line">cp $(which qemu-mips-static) ./qemu						# 大端序的qemu-mips指令复制到当前目录，将其更改为qemu</span><br><span class="line"><span class="meta">#</span><span class="bash"> 使用qemu指令模式模拟执行BusyBox，相当于执行chroot . ./qemu -E CONTENT_LENGTH=<span class="variable">$LEN</span> -g 6666 /bin/busybox <span class="variable">$INPUT</span></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> -E指定的环境变量在测试CGI脚本才能发挥实际用处，这里只是举例</span></span><br><span class="line">echo &quot;$INPUT&quot; | chroot . ./qemu -E CONTENT_LENGTH=$LEN -g $PORT /bin/busybox 2&gt;/dev/null</span><br><span class="line">rm -rf ./qemu								# 执行完删除模拟程序</span><br></pre></td></tr></table></figure>
+
+<p>运行后，服务器等待IDA remote gdb debugger的对接；</p>
+<p>在IDA中对接的方法不多介绍，主要是对debugger的一些配置；</p>
+<h3 id="IDA脚本基础"><a href="#IDA脚本基础" class="headerlink" title="IDA脚本基础"></a>IDA脚本基础</h3><p>基于对扩展性的考虑，IDA支持自定义脚本插件；</p>
+<ul>
+<li>IDC：内建的脚本语言，和C语言类似，仅适用于GUI版本的IDA；</li>
+<li>IDAPython：插件，支持Python集成式脚本；</li>
+<li>独立脚本插件</li>
+</ul>
+<h4 id="脚本执行"><a href="#脚本执行" class="headerlink" title="脚本执行"></a>脚本执行</h4><ul>
+<li>IDC命令行：<code>File</code>-&gt;<code>IDC Command</code></li>
+<li>独立脚本文件：<code>File</code>-&gt;<code>Script File</code></li>
+<li>Python命令行：<code>File</code>-&gt;<code>Python Command</code></li>
+</ul>
+<h4 id="IDC"><a href="#IDC" class="headerlink" title="IDC"></a>IDC</h4><ul>
+<li><p><code>F1</code>-&gt;<code>Index of IDC Functions</code>可以查看IDC官方文档，支持搜索函数调用等；</p>
+</li>
+<li><p>关于IDC的用法</p>
+<ul>
+<li><p>变量类型：</p>
+<p>没有明确类型，主要有3种：</p>
+<ul>
+<li>整型long</li>
+<li>字符串型</li>
+<li>浮点型</li>
+</ul>
+</li>
+<li><p>变量环境：</p>
+<p>支持全局和局部变量</p>
+<ul>
+<li><p>全局</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 引入全局变量extern</span></span><br><span class="line"><span class="keyword">extern</span> outval;</span><br><span class="line"><span class="keyword">extern</span> outval = <span class="string">&quot;wrong!&quot;</span>		<span class="comment">// 不合法声明，全局变量不能声明时赋值</span></span><br><span class="line"><span class="keyword">static</span> main()&#123;</span><br><span class="line"><span class="keyword">extern</span> inval;					<span class="comment">// 合法</span></span><br><span class="line">outval = <span class="string">&quot;Global String&quot;</span>;		<span class="comment">// 全局变量赋值</span></span><br><span class="line">inval = <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li><p>局部</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 局部变量的声明</span></span><br><span class="line"><span class="keyword">auto</span> addr, reg, val;</span><br><span class="line"><span class="keyword">auto</span> valinit = <span class="number">0</span>;</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><p>表达式</p>
+<p>IDC的表达式语法与C语言十分相似，但是有几点不同：</p>
+<ul>
+<li>复合赋值运算：不支持<code>op=</code>，如<code>+=</code>，<code>-=</code>；</li>
+<li>所有整数操作作为有符号数处理，因此进行移位等比特操作时要对移动的符号位进行处理；</li>
+<li>字符串操作不需要调用函数拼接，可以直接使用<code>+</code>来拼接字符串；</li>
+</ul>
+</li>
+<li><p>预处理指令</p>
+<ul>
+<li><code>#include &lt;头文件&gt;</code></li>
+<li><code>#define &lt;宏&gt;</code></li>
+<li><code>#ifdef &lt;名称&gt; ... #else ... #endif</code>：测试宏存在与否</li>
+<li><code>#undef &lt;名称&gt;</code> ：删除宏</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>需要自定义函数时，应当使用<code>File</code>-&gt;<code>Script File</code>独立加载，这时候可以创建独立的IDC程序文件来提供支持；</p>
+<p>应当满足：</p>
+<ul>
+<li>使用自定义函数；</li>
+<li>至少定义一个没有参数的<code>main</code>函数；</li>
+<li>文件中必须包含<code>idc.idc</code>头文件;</li>
+</ul>
+<p>下面是一个sample；</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;idc.idc&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> DEBUG</span></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="meta">#<span class="meta-keyword">ifdef</span> DEBUG</span></span><br><span class="line">    Message(<span class="string">&quot;DEBUG MODE\n&quot;</span>);</span><br><span class="line">    <span class="meta">#<span class="meta-keyword">else</span></span></span><br><span class="line">    Message(<span class="string">&quot;RELEASE MODE\n&quot;</span>);</span><br><span class="line">    <span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">	Message(<span class="string">&quot;this is a IDC Script File Sample!\n&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li><p>IDC常用函数</p>
+<ul>
+<li>数据访问<ul>
+<li>long Byte(long addr)：从虚拟地址addr处读取一个字节的值；</li>
+<li>long Word(long addr)：从虚拟地址addr处读取两个字节（一个字）的值；</li>
+<li>long Dword(long addr)：从虚拟地址addr处读取两个字节（双字）的值；</li>
+</ul>
+</li>
+<li>赋值<ul>
+<li>long PatchByte(long addr, long val)：将虚拟地址addr处的一个字节的值赋值为val；</li>
+<li>long PatchWord(long addr, long val)：将虚拟地址addr处的两个字节（一个字）的值赋值为val；</li>
+<li>long PatchDword(long addr, long val)：将虚拟地址addr处的两个字节（双字）的值赋值为val；</li>
+</ul>
+</li>
+<li>检测<ul>
+<li>bool isLoaded(long addr)：如果虚拟地址addr包含有效数据，则返回1，否则返回0；</li>
+</ul>
+</li>
+<li>打印<ul>
+<li>void Message(string format,…)</li>
+<li>void print(…)</li>
+<li>void Warning(string format,…)</li>
+</ul>
+</li>
+<li>交互<ul>
+<li>string AskStr(string default, string prompt)：要求用户在消息框中输入字符串；</li>
+<li>string AskFile(long doSave, string mask, string prompt)：要求用户选择文件；</li>
+<li>string AskYN(long default, string prompt)：获取用户选择的<code>Yes</code>或<code>No</code>；</li>
+<li>long ScreenEA()：返回当前光标所在位置的虚拟地址</li>
+<li>bool Jump(long addr)：跳转到反汇编下的指定addr；</li>
+</ul>
+</li>
+<li>字符串操作<ul>
+<li>long atol(string val)：十进制-&gt;整型；</li>
+<li>long xtol(string val)：十六进制-&gt;整型；</li>
+<li>string ltoa(long val, long radix)：指定radix进制返回val的字符串的值；</li>
+<li>long ord(string ch)：返回ch的ASCII码值；</li>
+<li>long strlen(string str)</li>
+<li>long strstr(string str, string search)：返回字符串str中search的索引，若没有则返回<code>-1</code>；</li>
+<li>string substr(string str, long start, long end)：切片，start-&gt;end-1；</li>
+</ul>
+</li>
+<li>函数操作<ul>
+<li>long GetFuntionAttr(long addr, logn attrib)</li>
+<li>string GetFunctionName(long addr)</li>
+<li>long NextFunction(long addr)</li>
+<li>long PrevFunction(long addr)</li>
+</ul>
+</li>
+<li>**代码交叉引用<ul>
+<li>long Rfirst(long form)</li>
+<li>long Rnext(long form, long current)</li>
+<li>long XrefType()</li>
+<li>long RfirstB(long to)</li>
+<li>long RnextB(long to, long current)</li>
+</ul>
+</li>
+<li>**数据交叉引用<ul>
+<li>long Dfirst(long form)</li>
+<li>long Dnext(long form, long current)</li>
+<li>long XrefType()</li>
+<li>long DfirstB(long to)</li>
+<li>long DnextB(long to, long current)</li>
+</ul>
+</li>
+<li>数据库名称<ul>
+<li>string Name(long addr)：返回地址在IDA数据库中的名称，若无则返回空；</li>
+<li>string NameEx(long form, long addr)：返回与addr相关的名称；</li>
+<li>bool MakeNameEx(long addr, string name, long flags)：给addr分配名称name，flags指定属性；</li>
+<li>long LocByName(string name)：返回指定name的addr；</li>
+<li>long LocByNameEx(long funcaddr, string localname)：在包含funcaddr的函数中指定局部名称localname；</li>
+</ul>
+</li>
+<li>数据库搜索<ul>
+<li>long FindCode(long addr, long flags)</li>
+<li>long FindBinary(long addr, long flags, string binary)</li>
+<li>long FindData(long addr, long flags)</li>
+<li>long FindText(long addr, long flags, long row, long column, string text)</li>
+</ul>
+</li>
+<li>数据库操纵<ul>
+<li>void MakeUnkn(long addr, long flags)</li>
+<li>long MakeCode(long addr)</li>
+<li>bool MakeByte(long addr) - MakeWord() - MakeDword()</li>
+<li>bool MakeFunction(long start, long end)</li>
+<li>bool MakeStr(long start, long end)</li>
+</ul>
+</li>
+<li>反汇编组件<ul>
+<li>string GetDisasm(long addr)</li>
+<li>string GetMnem(long addr)：地址的指令的助记符</li>
+<li>string GetOpnd(long addr, long opnum)：指令的指定操作数文本</li>
+<li>long GetOpType(long addr, long opnum)：指令的指定操作数类型</li>
+<li>long GetOperandValue(long addr, long opnum)：指令的指定操作数的值</li>
+<li>string CommentEx(long addr, long type)：注释</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>一个小demo，用于搜寻危险函数，保存为<code>scanvuln.idc</code>文件；</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// scanvuln.idc</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;idc.idc&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="title">flagCalls</span><span class="params">(func_name)</span></span>&#123;			<span class="comment">// func_name 为用户指定的危险函数名称</span></span><br><span class="line">    <span class="keyword">auto</span> count = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">auto</span> func_addr, xref;</span><br><span class="line">    func_addr = LocByName(func_name);</span><br><span class="line">    <span class="keyword">if</span>(func_addr != BADADDR)&#123;</span><br><span class="line">        <span class="keyword">for</span>(xref = RfirstB(func_addr);xref!=BADADDR;xref=RnextB(func_addr, xref))&#123;	<span class="comment">// 代码交叉引用遍历</span></span><br><span class="line">            <span class="comment">// Message(&quot;%x, %x\n&quot;, xref, func_addr)</span></span><br><span class="line">            <span class="comment">// 如果当前RfirstB()或者RnextB()函数返回的交叉引用类型是近调用或者远调用，会在调用位置上加上注释，输出该地址</span></span><br><span class="line">            <span class="keyword">if</span>(XrefType() == fl_CN || XrefType() == fl_CF)&#123;</span><br><span class="line">                MakeComm(xref, <span class="string">&quot;**** AUDIT HERE ****&quot;</span>);</span><br><span class="line">                Message(<span class="string">&quot;Function%d: 0x%x ==&gt; %s\n&quot;</span>, ++count, xref, func_name);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">     <span class="comment">/*</span></span><br><span class="line"><span class="comment">     	// 数据交叉引用遍历</span></span><br><span class="line"><span class="comment">       	for(xref = DirstB(func_addr); xref!=BADADDR; xref = DnextB(func_addr, xref))&#123;</span></span><br><span class="line"><span class="comment">        	if(XrefType() == dr_0)&#123;</span></span><br><span class="line"><span class="comment">        		MakeComm(xref, &quot;**** AUDIT HERE ****&quot;);</span></span><br><span class="line"><span class="comment">                Message(&quot;Function%d: 0x%x ==&gt; %s\n&quot;, ++count, xref, func_name);</span></span><br><span class="line"><span class="comment">        	&#125;</span></span><br><span class="line"><span class="comment">        &#125;</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    Message(<span class="string">&quot;--------------------------------\n&quot;</span>);</span><br><span class="line">    flagCalls(<span class="string">&quot;strcpy&quot;</span>);</span><br><span class="line">    flagCalls(<span class="string">&quot;sprintf&quot;</span>);</span><br><span class="line">    Message(<span class="string">&quot;--------------------------------\n&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>一个小的测试程序，其实就是之前的编译生成的<code>vuln</code>；</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">vuln</span><span class="params">(<span class="keyword">char</span> *src)</span></span>&#123;</span><br><span class="line">	<span class="keyword">char</span> output[<span class="number">20</span>] = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">    <span class="built_in">strcpy</span>(output, src);		<span class="comment">// 缓冲区溢出</span></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;%s\n&quot;</span>, output);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> *argv[])</span></span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(argc &lt; <span class="number">2</span>)&#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;need more input arguments\n&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    vuln(argv[<span class="number">1</span>]);			<span class="comment">// 参数作为源字符串输入</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>IDA反编译程序vuln，执行脚本文件的方式加载scanvuln.idc（<code>alt+F7</code>），可以看到危险函数<code>strcpy</code>的引用地址被打印出来；</p>
+<p><img src="/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/router-vuln-analysis-skill/strcpy.jpg"></p>
+</li>
+<li><p>双击地址后，会自动调到引用处，可以看到被标记上了注释；</p>
+<p><img src="/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/router-vuln-analysis-skill/strcpyaddr.jpg"></p>
+</li>
+</ul>
+<h4 id="IDAPython"><a href="#IDAPython" class="headerlink" title="IDAPython"></a>IDAPython</h4><p>IDApython有更强大的功能（感谢Python），但是比较难找到官方使用文档（但是不乏大佬写的文章），IDA目录中Python子目录里有关于IDAPython的3个模块，可供学习；</p>
+<ul>
+<li>idaapi.py：负责访问核心IDA API</li>
+<li>idautils.py：提供大量的使用函数</li>
+<li>idc.py：负责提供IDC中所有函数的功能</li>
+</ul>
+<p>另外在<a target="_blank" rel="noopener" href="https://www.hex-rays.com/products/ida/supportidapython_docs/index.html">ida自己的文档</a>中有对这三个文件所有可用函数的介绍；</p>
+<p>下面是用IDAPython写的具有查找危险函数功能的脚本<code>scanvuln.py</code>；</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># coding:utf-8</span></span><br><span class="line"><span class="keyword">from</span> idaapi <span class="keyword">import</span> *</span><br><span class="line"><span class="comment"># 根据函数名获取函数地址</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">getFuncAddr</span>(<span class="params">func_name</span>):</span></span><br><span class="line">    <span class="keyword">return</span> LocByName(func_name)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 对危险函数所在的位置进行标注</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">judgeAduit</span>(<span class="params">func_addr</span>):</span></span><br><span class="line">    MakeComm(func_addr, <span class="string">&quot;### AUDIT HERE ###&quot;</span>)</span><br><span class="line">    SetColor(func_addr, CIC_ITEM, <span class="number">0x0000ff</span>)</span><br><span class="line">    </span><br><span class="line"><span class="comment"># 搜寻函数</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">flagCalls</span>(<span class="params">func_name</span>):</span></span><br><span class="line">    count = <span class="number">0</span></span><br><span class="line">    func_addr = getFuncAddr(func_name)</span><br><span class="line">	func = get_func(func_addr)</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> func <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">    	name = Name(func.startEA)</span><br><span class="line">    	items = FuncItems(func.startEA)</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> items:</span><br><span class="line">            <span class="keyword">for</span> xref <span class="keyword">in</span> XrefsTo(i, <span class="number">0</span>):</span><br><span class="line">                <span class="keyword">if</span> xref.<span class="built_in">type</span> == fl_CN <span class="keyword">or</span> xref.<span class="built_in">type</span> == fl_CF:</span><br><span class="line">                    count += <span class="number">1</span></span><br><span class="line">                    Message(<span class="string">&quot;%s[%d] calls 0x%08x from =&gt; %08x\n&quot;</span>%(name, count, xref.frm, i))</span><br><span class="line">                    judgeAduit(func_addr)</span><br><span class="line">                <span class="keyword">else</span>:</span><br><span class="line">                    Warning(<span class="string">&quot;No function named &#x27;%s&#x27; found at location %x&quot;</span> % (func_name, func_addr))</span><br><span class="line">                    </span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">   flagCalls(<span class="string">&#x27;strcpy&#x27;</span>) </span><br></pre></td></tr></table></figure>
+
+<p>执行后会出现如下结果：</p>
+<p><img src="/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/router-vuln-analysis-skill/PythonStrcpy.jpg"></p>
+<p>双击地址即可实现跳转,可以看到strcpy的地址被标红了；</p>
+<p><img src="/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/router-vuln-analysis-skill/MarkRed.jpg"></p>
+
+        
+        
+          <blockquote id="copyright">
+              <p>原文链接: <a href="https://www.jk404.cn/page/4/index.html">https://www.jk404.cn/page/4/index.html</a></p>
+              <p>版权声明: 转载请注明出处.</p>
+          </blockquote>
+        
+      
+    </div>
+    <footer class="article-footer">
+      
+        <div class="article-tag-wrap">
+          
+
+          
+          
+
+
+        </div>
+      
+      
+      
+    </footer>
+  </div>
+</article>
+
+
   <article id="post-router-vuln-environ" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-inner">
     
@@ -1282,414 +1744,6 @@ PIE:      PIE enabled
 </article>
 
 
-  <article id="post-syzkaller-2-principle" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/CTF/PWN/kernel-pwn/FUZZ/Syzkaller/syzkaller-2-principle/">syzkaller_2_principle</a>
-    </h1>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      
-      <span class="article-date">
-  <i class="fa fa-date"></i>
-  <time class="dt-published" datetime="2021-11-24T18:32:59.000Z" itemprop="datePublished">2021年11月25日</time>
-</span>
-      
-  <div class="article-category">
-    <i class="fa fa-classify"></i>
-    <a class="article-category-link" href="/categories/CTF/">CTF</a> > <a class="article-category-link" href="/categories/CTF/PWN/">PWN</a> > <a class="article-category-link" href="/categories/CTF/PWN/kernel-pwn/">kernel pwn</a> > <a class="article-category-link" href="/categories/CTF/PWN/kernel-pwn/FUZZ/">FUZZ</a> > <a class="article-category-link" href="/categories/CTF/PWN/kernel-pwn/FUZZ/Syzkaller/">Syzkaller</a>
-  </div>
-
-      
-      
-<a href="/CTF/PWN/kernel-pwn/FUZZ/Syzkaller/syzkaller-2-principle/#comments" class="article-comment-link">
-  
-  <i class="fa fa-commt"></i>
-  留言
-</a>
-
-
-    </div>
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <h1 id="syzkaller-2-原理与测试"><a href="#syzkaller-2-原理与测试" class="headerlink" title="syzkaller(2):原理与测试"></a>syzkaller(2):原理与测试</h1><h2 id="流程图"><a href="#流程图" class="headerlink" title="流程图"></a>流程图</h2><p><img src="/CTF/PWN/kernel-pwn/FUZZ/Syzkaller/syzkaller-2-principle/syzkaller_1.jpg"></p>
-<p>上图为流程图。</p>
-<p><code>syz-manager</code>通过<code>ssh</code>调用<code>syz-fuzzer</code>；</p>
-<p><code>syz-fuzzer和syz-manager</code>之间通过<code>RPC</code>进行通信；</p>
-<p><code>syz-fuzzer</code>将输入传给<code>syz-executor</code>，从<code>kernel</code>中读取代码覆盖率信息；</p>
-<p><code>syz-executor</code>执行<code>syscall</code>系统调用。</p>
-<h2 id="目录结构"><a href="#目录结构" class="headerlink" title="目录结构"></a>目录结构</h2><table>
-<thead>
-<tr>
-<th align="center">文件/文件名</th>
-<th align="center">说明/用途</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">Godeps</td>
-<td align="center">golang依赖包管理</td>
-</tr>
-<tr>
-<td align="center">dashbord</td>
-<td align="center">与syzbot相关，syzbot会在fuzz后向内核邮件列表报告发现的错误，内容在<a target="_blank" rel="noopener" href="https://syzkaller.appspot.com上/">https://syzkaller.appspot.com上</a></td>
-</tr>
-<tr>
-<td align="center">docs</td>
-<td align="center">相关文档</td>
-</tr>
-<tr>
-<td align="center">executor</td>
-<td align="center">用于执行系统调用</td>
-</tr>
-<tr>
-<td align="center">pkg</td>
-<td align="center">配置文件目录</td>
-</tr>
-<tr>
-<td align="center">prog</td>
-<td align="center">目标系统信息以及需要执行的系统调用</td>
-</tr>
-<tr>
-<td align="center">sys</td>
-<td align="center">系统调用描述</td>
-</tr>
-</tbody></table>
-<p>在<code>pkg</code>目录中又有如下的结构：</p>
-<ul>
-<li>ast目录：解析并格式化sys文件。</li>
-<li>bisect目录：通过二分查找，编译代码测试确定引入含有漏洞代码的commit和引入修复的commit。</li>
-<li>build目录：包含用于构建内核的辅助函数。</li>
-<li>compiler目录：从文本描述生成系统调用，类型和资源的sys描述。</li>
-<li>config目录：加载配置文件。</li>
-<li>cover目录：提供处理代码覆盖信息的类型。</li>
-<li>csource目录：根据syzkaller程序生成等价的c程序。</li>
-<li>db目录：存储syz-manager和syz-hub中的语料库。</li>
-<li>email目录：解析处理邮件相关功能。</li>
-<li>gce目录：对Google Compute Engine(GCE) API的包装。</li>
-<li>gcs目录：对Google Compute Storage(GCS) API的包装。</li>
-<li>hash目录：提供一些hash函数。</li>
-<li>host目录：检测host是否支持一些特性和特定的系统调用。</li>
-<li>html目录：提供一些web端显示fuzz结果的html页面用的辅助函数。</li>
-<li>ifuzz目录：生成和变异x86机器码。</li>
-<li>instance目录：提供用于测试补丁，镜像和二分查找的临时实例的辅助函数。</li>
-<li>ipc目录：进程间通信。</li>
-<li>kd目录：windows KD调试相关。</li>
-<li>log目录：日志功能。</li>
-<li>mgrconfig目录：管理解析配置文件。</li>
-<li>osutil目录：os和文件操作工具。</li>
-<li>report目录：处理内核输出和检测/提取crash信息并符号化等。</li>
-<li>repro目录：对crash进行复现并进行相关的处理。</li>
-<li>rpctype目录：包含通过系统各部分之间的net/rpc连接传递的消息类型。</li>
-<li>runtest目录：syzkaller程序端到端测试的驱动程序。</li>
-<li>serializer目录：序列化处理。</li>
-<li>signal目录：提供用于处理反馈信号的类型。</li>
-<li>symbolizer目录：处理符号相关信息。</li>
-<li>vcs目录：处理各种库的辅助函数。</li>
-</ul>
-<h2 id="概况"><a href="#概况" class="headerlink" title="概况"></a>概况</h2><h3 id="系统调用模板"><a href="#系统调用模板" class="headerlink" title="系统调用模板"></a>系统调用模板</h3><h4 id="syzkaller-formwork"><a href="#syzkaller-formwork" class="headerlink" title="syzkaller formwork"></a>syzkaller formwork</h4><p><code>syzkaller</code>使用自己的声明式语言描述系统调用模板，可以在<code>docs/syscall_descriptions.md</code>中找到说明；</p>
-<h4 id="formwork-gt-golang-code"><a href="#formwork-gt-golang-code" class="headerlink" title="formwork =&gt; golang code"></a>formwork =&gt; golang code</h4><p>这些系统调用模板被翻译成<code>syzkaller</code>能够执行的代码需要经过两个步骤：</p>
-<ol>
-<li><p>使用<code>syz-extract</code>从<code>linux</code>的源码中提取符号常量值，结果存储在<code>.const</code>文件中；</p>
-<blockquote>
-<p>如：<code>/sys/linux/tty.txt</code>被转换为<code>sys/linux/tty_amd64.const</code>；</p>
-</blockquote>
-</li>
-<li><p>根据<code>syscall formwork</code>和<code>.const</code>文件，使用<code>syz-sysgen</code>生成<code>syzkaller</code>使用的go代码；</p>
-<ul>
-<li><code>assignSyscallNumbers</code>：分配系统调用号，检测不受支持的系统调用并丢弃；</li>
-<li><code>patchConsts</code>：将AST中的常量patch成对应的值；</li>
-<li><code>check</code>：对AST进行语义检查；</li>
-<li><code>genSyscalls</code>：从AST生成prog对象；</li>
-</ul>
-<p>可以在<code>/sys/linux/gen/amd64.go</code>和<code>/executor/syscalls.h</code>中看到结果；</p>
-</li>
-</ol>
-<h4 id="new-syscall-test"><a href="#new-syscall-test" class="headerlink" title="new syscall test"></a>new syscall test</h4><p><code>/sys/linux/sys.txt</code>包含的是常规系统调用的描述；</p>
-<p>子系统的低筒调用描述放在<code>sys/linux/</code>下，即为那些以<code>.txt</code>结尾的文件；</p>
-<blockquote>
-<p>如：bpf、socket子系统…</p>
-</blockquote>
-<p>如果要对新的系统调用进行测试，需要添加新的系统调用的描述，系统调用和参数都可以自己定义，如：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">syscallname <span class="string">&quot;(&quot;</span> [arg [<span class="string">&quot;,&quot;</span> arg]*] <span class="string">&quot;)&quot;</span> [type] [<span class="string">&quot;(&quot;</span> attribute* <span class="string">&quot;)&quot;</span>]</span><br><span class="line">arg = argname type</span><br><span class="line">argname = identifier</span><br><span class="line">type = <span class="keyword">typename</span> [ <span class="string">&quot;[&quot;</span> type-options <span class="string">&quot;]&quot;</span> ]</span><br><span class="line"><span class="keyword">typename</span> = <span class="string">&quot;const&quot;</span> | <span class="string">&quot;intN&quot;</span> | <span class="string">&quot;intptr&quot;</span> | <span class="string">&quot;flags&quot;</span> | <span class="string">&quot;array&quot;</span> | <span class="string">&quot;ptr&quot;</span> |</span><br><span class="line">       <span class="string">&quot;string&quot;</span> | <span class="string">&quot;strconst&quot;</span> | <span class="string">&quot;filename&quot;</span> | <span class="string">&quot;len&quot;</span> |</span><br><span class="line">       <span class="string">&quot;bytesize&quot;</span> | <span class="string">&quot;bytesizeN&quot;</span> | <span class="string">&quot;bitsize&quot;</span> | <span class="string">&quot;vma&quot;</span> | <span class="string">&quot;proc&quot;</span></span><br><span class="line">type-options = [type-opt [<span class="string">&quot;,&quot;</span> type-opt]]</span><br></pre></td></tr></table></figure>
-
-<p>甚至说可以为一个全新的子系统添加系统调用描述，<code>docs</code>目录下的<code>syscall_descriptions_syntax.md</code>中可以找到语法描述；</p>
-<h4 id="update-syscall-formwork"><a href="#update-syscall-formwork" class="headerlink" title="update syscall formwork"></a>update syscall formwork</h4><p>首先拿到内核源码后，先看一下是什么版本的内核；</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat Makefile | head</span><br></pre></td></tr></table></figure>
-
-<p>由下面的信息可以知道是<code>5.16</code>版本的内核；</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">VERSION = 5</span><br><span class="line">PATCHLEVEL = 16</span><br><span class="line">SUBLEVEL = 0</span><br></pre></td></tr></table></figure>
-
-<p>先比较新旧版本<code>uapi/*.h</code>发生了什么变化；</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git diff -U0 v5.15 v5.14 include/uapi/*.h | grep &quot;+++&quot;   # 5.16没有在working tree中，先用5.15看看...</span><br></pre></td></tr></table></figure>
-
-<p>将得到：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">+++ b/include/uapi/asm-generic/siginfo.h</span><br><span class="line">+++ b/include/uapi/asm-generic/socket.h</span><br><span class="line">+++ b/include/uapi/asm-generic/unistd.h</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
-
-<p>Linus在linux 3.7版本中接受了David Howell的用来解决递归引用的补丁。递归引用这个问题通常发生在<code>inline</code>函数中：比如头文件A中的<code>inline</code>函数需要头文件中B的<code>struct</code>，但是同时B中也有一个<code>inline</code>函数需要A中的一个<code>struct</code>。所以David Howell把<code>include</code>和<code>arch/xxxxxx/include</code>目录中的内核头文件中有关用户空间API的内容分割出来，放到新的uapi/子目录中相应的地方。</p>
-<p>除了解决递归引用的问题之外，这样做简化了仅供内核使用的头文件的大小，并且使得跟踪内核向用户空间呈现的API的更改变得更容易。对C库维护者、测试项目(如LTP)、文档项目(如man-pages)还有我们利用<code>syzkaller</code>做内核fuzz的人来说有很大的帮助；</p>
-<h2 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h2><h3 id="编译syz-extract-amp-syzsysgen"><a href="#编译syz-extract-amp-syzsysgen" class="headerlink" title="编译syz-extract&amp;syzsysgen"></a>编译syz-extract&amp;syzsysgen</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">make bin/syz-extract</span><br><span class="line">make bin/syz-sysgen</span><br></pre></td></tr></table></figure>
-
-<h3 id="自定义规则"><a href="#自定义规则" class="headerlink" title="自定义规则"></a>自定义规则</h3><p>在<code>syzkaller/sys/linux</code>下，新建<code>proc_operation.txt</code>文件，并加入：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">include &lt;linux/fs.h&gt;</span><br><span class="line"> </span><br><span class="line">open$proc(file ptr[in, string[&quot;/proc/test&quot;]], flags flags[proc_open_flags], mode flags[proc_open_mode]) fd</span><br><span class="line">read$proc(fd fd, buf buffer[out], count len[buf])</span><br><span class="line">write$proc(fd fd, buf buffer[in], count len[buf])</span><br><span class="line">close$proc(fd fd)</span><br><span class="line"> </span><br><span class="line">proc_open_flags = O_RDONLY, O_WRONLY, O_RDWR, O_APPEND, FASYNC, O_CLOEXEC, O_CREAT, O_DIRECT, O_DIRECTORY, O_EXCL, O_LARGEFILE, O_NOATIME, O_NOCTTY, O_NOFOLLOW, O_NONBLOCK, O_PATH, O_SYNC, O_TRUNC, __O_TMPFILE</span><br><span class="line">proc_open_mode = S_IRUSR, S_IWUSR, S_IXUSR, S_IRGRP, S_IWGRP, S_IXGRP, S_IROTH, S_IWOTH, S_IXOTH</span><br></pre></td></tr></table></figure>
-
-<p>参考大师傅们的介绍：<code>$</code>号前的<code>syscallname</code>是系统调用名，<code>$</code>号后的t<code>ype</code>是指特定类型的系统调用。如上文的<code> open$proc</code> 指的就是<code>open</code>这个类调用中<code>proc</code>这个具体的调用，这个名字是由规则编写者确定的，具体行为靠的是后面的参数去确定。 参数的格式如下： <code>ArgumentName ArgumentType[Limit] ArgumentName</code>是指参数名，<code>ArgumentType</code>指的是参数类型，例如上述例子有string、flags等类型。[ ]号中的内容就是具体的类型的值，不指定的时候由<code>syzkaller</code>自动生成，若要指定须在后文指定，以上文为例：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mode flags[proc_open_mode]</span><br><span class="line">proc_open_mode = ...</span><br></pre></td></tr></table></figure>
-
-<p> 因为我们给的例子是通过<code>/proc/test</code>这个内核接口的写操作来触发堆溢出，因此我们需要控制的参数是<code>open</code>函数中的file参数为“/proc/test”即可，其他操作参考sys.txt即可；</p>
-<h3 id="生成-const文件"><a href="#生成-const文件" class="headerlink" title="生成.const文件"></a>生成.const文件</h3><p>调用<code>syz-extract</code>生成<code>.consts</code>文件；</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bin/syz-extract -os linux -sourcedir &quot;/root/source/linux&quot; -arch amd64 proc_operation.txt</span><br></pre></td></tr></table></figure>
-
-<p>文件内容如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"># Code generated by syz-sysgen. DO NOT EDIT.</span><br><span class="line">arches = amd64</span><br><span class="line">FASYNC = amd64:8192</span><br><span class="line">O_APPEND = amd64:1024</span><br><span class="line">O_CLOEXEC = amd64:524288</span><br><span class="line">O_CREAT = amd64:64</span><br><span class="line">O_DIRECT = amd64:16384</span><br><span class="line">O_DIRECTORY = amd64:65536</span><br><span class="line">O_EXCL = amd64:128</span><br><span class="line">O_LARGEFILE = amd64:32768</span><br><span class="line">O_NOATIME = amd64:262144</span><br><span class="line">O_NOCTTY = amd64:256</span><br><span class="line">O_NOFOLLOW = amd64:131072</span><br><span class="line">O_NONBLOCK = amd64:2048</span><br><span class="line">O_PATH = amd64:2097152</span><br><span class="line">O_RDONLY = amd64:0</span><br><span class="line">O_RDWR = amd64:2</span><br><span class="line">O_SYNC = amd64:1052672</span><br><span class="line">O_TRUNC = amd64:512</span><br><span class="line">O_WRONLY = amd64:1</span><br><span class="line">S_IRGRP = amd64:32</span><br><span class="line">S_IROTH = amd64:4</span><br><span class="line">S_IRUSR = amd64:256</span><br><span class="line">S_IWGRP = amd64:16</span><br><span class="line">S_IWOTH = amd64:2</span><br><span class="line">S_IWUSR = amd64:128</span><br><span class="line">S_IXGRP = amd64:8</span><br><span class="line">S_IXOTH = amd64:1</span><br><span class="line">S_IXUSR = amd64:64</span><br><span class="line">__NR_close = amd64:3</span><br><span class="line">__NR_open = amd64:2</span><br><span class="line">__NR_read = amd64:0</span><br><span class="line">__NR_write = amd64:1</span><br><span class="line">__O_TMPFILE = amd64:4194304</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<h3 id="生成go代码"><a href="#生成go代码" class="headerlink" title="生成go代码"></a>生成go代码</h3><p>运行<code>syz-sysgen</code>，生成<code>syzkaller</code>可以执行的go代码；</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./bin/syz-sysgen</span><br></pre></td></tr></table></figure>
-
-<h3 id="编译syzkaller"><a href="#编译syzkaller" class="headerlink" title="编译syzkaller"></a>编译syzkaller</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">make clean</span><br><span class="line">make all</span><br></pre></td></tr></table></figure>
-
-<h3 id="修改my-cfg"><a href="#修改my-cfg" class="headerlink" title="修改my.cfg"></a>修改my.cfg</h3><p>添加上允许的自定义系统调用；</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&quot;enable_syscalls&quot;: [</span><br><span class="line">                &quot;open$proc&quot;,</span><br><span class="line">                &quot;read$proc&quot;,</span><br><span class="line">                &quot;write$proc&quot;,</span><br><span class="line">                &quot;close$proc&quot;</span><br><span class="line">],</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3>
-        
-        
-          <blockquote id="copyright">
-              <p>原文链接: <a href="https://www.jk404.cn/page/4/index.html">https://www.jk404.cn/page/4/index.html</a></p>
-              <p>版权声明: 转载请注明出处.</p>
-          </blockquote>
-        
-      
-    </div>
-    <footer class="article-footer">
-      
-        <div class="article-tag-wrap">
-          
-
-          
-          
-
-
-        </div>
-      
-      
-      
-    </footer>
-  </div>
-</article>
-
-
-  <article id="post-零散知识点" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/CTF/PWN/%E9%9B%B6%E6%95%A3%E7%9F%A5%E8%AF%86%E7%82%B9/">零散知识点</a>
-    </h1>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      
-      <span class="article-date">
-  <i class="fa fa-date"></i>
-  <time class="dt-published" datetime="2021-11-24T02:47:39.000Z" itemprop="datePublished">2021年11月24日</time>
-</span>
-      
-  <div class="article-category">
-    <i class="fa fa-classify"></i>
-    <a class="article-category-link" href="/categories/CTF/">CTF</a> > <a class="article-category-link" href="/categories/CTF/PWN/">PWN</a>
-  </div>
-
-      
-      
-<a href="/CTF/PWN/%E9%9B%B6%E6%95%A3%E7%9F%A5%E8%AF%86%E7%82%B9/#comments" class="article-comment-link">
-  
-  <i class="fa fa-commt"></i>
-  留言
-</a>
-
-
-    </div>
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <h1 id="零散的知识点"><a href="#零散的知识点" class="headerlink" title="零散的知识点"></a>零散的知识点</h1><p>一些零散的知识点，用于简单快速回顾；</p>
-<h2 id="函数调用约定"><a href="#函数调用约定" class="headerlink" title="函数调用约定"></a>函数调用约定</h2><p>cdecl（C declaration），C语言的调用约定；</p>
-<p>在x86上有：</p>
-<ol>
-<li>函数实参在线程栈上按照从右至左的顺序依次压栈。</li>
-<li>函数结果保存在寄存器EAX/AX/AL中</li>
-<li>浮点型结果存放在寄存器ST0中</li>
-<li>编译后的函数名前缀以一个<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E4%B8%8B%E5%88%92%E7%BA%BF">下划线字符</a></li>
-<li>调用者负责从线程栈中弹出实参（即清栈）</li>
-<li>8比特或者16比特长的整形实参提升为32比特长。</li>
-<li>受到函数调用影响的寄存器（volatile registers）：EAX, ECX, EDX, ST0 - ST7, ES, GS</li>
-<li>不受函数调用影响的寄存器： EBX, EBP, ESP, EDI, ESI, CS, DS</li>
-<li>RET指令从函数被调用者返回到调用者（实质上是读取寄存器EBP所指的线程栈之处保存的函数返回地址并加载到IP寄存器）</li>
-</ol>
-<p>x86-64上用寄存器传参：</p>
-<p>rdi rsi rdx rcx r8 r9</p>
-<p>而且栈顶之外还有128bytes的红区可以使用，如果够用则不必用rsp开新空间；</p>
-<h2 id="寻址方式"><a href="#寻址方式" class="headerlink" title="寻址方式"></a>寻址方式</h2><p>在x86下：</p>
-<p>32位基址寄存器是：EAX、EBX、ECX、EDX、ESI、EDI、EBP和ESP；<br>32位变址寄存器是：EAX、EBX、ECX、EDX、ESI、EDI和EBP(除ESP之外)。</p>
-<p>段寄存器的规定：</p>
-<ol>
-<li>地址中寄存器的书写顺序决定该寄存器是基址寄存器，还是变址寄存器；<br>如：[EBX+EBP]中的EBX是基址寄存器，EBP是变址寄存器，而[EBP+EBX]中的EBP是基址寄存器，EBX是变址寄存器；</li>
-<li>默认段寄存器的选用取决于基址寄存器；</li>
-<li>基址寄存器是EBP或ESP时，默认的段寄存器是SS，否则，默认的段寄存器是DS；</li>
-<li>在指令中，如果使用段前缀的方式，那么，显式段寄存器优先。</li>
-</ol>
-<h2 id="堆栈及其初始化"><a href="#堆栈及其初始化" class="headerlink" title="堆栈及其初始化"></a>堆栈及其初始化</h2><h3 id="四种堆栈"><a href="#四种堆栈" class="headerlink" title="四种堆栈"></a>四种堆栈</h3><ol>
-<li>系统引导时初始化临时使用的堆栈；</li>
-<li>进入保护模式的时候提供给内核程序初始化的堆栈，也是init进程使用的用户态堆栈；</li>
-<li>内核态堆栈；</li>
-<li>用户态堆栈</li>
-</ol>
-<h3 id="用于初始化的堆栈"><a href="#用于初始化的堆栈" class="headerlink" title="用于初始化的堆栈"></a>用于初始化的堆栈</h3><ol>
-<li>开机时，bootsect设置堆栈；</li>
-<li>进入保护模式时，esp指向user_stack的顶端，内核程序自己使用的堆栈；</li>
-<li>初始化时，通过fock系统调用，main.c被切换到init进程执行，使用内核程序堆栈；</li>
-</ol>
-<h3 id="task的堆栈"><a href="#task的堆栈" class="headerlink" title="task的堆栈"></a>task的堆栈</h3><h4 id="内核态下"><a href="#内核态下" class="headerlink" title="内核态下"></a>内核态下</h4><p>系统调用等任务在内核代码中执行期间用到的堆栈，较小。每当任务从用户代码转移进入内核代码中执行时，任务的内核态栈总是空的。任务内核态堆栈被设置在位于其进程描述符的末端，即与任务的进程描述符（task_struct）放在同一页面内。</p>
-<h4 id="用户态下"><a href="#用户态下" class="headerlink" title="用户态下"></a>用户态下</h4><p>当一个任务（进程）刚被创建时，它的用户态堆栈指针被设置在其地址空间的靠近末端（64MB顶端）部分。实际上末端部分还要包括执行程序的参数和环境变量，然后才是用户堆栈空间。用brk设置program brak，用sbrk来增长堆；</p>
-<h4 id="切换问题"><a href="#切换问题" class="headerlink" title="切换问题"></a>切换问题</h4><p>如果一个中断产生时任务正在用户代码中执行，那么该中断就会引起CPU特权级从3级到0级的变化，此时CPU就会进行用户态堆栈到内核态堆栈的切换操作。<strong>CPU会从当前任务的任务状态段TSS中取得新堆栈的段选择符和偏移值</strong>。因为中断服务程序在内核中，属于0级特权级代码，所以48位的内核态堆栈指针会从TSS的ss0和esp0字段中获得。在定位了新堆栈（内核态堆栈）之后，CPU就会首先把原用户态堆栈指针ss和esp压入内核态堆栈，随后把标志寄存器eflags的内容和返回位置cs、eip压入内核态堆栈。</p>
-<p>内核的系统调用是一个软件中断，因此任务调用系统调用时就会进入内核并执行内核中的中断服务代码。此时内核代码就会使用该任务的内核态堆栈进行操作。同样，当进入内核程序时，由于特权级别发生了改变（从用户态转到内核态），用户态堆栈的堆栈段和堆栈指针以及eflags会被保存在任务的内核态堆栈中。而在执行iret退出内核程序返回到用户程序时，将恢复用户态的堆栈和eflags。</p>
-<p>如果一个任务正在内核态中运行，那么若CPU响应中断就不再需要进行堆栈切换操作，因为此时该任务运行的内核代码已经在使用内核态堆栈，并且不涉及优先级别的变化，所以CPU仅把eflags和中断返回指针cs、eip压入当前内核态堆栈，然后执行中断服务过程。</p>
-<h2 id="程序调试自检"><a href="#程序调试自检" class="headerlink" title="程序调试自检"></a>程序调试自检</h2><p>Windows下程序会调用API函数来检查当前进程是否正在被调试；</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> debugger_present;</span><br><span class="line">HANDLE process = GetCurrentProcess();</span><br><span class="line">CheckRemoteDebuggerPresent(process, &amp;debugger_present);</span><br></pre></td></tr></table></figure>
-
-<p>Linux下的自检方法有：</p>
-<ol>
-<li><p>使用ptrace，来请求trace自己；</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">has_debugger</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> debugger;</span><br><span class="line">    <span class="keyword">if</span> (ptrace(PTRACE_TRACEME, <span class="number">0</span>, <span class="literal">NULL</span>, <span class="literal">NULL</span>) == <span class="number">0</span>) &#123; </span><br><span class="line">        <span class="comment">// return 0 means success, so no debugger is attached</span></span><br><span class="line">        debugger = <span class="number">0</span>;</span><br><span class="line">    &#125; </span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        debugger = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">return</span> debugger;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>即，如果ptrace()函数设置只能被调用一次，后续的调用会失败，如果返回0，说明没有嗲用过，如果失败，则正处于调式；</p>
-</li>
-<li><p>SIGTRAP处理函数sigtrap_handler</p>
-<p>让程序注册一个SIGTRAP处理函数，显式引发一个SIGTRAP信号，这样如果程序被调试，gdb会拦截SIGTRAP，处理函数则不会执行；</p>
-</li>
-<li><p>ppid</p>
-<p>查看父进程状态，通过搜索进程中中是否含有gdb或者ltrace、strace这些trace工具；</p>
-</li>
-</ol>
-<h2 id="虚拟地址-gt-物理地址"><a href="#虚拟地址-gt-物理地址" class="headerlink" title="虚拟地址-&gt;物理地址"></a>虚拟地址-&gt;物理地址</h2><p>48位地址中有：</p>
-<p>8 bit 四级页表偏移</p>
-<p>8 bit 页目录表指针偏移</p>
-<p>8 bit 页目录表偏移</p>
-<p>8 bit 页表偏移</p>
-<p>12 bit 物理地址偏移</p>
-<p>CR0提供了页目录基址物理地址dirbase1；</p>
-<p>根据8bit的四级页表入口偏移offset1，找到对应的页入口地址dirbase1+offset1，其对应内容左移12位（低位补3个0）即为页目录指针表基址dirbase2；</p>
-<p>根据8bit的页目录表指针偏移offset2，找到对一个的指针地址dirbase2+offset2，其对应内容左移12位，即为页目录表基址dirbase3；</p>
-<p>同理，最后可以得到页面物理基地址dirbase5，此时加上12bit的物理地址偏移offset，即可以得到先关的物理地址；</p>
-<p><img src="/CTF/PWN/%E9%9B%B6%E6%95%A3%E7%9F%A5%E8%AF%86%E7%82%B9/va2pa.jpg" alt="va2pa"></p>
-<h2 id="查看端口占用情况"><a href="#查看端口占用情况" class="headerlink" title="查看端口占用情况"></a>查看端口占用情况</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">lsof -i</span><br><span class="line">netstat -tunlp | grep [port number]</span><br></pre></td></tr></table></figure>
-
-<h2 id="elf、load、link"><a href="#elf、load、link" class="headerlink" title="elf、load、link"></a>elf、load、link</h2><h3 id="数据段"><a href="#数据段" class="headerlink" title="数据段"></a>数据段</h3><p>.bss, .data, .rodata，含义；</p>
-<h3 id="结构"><a href="#结构" class="headerlink" title="结构"></a>结构</h3><p>elf header + section + section header table 段表 + 字符串表 + 符号表 + 重定位表，含义？</p>
-<h3 id="section-amp-segment"><a href="#section-amp-segment" class="headerlink" title="section&amp;segment"></a>section&amp;segment</h3><p>二者什么关系呢？</p>
-<p>section是程序文件中分的段，在装载的时候，为了提高效率，会把相同属性secton合并到一个segment里；</p>
-<h3 id="静态链接和动态链接"><a href="#静态链接和动态链接" class="headerlink" title="静态链接和动态链接"></a>静态链接和动态链接</h3><h4 id="静态链接"><a href="#静态链接" class="headerlink" title="静态链接"></a>静态链接</h4><p>优点：</p>
-<ol>
-<li>代码装载速度快，执行速度略快；</li>
-<li>不需要保证用户计算机上lib版本的问题，避免ddl hell；</li>
-</ol>
-<p>缺点：</p>
-<ol>
-<li>文件体积大，资源开销大</li>
-</ol>
-<h4 id="动态链接"><a href="#动态链接" class="headerlink" title="动态链接"></a>动态链接</h4><p>优点：</p>
-<ol>
-<li>节省内存，减少页面交换；</li>
-<li>更换ddl时，只要输出接口不变，就不会有什么影响；</li>
-<li>按照约定就可以调用同一个dll函数；</li>
-<li>适用于大规模软件开发；</li>
-</ol>
-<p>缺点：</p>
-<ol>
-<li>dll不存在则会加载失败</li>
-</ol>
-<h3 id="elf中无函数符号，检测syscall的调用"><a href="#elf中无函数符号，检测syscall的调用" class="headerlink" title="elf中无函数符号，检测syscall的调用"></a>elf中无函数符号，检测syscall的调用</h3><h2 id="在任意进程中修改内存保护属性"><a href="#在任意进程中修改内存保护属性" class="headerlink" title="在任意进程中修改内存保护属性"></a>在任意进程中修改内存保护属性</h2><p>windows中用virtualProtect或者virtualProtectEx；</p>
-<p>linux中修改的api是mprotect或者pkey_mprotect，他们始终在当前的进程空间上运行，修改寄存器然后系统调用10；如果开了seccomp，就通过内核线程，每次出现current pointer的时候指向目标线程task_strct；所以写一个模块获取目标PID和kallsyms的信息，然后调用mprotect</p>
-<h2 id="malloc的过程"><a href="#malloc的过程" class="headerlink" title="malloc的过程"></a>malloc的过程</h2><p><img src="/CTF/PWN/%E9%9B%B6%E6%95%A3%E7%9F%A5%E8%AF%86%E7%82%B9/malloc.jpg" alt="malloc"></p>
-<h2 id="free的过程"><a href="#free的过程" class="headerlink" title="free的过程"></a>free的过程</h2><p><img src="/CTF/PWN/%E9%9B%B6%E6%95%A3%E7%9F%A5%E8%AF%86%E7%82%B9/%E9%9B%B6%E6%95%A3%E7%9F%A5%E8%AF%86%E7%82%B9%5Cfree.jpg" alt="free"></p>
-<h2 id="brk-mmap"><a href="#brk-mmap" class="headerlink" title="brk mmap"></a>brk mmap</h2><p>brk和mmap是系统调用，sbrk只是函数，用来移动堆上界；</p>
-<p>mm_struct里有start_code和end_code，是.text的起止地址，start_data和end_data是数据段的起止地址，start_stack是栈的起始地址，start_brk是堆的起始地址，brk是堆终止地址；</p>
-<p>brk系统调用改变mm_struct里brk的值；</p>
-<p>mmap系统调用新建vm_area_struct，然后把文件结构参数赋值给成员m_file，这样就使得进程读写文件的操作变为读写内存的操作；</p>
-<p>calloc初始化，而malloc不进行初始化；</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;128K brk</span><br><span class="line">&gt;128k mmap</span><br></pre></td></tr></table></figure>
-
-<h2 id="C语言安全缺陷"><a href="#C语言安全缺陷" class="headerlink" title="C语言安全缺陷"></a>C语言安全缺陷</h2><p>类型转换</p>
-<p>边界检查</p>
-<p>等等。。</p>
-<h2 id="插桩"><a href="#插桩" class="headerlink" title="插桩"></a>插桩</h2><h3 id="插桩的位置"><a href="#插桩的位置" class="headerlink" title="插桩的位置"></a>插桩的位置</h3><p>a. 程序的第一条语句；b. 分支语句的开始；c. 循环语句的开始；d. 下一个入口语句之前的语句；e. 程序的结束语句；f. 分支语句的结束；g. 循环语句的结束</p>
-<h3 id="插桩的策略"><a href="#插桩的策略" class="headerlink" title="插桩的策略"></a>插桩的策略</h3><p>语句覆盖探针（基本块探针）：在基本块的入口和出口处，分别植入相应的探针，以确定程序执行时该基本块是否被覆盖。 　分支覆盖探针：c/c++语言中，分支由分支点确定。对于每个分支，在其开始处植入一个相应的探针，以确定程序执行时该分支是否被覆盖。 　条件覆盖探针：c/c++语言中，if, swich,while, do-while, for 几种语法结构都支持条件判定，在每个条件表达式的布尔表达式处植入探针，进行变量跟踪取值，以确定其被覆盖情况；</p>
-<p>后续fuzz的过程中会根据这些桩代码进行路径探索，测试</p>
-<h2 id="堆喷射"><a href="#堆喷射" class="headerlink" title="堆喷射"></a>堆喷射</h2><p>将Shellcode与大量的slide code（滑板指令）相组合，组成一整个 <strong>注入代码段</strong> ，然后向系统申请大量的内存空间，并反复用 <strong>注入代码段</strong> 填充，然后将程序执行流劫持到内核堆上，使得程序慢慢“滑”向SHellcode。</p>
-<p>Slide code均不会影响shellcode的执行。：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1.NOP指令（\x90）</span><br><span class="line">2.\x0c</span><br><span class="line">3.\x0d</span><br></pre></td></tr></table></figure>
-
-<p>SLAB作为用户linux系统内核对于小对象的高速cache。</p>
-<p><code>cat /proc/slabinfo</code> 可以查看当前 slab 对象的分配情况。</p>
-<h2 id="gdb"><a href="#gdb" class="headerlink" title="gdb"></a>gdb</h2><h2 id="fuzz"><a href="#fuzz" class="headerlink" title="fuzz"></a>fuzz</h2><h3 id="afl"><a href="#afl" class="headerlink" title="afl"></a>afl</h3><h3 id="syzkaller"><a href="#syzkaller" class="headerlink" title="syzkaller"></a>syzkaller</h3><h2 id="ret2dir"><a href="#ret2dir" class="headerlink" title="ret2dir"></a>ret2dir</h2><h3 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h3><p>利用return-to-direct-mapped memory(ret2dir)攻击技术绕过SMEP,SMAP,PXN,KERNEXEC,UDEREF,KGuard保护。简单来说，通过利用一个核心区域，直接映射系统的一部分或全部物理内存(用户空间内存映射到physmap，内核可直接访问physmap)，允许攻击者在内核地址空间内访问用户数据；</p>
-<p>内存分配主要有kmalloc和vmalloc两种方式。</p>
-<p>vmalloc 请求 页的倍数大小的内存，要保证虚拟地址连续，物理地址不需要连续</p>
-<p>kmalloc 内存在字节级做分配，要保证 虚拟地址和物理地址都是连续的</p>
-<p>kmalloc是slub分配器使用的方式，kmalloc可在physmap上做内存分配操作。例如分配0x200，则对应kmalloc-512，该内存在physmap里面。</p>
-<p>physmap区域在0xffff888000000000 - 0xffffc87fffffffff这一段，大小为64TB。物理内存直接映射在该虚拟内存空间某地址处，只要知道该基址，做线性加减就完事了，速度和效率都很高</p>
-<h3 id="方法"><a href="#方法" class="headerlink" title="方法"></a>方法</h3><p>从以上可知，1.physmap和RAM是直接的映射关系；2.可通过kmalloc分配的内存地址找到physmap的基址。</p>
-<p>SMAP/SMEP主要是使内核不能直接执行用户态的代码。但用户态分配的内存，会停留在RAM中，这块内存在physmap中也能看到。可通过mmap分配大量的内存，这样找到的概率就会比较大。</p>
-<p>早期的physmap可执行，只需在用户态写好shellcode，然后劫持内核后跳到physmap对应位置即可，不用管SMAP/SMEP。后期加上保护策略，physmap不可执行(W^X)，但可通过ROP方式进行利用</p>
-<h3 id="方式"><a href="#方式" class="headerlink" title="方式"></a>方式</h3><p>mmap大量内存(喷射rop chain等，这样用户数据会映射到内核physmap)，提高命中概率。</p>
-<p>qemu给了128M的内存，mmap出64M的内存，以增大命中率(在用户层喷射数据，这样会映射到内核physmap，这样根据physmap基址搜索的时候才更有可能搜到用户数据)。mmap内存都初始化为字符”K”；</p>
-<p>泄露slab地址，根据内核中的slab地址计算physmap基地址，根据physmap基址搜索映射到内核physmap的用户数据，找出slab的地址，然后在上面做爆破，一个页一个页读取，直到找出KKKKKKKKKKKKKKKK这个子串的内存，找到可能的physmap地址后，调用write_any写这个地址，看看用户态对应的内存有没有被改变，如果随之改变，则说明两者已经对应上了；</p>
-<p>劫持内核执行流到physmap。</p>
-<h3 id="修复"><a href="#修复" class="headerlink" title="修复"></a>修复</h3><p>排他性页框架所有权机制(exclusive page frame ownership scheme)，能以很低的性能损耗缓解ret2dir攻击。</p>
-<h2 id="ret2user"><a href="#ret2user" class="headerlink" title="ret2user"></a>ret2user</h2><h3 id="原理-1"><a href="#原理-1" class="headerlink" title="原理"></a>原理</h3><p>攻击利用了 用户空间的进程不能访问内核空间，但内核空间能访问用户空间 这个特性来定向内核代码或数据流指向用户控件，以 ring 0 特权执行用户空间代码完成提权等操作</p>
-<h3 id><a href="#" class="headerlink" title></a></h3>
-        
-        
-          <blockquote id="copyright">
-              <p>原文链接: <a href="https://www.jk404.cn/page/4/index.html">https://www.jk404.cn/page/4/index.html</a></p>
-              <p>版权声明: 转载请注明出处.</p>
-          </blockquote>
-        
-      
-    </div>
-    <footer class="article-footer">
-      
-        <div class="article-tag-wrap">
-          
-
-          
-          
-
-
-        </div>
-      
-      
-      
-    </footer>
-  </div>
-</article>
-
-
 
     <nav id="page-nav">
 
@@ -1708,6 +1762,14 @@ PIE:      PIE enabled
       <ul>
         
           <li>
+            <a href="/Taichi/Taichi-01-First-Taichi-Program/">Taichi_01_First_Taichi_Program</a>
+          </li>
+        
+          <li>
+            <a href="/Taichi/Taichi-00-introduction/">Taichi_00_introduction</a>
+          </li>
+        
+          <li>
             <a href="/OS/theory/OS-01-summary/">OS_01_summary</a>
           </li>
         
@@ -1717,14 +1779,6 @@ PIE:      PIE enabled
         
           <li>
             <a href="/course/static-program-analysis/static-program-analysis-05-interprocedural-analysis/">static_program_analysis_05_interprocedural_analysis</a>
-          </li>
-        
-          <li>
-            <a href="/uncategorized/ctf-susctf2022-happytree/%E6%9C%AA%E5%91%BD%E5%90%8D%E7%BB%98%E5%9B%BE.drawio/">(no title)</a>
-          </li>
-        
-          <li>
-            <a href="/CTF/PWN/wp/susctf2022/ctf-susctf2022-happytree/">ctf_susctf2022_happytree</a>
           </li>
         
       </ul>
@@ -1739,7 +1793,7 @@ PIE:      PIE enabled
   <div class="widget-wrap">
     <h3 class="widget-title"><i class="fa fa-classify"></i> 分类</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP-lab/">CSAPP-lab</a><span class="category-list-count">3</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP-lab/bomblab/">bomblab</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP-lab/datalab/">datalab</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP-lab/preparelab/">preparelab</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/">CTF</a><span class="category-list-count">32</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/">PWN</a><span class="category-list-count">32</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/">kernel pwn</a><span class="category-list-count">13</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/FUZZ/">FUZZ</a><span class="category-list-count">3</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/FUZZ/Syzkaller/">Syzkaller</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/FUZZ/Trinity/">Trinity</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/Linux-source/">Linux source</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/cve/">cve</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/knowledge/">knowledge</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/wp/">wp</a><span class="category-list-count">3</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/uncategorized/">uncategorized</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/user-space-pwn/">user space pwn</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/user-space-pwn/cve/">cve</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/">wp</a><span class="category-list-count">14</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/asisctf/">asisctf</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/asisctf/asisctf2021/">asisctf2021</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/buuoj/">buuoj</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/l3hctf/">l3hctf</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/pwnable-kr/">pwnable.kr</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/susctf2022/">susctf2022</a><span class="category-list-count">2</span></li></ul></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/">OS</a><span class="category-list-count">15</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/OS/Prepare/">Prepare</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/">lab1</a><span class="category-list-count">13</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge1-what-is-make/">challenge1:what is make</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge2-qemu-gdb/">challenge2:qemu&gdb</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge3-go-into-protected-mode/">challenge3:go into protected mode</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge4-load-kernel-elf/">challenge4:load kernel elf</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge5-trace-stackframe/">challenge5:trace stackframe</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge6-interrupt-handle/">challenge6:interrupt handle</a><span class="category-list-count">3</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/theory/">theory</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/">PWN</a><span class="category-list-count">6</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/Fuzz/">Fuzz</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/Fuzz/AFL/">AFL</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/cve/">cve</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/microcorruption/">microcorruption</a><span class="category-list-count">4</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/UE4/">UE4</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/UE4/LowPoly/">LowPoly</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/course/">course</a><span class="category-list-count">6</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/course/MIT-AI/">MIT-AI</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/course/static-program-analysis/">static_program_analysis</a><span class="category-list-count">5</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/golang/">golang</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/golang/start/">start</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/pwn-college/">pwn.college</a><span class="category-list-count">3</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/pwn-college/Chapter01-Program-interaction/">Chapter01 Program interaction</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/pwn-college/Chapter02-Binary-file/">Chapter02 Binary file</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/pwn-college/Introduciton/">Introduciton</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/study/">study</a><span class="category-list-count">21</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/study/book/">book</a><span class="category-list-count">17</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/">揭秘家用路由器0day漏洞挖掘技术</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/">程序员的自我修养：链接、装载与库</a><span class="category-list-count">7</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/study/daily/">daily</a><span class="category-list-count">4</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/tools/">tools</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/welcome/">welcome</a><span class="category-list-count">1</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP-lab/">CSAPP-lab</a><span class="category-list-count">3</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP-lab/bomblab/">bomblab</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP-lab/datalab/">datalab</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP-lab/preparelab/">preparelab</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/">CTF</a><span class="category-list-count">32</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/">PWN</a><span class="category-list-count">32</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/">kernel pwn</a><span class="category-list-count">13</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/FUZZ/">FUZZ</a><span class="category-list-count">3</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/FUZZ/Syzkaller/">Syzkaller</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/FUZZ/Trinity/">Trinity</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/Linux-source/">Linux source</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/cve/">cve</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/knowledge/">knowledge</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/wp/">wp</a><span class="category-list-count">3</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/uncategorized/">uncategorized</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/user-space-pwn/">user space pwn</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/user-space-pwn/cve/">cve</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/">wp</a><span class="category-list-count">14</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/asisctf/">asisctf</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/asisctf/asisctf2021/">asisctf2021</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/buuoj/">buuoj</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/l3hctf/">l3hctf</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/pwnable-kr/">pwnable.kr</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/susctf2022/">susctf2022</a><span class="category-list-count">2</span></li></ul></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/">OS</a><span class="category-list-count">15</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/OS/Prepare/">Prepare</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/">lab1</a><span class="category-list-count">13</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge1-what-is-make/">challenge1:what is make</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge2-qemu-gdb/">challenge2:qemu&gdb</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge3-go-into-protected-mode/">challenge3:go into protected mode</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge4-load-kernel-elf/">challenge4:load kernel elf</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge5-trace-stackframe/">challenge5:trace stackframe</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge6-interrupt-handle/">challenge6:interrupt handle</a><span class="category-list-count">3</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/theory/">theory</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/">PWN</a><span class="category-list-count">6</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/Fuzz/">Fuzz</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/Fuzz/AFL/">AFL</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/cve/">cve</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/microcorruption/">microcorruption</a><span class="category-list-count">4</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/Taichi/">Taichi</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/UE4/">UE4</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/UE4/LowPoly/">LowPoly</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/course/">course</a><span class="category-list-count">6</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/course/MIT-AI/">MIT-AI</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/course/static-program-analysis/">static_program_analysis</a><span class="category-list-count">5</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/golang/">golang</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/golang/start/">start</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/pwn-college/">pwn.college</a><span class="category-list-count">3</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/pwn-college/Chapter01-Program-interaction/">Chapter01 Program interaction</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/pwn-college/Chapter02-Binary-file/">Chapter02 Binary file</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/pwn-college/Introduciton/">Introduciton</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/study/">study</a><span class="category-list-count">21</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/study/book/">book</a><span class="category-list-count">17</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/">揭秘家用路由器0day漏洞挖掘技术</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/">程序员的自我修养：链接、装载与库</a><span class="category-list-count">7</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/study/daily/">daily</a><span class="category-list-count">4</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/tools/">tools</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/welcome/">welcome</a><span class="category-list-count">1</span></li></ul>
     </div>
   </div>
 
@@ -1749,7 +1803,7 @@ PIE:      PIE enabled
   <div class="widget-wrap">
     <h3 class="widget-title"><i class="fa fa-archive"></i> 归档</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/">2022年05月</a><span class="archive-list-count">16</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/">2021年12月</a><span class="archive-list-count">76</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/">2022年05月</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/">2021年12月</a><span class="archive-list-count">76</span></li></ul>
     </div>
   </div>
 
