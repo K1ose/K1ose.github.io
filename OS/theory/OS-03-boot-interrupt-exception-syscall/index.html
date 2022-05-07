@@ -134,7 +134,7 @@
     </div>
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <h1 id="Boot-amp-Interrupt-amp-Exception-amp-Syscall"><a href="#Boot-amp-Interrupt-amp-Exception-amp-Syscall" class="headerlink" title="Boot &amp; Interrupt &amp; Exception &amp; Syscall"></a>Boot &amp; Interrupt &amp; Exception &amp; Syscall</h1><h2 id="BIOS"><a href="#BIOS" class="headerlink" title="BIOS"></a>BIOS</h2><h3 id="计算机体系结构概述"><a href="#计算机体系结构概述" class="headerlink" title="计算机体系结构概述"></a>计算机体系结构概述</h3><p>​        CPU</p>
+        <h1 id="03-Boot-Interrupt-Exception-Syscall"><a href="#03-Boot-Interrupt-Exception-Syscall" class="headerlink" title="03-Boot Interrupt Exception Syscall"></a>03-Boot Interrupt Exception Syscall</h1><h2 id="BIOS"><a href="#BIOS" class="headerlink" title="BIOS"></a>BIOS</h2><h3 id="计算机体系结构概述"><a href="#计算机体系结构概述" class="headerlink" title="计算机体系结构概述"></a>计算机体系结构概述</h3><p>​        CPU</p>
 <p>​         |</p>
 <p>———————————————————— 总线</p>
 <p>​    |           |</p>
@@ -175,14 +175,100 @@
 
 
 
-<h2 id="系统启动流程"><a href="#系统启动流程" class="headerlink" title="系统启动流程"></a>系统启动流程</h2><h2 id="中断、异常和系统调用比较"><a href="#中断、异常和系统调用比较" class="headerlink" title="中断、异常和系统调用比较"></a>中断、异常和系统调用比较</h2><h2 id="系统调用"><a href="#系统调用" class="headerlink" title="系统调用"></a>系统调用</h2><h2 id="系统调用示例"><a href="#系统调用示例" class="headerlink" title="系统调用示例"></a>系统调用示例</h2><h2 id="ucore中的系统调用"><a href="#ucore中的系统调用" class="headerlink" title="ucore中的系统调用"></a>ucore中的系统调用</h2>
+<h2 id="系统启动流程"><a href="#系统启动流程" class="headerlink" title="系统启动流程"></a>系统启动流程</h2><h3 id="计算机启动流程"><a href="#计算机启动流程" class="headerlink" title="计算机启动流程"></a>计算机启动流程</h3><ul>
+<li>系统加电</li>
+<li>BIOS初始化硬件</li>
+<li>BIOS读取主引导扇区代码(主引导记录)</li>
+<li>主引导扇区代码读取互动分区的引导扇区代码(活动分区)</li>
+<li>引导扇区代码读取文件系统的加载程序(加载程序)</li>
+</ul>
+<p>总结起来为：</p>
+<img src="/OS/theory/OS-03-boot-interrupt-exception-syscall/bios_load_program.jpg" style="zoom: 80%;">
+
+<p>下面是过程间的细节；</p>
+<h4 id="CPU初始化"><a href="#CPU初始化" class="headerlink" title="CPU初始化"></a>CPU初始化</h4><ul>
+<li>CPU加电稳定后从0xffff0读取第一条指令<ul>
+<li>CS:IP = 0xf000:fff0</li>
+<li>第一条指令是跳转指令</li>
+</ul>
+</li>
+<li>CPU初始状态为16位实模式<ul>
+<li>CS:IP是16位寄存器</li>
+<li>指令指针PC=16*CS+IP</li>
+<li>最大寻址空间为1MB</li>
+</ul>
+</li>
+</ul>
+<h4 id="BIOS初始化"><a href="#BIOS初始化" class="headerlink" title="BIOS初始化"></a>BIOS初始化</h4><ul>
+<li>硬件自检POST</li>
+<li>检测系统中内存和显卡等部件的存在和工作状态</li>
+<li>查找并执行显卡等接口卡BIOS，进行设备初始化；</li>
+<li>执行系统BIOS，进行系统检测；<ul>
+<li>检测和配置系统中安装的即插即用设备；</li>
+</ul>
+</li>
+<li>更新CMOS中的扩展系统配置数据ESCD(表)；</li>
+<li>按指定启动顺去从软盘、硬盘或光驱启动</li>
+</ul>
+<h4 id="主引导记录MBR格式"><a href="#主引导记录MBR格式" class="headerlink" title="主引导记录MBR格式"></a>主引导记录MBR格式</h4><img src="/OS/theory/OS-03-boot-interrupt-exception-syscall/main_conductor_record.jpg" style="zoom:80%;">
+
+<ul>
+<li>启动代码<ul>
+<li>446字节</li>
+<li>检查分区表正确性</li>
+<li>加载并跳转到磁盘上的引导程序</li>
+</ul>
+</li>
+<li>硬盘分区表<ul>
+<li>64字节</li>
+<li>描述分区状态和位置</li>
+<li>每个分区描述信息占据16字节</li>
+</ul>
+</li>
+<li>结束标志字<ul>
+<li>2字节(55AA)</li>
+<li>主引导记录的有效标志</li>
+</ul>
+</li>
+</ul>
+<h4 id="活动分区格式"><a href="#活动分区格式" class="headerlink" title="活动分区格式"></a>活动分区格式</h4><img src="/OS/theory/OS-03-boot-interrupt-exception-syscall/particial_area.jpg" style="zoom: 80%;">
+
+<ul>
+<li><p>跳转指令</p>
+<ul>
+<li>跳转到启动代码</li>
+<li>平台相关</li>
+</ul>
+</li>
+<li><p>文件卷头</p>
+<ul>
+<li>文件系统描述信息</li>
+</ul>
+</li>
+<li><p>启动代码</p>
+<ul>
+<li>跳转到加载程序</li>
+</ul>
+</li>
+<li><p>结束标志字</p>
+<ul>
+<li>55AA</li>
+</ul>
+</li>
+</ul>
+<h4 id="Bootloader"><a href="#Bootloader" class="headerlink" title="Bootloader"></a>Bootloader</h4><img src="/OS/theory/OS-03-boot-interrupt-exception-syscall/bootloader_load_kernel.jpg" style="zoom:80%;">
+
+<p>加载程序所执行的内容如上图，于是内核从磁盘中被加载到内存中；</p>
+<h3 id="图示"><a href="#图示" class="headerlink" title="图示"></a>图示</h3><p>可能有错误，希望斧正；</p>
+<p><img src="/OS/theory/OS-03-boot-interrupt-exception-syscall/load_step_sample.jpg"></p>
+<h2 id="中断、异常和系统调用比较"><a href="#中断、异常和系统调用比较" class="headerlink" title="中断、异常和系统调用比较"></a>中断、异常和系统调用比较</h2><h2 id="系统调用"><a href="#系统调用" class="headerlink" title="系统调用"></a>系统调用</h2><h2 id="系统调用示例"><a href="#系统调用示例" class="headerlink" title="系统调用示例"></a>系统调用示例</h2><h2 id="ucore中的系统调用"><a href="#ucore中的系统调用" class="headerlink" title="ucore中的系统调用"></a>ucore中的系统调用</h2>
         
             <div id="toc-article">
                 
   <div class="widget-wrap" id="toc-wrap">
     <h3 class="widget-title"><i class="fa fa-toc"></i> 文章目录</h3>
     <div class="widget">
-      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Boot-amp-Interrupt-amp-Exception-amp-Syscall"><span class="toc-text">Boot &amp; Interrupt &amp; Exception &amp; Syscall</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#BIOS"><span class="toc-text">BIOS</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%A1%E7%AE%97%E6%9C%BA%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84%E6%A6%82%E8%BF%B0"><span class="toc-text">计算机体系结构概述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%86%85%E5%AD%98%E5%92%8C%E7%A1%AC%E7%9B%98%E5%B8%83%E5%B1%80"><span class="toc-text">计算机内存和硬盘布局</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#BIOS%E6%8F%90%E4%BE%9B%E7%9A%84%E5%8A%9F%E8%83%BD"><span class="toc-text">BIOS提供的功能</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8A%A0%E8%BD%BD%E7%A8%8B%E5%BA%8F"><span class="toc-text">加载程序</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%B3%BB%E7%BB%9F%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B"><span class="toc-text">系统启动流程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%AD%E6%96%AD%E3%80%81%E5%BC%82%E5%B8%B8%E5%92%8C%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8%E6%AF%94%E8%BE%83"><span class="toc-text">中断、异常和系统调用比较</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8"><span class="toc-text">系统调用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8%E7%A4%BA%E4%BE%8B"><span class="toc-text">系统调用示例</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ucore%E4%B8%AD%E7%9A%84%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8"><span class="toc-text">ucore中的系统调用</span></a></li></ol></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#03-Boot-Interrupt-Exception-Syscall"><span class="toc-text">03-Boot Interrupt Exception Syscall</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#BIOS"><span class="toc-text">BIOS</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%A1%E7%AE%97%E6%9C%BA%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84%E6%A6%82%E8%BF%B0"><span class="toc-text">计算机体系结构概述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%86%85%E5%AD%98%E5%92%8C%E7%A1%AC%E7%9B%98%E5%B8%83%E5%B1%80"><span class="toc-text">计算机内存和硬盘布局</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#BIOS%E6%8F%90%E4%BE%9B%E7%9A%84%E5%8A%9F%E8%83%BD"><span class="toc-text">BIOS提供的功能</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8A%A0%E8%BD%BD%E7%A8%8B%E5%BA%8F"><span class="toc-text">加载程序</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%B3%BB%E7%BB%9F%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B"><span class="toc-text">系统启动流程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B"><span class="toc-text">计算机启动流程</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#CPU%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="toc-text">CPU初始化</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#BIOS%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="toc-text">BIOS初始化</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%BB%E5%BC%95%E5%AF%BC%E8%AE%B0%E5%BD%95MBR%E6%A0%BC%E5%BC%8F"><span class="toc-text">主引导记录MBR格式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%B4%BB%E5%8A%A8%E5%88%86%E5%8C%BA%E6%A0%BC%E5%BC%8F"><span class="toc-text">活动分区格式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Bootloader"><span class="toc-text">Bootloader</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%BE%E7%A4%BA"><span class="toc-text">图示</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%AD%E6%96%AD%E3%80%81%E5%BC%82%E5%B8%B8%E5%92%8C%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8%E6%AF%94%E8%BE%83"><span class="toc-text">中断、异常和系统调用比较</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8"><span class="toc-text">系统调用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8%E7%A4%BA%E4%BE%8B"><span class="toc-text">系统调用示例</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ucore%E4%B8%AD%E7%9A%84%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8"><span class="toc-text">ucore中的系统调用</span></a></li></ol></li></ol>
     </div>
   </div>
 
