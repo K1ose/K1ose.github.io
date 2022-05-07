@@ -82,6 +82,530 @@
 
       <div class="outer">
         <section id="main">
+  <article id="post-static-program-analysis-05-interprocedural-analysis" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/course/static-program-analysis/static-program-analysis-05-interprocedural-analysis/">static_program_analysis_05_interprocedural_analysis</a>
+    </h1>
+  
+
+
+      </header>
+    
+    <div class="article-meta">
+      
+      <span class="article-date">
+  <i class="fa fa-date"></i>
+  <time class="dt-published" datetime="2022-04-22T06:23:39.000Z" itemprop="datePublished">2022年04月22日</time>
+</span>
+      
+  <div class="article-category">
+    <i class="fa fa-classify"></i>
+    <a class="article-category-link" href="/categories/course/">course</a> > <a class="article-category-link" href="/categories/course/static-program-analysis/">static_program_analysis</a>
+  </div>
+
+      
+      
+<a href="/course/static-program-analysis/static-program-analysis-05-interprocedural-analysis/#comments" class="article-comment-link">
+  
+  <i class="fa fa-commt"></i>
+  留言
+</a>
+
+
+    </div>
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="Interprocedural-Analysis"><a href="#Interprocedural-Analysis" class="headerlink" title="Interprocedural Analysis"></a>Interprocedural Analysis</h1><h2 id="Contents"><a href="#Contents" class="headerlink" title="Contents"></a>Contents</h2><ul>
+<li>Motivation</li>
+<li>Call Graph Construction (CHA)</li>
+<li>Interprocedural Control-Flow Graph</li>
+<li>Interprocedural Data-Flow Analysis</li>
+</ul>
+<h2 id="Motivation"><a href="#Motivation" class="headerlink" title="Motivation"></a>Motivation</h2><h3 id="Problem-of-Intraprocedural-Analysis"><a href="#Problem-of-Intraprocedural-Analysis" class="headerlink" title="Problem of Intraprocedural Analysis"></a>Problem of Intraprocedural Analysis</h3><p>过程内分析，要如何分析函数调用？</p>
+<ul>
+<li><p>最保守的假设：在常量传播检测(constant propagation)中，需要假设未知的变量不是常量，因此丢失了精度。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">void foo()&#123;</span><br><span class="line">	int n = ten();</span><br><span class="line">	addOne(42);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">int ten()&#123;</span><br><span class="line">	return 10;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">int addOne(int x)&#123;</span><br><span class="line">	int y = x + 1;</span><br><span class="line">	return y;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">int main()&#123;</span><br><span class="line">	foo()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>对于foo()函数而言，结果应该是n=10，由于函数内的分析无法判断ten()返回的值是什么，一次你只能保守假设ten()返回了非常量的值。</p>
+</li>
+</ul>
+<p>因此需要过程间分析(interprocedural Analysis)，通过Graph中的边传递data flow，因此避免了过度假设导致的精度丢失。而call graph包含了点和有向边。</p>
+<h2 id="Call-Graph"><a href="#Call-Graph" class="headerlink" title="Call Graph"></a>Call Graph</h2><blockquote>
+<p>A representation of calling relationships in the program. Essentially, a call graph is a set of call edges from call-sites to their target methods.(callees)</p>
+</blockquote>
+<p>以上面的函数调用为例子，有如下调用图：</p>
+<p><img src="/course/static-program-analysis/static-program-analysis-05-interprocedural-analysis/call_graph_sample0.jpg"></p>
+<p>调用图call graph在很多分析中都有所应用。</p>
+<h3 id="Call-Graph-Construction-for-OOPLs"><a href="#Call-Graph-Construction-for-OOPLs" class="headerlink" title="Call Graph Construction for OOPLs"></a>Call Graph Construction for OOPLs</h3><p>focus on JAVA</p>
+<p>构造调用图的方法有：</p>
+<ul>
+<li><p>Class hierarchy analysis (CHA)</p>
+</li>
+<li><p>Rapid type analysis (RTA)</p>
+</li>
+<li><p>Variable type analysis (VTA)</p>
+</li>
+<li><p>Pointer analysis (k-CFA)</p>
+</li>
+</ul>
+<p>以上的方法中，从上到下所得到的精度越高，但是效率有所降低。</p>
+<p>在Java中有如下三种方法调用：</p>
+<table>
+<thead>
+<tr>
+<th align="center"></th>
+<th align="center">Statck call</th>
+<th align="center">Special call</th>
+<th align="center">Virtual call</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">Instruction</td>
+<td align="center">invokestatic</td>
+<td align="center">invokespecial</td>
+<td align="center">1) invokeinterface<br>2) invokevirtual</td>
+</tr>
+<tr>
+<td align="center">Receiver objects</td>
+<td align="center">×</td>
+<td align="center">√</td>
+<td align="center">√</td>
+</tr>
+<tr>
+<td align="center">Target methods</td>
+<td align="center">Static methods</td>
+<td align="center">1) Constructors<br>2) Private instance methods<br>3) Superclass instance methods</td>
+<td align="center">Other instance methods</td>
+</tr>
+<tr>
+<td align="center">Number of Target methods</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">&gt;=1(polymorphism)</td>
+</tr>
+<tr>
+<td align="center">Determinacy</td>
+<td align="center">Compile-time</td>
+<td align="center">Compile-time</td>
+<td align="center">Run-time</td>
+</tr>
+</tbody></table>
+<p>构造调用图的关键在于处理Virtual call；</p>
+<h4 id="Method-Dispatch-of-Virutal-call"><a href="#Method-Dispatch-of-Virutal-call" class="headerlink" title="Method Dispatch of Virutal call"></a>Method Dispatch of Virutal call</h4><p>During run-time, a virtual call is resolved based on:<br>$$<br>o^1.foo(…)^2;<br>$$</p>
+<ol>
+<li><p>type of the receiver object(pointed by o)</p>
+</li>
+<li><p>method signature at the call site</p>
+</li>
+</ol>
+<p>如上，在程序运行时，virtual call需要对调用的实例方法进行resolve，这个过程设计到以上两个要素：</p>
+<ol>
+<li>o指向的具体类型 c；</li>
+<li>调用时的方法签名 m；</li>
+</ol>
+<p>对于签名signature：</p>
+<ul>
+<li>Signature = class type + method name + descriptor<ul>
+<li>Descriptor = return type + paramter types</li>
+</ul>
+</li>
+</ul>
+<p>即，对于下面的方法foo()而言：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">C</span></span>&#123;</span><br><span class="line">	<span class="function">T <span class="title">foo</span><span class="params">(P p, Q q, R r)</span></span>&#123;</span><br><span class="line">		...</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>有如下的签名：<code>&lt;C: T foo(P,Q,R)&gt;</code>，定义缩写为：C.foo(P,Q,R)</p>
+<p>由此可以定义一个函数<code>Dispatch(c, m)</code>，模拟动态时dispatch method的过程；</p>
+<p><img src="/course/static-program-analysis/static-program-analysis-05-interprocedural-analysis/dispatch_sample0.jpg"></p>
+<p>当c所包含的非抽象方法m’和m有相同的名字和描述时，即返回对应的m’，相当于知道了对应的method。否则，递归其父类，寻找符合条件的m’。</p>
+<h5 id="Sample"><a href="#Sample" class="headerlink" title="Sample"></a>Sample</h5><p>有以下例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">A</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">foo</span><span class="params">()</span></span>&#123;</span><br><span class="line">		...</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">B</span> <span class="keyword">extends</span> <span class="title">A</span> </span>&#123;</span><br><span class="line">	</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">C</span> <span class="keyword">extends</span> <span class="title">B</span> </span>&#123;</span><br><span class="line">    <span class="comment">// overide</span></span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">foo</span><span class="params">()</span></span>&#123;</span><br><span class="line">		...</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">dispatch</span><span class="params">()</span></span>&#123;</span><br><span class="line">	A x = <span class="keyword">new</span> B();</span><br><span class="line">	x.foo();</span><br><span class="line">	</span><br><span class="line">	A y = <span class="keyword">new</span> C();</span><br><span class="line">	y.foo();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>那么对于<code>A x = new B(); x.foo();</code>，<code>Dispatch(B, A.foo())</code>对应哪一个方法呢？</p>
+<ol>
+<li>首先Dispatch会先查找B类中的foo()方法，但是B类中并没有声明任何方法；</li>
+<li>因此会到A类中寻找foo()方法，得到<code>Dispatch(B, A.foo())=A.foo()</code>；</li>
+</ol>
+<p>那么对于<code>A y = new C(); y.foo();</code>，<code>Dispatch(C, A.foo())</code>对应哪一个方法呢？</p>
+<ol>
+<li>首先Dispatch会先查找C中的foo()方法，因为C中存在了foo()的声明，并且signature一致，因此对应的方法是<code>C.foo()</code>；</li>
+</ol>
+<h3 id="1-Class-Hierarchy-Analysis-CHA"><a href="#1-Class-Hierarchy-Analysis-CHA" class="headerlink" title="1-Class Hierarchy Analysis *(CHA)"></a>1-Class Hierarchy Analysis *(CHA)</h3><ul>
+<li><p>Require the class hierarchy information(inheritance structure) of the whole program - 需要程序中类的继承关系</p>
+</li>
+<li><p>Resolve a virtual call based on the declared type of receiver variable of the call site - 需要根据声明类型resolve virtual call</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">A a = ...</span><br><span class="line">a.foo()</span><br></pre></td></tr></table></figure></li>
+<li><p>Assume the receiver variable a may point to objects of class A or all subclasses of A - 查询A类的继承结构来找目标方法</p>
+<ul>
+<li>Resolve target methods by looking up the class hierarchy of class A</li>
+</ul>
+</li>
+</ul>
+<h4 id="call-resolution-of-CHA"><a href="#call-resolution-of-CHA" class="headerlink" title="call resolution of CHA"></a>call resolution of CHA</h4><p>We define function Resolve(cs) to resolve possible target methods of a call site cs by CHA - 定义一种Resolve(cs)方法，来resolve可能被调用的目标函数。</p>
+<p><img src="/course/static-program-analysis/static-program-analysis-05-interprocedural-analysis/CHA_resolve.jpg"></p>
+<ul>
+<li><p>首先初始化变量T；</p>
+</li>
+<li><p>用变量m存放call site对应方法的签名</p>
+</li>
+<li><p>对三种调用情况进行分别处理：</p>
+<ul>
+<li><p>对于static call，将签名直接存放到T中；</p>
+<p>对于：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">C</span></span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">static</span> T <span class="title">foo</span><span class="params">(P p, Q q)</span></span>&#123;</span><br><span class="line">		...</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">C.foo(x, y);</span><br></pre></td></tr></table></figure>
+
+<p>可以得到：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cs:	C.foo(x, y)</span><br><span class="line">m:	&lt;C: T foo(P,Q)&gt;</span><br></pre></td></tr></table></figure></li>
+<li><p>对于special call</p>
+<ul>
+<li><p>对于处理Superclass instance method，有以下例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">C</span> <span class="keyword">extends</span> <span class="title">B</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">static</span> T <span class="title">foo</span><span class="params">(P p, Q q)</span></span>&#123;</span><br><span class="line">		...</span><br><span class="line">		<span class="keyword">super</span>.foo(p, q);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可以得到：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">cs:		super.foo(p, q);</span><br><span class="line">m:		&lt;B: T foo(P,Q)&gt;</span><br><span class="line">c^m:	B</span><br><span class="line">T = &#123;Dispatch(c^m, m)&#125; = &#123;Dispatch(B, m)&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里还要做Dispatch是因为不知道B中是否含有对应的方法，也许B也是集成自另一个类的对应方法foo()；</p>
+</li>
+<li><p>对于处理Private instance method或是Constructor，有以下例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">C</span> <span class="keyword">extends</span> <span class="title">B</span> </span>&#123;</span><br><span class="line">	<span class="function">T <span class="title">foo</span><span class="params">(P p, Q q)</span></span>&#123;</span><br><span class="line">		...</span><br><span class="line">		<span class="keyword">this</span>.bar();</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">private</span> T <span class="title">bar</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br><span class="line">C c = <span class="keyword">new</span> C();</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><p>对于virtual call</p>
+<ul>
+<li><p>对于以下例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">C</span> </span>&#123;</span><br><span class="line">	<span class="function">T <span class="title">foo</span><span class="params">(P p, Q q)</span></span>&#123;</span><br><span class="line">		...</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line">C c = ...</span><br><span class="line">c.foo(x, y)</span><br></pre></td></tr></table></figure>
+
+<p>可以得到：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cs:		c.foo(x, y)</span><br><span class="line">m:		&lt;C: T foo(P, Q)&gt;</span><br><span class="line">c:		C</span><br></pre></td></tr></table></figure>
+
+<p>对应算法的处理，对当前类c以及每一个c的子类c’进行dispatch，保存结果到T；</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="Sample-1"><a href="#Sample-1" class="headerlink" title="Sample"></a>Sample</h4><p>存在以下程序：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">A</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">foo</span><span class="params">()</span> </span>&#123;...&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">B</span> <span class="keyword">extends</span> <span class="title">A</span> </span>&#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">C</span> <span class="keyword">extends</span> <span class="title">B</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">foo</span><span class="params">()</span> </span>&#123;...&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">D</span> <span class="keyword">extends</span> <span class="title">B</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">foo</span><span class="params">()</span> </span>&#123;...&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">resolve</span><span class="params">()</span></span>&#123;</span><br><span class="line">	C c = ...;</span><br><span class="line">	c.foo();</span><br><span class="line">	</span><br><span class="line">	A a = ...;</span><br><span class="line">	a.foo();</span><br><span class="line">	</span><br><span class="line">	B b = ...;</span><br><span class="line">	b.foo();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>其继承关系如图：</p>
+<p><img src="/course/static-program-analysis/static-program-analysis-05-interprocedural-analysis/CHA_sample.jpg"></p>
+<p>有：</p>
+<ol>
+<li>Resolve(c.foo()) = {C.foo()} =&gt; 对当前类及其子类进行Dispatch =&gt; 没有子类，当前类包含target method =&gt; C.foo()</li>
+<li>Resolve(a.foo()) = {A.foo(), C.foo(), D.foo()} =&gt; 对当前类及其子类进行Dispatch =&gt; 当前类包含foo() =&gt; 子类C、D包含foo()</li>
+<li>Resolve(b.foo()) = {A.foo(), C.foo(), D.foo()} =&gt; 对当前类及其子类进行Dispatch =&gt; 当前类未包含，Dispatch到A =&gt; A包含foo() =&gt; 子类C、D包含foo()</li>
+</ol>
+<p>若最后对b的声明中，<code>B b = new B(); b.foo();</code>。那么有：</p>
+<p>Resolve(b.foo()) = {A.foo(), C.foo(), D.foo()}</p>
+<p>根据算法，CHA中对于virtual call的处理，c只受声明类型的影响，这里虽然<code>new B()</code>，但本质类型还是<code>B</code>；</p>
+<h4 id="Features-of-CHA"><a href="#Features-of-CHA" class="headerlink" title="Features of CHA"></a>Features of CHA</h4><ul>
+<li>Fast<ul>
+<li>只考虑声明类型以及继承关系</li>
+<li>忽略数据流、控制流信息</li>
+</ul>
+</li>
+<li>imprecise<ul>
+<li>简单的函数关系处理</li>
+</ul>
+</li>
+</ul>
+<p>CHA在IDE中有所应用；</p>
+<h4 id="Call-Graph-Construction"><a href="#Call-Graph-Construction" class="headerlink" title="Call Graph Construction"></a>Call Graph Construction</h4><p>via CHA</p>
+<ul>
+<li>start from graph for whole program via CHA</li>
+<li>For each reachable method m, resolve target methods for each call site cs in m via CHA</li>
+<li>Repeat until no new method is discovered</li>
+</ul>
+<h5 id="Algorithm"><a href="#Algorithm" class="headerlink" title="Algorithm"></a>Algorithm</h5><p><img src="/course/static-program-analysis/static-program-analysis-05-interprocedural-analysis/build_call_graph.jpg"></p>
+<p>构建调用图的过程如上；</p>
+<ul>
+<li><p>首先进行初始化，三个数据结构：</p>
+<p><code>WL</code>即为worklist，其中存储了需要进行处理的方法。初始化为入口方法$m^entry$；</p>
+<p><code>CG</code>为调用边的集合；</p>
+<p><code>RM</code>为reachable method，表示算法目前分析到的方法；</p>
+</li>
+<li><p>随机是一个while循环，不断从worklist中取出方法并处理，过程中也许会加入新的方法；在循环内部，从worklist中取出一个方法，判断是否分析到，如果分析过了，这次循环就跳过，如果没有分析过，则为新的方法，需要进行处理；</p>
+</li>
+<li><p>对新方法的处理，先加入到<code>RM</code>中，将该方法中所有的call site，对每一个call site进行resolve，得到的目标方法结果放在T中；</p>
+</li>
+<li><p>对T中的每一个目标方法，将call site到目标方法的边加入到CG中，再将发现的目标方法加入到worklist中，其中有可能存在未分析过的方法；</p>
+</li>
+<li><p>只要worklist非空，循环会一直进行；</p>
+</li>
+<li><p>当worklist为空，则返回了调用边的集合；</p>
+</li>
+</ul>
+<h5 id="Sample-2"><a href="#Sample-2" class="headerlink" title="Sample"></a>Sample</h5><p>存在以下例子；</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">A</span></span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/* ----------</span></span><br><span class="line"><span class="comment">    	A.main()	-- Method</span></span><br><span class="line"><span class="comment">    	A.foo()		-- Call site</span></span><br><span class="line"><span class="comment">   	------------- */</span></span><br><span class="line">	<span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">		A.foo();</span><br><span class="line">	&#125;</span><br><span class="line">    </span><br><span class="line">	<span class="comment">/* ----------</span></span><br><span class="line"><span class="comment">    	A.foo()		-- Method</span></span><br><span class="line"><span class="comment">    	a.bar()		-- Call site</span></span><br><span class="line"><span class="comment">   	------------- */</span></span><br><span class="line">	<span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">foo</span><span class="params">()</span></span>&#123;</span><br><span class="line">		A a = <span class="keyword">new</span> A();</span><br><span class="line">		a.bar();</span><br><span class="line">	&#125;</span><br><span class="line">    </span><br><span class="line">	<span class="comment">/* ----------</span></span><br><span class="line"><span class="comment">    	A.bar()		-- Method</span></span><br><span class="line"><span class="comment">    	c.foo()		-- Call site</span></span><br><span class="line"><span class="comment">   	------------- */</span></span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">bar</span><span class="params">()</span></span>&#123;</span><br><span class="line">		C c = <span class="keyword">new</span> C();</span><br><span class="line">		c.bar();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">B</span> <span class="keyword">extends</span> <span class="title">A</span> </span>&#123;</span><br><span class="line">    <span class="comment">// B.bar()		-- Method</span></span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">bar</span><span class="params">()</span> </span>&#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">C</span> <span class="keyword">extends</span> <span class="title">A</span> </span>&#123;</span><br><span class="line">    <span class="comment">/* ----------</span></span><br><span class="line"><span class="comment">    	C.bar()		-- Method</span></span><br><span class="line"><span class="comment">    	A.foo()		-- Call site</span></span><br><span class="line"><span class="comment">   	------------- */</span></span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">bar</span><span class="params">()</span></span>&#123;</span><br><span class="line">		<span class="keyword">if</span> (...)</span><br><span class="line">			A.foo();</span><br><span class="line">	&#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// C.m()		-- Method</span></span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">m</span><span class="params">()</span> </span>&#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>对于上述代码，进行CHA算法，则有：</p>
+<ul>
+<li><p>初始化，将入口方法<code>A.main()</code>存放到worklist中</p>
+<table>
+<thead>
+<tr>
+<th align="center">Worklist</th>
+<th align="center">Call Graph</th>
+<th align="center">Reachable Method</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">[A.main()]</td>
+<td align="center">{}</td>
+<td align="center">{}</td>
+</tr>
+</tbody></table>
+</li>
+<li><p>判断该方法<code>A.main()</code>是否在<code>Reachable Method</code>中，如果不存在，则将方法<code>A.main()</code>从Worklist中取出，并将该方法放入<code>Reachable Method</code>中；</p>
+<table>
+<thead>
+<tr>
+<th align="center">Worklist</th>
+<th align="center">Call Graph</th>
+<th align="center">Reachable Method</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">[]</td>
+<td align="center">{}</td>
+<td align="center">{A.main()}</td>
+</tr>
+</tbody></table>
+</li>
+<li><p>解出该方法中的每一个cs，当前cs只有一个，为<code>Resolve(A.foo())</code>，因为A.foo()为静态方法<code>static void foo()</code>，因此得到target method；</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Resolve(A.foo())=&#123;A.foo()&#125;</span><br><span class="line">T = &#123;A.foo()&#125;</span><br></pre></td></tr></table></figure></li>
+<li><p>对于T中的每一个<code>target method</code>，添加<code>cs</code>到<code>target method</code>的边到<code>Call Graph</code>中，并将<code>target method</code>，即A.foo()添加到<code>Worklist</code>中；</p>
+<table>
+<thead>
+<tr>
+<th align="center">Worklist</th>
+<th align="center">Call Graph</th>
+<th align="center">Reachable Method</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">[A.foo()]</td>
+<td align="center"><img src="/course/static-program-analysis/static-program-analysis-05-interprocedural-analysis/call_graph_construction_sample_0.jpg" width="200px" height="200px"></td>
+<td align="center">{A.main()}</td>
+</tr>
+</tbody></table>
+</li>
+<li><p>此时判断Worklist是否为空，不为空则继续resolve；</p>
+<table>
+<thead>
+<tr>
+<th align="center">Worklist</th>
+<th align="center">Call Graph</th>
+<th align="center">Reachable Method</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">[A.foo()]</td>
+<td align="center"><img src="/course/static-program-analysis/static-program-analysis-05-interprocedural-analysis/call_graph_construction_sample_0.jpg" width="200px" height="200px"></td>
+<td align="center">{A.main()}</td>
+</tr>
+</tbody></table>
+</li>
+<li><p>判断该方法<code>A.foo()</code>是否在<code>Reachable Method</code>中，如果不存在，则将方法<code>A.foo()</code>从Worklist中取出，并将该方法放入<code>Reachable Method</code>中；</p>
+<table>
+<thead>
+<tr>
+<th align="center">Worklist</th>
+<th align="center">Call Graph</th>
+<th align="center">Reachable Method</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">[]</td>
+<td align="center"><img src="/course/static-program-analysis/static-program-analysis-05-interprocedural-analysis/call_graph_construction_sample_0.jpg" width="200px" height="200px"></td>
+<td align="center">{A.main(), A.foo()}</td>
+</tr>
+</tbody></table>
+</li>
+<li><p>解出该方法中的每一个cs，当前cs只有一个，为<code>Resolve(a.bar())</code>。因为<code>A a = new A()</code>，相当于调用了类A的构造函数，resolve后根据dispatch的规则，将得到其子类的同签名target method，得到的target method放到T中；</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Resolve(a.bar())=&#123;A.bar(), B.bar(), C.bar()&#125;</span><br><span class="line">T = &#123;A.bar(), B.bar(), C.bar()&#125;</span><br></pre></td></tr></table></figure></li>
+<li><p>对于T中的每一个<code>target method</code>，添加<code>cs</code>到<code>target method</code>的边到<code>Call Graph</code>中，并将<code>target method</code>添加到<code>Worklist</code>中；</p>
+<table>
+<thead>
+<tr>
+<th align="center">Worklist</th>
+<th align="center">Call Graph</th>
+<th align="center">Reachable Method</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">[A.bar(), B.bar(), C.bar()]</td>
+<td align="center"><img src="/course/static-program-analysis/static-program-analysis-05-interprocedural-analysis/call_graph_construction_sample_1.jpg" width="300px" height="400px"></td>
+<td align="center">{A.main(), A.foo()}</td>
+</tr>
+</tbody></table>
+</li>
+<li><p>此时判断Worklist是否为空，不为空则继续resolve；</p>
+</li>
+<li><p>取出<code>A.bar()</code>，判断<code>RM</code>中是否存在，不存在则枚举其所有的cs，得到<code>c.bar()</code>，对其进行Resolve(c.bar())，得到<code>C.bar()</code>；</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Resolve(c.bar())=&#123;C.bar()&#125;</span><br><span class="line">T = &#123;C.bar()&#125;</span><br></pre></td></tr></table></figure></li>
+<li><p>对于T中的每一个<code>target method</code>，添加<code>cs</code>到<code>target method</code>的边到<code>Call Graph</code>中，并将<code>target method</code>添加到<code>Worklist</code>中；</p>
+<table>
+<thead>
+<tr>
+<th align="center">Worklist</th>
+<th align="center">Call Graph</th>
+<th align="center">Reachable Method</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">[B.bar(), C.bar()]</td>
+<td align="center"><img src="/course/static-program-analysis/static-program-analysis-05-interprocedural-analysis/call_graph_construction_sample_2.jpg" width="300px" height="400px"></td>
+<td align="center">{A.main(), A.foo(), A.bar()}</td>
+</tr>
+</tbody></table>
+</li>
+<li><p>同理，对<code>B.bar()</code>中的cs进行resolve，由于<code>B.bar()</code>为空函数，则得到的<code>target Method</code>也为空，因此没有指向新的Method；</p>
+<table>
+<thead>
+<tr>
+<th align="center">Worklist</th>
+<th align="center">Call Graph</th>
+<th align="center">Reachable Method</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">[C.bar()]</td>
+<td align="center"><img src="/course/static-program-analysis/static-program-analysis-05-interprocedural-analysis/call_graph_construction_sample_2.jpg" width="300px" height="400px"></td>
+<td align="center">{A.main(), A.foo(), A.bar(), B.bar()}</td>
+</tr>
+</tbody></table>
+</li>
+<li><p>同理，对<code>C.bar()</code>中的cs进行resolve，<code>resolve(A.foo())=&#123;A.foo()&#125;</code>，得到：</p>
+<table>
+<thead>
+<tr>
+<th align="center">Worklist</th>
+<th align="center">Call Graph</th>
+<th align="center">Reachable Method</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">[]</td>
+<td align="center"><img src="/course/static-program-analysis/static-program-analysis-05-interprocedural-analysis/call_graph_construction_sample_3.jpg" width="300px" height="500px"></td>
+<td align="center">{A.main(), A.foo(), A.bar(), B.bar(), C.bar()}</td>
+</tr>
+</tbody></table>
+</li>
+<li><p>最后worklist已经为空，算法结束；</p>
+</li>
+</ul>
+<h3 id="Interprocedural-Control-Flow-Graph"><a href="#Interprocedural-Control-Flow-Graph" class="headerlink" title="Interprocedural Control-Flow Graph"></a>Interprocedural Control-Flow Graph</h3><p>过程间控制流图</p>
+<ul>
+<li><p>CFG represents structure of an individual method - CFG表示单个方法的结构</p>
+</li>
+<li><p>ICFG represents structure of the whole program - ICFG表示整个程序的结构</p>
+<ul>
+<li>with ICFG, we can perform interprocedural analysis - 因此可以做过程间分析</li>
+</ul>
+</li>
+<li><p>An ICFG of a program consists of CFGs of the methods in the program, plus two kinds of additional edges:</p>
+<ul>
+<li><p>Call edges: from call sites to the entry nodes of their callees - 调用点到目标方法的</p>
+</li>
+<li><p>Return edges: from return statements of the callees to the statements following their call sites(i.e., return sites) - 目标方法的return语句到调用方法cs</p>
+<p><img src="/course/static-program-analysis/static-program-analysis-05-interprocedural-analysis/ICFG_intro.jpg"></p>
+</li>
+</ul>
+<p>例如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// call site 的 return statement 会指向 return site</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">foo</span><span class="params">()</span></span>&#123;</span><br><span class="line">	bar(...);		<span class="comment">// call site</span></span><br><span class="line">	<span class="keyword">int</span> n = <span class="number">3</span>;		<span class="comment">// return site</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h4 id="Sample-3"><a href="#Sample-3" class="headerlink" title="Sample"></a>Sample</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">	<span class="keyword">int</span> a, b, c;</span><br><span class="line">	a = <span class="number">6</span>;</span><br><span class="line">	b = addOne(a);</span><br><span class="line">	c = b - <span class="number">3</span>;</span><br><span class="line">	b = ten();</span><br><span class="line">	c = a * b;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">addOne</span><span class="params">(<span class="keyword">int</span> x)</span></span>&#123;</span><br><span class="line">	<span class="keyword">int</span> y = x + <span class="number">1</span>;</span><br><span class="line">	<span class="keyword">return</span> y;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">ten</span><span class="params">()</span></span>&#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="number">10</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ICFG = CFGs + call &amp; return edges</span><br></pre></td></tr></table></figure>
+
+<p><img src="/course/static-program-analysis/static-program-analysis-05-interprocedural-analysis/ICFG_sample_0.jpg"></p>
+<p>上图中，蓝色箭头为<code>Call edges</code>，红色为<code>return edges</code>，黑色为<code>CFG edges</code>；</p>
+<h3 id="Interprocedural-Data-Flow-Analysis"><a href="#Interprocedural-Data-Flow-Analysis" class="headerlink" title="Interprocedural Data-Flow Analysis"></a>Interprocedural Data-Flow Analysis</h3><p>利用上面的ICFG即可进行过程间数据流分析；</p>
+<p>Analyzing the whole program with method calls based on interprocedural control-flow graph (ICFG)</p>
+<table>
+<thead>
+<tr>
+<th align="center"></th>
+<th align="center">Intraprocedural</th>
+<th align="center">Interprocedural</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">Program representation</td>
+<td align="center">CFG</td>
+<td align="center">ICFG = CFG + Call edges + Return Edges</td>
+</tr>
+<tr>
+<td align="center">Transfer functions</td>
+<td align="center">Node transfer - 通过结点转换</td>
+<td align="center">Node transfer + edge transfer - 通过结点和边转换</td>
+</tr>
+</tbody></table>
+<p>关于 Edge transfer</p>
+<ul>
+<li>Call edge transfer: transfer data flow from call node to the entry node of callee(along call edges)</li>
+<li>Return edge transfer: transfer data flow from return node of the callee to the return site(along return edges)</li>
+</ul>
+<h4 id="Sample-Interprocedural-Constant-Propagation"><a href="#Sample-Interprocedural-Constant-Propagation" class="headerlink" title="Sample-Interprocedural Constant Propagation"></a>Sample-Interprocedural Constant Propagation</h4><p>以过程间常量传播为例子；</p>
+<ul>
+<li>Call edge transfer: pass argument values - 传参</li>
+<li>Return edge transfer: pass return values - 传返回值</li>
+<li>Node transfer: same as intra-procedural constant propagation, plus that - 与过程内分析时一致，但多了处理方法调用<ul>
+<li>For each call node, kill data-flow value for the LHS variable. Its value will flow to return site along the return edges.</li>
+</ul>
+</li>
+</ul>
+<p>依旧使用上面的程序作为例子；</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">	<span class="keyword">int</span> a, b, c;</span><br><span class="line">	a = <span class="number">6</span>;</span><br><span class="line">	b = addOne(a);</span><br><span class="line">	c = b - <span class="number">3</span>;</span><br><span class="line">	b = ten();</span><br><span class="line">	c = a * b;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">addOne</span><span class="params">(<span class="keyword">int</span> x)</span></span>&#123;</span><br><span class="line">	<span class="keyword">int</span> y = x + <span class="number">1</span>;</span><br><span class="line">	<span class="keyword">return</span> y;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">ten</span><span class="params">()</span></span>&#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="number">10</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可以得到如下流程图：</p>
+<p><img src="/course/static-program-analysis/static-program-analysis-05-interprocedural-analysis/Interprocedural_constant_propagation_sample_0.jpg"></p>
+<p>在过程间分析后，得到的结果为：</p>
+<p><img src="/course/static-program-analysis/static-program-analysis-05-interprocedural-analysis/Interprocedural_constant_propagation_sample_1.jpg"></p>
+<p>最后得到的结果是：a = 6, b = 10, c = 60</p>
+<p>而如果是过程内分析，由于缺少 <code>call edges</code> 和 <code>return edges</code> ，只能够保守假设，得到的结果是：a = 6, b = NAC, c = NAC</p>
+<p>可见，在使用过程间分析后，在Constant Propagation中能够得到更好的精度；</p>
+<h2 id="Key-point"><a href="#Key-point" class="headerlink" title="Key point"></a>Key point</h2><ul>
+<li>How to build call graph via CHA</li>
+<li>Concept of interprocedural control-flow graph</li>
+<li>Concept of interprocedural data-flow analysis</li>
+<li>Interprocedural constant propagation</li>
+</ul>
+
+        
+        
+          <blockquote id="copyright">
+              <p>原文链接: <a href="https://www.jk404.cn/page/2/index.html">https://www.jk404.cn/page/2/index.html</a></p>
+              <p>版权声明: 转载请注明出处.</p>
+          </blockquote>
+        
+      
+    </div>
+    <footer class="article-footer">
+      
+        <div class="article-tag-wrap">
+          
+
+          
+          
+
+
+        </div>
+      
+      
+      
+    </footer>
+  </div>
+</article>
+
+
   <article id="post-ctf-susctf2022-happytree/未命名绘图.drawio" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-inner">
     
@@ -1543,1461 +2067,6 @@
 </article>
 
 
-  <article id="post-static-program-analysis-03-data-flow-analysis" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/course/static-program-analysis/static-program-analysis-03-data-flow-analysis/">static_program_analysis_03-data_flow_analysis</a>
-    </h1>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      
-      <span class="article-date">
-  <i class="fa fa-date"></i>
-  <time class="dt-published" datetime="2022-01-11T14:39:08.000Z" itemprop="datePublished">2022年01月11日</time>
-</span>
-      
-  <div class="article-category">
-    <i class="fa fa-classify"></i>
-    <a class="article-category-link" href="/categories/course/">course</a> > <a class="article-category-link" href="/categories/course/static-program-analysis/">static_program_analysis</a>
-  </div>
-
-      
-      
-<a href="/course/static-program-analysis/static-program-analysis-03-data-flow-analysis/#comments" class="article-comment-link">
-  
-  <i class="fa fa-commt"></i>
-  留言
-</a>
-
-
-    </div>
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <h1 id="Data-Flow-Analysis"><a href="#Data-Flow-Analysis" class="headerlink" title="Data Flow Analysis"></a>Data Flow Analysis</h1><h2 id="Overview-of-Data-Flow-Analysis"><a href="#Overview-of-Data-Flow-Analysis" class="headerlink" title="Overview of Data Flow Analysis"></a>Overview of Data Flow Analysis</h2><h3 id="What-is-Data-Flow-Analysis"><a href="#What-is-Data-Flow-Analysis" class="headerlink" title="What is Data Flow Analysis"></a>What is Data Flow Analysis</h3><p>May Analysis: Abstraction, Over-approximation is for most static analysis, outpus information that may be true</p>
-<p>Must Analysis: Abstraction, Under-approximation is for specific static analysis, outputs information that mast be true</p>
-<p>Safe-approximaiton</p>
-<ul>
-<li>may analysis - over-approximation</li>
-<li>must nanlysis - under-approximaiton</li>
-</ul>
-<p>How <code>application-specific Data</code> Flows through the <code>Nodes(BBs/statements)</code> and <code>Edges(control flows)</code> of <code>CFG</code>?</p>
-<p>=&gt; different <code>data-flow analysis applications</code> have</p>
-<p>=&gt; different <code>data abstraction</code> and</p>
-<p>=&gt; different <code>flow safe-approximation strateges</code>, i.e.</p>
-<p>=&gt; different <code>transfer functions</code> and <code>control-flow handlings</code></p>
-<h2 id="Preliminaries-of-Data-Flow-Analysis"><a href="#Preliminaries-of-Data-Flow-Analysis" class="headerlink" title="Preliminaries of Data Flow Analysis"></a>Preliminaries of Data Flow Analysis</h2><h3 id="Input-amp-Output-States"><a href="#Input-amp-Output-States" class="headerlink" title="Input &amp; Output States"></a>Input &amp; Output States</h3><ul>
-<li>Each execution of anIR statement transforms an ionput state to a new output state</li>
-<li>The input(output) state is associated with the program point before(after) the statement</li>
-</ul>
-<p>通俗来讲，对于一个Statement而言，存在输入和输出的状态，使用<code>IN[..]</code>来代表输入状态，<code>OUT[..]</code>来代表输出状态；</p>
-<p><img src="/course/static-program-analysis/static-program-analysis-03-data-flow-analysis/Input_Output.jpg"></p>
-<p>当两个Statement相邻时，上一Statement的Output就是下一个Statement的Input，当两个Statement合并到一个Statement时，需要对两个Statement的Output进行Meet操作，如下：</p>
-<p><code>OUT[s1]</code> ^ <code>OUT[s3]</code> = <code>IN[s2]</code></p>
-<p><img src="/course/static-program-analysis/static-program-analysis-03-data-flow-analysis/meet.jpg"></p>
-<p>In each data-flow analysis application, we associate with every program point a data-flow value that represents an abstraction of the set of all possible program states taht can be observed for that point.</p>
-<p>例如：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">x = 10;</span><br><span class="line">	---- x = [+] y = [⊥]</span><br><span class="line">y = -1;</span><br><span class="line">	---- x = [+] y = [-]</span><br><span class="line">x = y;</span><br><span class="line">	---- x = [-] y = [-]</span><br><span class="line">x = x / y</span><br><span class="line">	---- x = [+] y = [-]</span><br></pre></td></tr></table></figure>
-
-<h3 id="Nations-for-Transfer-Function’s-Constraints"><a href="#Nations-for-Transfer-Function’s-Constraints" class="headerlink" title="Nations for Transfer Function’s Constraints"></a>Nations for Transfer Function’s Constraints</h3><ul>
-<li><p>Foward Analysis</p>
-<p><img src="/course/static-program-analysis/static-program-analysis-03-data-flow-analysis/forward_analysis.jpg"></p>
-<div align="center">使用下面的表示形式来表达上图的Output和input关系</div>
-
-<p>$$<br>OUT[s] = f_s(IN[s])<br>$$</p>
-</li>
-<li></li>
-<li><p>Backward Analysis</p>
-<p><img src="/course/static-program-analysis/static-program-analysis-03-data-flow-analysis/backward_analysis.jpg"></p>
-<div align="center">使用下面的表示形式来表达上图的逆向的Output和input关系</div>
-
-<p>$$<br>IN[s] = f_s(OUT[s])<br>$$</p>
-</li>
-</ul>
-<h3 id="Notations-for-Control-Flow’s-Constraints"><a href="#Notations-for-Control-Flow’s-Constraints" class="headerlink" title="Notations for Control Flow’s Constraints"></a>Notations for Control Flow’s Constraints</h3><ul>
-<li><p>Control flow within a BB</p>
-<p><img src="/course/static-program-analysis/static-program-analysis-03-data-flow-analysis/withinBB.jpg"><br>$$<br>IN[s_{i+1}] = OUT[s_i], for\space all\space i = 1,\space 2,\space …,\space n-1<br>$$<br>这个表达式表明，在一个Base Block中，每个statement的输入是它上一个statement的输出。</p>
-</li>
-<li><p>Control flow among BBs</p>
-<center>
-    <img src="/course/static-program-analysis/static-program-analysis-03-data-flow-analysis/amongBBs1.jpg">
-    <img src="/course/static-program-analysis/static-program-analysis-03-data-flow-analysis/amongBBs2.jpg">
-</center>
-
-<p>$$<br>IN[B] = IN[s_1]<br>\<br>OUT[B] = OUT[s_n]<br>\<br>\<br>OUT[B] = f_B(IN[B]), \space f_B = f_{s_n} · … · f_{s_2} · f_{s_1}<br>\<br>IN[B] = ∧_{P \space a\space predecessor\space of\space B}\space OUT[P]<br>\<br>\<br>IN[B] = f_B(OUT[B]), f_B = f_{s_1} · … · f_{s_{n-1}} · f_{s_n}<br>\<br>OUT[B] = ∧_{S \space a\space successor\space of\space B}\space IN[S]<br>$$</p>
-<p>在多个BB之间，存在：</p>
-<ul>
-<li>当前BB的输入为第一个statement的输入</li>
-<li>当前BB的输出为该BB中最后一个statment的输出，即第n个statement的输出</li>
-<li>当P1和P2的OUT为B的IN时，可以用上述的$IN[B] = ∧_{P \space a\space predecessor\space of\space B}\space OUT[P]$表示</li>
-<li>当反向时也有类似的表示</li>
-</ul>
-</li>
-</ul>
-<h2 id="Data-Flow-Analysis-Applications"><a href="#Data-Flow-Analysis-Applications" class="headerlink" title="Data Flow Analysis Applications"></a>Data Flow Analysis Applications</h2><h3 id="Issues-Not-Covered"><a href="#Issues-Not-Covered" class="headerlink" title="Issues Not Covered"></a>Issues Not Covered</h3><p>下面的内容不包括：</p>
-<ul>
-<li>Method Calls - 方法调用<ul>
-<li>Intra-procedural CFG</li>
-<li>Will be introduced in lecture: Inter-procedural Analysis</li>
-</ul>
-</li>
-<li>Aliases - 别名，不同变量名指向相同的地址<ul>
-<li>Variables have no aliases</li>
-<li>Will be introduced imn lecture: Pointer Analysis</li>
-</ul>
-</li>
-</ul>
-<h3 id="Reaching-Definitions-Analysis"><a href="#Reaching-Definitions-Analysis" class="headerlink" title="Reaching Definitions Analysis"></a>Reaching Definitions Analysis</h3><h4 id="Preliminary"><a href="#Preliminary" class="headerlink" title="Preliminary"></a>Preliminary</h4><blockquote>
-<p>一个编译优化 - may analysis</p>
-<p>A definition d at program point p reaches a point q if there is a path from p to q such that d is not “killed” along that path.</p>
-</blockquote>
-<ul>
-<li>A definition of a variable v is a statement that assigns a value to v - 定义就是对v的声明赋值</li>
-<li>Translated as: definition of varibale v at program ponit p reaches point q if there is a path from p to q such that no new definition of v appears on that path - 在p点定义v的位置为d，p-&gt;q的路径中，不能对v有新的定义</li>
-<li>Reaching definitions can be used to detect possible undefined variables. e.g., introduce a dummy definition for each variablev at the entry of CFG, and if the dummy definition of v reaches a point p where v is used, then v may be used before definition (as undefined reaches v) - 一个变量在定义后，CFG前有一个入口结点，给每一个变量引入一个label，变量在程序执行之前是undefined的，如果这个undefined的值到v被使用的地方，则会报未初始化的错误。显然这是一个may analysis，因为程序有可能会执行到这个路径。</li>
-</ul>
-<h4 id="Understanding"><a href="#Understanding" class="headerlink" title="Understanding"></a>Understanding</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">D: v = x op y</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li><p>Data Flow Values/Facts - Abstractoin - 抽象变量的定义</p>
-<ul>
-<li><p>The definitoins of all the variables in a program</p>
-</li>
-<li><p>Can be represented by bit vectors</p>
-<p>e.g., D1, D2, D3, D4, …, D100 - 一百个定义抽象为bit</p>
-</li>
-</ul>
-</li>
-<li><p>Transfer Function - Safe-approximation<br>$$<br>OUT[B] = gen_B \space ∪ \space (IN[B] - kill_B)<br>$$</p>
-<img src="/course/static-program-analysis/static-program-analysis-03-data-flow-analysis/understanding_reaching.jpg" height="500" width="600">
-
-<p>可以看到d1,d2,…,d7都是定义。</p>
-<ul>
-<li>对于B1：<ul>
-<li>其$gen_{B_1}$为定义i,j,a三个变量的标志d1,d2,d3；</li>
-<li>其$kill_{B_1}$为其他定义i,j,a的其他地方，所以标志为d4,d5,d6,d7；</li>
-</ul>
-</li>
-<li>以此类推，可以得到B2的$gen_{B_2}$和$kill_{B_2}$等；</li>
-</ul>
-</li>
-<li><p>Control Flow<br>$$<br>IN[B]=∪_{P \space a\space predecessor\space of\space B}OUT[P]<br>$$<br>表示了所有其他前驱所汇聚到IN[B]，形成may analysis的一个过程。</p>
-</li>
-</ul>
-<h4 id="Algorithm"><a href="#Algorithm" class="headerlink" title="Algorithm"></a>Algorithm</h4><ul>
-<li><p>Input: CFG($kill_B$ and $gen_B$ computed for each basic block B)</p>
-</li>
-<li><p>Output: IN[B] and OUT[B] for each basic block B</p>
-</li>
-<li><p>Method:</p>
-<img src="/course/static-program-analysis/static-program-analysis-03-data-flow-analysis/algorithm_0.jpg" height="300" width="500">
-
-<ul>
-<li>第一步，让entry结点的Output为空；</li>
-<li>然后遍历每一个basic block，让每一个bb的Output为空（这里排除了entry，是因为这是一个算法模板，有其他的算法对entry有其他操作，所以初始化时应当分开来进行）；</li>
-<li>只要有任何一个bb的Output发生了变化，则遍历每一个bb，使得bb的Input为Control flow的约束，Output为Transfer function的约束。</li>
-</ul>
-</li>
-</ul>
-<h4 id="Sample"><a href="#Sample" class="headerlink" title="Sample"></a>Sample</h4><p>这里举例说明，存在如下的CFG。</p>
-<img src="/course/static-program-analysis/static-program-analysis-03-data-flow-analysis/sample_0.jpg" height="400/">
-
-<p>这里将对不同变量的定义用颜色区分，可以看到，每一个statement都对应一个D的定义操作。</p>
-<p>这样的CFG可以有下面的代码转化而来：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">D1</span><br><span class="line">D2</span><br><span class="line">do&#123;</span><br><span class="line">	D3</span><br><span class="line">	D4</span><br><span class="line">	if(...)&#123;</span><br><span class="line">		D5</span><br><span class="line">		D6</span><br><span class="line">	&#125;</span><br><span class="line">	else&#123;</span><br><span class="line">		D7</span><br><span class="line">		break</span><br><span class="line">	&#125;</span><br><span class="line">&#125; while(...)</span><br><span class="line">D8</span><br></pre></td></tr></table></figure>
-
-<p>这里将八个Statement，即八个定义操作抽象为bit。0：表示到该点不能reach，1：到该点可以reach；</p>
-<h5 id="1st-traverse"><a href="#1st-traverse" class="headerlink" title="1st-traverse"></a>1st-traverse</h5><p>根据算法，初始化后，所有的Output为空。</p>
-<ul>
-<li><p>进入Entry，没有变量的定义，都不能reach</p>
-<table>
-<thead>
-<tr>
-<th>Step</th>
-<th>Statement</th>
-<th align="center">D1</th>
-<th align="center">D2</th>
-<th align="center">D3</th>
-<th align="center">D4</th>
-<th align="center">D5</th>
-<th align="center">D6</th>
-<th align="center">D7</th>
-<th align="center">D8</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>1-Entry</td>
-<td>\</td>
-<td align="center">0</td>
-<td align="center">0</td>
-<td align="center">0</td>
-<td align="center">0</td>
-<td align="center">0</td>
-<td align="center">0</td>
-<td align="center">0</td>
-<td align="center">0</td>
-</tr>
-</tbody></table>
-</li>
-<li><p>进入第一个Basic Block，B1有两个statement，分别是D1和D2，通过$OUT[B] = gen_B \space ∪ \space (IN[B] - kill_B)$可以得到：</p>
-<ul>
-<li>$gen_{B_1}$ = {D1,D2}，$kill_{B_1}$ = {D4,D5,D7}</li>
-</ul>
-<p>因此，在执行了B1的statement后，有：</p>
-<table>
-<thead>
-<tr>
-<th>Step</th>
-<th>Statement</th>
-<th align="center">D1</th>
-<th align="center">D2</th>
-<th align="center">D3</th>
-<th align="center">D4</th>
-<th align="center">D5</th>
-<th align="center">D6</th>
-<th align="center">D7</th>
-<th align="center">D8</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>2-B1</td>
-<td>D1: x = p + 1<br>D2: y = q + 2</td>
-<td align="center">1</td>
-<td align="center">1</td>
-<td align="center">0</td>
-<td align="center">0</td>
-<td align="center">0</td>
-<td align="center">0</td>
-<td align="center">0</td>
-<td align="center">0</td>
-</tr>
-</tbody></table>
-</li>
-<li><p>进入B2后，根据$IN[B]=∪_{P \space a\space predecessor\space of\space B}OUT[P]$，找到B2的前驱，一共有两个，分别是B1和B4。B1的<code>OUT[B1]=11000000</code>，B4的<code>OUT[B4]=00000000</code>，两者做或操作，作为<code>IN[B2]</code>，因此<code>IN[B2]=11000000</code>；</p>
-<p>在B2的statement中，存在：1. 引入新变量m；2.对y变量的再次定义，因此有：</p>
-<ul>
-<li>$gen_{B_2}$ = {D3,D4}，$kill_{B_2}$ = {D2}</li>
-</ul>
-<p>因此将进行<code>kill</code>，而D2目前为<code>1</code>，kill掉后为<code>0</code>；</p>
-<p>因此B2的<code>OUT[B2]=10110000</code>，这同时也是B3、B4的<code>IN</code>；</p>
-<table>
-<thead>
-<tr>
-<th>Step</th>
-<th>Statement</th>
-<th align="center">D1</th>
-<th align="center">D2</th>
-<th align="center">D3</th>
-<th align="center">D4</th>
-<th align="center">D5</th>
-<th align="center">D6</th>
-<th align="center">D7</th>
-<th align="center">D8</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>3-B2</td>
-<td>D3: m = k<br>D4: y = q - 1</td>
-<td align="center">1</td>
-<td align="center">0</td>
-<td align="center">1</td>
-<td align="center">1</td>
-<td align="center">0</td>
-<td align="center">0</td>
-<td align="center">0</td>
-<td align="center">0</td>
-</tr>
-</tbody></table>
-</li>
-<li><p>由于B2有两个分支，这里按顺序先考虑B3；</p>
-<p>B3对变量x进行了重定义，有：</p>
-<ul>
-<li>$gen_{B_3}$ = {D7}，$kill_{B_3}$ = {D1,D5}</li>
-</ul>
-<p>因此对于<code>IN[B3]=10110000</code>，将有<code>OUT[B5]=00110010</code></p>
-<table>
-<thead>
-<tr>
-<th>Step</th>
-<th>Statement</th>
-<th align="center">D1</th>
-<th align="center">D2</th>
-<th align="center">D3</th>
-<th align="center">D4</th>
-<th align="center">D5</th>
-<th align="center">D6</th>
-<th align="center">D7</th>
-<th align="center">D8</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>4-B3</td>
-<td>D7: x = m - 3</td>
-<td align="center">0</td>
-<td align="center">0</td>
-<td align="center">1</td>
-<td align="center">1</td>
-<td align="center">0</td>
-<td align="center">0</td>
-<td align="center">1</td>
-<td align="center">0</td>
-</tr>
-</tbody></table>
-</li>
-<li><p>对于B4，同样的有：</p>
-<ul>
-<li>$gen_{B_4}$ = {D5,D6}，$kill_{B_4}$ = {D1,D7,D8}</li>
-</ul>
-<p><code>IN[B4]=10110000</code>，将有<code>OUT[B5]=00111100</code>；</p>
-<table>
-<thead>
-<tr>
-<th>Step</th>
-<th>Statement</th>
-<th align="center">D1</th>
-<th align="center">D2</th>
-<th align="center">D3</th>
-<th align="center">D4</th>
-<th align="center">D5</th>
-<th align="center">D6</th>
-<th align="center">D7</th>
-<th align="center">D8</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>5-B4</td>
-<td>D5: x = 4<br>D6: z = 5</td>
-<td align="center">0</td>
-<td align="center">0</td>
-<td align="center">1</td>
-<td align="center">1</td>
-<td align="center">1</td>
-<td align="center">1</td>
-<td align="center">0</td>
-<td align="center">0</td>
-</tr>
-</tbody></table>
-</li>
-<li><p>对于B5，根据$IN[B]=∪_{P \space a\space predecessor\space of\space B}OUT[P]$，找到其对应的前驱，<code>OUT[B3]</code>、<code>OUT[B4]</code>，进行或操作，得到<code>IN[B5]=00111110</code>;</p>
-<p>同样有：</p>
-<ul>
-<li>$gen_{B_5}$ = {D8}，$kill_{B_5}$ = {D6}</li>
-</ul>
-<p>对于<code>IN[B5]=00111110</code>，有<code>OUT[B5]=00111011</code>；</p>
-<table>
-<thead>
-<tr>
-<th>Step</th>
-<th>Statement</th>
-<th align="center">D1</th>
-<th align="center">D2</th>
-<th align="center">D3</th>
-<th align="center">D4</th>
-<th align="center">D5</th>
-<th align="center">D6</th>
-<th align="center">D7</th>
-<th align="center">D8</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>6-B5</td>
-<td>D8: z = 2p</td>
-<td align="center">0</td>
-<td align="center">0</td>
-<td align="center">1</td>
-<td align="center">1</td>
-<td align="center">1</td>
-<td align="center">0</td>
-<td align="center">1</td>
-<td align="center">1</td>
-</tr>
-</tbody></table>
-</li>
-<li><p>进入Exit，完成第一次遍历，是否需要再次进行循环的条件是<code>while(changes to any OUT occur)</code>，显然出现了新的OUT，所以仍然需要进行遍历。</p>
-<p><code>Changes occur in OUT[] of B1,B2,B3,B4,B5</code></p>
-<p>这里对每一个Basic Block的情况进行汇总：</p>
-<table>
-<thead>
-<tr>
-<th>BB</th>
-<th>IN[]</th>
-<th>Statement</th>
-<th>$gen_B$</th>
-<th>$kill_B$</th>
-<th align="center">D1</th>
-<th align="center">D2</th>
-<th align="center">D3</th>
-<th align="center">D4</th>
-<th align="center">D5</th>
-<th align="center">D6</th>
-<th align="center">D7</th>
-<th align="center">D8</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>B1</td>
-<td>Entry</td>
-<td>D1: x = p + 1<br>D2: y = q + 2</td>
-<td>{D1,D2}</td>
-<td>{D4,D5,D7}</td>
-<td align="center">1</td>
-<td align="center">1</td>
-<td align="center">0</td>
-<td align="center">0</td>
-<td align="center">0</td>
-<td align="center">0</td>
-<td align="center">0</td>
-<td align="center">0</td>
-</tr>
-<tr>
-<td>B2</td>
-<td>B1、B4</td>
-<td>D3: m = k<br>D4: y = q - 1</td>
-<td>{D3,D4}</td>
-<td>{D2}</td>
-<td align="center">1</td>
-<td align="center">0</td>
-<td align="center">1</td>
-<td align="center">1</td>
-<td align="center">0</td>
-<td align="center">0</td>
-<td align="center">0</td>
-<td align="center">0</td>
-</tr>
-<tr>
-<td>B3</td>
-<td>B2</td>
-<td>D7: x = m - 3</td>
-<td>{D7}</td>
-<td>{D1,D5}</td>
-<td align="center">0</td>
-<td align="center">0</td>
-<td align="center">1</td>
-<td align="center">1</td>
-<td align="center">0</td>
-<td align="center">0</td>
-<td align="center">1</td>
-<td align="center">0</td>
-</tr>
-<tr>
-<td>B4</td>
-<td>B2</td>
-<td>D5: x = 4<br>D6: z = 5</td>
-<td>{D5,D6}</td>
-<td>{D1,D7,D8}</td>
-<td align="center">0</td>
-<td align="center">0</td>
-<td align="center">1</td>
-<td align="center">1</td>
-<td align="center">1</td>
-<td align="center">1</td>
-<td align="center">0</td>
-<td align="center">0</td>
-</tr>
-<tr>
-<td>B5</td>
-<td>B3、B4</td>
-<td>D8: z = 2p</td>
-<td>{D8}</td>
-<td>{D6}</td>
-<td align="center">0</td>
-<td align="center">0</td>
-<td align="center">1</td>
-<td align="center">1</td>
-<td align="center">1</td>
-<td align="center">0</td>
-<td align="center">1</td>
-<td align="center">1</td>
-</tr>
-</tbody></table>
-</li>
-</ul>
-<h5 id="2nd-traverse"><a href="#2nd-traverse" class="headerlink" title="2nd-traverse"></a>2nd-traverse</h5><p>在第二次遍历时，</p>
-<ul>
-<li><p>对于B1，OUT是不需要重新计算的；</p>
-</li>
-<li><p>而对于B2而言，其IN分别来自B1、B4，要对他们的IN进行或运算，即<code>IN[B1]=11000000</code>、<code>IN[B4]=00111100</code>，可以得到<code>IN[B2]=11111100</code>，在根据$gen_B$、$kill_B$进行操作后，得到<code>OUT[B2]=10111100</code>；</p>
-</li>
-<li><p>对于B3，其IN为B2的OUT，所以<code>IN[B3]=10111100</code>，<code>OUT[B3]=00110110</code>；</p>
-</li>
-<li><p>对于B4，其IN为B2的OUT，所以<code>IN[B4]=10111100</code>，<code>OUT[B4]=00111100</code>；</p>
-</li>
-<li><p>对于B5，其IN为B3、B4的OUT，所以<code>IN[B5]=00111110</code>，<code>OUT[B5]=00111011</code></p>
-</li>
-<li><p>进入Exit，完成第二次遍历后，检查OUT判断是否要进行第三次循环；</p>
-<table>
-<thead>
-<tr>
-<th>BB</th>
-<th>IN[]</th>
-<th>Statement</th>
-<th>$gen_B$</th>
-<th>$kill_B$</th>
-<th align="center">D1</th>
-<th align="center">D2</th>
-<th align="center">D3</th>
-<th align="center">D4</th>
-<th align="center">D5</th>
-<th align="center">D6</th>
-<th align="center">D7</th>
-<th align="center">D8</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>B1</td>
-<td>Entry</td>
-<td>D1: x = p + 1<br>D2: y = q + 2</td>
-<td>{D1,D2}</td>
-<td>{D4,D5,D7}</td>
-<td align="center">1</td>
-<td align="center">1</td>
-<td align="center">0</td>
-<td align="center">0</td>
-<td align="center">0</td>
-<td align="center">0</td>
-<td align="center">0</td>
-<td align="center">0</td>
-</tr>
-<tr>
-<td>B2</td>
-<td>B1、B4</td>
-<td>D3: m = k<br>D4: y = q - 1</td>
-<td>{D3,D4}</td>
-<td>{D2}</td>
-<td align="center">1</td>
-<td align="center">0</td>
-<td align="center">1</td>
-<td align="center">1</td>
-<td align="center">1</td>
-<td align="center">1</td>
-<td align="center">0</td>
-<td align="center">0</td>
-</tr>
-<tr>
-<td>B3</td>
-<td>B2</td>
-<td>D7: x = m - 3</td>
-<td>{D7}</td>
-<td>{D1,D5}</td>
-<td align="center">0</td>
-<td align="center">0</td>
-<td align="center">1</td>
-<td align="center">1</td>
-<td align="center">0</td>
-<td align="center">1</td>
-<td align="center">1</td>
-<td align="center">0</td>
-</tr>
-<tr>
-<td>B4</td>
-<td>B2</td>
-<td>D5: x = 4<br>D6: z = 5</td>
-<td>{D5,D6}</td>
-<td>{D1,D7,D8}</td>
-<td align="center">0</td>
-<td align="center">0</td>
-<td align="center">1</td>
-<td align="center">1</td>
-<td align="center">1</td>
-<td align="center">1</td>
-<td align="center">0</td>
-<td align="center">0</td>
-</tr>
-<tr>
-<td>B5</td>
-<td>B3、B4</td>
-<td>D8: z = 2p</td>
-<td>{D8}</td>
-<td>{D6}</td>
-<td align="center">0</td>
-<td align="center">0</td>
-<td align="center">1</td>
-<td align="center">1</td>
-<td align="center">1</td>
-<td align="center">0</td>
-<td align="center">1</td>
-<td align="center">1</td>
-</tr>
-</tbody></table>
-<p>可以看到<code>Changes occur in OUT[] of B2,B3</code>，因此需要进行第三次遍历；</p>
-</li>
-</ul>
-<h5 id="3rd-traverse"><a href="#3rd-traverse" class="headerlink" title="3rd-traverse"></a>3rd-traverse</h5><ul>
-<li>遍历结束后，OUT没有变化，因此不需要进行第四次遍历。</li>
-</ul>
-<h5 id="Why-this-algorithm-can-finally-stop"><a href="#Why-this-algorithm-can-finally-stop" class="headerlink" title="Why this algorithm can finally stop?"></a>Why this algorithm can finally stop?</h5><p>Transfer Function:<br>$$<br>OUT[B] = gen_B \space ∪ \space (IN[B] - kill_B)<br>$$</p>
-<ul>
-<li>$gen_B$ and $kill_B$ remain unchanged</li>
-<li>When more facts flow in IN[B], the “more facts” either<ul>
-<li>is killed, or</li>
-<li>flows to OUT[B]（$survivor_B$）</li>
-</ul>
-</li>
-<li>When a fact is added to OUT[B], through either $gen_B$, or $survivor_B$, it stays there forever</li>
-<li>Thus OUt[B] newver shrinks (e.g., 0-&gt;1, or 1-&gt;1)</li>
-<li>As the set of facts is finite (e.g., all definitions in the program), there must exist a pass of iteration during which nothing is added to any OUT, and then the algorithm terminates</li>
-</ul>
-<h5 id="Safe-to-terminate-by-condition-do-while"><a href="#Safe-to-terminate-by-condition-do-while" class="headerlink" title="Safe to terminate by condition do..while?"></a>Safe to terminate by condition do..while?</h5><p>迭代和Transfer Function的原因，最终算法会到达一个不动点，这个不动点是一个safe-approximation的结果。</p>
-<h5 id="assumption"><a href="#assumption" class="headerlink" title="assumption"></a>assumption</h5><ul>
-<li>对于一个Basic Block，同样的输入会得到同样的输出，即对于输入x，res = $gen_B\space ∪\space x\space -\space kill_B$ ，x不变时，res也不会变。</li>
-<li>对于B1，不需要重复计算IN[B1]和OUT[B1]。</li>
-<li>对于每个Basic Block的OUT中，D如果为1，则表示该定义能够reach到当前BB，否知则否。</li>
-<li>In each data-flow analysis application, we associate with every program point a data-flow value taht represents an abstraction of the set of all possible program states that can be observed for that point. Data-flow analysis is to find a solution to a set of safe-approximation-directed constraints on the IN[s]’s and OUT[s]’s, for all statements s.<ul>
-<li>constraints based on semantics of statements(transfer funcitons)</li>
-<li>constraints based on the flows of control</li>
-</ul>
-</li>
-</ul>
-<h3 id="Live-Variables-Analysis"><a href="#Live-Variables-Analysis" class="headerlink" title="Live Variables Analysis"></a>Live Variables Analysis</h3><h4 id="Preliminary-1"><a href="#Preliminary-1" class="headerlink" title="Preliminary"></a>Preliminary</h4><blockquote>
-<p>Live variables analysis tells whether the value of variable v at program point p could be used along some path in CFG starting at p. If so, v is live at p; otherwise, v is dead at p.</p>
-</blockquote>
-<p>v(p) == should not be redefined before usage =&gt; use(v)</p>
-<p><img src="/course/static-program-analysis/static-program-analysis-03-data-flow-analysis/live_variable.jpg"></p>
-<ul>
-<li>Information of live variables can be used for register allocations.e.g., at some point all registers are full and we need to use one, then we should favor using a register with a dead value. - 如果存放变量的寄存器都被占用了，那么应该首先使用存放dead value的寄存器来存放新的value。</li>
-</ul>
-<h4 id="Understanding-1"><a href="#Understanding-1" class="headerlink" title="Understanding"></a>Understanding</h4><ul>
-<li><p>Data Flow Values/Facts - Abstraction</p>
-<ul>
-<li><p>All the variables in a program</p>
-</li>
-<li><p>Can be represented by bit vectors</p>
-<p>e.g., v1,v2,v3,…,v100 -&gt; 100 bits</p>
-</li>
-</ul>
-</li>
-<li><p>Safe-approximation</p>
-<ul>
-<li><p>Transfer Function</p>
-<p>由：<br>$$<br>OUT[B]=∪_{S \space a\space successor\space of\space B}\space IN[B]<br>$$</p>
-<p>得到：<br>$$<br>IN[B]=use_B\space ∪\space (OUT[B]-def_B)<br>$$<br>对Transfer Function的理解：</p>
-<ul>
-<li>采取何种分析方式？Backward or Forward？</li>
-<li>已知<code>OUT[B]</code>，何来<code>IN[B]</code>？</li>
-</ul>
-<p>对于下面的例子：</p>
-<img src="/course/static-program-analysis/static-program-analysis-03-data-flow-analysis/understanding_live.jpg" height="300" width="500/">
-
-<p>在已知<code>OUT[B]=&#123;v&#125;</code>的情况下，如何去推算<code>IN[B]</code>呢？</p>
-<p>这里先举几个例子，针对不同的?，有以下内容形成的表格：</p>
-<table>
-<thead>
-<tr>
-<th align="left">?</th>
-<th align="center">$use_B$</th>
-<th align="center">$def_B$</th>
-<th align="center">IsBefore Flag</th>
-<th align="center">IN[B]</th>
-<th align="center">Explanation</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left">k = n</td>
-<td align="center">{n}</td>
-<td align="center">{k}</td>
-<td align="center">0</td>
-<td align="center">{v}</td>
-<td align="center">not used, not redefined</td>
-</tr>
-<tr>
-<td align="left">k = v</td>
-<td align="center">{v}</td>
-<td align="center">{k}</td>
-<td align="center">0</td>
-<td align="center">{v}</td>
-<td align="center">used</td>
-</tr>
-<tr>
-<td align="left">v = 2</td>
-<td align="center">{}</td>
-<td align="center">{v}</td>
-<td align="center">0</td>
-<td align="center">{}</td>
-<td align="center">not used, redefined</td>
-</tr>
-<tr>
-<td align="left">v = v - 1</td>
-<td align="center">{v}</td>
-<td align="center">{v}</td>
-<td align="center">1</td>
-<td align="center">{v}</td>
-<td align="center">used before redefined</td>
-</tr>
-<tr>
-<td align="left">v = 2<br>k = v</td>
-<td align="center">{v}</td>
-<td align="center">{v, k}</td>
-<td align="center">0</td>
-<td align="center">{}</td>
-<td align="center">redefined before used</td>
-</tr>
-<tr>
-<td align="left">k = v<br>v = 2</td>
-<td align="center">{v}</td>
-<td align="center">{k, v}</td>
-<td align="center">1</td>
-<td align="center">{v}</td>
-<td align="center">used before redefined</td>
-</tr>
-</tbody></table>
-<p>在redefine之前如果use，那么认为该变量仍然是live的。</p>
-<p>可以看到，其实很多数据流分析的pattern都是$gen_B$和$kill_B$的结构；</p>
-<p><em>因此，对于$IN[B]$的推算，由$OUT[B]-def_B$可以去掉那些重定义的value，但是如果在重定义前使用了这些变量，则需要加回来$use_B$，由此才得到$IN[B]$</em></p>
-</li>
-</ul>
-</li>
-</ul>
-<h4 id="Algorithm-1"><a href="#Algorithm-1" class="headerlink" title="Algorithm"></a>Algorithm</h4><ul>
-<li><p>INPUT：CFG(def_B and useB computed for each basic block B)</p>
-</li>
-<li><p>OUTPUT：IN[B] and OUT[B] for each basic block B</p>
-</li>
-<li><p>Method：</p>
-<p><img src="/course/static-program-analysis/static-program-analysis-03-data-flow-analysis/algorithm_1.jpg"></p>
-</li>
-</ul>
-<h4 id="Sample-1"><a href="#Sample-1" class="headerlink" title="Sample"></a>Sample</h4><p>有如下例子：</p>
-<p><img src="/course/static-program-analysis/static-program-analysis-03-data-flow-analysis/sample_1.jpg"></p>
-<ol>
-<li><p>首先进行初始化，将所有OUT[B]、IN[B]标记为<code>0000000</code>；</p>
-<table>
-<thead>
-<tr>
-<th align="center">x</th>
-<th align="center">y</th>
-<th align="center">z</th>
-<th align="center">p</th>
-<th align="center">q</th>
-<th align="center">m</th>
-<th align="center">k</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">0</td>
-<td align="center">0</td>
-<td align="center">0</td>
-<td align="center">0</td>
-<td align="center">0</td>
-<td align="center">0</td>
-<td align="center">0</td>
-</tr>
-</tbody></table>
-</li>
-<li><p>根据Backward和transfer function($IN[B]=use_B\space ∪\space (OUT[B]-def_B)$)进行推算；</p>
-<p>简单理解就是，对于$def_B$进行kill操作（标0），对于$use_B$进行gen操作（标1）；</p>
-<ul>
-<li><p>对于B5而言，有：</p>
-<p>​    $use_B$={p}, $def_B$={z}, $OUT[B]={0000000}$</p>
-<p>得到：</p>
-<table>
-<thead>
-<tr>
-<th align="center">Basic Block</th>
-<th align="left">Statement</th>
-<th align="center">$OUT[B_i]$</th>
-<th align="center">$use_B$</th>
-<th align="center">$def_B$</th>
-<th align="center">x</th>
-<th align="center">y</th>
-<th align="center">z</th>
-<th align="center">p</th>
-<th align="center">q</th>
-<th align="center">m</th>
-<th align="center">k</th>
-<th align="center">$IN[B_i]$</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">B5</td>
-<td align="left">z = 2p</td>
-<td align="center">000 0000</td>
-<td align="center">{p}</td>
-<td align="center">{z}</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center">0</td>
-<td align="center">1</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center">000 1000</td>
-</tr>
-</tbody></table>
-</li>
-<li><p>对于B4而言，B4有两个后继{B5, B2}，其$OUT[B4]$为$IN[B2]$和$IN[B5]$的Union，有：</p>
-<p>​    $use_B$={y}, $def_B$={x, q}, $OUT[B4]=0000000 ∪ 0001000 = 0001000$</p>
-<p>得到：</p>
-<table>
-<thead>
-<tr>
-<th align="center">Basic Block</th>
-<th align="left">Statement</th>
-<th align="center">$OUT[B_i]$</th>
-<th align="center">$use_B$</th>
-<th align="center">$def_B$</th>
-<th align="center">x</th>
-<th align="center">y</th>
-<th align="center">z</th>
-<th align="center">p</th>
-<th align="center">q</th>
-<th align="center">m</th>
-<th align="center">k</th>
-<th align="center">$IN[B_i]$</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">B4</td>
-<td align="left">x = 4<br>q = y</td>
-<td align="center">000 1000</td>
-<td align="center">{y}</td>
-<td align="center">{x, q}</td>
-<td align="center">0</td>
-<td align="center">1</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center">0</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center">010 1000</td>
-</tr>
-</tbody></table>
-</li>
-<li><p>对于B3而言，有：</p>
-<p>​    $use_B$={x}, $def_B$={x}, $OUT[B3]=0001000$</p>
-<p>得到：</p>
-<table>
-<thead>
-<tr>
-<th align="center">Basic Block</th>
-<th align="left">Statement</th>
-<th align="center">$OUT[B_i]$</th>
-<th align="center">$use_B$</th>
-<th align="center">$def_B$</th>
-<th align="center">x</th>
-<th align="center">y</th>
-<th align="center">z</th>
-<th align="center">p</th>
-<th align="center">q</th>
-<th align="center">m</th>
-<th align="center">k</th>
-<th align="center">$IN[B_i]$</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">B3</td>
-<td align="left">x = x - 3</td>
-<td align="center">000 1000</td>
-<td align="center">{x}</td>
-<td align="center">{x}</td>
-<td align="center">0</td>
-<td align="center">1</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center">0</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center">100 1000</td>
-</tr>
-</tbody></table>
-</li>
-<li><p>对于B2而言，B2有两个后继，为{B3, B4}，因此其$OUT_[B2]$为$IN[B3]$和$IN[B4]$的Union，有：</p>
-<p>​    $use_B$={k, m}, $def_B$={m, y}, $OUT[B2]=1101000$</p>
-<p>得到：</p>
-<table>
-<thead>
-<tr>
-<th align="center">Basic Block</th>
-<th align="left">Statement</th>
-<th align="center">$OUT[B_i]$</th>
-<th align="center">$use_B$</th>
-<th align="center">$def_B$</th>
-<th align="center">x</th>
-<th align="center">y</th>
-<th align="center">z</th>
-<th align="center">p</th>
-<th align="center">q</th>
-<th align="center">m</th>
-<th align="center">k</th>
-<th align="center">$IN[B_i]$</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">B2</td>
-<td align="left">m = k<br>y = m - 1</td>
-<td align="center">110 1000</td>
-<td align="center">{k, m}</td>
-<td align="center">{m, y}</td>
-<td align="center"></td>
-<td align="center">0</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center">0</td>
-<td align="center">1</td>
-<td align="center">100 1001</td>
-</tr>
-</tbody></table>
-</li>
-<li><p>对于B1而言，有：</p>
-<p>​    $use_B$={p, q, z}, $def_B$={x, y}, $OUT[B1]=1001001$</p>
-<p>得到：</p>
-<table>
-<thead>
-<tr>
-<th align="center">Basic Block</th>
-<th align="left">Statement</th>
-<th align="center">$OUT[B_i]$</th>
-<th align="center">$use_B$</th>
-<th align="center">$def_B$</th>
-<th align="center">x</th>
-<th align="center">y</th>
-<th align="center">z</th>
-<th align="center">p</th>
-<th align="center">q</th>
-<th align="center">m</th>
-<th align="center">k</th>
-<th align="center">$IN[B_i]$</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">B1</td>
-<td align="left">x = p + 1<br>y = q + z</td>
-<td align="center">100 1001</td>
-<td align="center">{p, q, z}</td>
-<td align="center">{x, y}</td>
-<td align="center">0</td>
-<td align="center">0</td>
-<td align="center">1</td>
-<td align="center">1</td>
-<td align="center">1</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center">001 1101</td>
-</tr>
-</tbody></table>
-</li>
-</ul>
-<p>由此第一次推算结束了。</p>
-<p>那么是否需要进行第二次的推算呢？判断条件是<em>changes to any IN[B] occur</em>，所以仍然需要进行循环推算；</p>
-</li>
-<li><p>第二次推算继续：</p>
-<p>根据推算规则：<br>$$<br>IN[B]=use_B\space ∪\space (OUT[B]-def_B)<br>$$<br>对于每一个Basic Block，其中的Statment都是不变的，意味着$use_B$和$def_B$是不变的， 因此当$OUT[B]$不变时，$IN[B]$也不会变；</p>
-<ul>
-<li><p>对于B5而言，依然不变：</p>
-<table>
-<thead>
-<tr>
-<th align="center">Basic Block</th>
-<th align="left">Statement</th>
-<th align="center">$OUT[B_i]$</th>
-<th align="center">$use_B$</th>
-<th align="center">$def_B$</th>
-<th align="center">x</th>
-<th align="center">y</th>
-<th align="center">z</th>
-<th align="center">p</th>
-<th align="center">q</th>
-<th align="center">m</th>
-<th align="center">k</th>
-<th align="center">$IN[B_i]$</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">B5</td>
-<td align="left">z = 2p</td>
-<td align="center">000 0000</td>
-<td align="center">{p}</td>
-<td align="center">{z}</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center">0</td>
-<td align="center">1</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center">000 1000</td>
-</tr>
-</tbody></table>
-</li>
-<li><p>对于B3而言，由于$IN[B5]$不变，其前驱的Basic Block如若只有一个后继，那么该Basic Block的IN[B]不变，意味着B3的$OUT[B]$也不会变。</p>
-<table>
-<thead>
-<tr>
-<th align="center">Basic Block</th>
-<th align="left">Statement</th>
-<th align="center">$OUT[B_i]$</th>
-<th align="center">$use_B$</th>
-<th align="center">$def_B$</th>
-<th align="center">x</th>
-<th align="center">y</th>
-<th align="center">z</th>
-<th align="center">p</th>
-<th align="center">q</th>
-<th align="center">m</th>
-<th align="center">k</th>
-<th align="center">$IN[B_i]$</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">B3</td>
-<td align="left">x = x - 3</td>
-<td align="center">000 1000</td>
-<td align="center">{x}</td>
-<td align="center">{x}</td>
-<td align="center">0</td>
-<td align="center">1</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center">0</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center">100 1000</td>
-</tr>
-</tbody></table>
-</li>
-<li><p>对于B4而言，其有两个后继B2、B5，根据规则有：</p>
-<p>​    $use_B$={y}, $def_B$={x, q}, $OUT[B4]=1001001 ∪ 0001000 = 1001001$</p>
-<table>
-<thead>
-<tr>
-<th align="center">Basic Block</th>
-<th align="left">Statement</th>
-<th align="center">$OUT[B_i]$</th>
-<th align="center">$use_B$</th>
-<th align="center">$def_B$</th>
-<th align="center">x</th>
-<th align="center">y</th>
-<th align="center">z</th>
-<th align="center">p</th>
-<th align="center">q</th>
-<th align="center">m</th>
-<th align="center">k</th>
-<th align="center">$IN[B_i]$</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">B4</td>
-<td align="left">x = 4<br>q = y</td>
-<td align="center">100 1001</td>
-<td align="center">{y}</td>
-<td align="center">{x, q}</td>
-<td align="center">0</td>
-<td align="center">1</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center">0</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center">010 1001</td>
-</tr>
-</tbody></table>
-</li>
-<li><p>对于B2而言，B2有两个后继，为{B3, B4}，因此其$OUT_[B2]$为$IN[B3]$和$IN[B4]$的Union，有：</p>
-<p>​    $use_B$={k, m}, $def_B$={m, y}, $OUT[B2]=1101001$</p>
-<p>得到：</p>
-<table>
-<thead>
-<tr>
-<th align="center">Basic Block</th>
-<th align="left">Statement</th>
-<th align="center">$OUT[B_i]$</th>
-<th align="center">$use_B$</th>
-<th align="center">$def_B$</th>
-<th align="center">x</th>
-<th align="center">y</th>
-<th align="center">z</th>
-<th align="center">p</th>
-<th align="center">q</th>
-<th align="center">m</th>
-<th align="center">k</th>
-<th align="center">$IN[B_i]$</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">B2</td>
-<td align="left">m = k<br>y = m - 1</td>
-<td align="center">110 1001</td>
-<td align="center">{k, m}</td>
-<td align="center">{m, y}</td>
-<td align="center"></td>
-<td align="center">0</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center">0</td>
-<td align="center">1</td>
-<td align="center">100 1001</td>
-</tr>
-</tbody></table>
-</li>
-<li><p>对于B1而言，$IN[B2]$没有变化，意味着$OUT[B1]$没有变化，因此$IN[B1]$不变；</p>
-</li>
-</ul>
-<p>对于本次遍历而言，变化的$IN[B]$有$IN[B4]$，因此还需要进行第三次的循环遍历；</p>
-</li>
-<li><p>根据规则，只有$IN[B4]$，即只有$OUT[B2]$发生变化，根据上一次遍历中对$IN[B2]$的推算没有变化，因此这次遍历不会产生IN[B]的变化，由此循环结束；得到的Final analysis result为对于每个Basic Block，其IN[B]中对应变量标记如果为1，则代表在进入当前Basic Block前，该变量为live；</p>
-</li>
-</ol>
-<h3 id="Available-Expressions-Analysis"><a href="#Available-Expressions-Analysis" class="headerlink" title="Available Expressions Analysis"></a>Available Expressions Analysis</h3><p>Must Analysis</p>
-<h4 id="Preliminary-2"><a href="#Preliminary-2" class="headerlink" title="Preliminary"></a>Preliminary</h4><blockquote>
-<p>An expreesion $x \space op \space y$ is available at program point p if (1) all paths from the entry to p must pass through the evaluation of $x \space op \space y$, and (2) after the last evaluation of $x \space op \space y$, there is no redefinitoin of x or y.</p>
-</blockquote>
-<ul>
-<li>This definitoin means at program p, we can replace expression <em>x op y</em> by the result of its last evaluation</li>
-<li>The information of available expressions can be used for detecting global common subexpressions.</li>
-</ul>
-<h4 id="Undestanding"><a href="#Undestanding" class="headerlink" title="Undestanding"></a>Undestanding</h4><p>Abstraction:</p>
-<ul>
-<li>Data Flow Values/Facts<ul>
-<li>All the expressions in a program</li>
-<li>Can be represented by bit vectors</li>
-</ul>
-</li>
-</ul>
-<p>Safe-approximation</p>
-<ul>
-<li><p>Forward?</p>
-</li>
-<li><p>A sample =&gt;</p>
-<ul>
-<li>Add to OUt the expression <em>x op y</em>(gen)</li>
-<li>Delete from IN any expression involving variable a(kill)</li>
-</ul>
-<p><img src="/course/static-program-analysis/static-program-analysis-03-data-flow-analysis/understanding_available_expreesion_0.jpg"></p>
-<p>Transfer Function:<br>$$<br>OUT[B]=gen_B \space ∪ \space (IN[B]-kill_B)<br>$$</p>
-<p>$$<br>IN[B]=∩_{P \space a \space predecessor \space of \space B}OUT[P]<br>$$</p>
-<p>由于must analysis，需要对IN[B]采取$∩$的方法；</p>
-<p>对于：</p>
-<p><img src="/course/static-program-analysis/static-program-analysis-03-data-flow-analysis/understanding_available_expreesion_1.jpg"></p>
-<ol>
-<li><p>在$a=e^{16}*x$后，$OUT[B]$={$e^{16}*x$}；</p>
-</li>
-<li><p>在经过对x的赋值后，由于对x的引用，OUT[B]被置空，但是在对b的定义中使用了$b=e^{16}*x$后，重新gen；</p>
-</li>
-<li><p>最终在$c=e^{16}*x$的Basic Block前，IN[B]为{$e^{16}*x$}；</p>
-</li>
-</ol>
-<p>有一个问题就是，其中x的值发生了变化，如何避免这种错误发生呢？如果将a, b, c都替换成t，这样一来从a-&gt;c的两个分支，无论走哪个分支，如果t的值被覆盖，也能由自身继承，因此达到了must的效果；</p>
-</li>
-</ul>
-<h4 id="Algorithm-2"><a href="#Algorithm-2" class="headerlink" title="Algorithm"></a>Algorithm</h4><p><img src="/course/static-program-analysis/static-program-analysis-03-data-flow-analysis/algorithm_2.jpg"></p>
-<h4 id="Sample-2"><a href="#Sample-2" class="headerlink" title="Sample"></a>Sample</h4><p><img src="/course/static-program-analysis/static-program-analysis-03-data-flow-analysis/sample_2.jpg"></p>
-<p>对于如上的例子，进行分析：</p>
-<ol>
-<li><p>首先初始化，将所有basic block的OUT[B]设置为11111， entry设置为00000；</p>
-</li>
-<li><p>开始循环</p>
-<ul>
-<li><p>对于B1而言，有：</p>
-<p>​    $gen_B$={$p-1$}, $kill_B$={y}, IN[B]=00000</p>
-<p>得到：</p>
-<table>
-<thead>
-<tr>
-<th align="center">Basic Block</th>
-<th align="center">$IN[B_i]$</th>
-<th align="center">$gen_B$</th>
-<th align="center">$kill_B$</th>
-<th align="center">$p-1$</th>
-<th align="center">$z/5$</th>
-<th align="center">$2*y$</th>
-<th align="center">$e^7*x$</th>
-<th align="center">$y+3$</th>
-<th align="center">$OUT[B_i]$</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">B1</td>
-<td align="center">00000</td>
-<td align="center">{$p-1$}</td>
-<td align="center">{y}</td>
-<td align="center">1</td>
-<td align="center"></td>
-<td align="center">0</td>
-<td align="center"></td>
-<td align="center">0</td>
-<td align="center">10000</td>
-</tr>
-</tbody></table>
-</li>
-<li><p>对于B2而言，IN[B2] = 11111 ∩ 10000 = 10000，有：</p>
-<p>​    $gen_B$={$z/5$, $e^7*x$}, $kill_B$={k, p}</p>
-<p>得到：</p>
-<table>
-<thead>
-<tr>
-<th align="center">Basic Block</th>
-<th align="center">$IN[B_i]$</th>
-<th align="center">$gen_B$</th>
-<th align="center">$kill_B$</th>
-<th align="center">$p-1$</th>
-<th align="center">$z/5$</th>
-<th align="center">$2*y$</th>
-<th align="center">$e^7*x$</th>
-<th align="center">$y+3$</th>
-<th align="center">$OUT[B_i]$</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">B2</td>
-<td align="center">10000</td>
-<td align="center">{$z/5$, $e^7*x$}</td>
-<td align="center">{k, p}</td>
-<td align="center">0</td>
-<td align="center">1</td>
-<td align="center"></td>
-<td align="center">1</td>
-<td align="center"></td>
-<td align="center">01010</td>
-</tr>
-</tbody></table>
-</li>
-<li><p>对于B3而言，有：</p>
-<p>​    $gen_B$={$y+3$}, $kill_B$={z}, IN[B]=01010</p>
-<p>得到：</p>
-<table>
-<thead>
-<tr>
-<th align="center">Basic Block</th>
-<th align="center">$IN[B_i]$</th>
-<th align="center">$gen_B$</th>
-<th align="center">$kill_B$</th>
-<th align="center">$p-1$</th>
-<th align="center">$z/5$</th>
-<th align="center">$2*y$</th>
-<th align="center">$e^7*x$</th>
-<th align="center">$y+3$</th>
-<th align="center">$OUT[B_i]$</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">B3</td>
-<td align="center">01010</td>
-<td align="center">{$y+3$}</td>
-<td align="center">{z}</td>
-<td align="center"></td>
-<td align="center">0</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center">1</td>
-<td align="center">00011</td>
-</tr>
-</tbody></table>
-</li>
-<li><p>对于B4而言，有：</p>
-<p>​    $gen_B$={$2<em>y$, $e^7</em>x$}, $kill_B$={x, q}, IN[B]=01010</p>
-<p>得到：</p>
-<table>
-<thead>
-<tr>
-<th align="center">Basic Block</th>
-<th align="center">$IN[B_i]$</th>
-<th align="center">$gen_B$</th>
-<th align="center">$kill_B$</th>
-<th align="center">$p-1$</th>
-<th align="center">$z/5$</th>
-<th align="center">$2*y$</th>
-<th align="center">$e^7*x$</th>
-<th align="center">$y+3$</th>
-<th align="center">$OUT[B_i]$</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">B4</td>
-<td align="center">01010</td>
-<td align="center">{$2<em>y$, $e^7</em>x$}</td>
-<td align="center">{x, q}</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center">1</td>
-<td align="center">1</td>
-<td align="center"></td>
-<td align="center">01110</td>
-</tr>
-</tbody></table>
-</li>
-<li><p>对于B5而言，有：</p>
-<p>​    $gen_B$={$e^7*x$, $z/5$}, $kill_B$={m, y}, IN[B] = 01110 ∩ 00011 = 00010</p>
-<p>得到：</p>
-<table>
-<thead>
-<tr>
-<th align="center">Basic Block</th>
-<th align="center">$IN[B_i]$</th>
-<th align="center">$gen_B$</th>
-<th align="center">$kill_B$</th>
-<th align="center">$p-1$</th>
-<th align="center">$z/5$</th>
-<th align="center">$2*y$</th>
-<th align="center">$e^7*x$</th>
-<th align="center">$y+3$</th>
-<th align="center">$OUT[B_i]$</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">B5</td>
-<td align="center">00010</td>
-<td align="center">{$e^7*x$, $z/5$}</td>
-<td align="center">{m, y}</td>
-<td align="center"></td>
-<td align="center">1</td>
-<td align="center">0</td>
-<td align="center">1</td>
-<td align="center">0</td>
-<td align="center">01010</td>
-</tr>
-</tbody></table>
-</li>
-</ul>
-<p>由于OUT[B]发生了变化，再次进入循环；</p>
-<ul>
-<li><p>对于B1而言，由于IN[B]不变，所以OUT[B]没变；</p>
-</li>
-<li><p>对于B2而言，由于IN[B2] = 10000 ∩ 01110 = 00000，有：</p>
-<table>
-<thead>
-<tr>
-<th align="center">Basic Block</th>
-<th align="center">$IN[B_i]$</th>
-<th align="center">$gen_B$</th>
-<th align="center">$kill_B$</th>
-<th align="center">$p-1$</th>
-<th align="center">$z/5$</th>
-<th align="center">$2*y$</th>
-<th align="center">$e^7*x$</th>
-<th align="center">$y+3$</th>
-<th align="center">$OUT[B_i]$</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">B2</td>
-<td align="center">00000</td>
-<td align="center">{$z/5$, $e^7*x$}</td>
-<td align="center">{k, p}</td>
-<td align="center">0</td>
-<td align="center">1</td>
-<td align="center"></td>
-<td align="center">1</td>
-<td align="center"></td>
-<td align="center">01010</td>
-</tr>
-</tbody></table>
-<p>结果没变；</p>
-</li>
-<li><p>对于B3而言，IN[B]没变，所以OUT[B]没变；</p>
-</li>
-<li><p>对于B4而言，IN[B]没变，所以OUT[B]没变；</p>
-</li>
-<li><p>对于B5而言，IN[B]= 00011 ∩ 01110 = 00010，没变，所以OUT[B]没变；</p>
-</li>
-</ul>
-<p>由于OUT[B]没有发生变化，因此循环结束；</p>
-</li>
-</ol>
-<h3 id="Analysis-Comparison"><a href="#Analysis-Comparison" class="headerlink" title="Analysis Comparison"></a>Analysis Comparison</h3><table>
-<thead>
-<tr>
-<th align="center"></th>
-<th align="center">Reaching Definitions</th>
-<th align="center">Live Variables</th>
-<th align="center">Available Expressions</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">Domain</td>
-<td align="center">definition(set of definitions)</td>
-<td align="center">value(set of variables)</td>
-<td align="center">x op y(set of expressions)</td>
-</tr>
-<tr>
-<td align="center">Direction</td>
-<td align="center">Forward</td>
-<td align="center">Backward</td>
-<td align="center">Forward</td>
-</tr>
-<tr>
-<td align="center">May/Must</td>
-<td align="center">May</td>
-<td align="center">May</td>
-<td align="center">Must</td>
-</tr>
-<tr>
-<td align="center">Boundary</td>
-<td align="center">entry.out(OUT[entry]=∅)</td>
-<td align="center">exit.in(IN[exit]=∅)</td>
-<td align="center">entry.out(OUT[entry]=∅)</td>
-</tr>
-<tr>
-<td align="center">Initialization</td>
-<td align="center">OUT =&gt; 0(OUT[B]=∅)</td>
-<td align="center">IN =&gt; 0(IN[B]=∅)</td>
-<td align="center">OUT =&gt; 1(OUT[B]=∪)</td>
-</tr>
-<tr>
-<td align="center">Transfer Function</td>
-<td align="center">$OUT[B]=gen_B+(IN[B]-kill_B)$<br>$IN[B]=∪_{P \space a\space predecessor\space of\space B}OUT[P]$</td>
-<td align="center">$IN[B]=use_B+(OUT[B]-def_B)$<br>$OUT[B]=∪_{P \space a\space predecessor\space of\space B}IN[P]$</td>
-<td align="center">$OUT[B]=gen_B+(IN[B]-kill_B)$<br>$IN[B]=∩_{P \space a\space predecessor\space of\space B}OUT[P]$</td>
-</tr>
-<tr>
-<td align="center">Meet</td>
-<td align="center">OUT not change(∪)</td>
-<td align="center">IN not change(∪)</td>
-<td align="center">OUt not change(∩)</td>
-</tr>
-</tbody></table>
-<h2 id="Summary"><a href="#Summary" class="headerlink" title="Summary"></a>Summary</h2><ul>
-<li>Overview of Data Flow Analysis</li>
-<li>Preliminaries of Data Flow Analysis</li>
-<li>Three kinds of Analysis<ul>
-<li>Reaching Definitions Analysis</li>
-<li>Live Variables Analysis</li>
-<li>Available Expressions Analysis</li>
-</ul>
-</li>
-<li>Key Point<ul>
-<li>Understand the three data flow analysis</li>
-<li>Can tell the differences and similarities of the three data flow analyses(the front form)</li>
-<li>Understand the iterative algorithm and can tell why it is able to terminate(OUT&amp;IN,why the progess can stop?)</li>
-</ul>
-</li>
-</ul>
-
-        
-        
-          <blockquote id="copyright">
-              <p>原文链接: <a href="https://www.jk404.cn/page/2/index.html">https://www.jk404.cn/page/2/index.html</a></p>
-              <p>版权声明: 转载请注明出处.</p>
-          </blockquote>
-        
-      
-    </div>
-    <footer class="article-footer">
-      
-        <div class="article-tag-wrap">
-          
-
-          
-          
-
-
-        </div>
-      
-      
-      
-    </footer>
-  </div>
-</article>
-
-
 
     <nav id="page-nav">
 
@@ -3016,6 +2085,10 @@
       <ul>
         
           <li>
+            <a href="/uncategorized/OS-03-boot-interrupt-exception-syscall/OS-03-boot-interrupt-exception-syscall.drawio/">(no title)</a>
+          </li>
+        
+          <li>
             <a href="/OS/theory/OS-03-boot-interrupt-exception-syscall/">OS_03_boot_interrupt_exception_syscall</a>
           </li>
         
@@ -3029,10 +2102,6 @@
         
           <li>
             <a href="/Taichi/Taichi-02-Metaprogramming-and-Object-Oriented/">Taichi_02_Metaprogramming_and_Object_Oriented</a>
-          </li>
-        
-          <li>
-            <a href="/Taichi/Taichi-01-First-Taichi-Program/">Taichi_01_First_Taichi_Program</a>
           </li>
         
       </ul>
@@ -3057,7 +2126,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title"><i class="fa fa-archive"></i> 归档</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/">2022年05月</a><span class="archive-list-count">22</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/">2021年12月</a><span class="archive-list-count">73</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/">2022年05月</a><span class="archive-list-count">23</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/">2021年12月</a><span class="archive-list-count">73</span></li></ul>
     </div>
   </div>
 
