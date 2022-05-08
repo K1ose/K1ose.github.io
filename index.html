@@ -247,11 +247,8 @@
     <div class="e-content article-entry" itemprop="articleBody">
       
         <h1 id="03-Boot-Interrupt-Exception-Syscall"><a href="#03-Boot-Interrupt-Exception-Syscall" class="headerlink" title="03-Boot Interrupt Exception Syscall"></a>03-Boot Interrupt Exception Syscall</h1><p><a href="./OS-03-boot-interrupt-exception-syscall.drawio.html">相关图</a></p>
-<h2 id="BIOS"><a href="#BIOS" class="headerlink" title="BIOS"></a>BIOS</h2><h3 id="计算机体系结构概述"><a href="#计算机体系结构概述" class="headerlink" title="计算机体系结构概述"></a>计算机体系结构概述</h3><p>​        CPU</p>
-<p>​         |</p>
-<p>———————————————————— 总线</p>
-<p>​    |           |</p>
-<p>  I/O设备       内存</p>
+<h2 id="BIOS"><a href="#BIOS" class="headerlink" title="BIOS"></a>BIOS</h2><h3 id="计算机体系结构概述"><a href="#计算机体系结构概述" class="headerlink" title="计算机体系结构概述"></a>计算机体系结构概述</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">		CPU</span><br><span class="line"></span><br><span class="line">		 |</span><br><span class="line"></span><br><span class="line">———————————————————— 总线</span><br><span class="line"></span><br><span class="line">	|           |</span><br><span class="line"></span><br><span class="line">  I/O设备       内存</span><br></pre></td></tr></table></figure>
+
 <h3 id="计算机内存和硬盘布局"><a href="#计算机内存和硬盘布局" class="headerlink" title="计算机内存和硬盘布局"></a>计算机内存和硬盘布局</h3><p>内存</p>
 <ul>
 <li>ROM只读存储 &lt;- 加电后，CPU加载执行的第一条指令</li>
@@ -374,7 +371,183 @@
 <p>加载程序所执行的内容如上图，于是内核从磁盘中被加载到内存中；</p>
 <h3 id="图示"><a href="#图示" class="headerlink" title="图示"></a>图示</h3><p>可能有错误，希望斧正；</p>
 <p><img src="/OS/theory/OS-03-boot-interrupt-exception-syscall/load_step_sample.jpg"></p>
-<h2 id="中断、异常和系统调用比较"><a href="#中断、异常和系统调用比较" class="headerlink" title="中断、异常和系统调用比较"></a>中断、异常和系统调用比较</h2><h2 id="系统调用"><a href="#系统调用" class="headerlink" title="系统调用"></a>系统调用</h2><h2 id="系统调用示例"><a href="#系统调用示例" class="headerlink" title="系统调用示例"></a>系统调用示例</h2><h2 id="ucore中的系统调用"><a href="#ucore中的系统调用" class="headerlink" title="ucore中的系统调用"></a>ucore中的系统调用</h2>
+<h2 id="中断、异常和系统调用"><a href="#中断、异常和系统调用" class="headerlink" title="中断、异常和系统调用"></a>中断、异常和系统调用</h2><p>为什么需要中断、异常和系统调用？</p>
+<ul>
+<li><p>中断：来自硬件设备的处理请求</p>
+<ul>
+<li><p>计算机运行中，内核是被信任的第三方</p>
+</li>
+<li><p>只有内核可以执行特权指令</p>
+</li>
+<li><p>方便应用程序，提供服务给应用程序</p>
+</li>
+</ul>
+</li>
+<li><p>异常：非法指令或其他原因导致当前指令执行失败后的处理请求</p>
+<ul>
+<li><p>与外设交互的响应</p>
+</li>
+<li><p>处理意想不到的行为</p>
+</li>
+</ul>
+</li>
+<li><p>系统调用：应用程序主动向操作系统发出的服务请求</p>
+<ul>
+<li>用户程序得到系统服务</li>
+<li>系统调用和功能调用</li>
+</ul>
+</li>
+</ul>
+<p>内核的进入与退出</p>
+<h3 id="中断、异常和系统调用比较"><a href="#中断、异常和系统调用比较" class="headerlink" title="中断、异常和系统调用比较"></a>中断、异常和系统调用比较</h3><h4 id="源头"><a href="#源头" class="headerlink" title="源头"></a>源头</h4><p>中断：外设</p>
+<p>异常：应用程序、内核意想不到的行为</p>
+<p>系统调用：应用程序请求操作提供服务</p>
+<h4 id="响应方式"><a href="#响应方式" class="headerlink" title="响应方式"></a>响应方式</h4><p>中断：异步</p>
+<p>异常：同步</p>
+<p>系统调用：异步或同步</p>
+<h4 id="处理机制"><a href="#处理机制" class="headerlink" title="处理机制"></a>处理机制</h4><p>中断：持续，对用户程序是透明的</p>
+<p>异常：杀死或重新执行产生意想不到的行为的程序指令</p>
+<p>系统调用：等待和持续</p>
+<h3 id="中断"><a href="#中断" class="headerlink" title="中断"></a>中断</h3><h4 id="硬件处理"><a href="#硬件处理" class="headerlink" title="硬件处理"></a>硬件处理</h4><ul>
+<li>在CPU初始化时设中断使能标志<ul>
+<li>依据内部或外部事件设置中断标志</li>
+<li>依据中断向量表调用相应中断服务例程</li>
+</ul>
+</li>
+</ul>
+<h4 id="软件处理"><a href="#软件处理" class="headerlink" title="软件处理"></a>软件处理</h4><ul>
+<li>现场保存（编译器）</li>
+<li>中断服务处理（服务例程）</li>
+<li>清除中断标记（服务例程）</li>
+<li>现场恢复（编译器）</li>
+</ul>
+<h4 id="中断嵌套"><a href="#中断嵌套" class="headerlink" title="中断嵌套"></a>中断嵌套</h4><ul>
+<li>硬件中断服务例程允许被打断<ul>
+<li>不同硬件中断源可能同时出现硬件中断处理</li>
+<li>硬件中断服务例程中需要临时禁止中断请求</li>
+<li>中断请求会保持到CPU做出响应</li>
+</ul>
+</li>
+<li>异常服务例程允许被打断<ul>
+<li>异常服务例程执行时可能出现硬件中断</li>
+</ul>
+</li>
+<li>异常服务例程可嵌套<ul>
+<li>例如异常服务例程执行时出现缺页异常</li>
+</ul>
+</li>
+</ul>
+<h3 id="系统调用"><a href="#系统调用" class="headerlink" title="系统调用"></a>系统调用</h3><img src="/OS/theory/OS-03-boot-interrupt-exception-syscall/syscall_sample.jpg" style="zoom: 80%;">
+
+<h4 id="外部使用"><a href="#外部使用" class="headerlink" title="外部使用"></a>外部使用</h4><ul>
+<li>操作系统服务的编程接口</li>
+<li>通常由高级语言编写</li>
+<li>程序访问通常是通过高层次的API接口而不是直接进行系统调用</li>
+<li>三种常见的应用编程接口（API）<ul>
+<li>Win32 API用于Windows</li>
+<li>POSIX API用于POSIX-based systems</li>
+<li>JAVA API用于JVM</li>
+</ul>
+</li>
+</ul>
+<h4 id="内部实现"><a href="#内部实现" class="headerlink" title="内部实现"></a>内部实现</h4><ul>
+<li>每个系统调用对应一个系统调用号<ul>
+<li>系统调用接口根据系统调用号来维护表的索引</li>
+</ul>
+</li>
+<li>系统调用接口调用内核态中的系统调用功能实现，并返回系统调用的状态和结果</li>
+<li>用户不需要知道系统调用的实现<ul>
+<li>需要设置调用参数和获取返回结果</li>
+<li>操作系统接口的细节大部分都隐藏在应用编程接口后，通过运行程序支持的库来管理</li>
+</ul>
+</li>
+</ul>
+<h4 id="系统调用和函数调用的差别"><a href="#系统调用和函数调用的差别" class="headerlink" title="系统调用和函数调用的差别"></a>系统调用和函数调用的差别</h4><p>系统调用</p>
+<ul>
+<li>INT和IRET指令用于系统调用，系统调用时，堆栈切换和特权级的转换（后续会涉及详细内容）</li>
+</ul>
+<p>函数调用</p>
+<ul>
+<li>CALL和RET用于常规调用，常规调用时没有堆栈切换</li>
+</ul>
+<h3 id="系统调用示例"><a href="#系统调用示例" class="headerlink" title="系统调用示例"></a>系统调用示例</h3><p>一个标准的函数调用，例如应用程序调用printf()，会触发系统调用write()；</p>
+<ul>
+<li>产生中断</li>
+<li>系统调用表查询</li>
+<li>系统调用实现</li>
+<li>结果返回</li>
+</ul>
+<p>执行文件复制过程中的系统调用</p>
+<p>源文件 -&gt; 目标文件 的 步骤：</p>
+<ul>
+<li>获取输入文件名<ul>
+<li>在屏幕显示提示</li>
+<li>等待并接收键盘输入</li>
+</ul>
+</li>
+<li>获取输出文件名<ul>
+<li>在屏幕显示提示</li>
+<li>等待并接收键盘输入</li>
+</ul>
+</li>
+<li>打开输入文件<ul>
+<li>如果文件不存在，出错退出</li>
+</ul>
+</li>
+<li>创建输出文件<ul>
+<li>如果文件存在，出错退出</li>
+</ul>
+</li>
+<li>循环<ul>
+<li>读取输入文件</li>
+<li>写入输出文件</li>
+</ul>
+</li>
+<li>直到读取结束</li>
+<li>关闭输出文件</li>
+<li>在屏幕上显示完成信息</li>
+<li>正常退出</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// System call numbers</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> SYS_fork 1</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> SYS_exit 2</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> SYS_wait 3</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> SYS_pipe 4</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> SYS_write 5</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> SYS_read 6</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> SYS_close 7</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> SYS_kill 8</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> SYS_exec 9</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> SYS_open 10</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> SYS_mknod 11</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> SYS_unlink 12</span></span><br></pre></td></tr></table></figure>
+
+<p>对于上面的程序，需要用到的系统调用有exit write read close；</p>
+<p>对于read()函数，有</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">read</span><span class="params">(<span class="keyword">int</span> fd, <span class="keyword">void</span> *buf, <span class="keyword">int</span> length)</span></span></span><br></pre></td></tr></table></figure>
+
+<p>参数和返回值信息为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">fd - 文件描述符</span><br><span class="line">*buf - 数据缓冲区指针</span><br><span class="line">length - 数据缓冲区长度</span><br><span class="line">return_value - 返回读取数据长度</span><br></pre></td></tr></table></figure>
+
+<h3 id="ucore中的系统调用"><a href="#ucore中的系统调用" class="headerlink" title="ucore中的系统调用"></a>ucore中的系统调用</h3><h2 id="练习"><a href="#练习" class="headerlink" title="练习"></a>练习</h2><h3 id="中断、异常和系统调用-1"><a href="#中断、异常和系统调用-1" class="headerlink" title="中断、异常和系统调用"></a>中断、异常和系统调用</h3><ol>
+<li><p>```<br>(2012统考)下列选项中，不可能在用户态发生的是（C）<br>系统调用<br>外部中断<br>进程切换<br>缺页</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">2. ```</span><br><span class="line">   （2012统考）中断处理和子程序调用都需要压栈以保护现场。中断处理一定会保存而子程序调用不需要保存其内容的是（ B ）</span><br><span class="line">   </span><br><span class="line">   程序计数器</span><br><span class="line">   程序状态字寄存器</span><br><span class="line">   通用数据寄存器</span><br><span class="line">   通用地址寄存器</span><br><span class="line">   </span><br><span class="line">   解析：程序状态字（PSW）寄存器用于记录当前处理器的状态和控制指令的执行顺序，并且保留与运行程序相关的各种信息，主要作用是实现程序状态的保护和恢复。所以中断处理程序要将PSW保存，子程序调用在进程内部执行，不会更改PSW。</span><br></pre></td></tr></table></figure></li>
+<li><p>```<br>（华中科技大学）中断向量地址是（ B ）</p>
+<p>子程序入口地址<br>中断服务例程入口地址<br>中断服务例程入口地址的地址<br>例行程序入口地址</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">4. ```</span><br><span class="line">   下列选项中， ____可以执行特权指令？(A)</span><br><span class="line">   </span><br><span class="line">   中断处理例程</span><br><span class="line">   普通用户的程序</span><br><span class="line">   通用库函数</span><br><span class="line">   管理员用户的程序</span><br></pre></td></tr></table></figure></li>
+<li><p>```<br>一般来讲，中断来源于____（A）</p>
+<p>外部设备<br>应用程序主动行为<br>操作系统主动行为<br>软件故障</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">6. ```</span><br><span class="line">   用户程序通过____向操作系统提出访问外部设备的请求（B）</span><br><span class="line">   I/O指令</span><br><span class="line">   系统调用</span><br><span class="line">   中断</span><br><span class="line">   创建新的进程</span><br><span class="line">   解析：</span><br><span class="line">   以ucore OS为例，在lab5中有详细的syscall机制的设计实现。比如用户执行显示输出一个字符的操作，由于涉及向屏幕和串口等外设输出字符，需要向操作系统发出请求，具体过程是应用程序运行在用户态，通过用户程序库函数cputch，会调用sys_putc函数，并进一步调用syscall函数（在usr/libs/syscall.c文件中），而这个函数会执行“int 0x80”来发出系统调用请求。在ucore OS内核中，会接收到这个系统调用号（0x80）的中断（参见 kernel/trap/trap.c中的trap_dispatch函数有关 “case T_SYSCALL:”的实现）,并进一步调用内核syscall函数（参见 kernel/syscall/syscall.c中的实现）来完成用户的请求。内核在内核态（也称特权态）完成后，通过执行“iret”指令（kernel/trap/trapentry.S中的“__trapret:”下面的指令），返回到用户态应用程序发出系统调用的下一条指令继续执行应用程序。</span><br></pre></td></tr></table></figure></li>
+<li><p>```<br>应用程序引发异常的时候，操作系统可能的反应是（C）<br>删除磁盘上的应用程序<br>重启应用程序<br>杀死应用程序<br>修复应用程序中的错误</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">8. ```</span><br><span class="line">   操作系统与用户的接口包括____（A）</span><br><span class="line">   系统调用</span><br><span class="line">   进程调度</span><br><span class="line">   中断处理</span><br><span class="line">   程序编译</span><br></pre></td></tr></table></figure></li>
+<li><p>```<br>操作系统处理中断的流程包括____（ABCD）</p>
+<p>保护当前正在运行程序的现场<br>分析是何种中断，以便转去执行相应的中断处理程序<br>执行相应的中断处理程序<br>恢复被中断程序的现场</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">10. ```</span><br><span class="line">    下列程序工作在内核态的有____(ABCD)</span><br><span class="line">    </span><br><span class="line">    系统调用的处理程序</span><br><span class="line">    中断处理程序</span><br><span class="line">    进程调度</span><br><span class="line">    内存管理</span><br></pre></td></tr></table></figure></li>
+<li><p>```<br>(西北工业大学)CPU执行操作系统代码的时候称为处理机处于（ C ）</p>
+<p>自由态<br>目态<br>管态<br>就绪态</p>
+<p>解析：内核态又称为管态</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">    </span><br><span class="line">10. ```</span><br><span class="line">    （2013统考）下列选项中，会导致用户进程从用户态切换到内核态的操作是（ B ） </span><br><span class="line">    </span><br><span class="line">    1）整数除以0 2）sin()函数调用 3）read系统调用</span><br><span class="line">    </span><br><span class="line">    1、2</span><br><span class="line">    1、3</span><br><span class="line">    2、3</span><br><span class="line">    1、2、3</span><br><span class="line">    </span><br></pre></td></tr></table></figure></li>
+<li><p>```<br>系统调用的主要作用是（ C ）</p>
+<p>处理硬件问题<br>应对软件异常<br>给应用程序提供服务接口<br>管理应用程序</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">10. ```</span><br><span class="line">    下列关于系统调用的说法错误的是（ B ）</span><br><span class="line">    </span><br><span class="line">    系统调用一般有对应的库函数</span><br><span class="line">    应用程序可以不通过系统调用来直接获得操作系统的服务</span><br><span class="line">    应用程序一般使用更高层的库函数而不是直接使用系统调用</span><br><span class="line">    系统调用可能执行失败</span><br><span class="line">    </span><br><span class="line">    解析：根据对当前操作系统设计与实现的理解，系统调用是应用程序向操作系统发出服务请求并获得操作系统服务的唯一通道和结果。如果操作系统在执行系统调用服务时，产生了错误，就会导致系统调用执行失败。 以ucore OS为例，在用户态的应用程序（lab5,6,7,8中的应用程序）都是通过系统调用来获得操作系统的服务的。为了简化应用程序发出系统调用请求，ucore OS提供了用户态的更高层次的库函数（user/libs/ulib.[ch]和syscall.[ch]），简化了应用程序的编写。如果操作系统在执行系统调用服务时，产生了错误，就会导致系统调用执行失败。</span><br></pre></td></tr></table></figure></li>
+<li><pre><code>以下关于系统调用和常规调用的说法中，错误的是（D）
+
+系统调用一般比常规函数调用的执行开销大
+系统调用需要切换堆栈
+系统调用可以引起特权级的变化
+常规函数调用和系统调用都在内核态执行
+</code></pre>
+</li>
+</ol>
+
         
         
           <blockquote id="copyright">
