@@ -213,9 +213,9 @@
     <link href="https://www.jk404.cn/cpp/cpp-01-preliminary-knowledge/"/>
     <id>https://www.jk404.cn/cpp/cpp-01-preliminary-knowledge/</id>
     <published>2022-06-18T04:55:57.000Z</published>
-    <updated>2022-06-18T06:56:57.379Z</updated>
+    <updated>2022-06-18T16:08:28.072Z</updated>
     
-    <content type="html"><![CDATA[<h1 id="01-preliminary-knowledge"><a href="#01-preliminary-knowledge" class="headerlink" title="01 preliminary knowledge"></a>01 preliminary knowledge</h1><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><ul><li>C++的背景</li><li>C++编程的基本原则</li></ul><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line"><span class="built_in">printf</span>(hello, world);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+    <content type="html"><![CDATA[<h1 id="01-preliminary-knowledge"><a href="#01-preliminary-knowledge" class="headerlink" title="01 preliminary knowledge"></a>01 preliminary knowledge</h1><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><ul><li>C++的背景</li><li>C++编程的基本原则</li></ul><h2 id="1-1-C-简介"><a href="#1-1-C-简介" class="headerlink" title="1.1 C++简介"></a>1.1 C++简介</h2><ul><li><p>三种编程方式</p><ul><li>过程性语言 procedural language</li><li>以类为代表的面向对象语言</li><li>模板支持的泛型</li></ul></li><li><p>C语言编程原理</p><ul><li>过程性语言 procedural language 数据+算法=程序</li><li>结构化编程 structured programming 逻辑的条条框框</li><li>自顶向下 top-down ： 大型程序分解成小任务模块</li></ul></li><li><p>面向对象编程OOP</p></li><li><p>C++和泛型编程(generic programming)</p></li><li><p>可移植性和标准</p><ul><li>ISO/IEC 14882:1998 =&gt; C++98 ： 描述C++特性，添加异常、运行阶段类型识别(RTTI)、模板和标准模板库(STL)</li></ul></li><li><p>C++的发展</p></li><li><p>编译和链接</p><ul><li>Unix - [CC 源文件.c =&gt; 目标文件.o =&gt; 可执行文件.out]</li><li>Linux - [g++ 源文件.cxx / g++ 源文件.cxx -lg++ =&gt; 可执行文件.out + 目标文件.o]</li></ul></li></ul>]]></content>
     
     
       
