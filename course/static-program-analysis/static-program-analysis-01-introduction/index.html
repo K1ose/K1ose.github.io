@@ -1,140 +1,148 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>static_program_analysis_01_introduction | K1ose's Space</title><meta name="author" content="K1ose"><meta name="copyright" content="K1ose"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="IntroductionLinksofficial link PL &amp; Static AnalysisWhat is Program Languages Theory - 理论 Language Design - 语言设计 Type System - 类型系统 Semantics and Logics - 语义和逻辑 …   Environment - 环境 Compilers - 编译器">
+<meta property="og:type" content="article">
+<meta property="og:title" content="static_program_analysis_01_introduction">
+<meta property="og:url" content="https://www.jk404.cn/course/static-program-analysis/static-program-analysis-01-introduction/index.html">
+<meta property="og:site_name" content="K1ose&#39;s Space">
+<meta property="og:description" content="IntroductionLinksofficial link PL &amp; Static AnalysisWhat is Program Languages Theory - 理论 Language Design - 语言设计 Type System - 类型系统 Semantics and Logics - 语义和逻辑 …   Environment - 环境 Compilers - 编译器">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7">
+<meta property="article:published_time" content="2022-01-10T03:15:41.000Z">
+<meta property="article:modified_time" content="2022-01-10T11:08:13.854Z">
+<meta property="article:author" content="K1ose">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://www.jk404.cn/course/static-program-analysis/static-program-analysis-01-introduction/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'static_program_analysis_01_introduction',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2022-01-10 19:08:13'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
   
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
   
-  <title>static_program_analysis_01_introduction | -K1ose-</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  
-  
-  
-    <link rel="alternate" href="/atom.xml" title="-K1ose-" type="application/atom+xml">
-  
-  
-    <link rel="shortcut icon" href="/favicon.png">
-  
-  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
     
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
-
-  
-  
-<link rel="stylesheet" href="/css/style.css">
-
-  
-    
-<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
-
-  
-  
-  
-<meta name="generator" content="Hexo 5.4.0"></head>
-
-<body>
-  <div id="container">
-    <div id="wrap">
-      <header id="header">
-  <div id="header-outer" class="outer">
-    <div id="header-title" class="inner">
-      <h1 id="logo-wrap">
-        <a href="/" id="logo">-K1ose-</a>
-      </h1>
-      
-        <h2 id="subtitle-wrap">
-          <a href="/" id="subtitle">Stay hungry, stay foolish</a>
-        </h2>
-      
-    </div>
-    <div id="header-inner" class="inner">
-      <nav id="main-nav">
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
         
-          <a class="main-nav-link" href="/."><i class="fa fa-home"></i> 首页</a>
-        
-          <a class="main-nav-link" href="/archives/"><i class="fa fa-archive"></i> 归档</a>
-        
-          <a class="main-nav-link" href="/about/"><i class="fa fa-user"></i> 关于</a>
-        
-          <a class="main-nav-link" href="/atom.xml"><i class="fa fa-rss"></i> 订阅</a>
-        
-      </nav>
-    </div>
-    <div id="search-form">
-      <div id="result-mask" class="hide"></div>
-      <label><input id="search-key" type="text" autocomplete="off" placeholder="搜索"></label>
-      <div id="result-wrap" class="hide">
-        <div id="search-result"></div>
-      </div>
-      <div class="hide">
-        <template id="search-tpl">
-          <div class="item">
-            <a href="/{path}" title="{title}">
-              <div class="title">{title}</div>
-              <div class="time">{date}</div>
-              <div class="tags">{tags}</div>
-            </a>
-          </div>
-        </template>
-      </div>
-    </div>
-  </div>
-</header>
-
-      <div class="outer">
-        <section id="main"><article id="post-static-program-analysis-01-introduction" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-inner">
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
     
-    
-      <header class="article-header">
-        
-  
-    <h1 class="p-name article-title" itemprop="headline name">
-      static_program_analysis_01_introduction
-    </h1>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      
-      <span class="article-date">
-  <i class="fa fa-date"></i>
-  <time class="dt-published" datetime="2022-01-10T03:15:41.000Z" itemprop="datePublished">2022年01月10日</time>
-</span>
-      
-  <div class="article-category">
-    <i class="fa fa-classify"></i>
-    <a class="article-category-link" href="/categories/course/">course</a> > <a class="article-category-link" href="/categories/course/static-program-analysis/">static_program_analysis</a>
-  </div>
-
-      
-        <span class="article-views">
-  <i class="fa fa-views"></i>
-  <i id="busuanzi_container_page_pv">
-      <i id="busuanzi_value_page_pv"></i>
-  </i>
-</span>
-
-      
-      
-<a href="/course/static-program-analysis/static-program-analysis-01-introduction/#comments" class="article-comment-link">
-  
-    
-    
-    
-    
-    
-  
-  <i class="fa fa-commt"></i>
-  留言
-</a>
-
-
-    </div>
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <h1 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h1><h2 id="Links"><a href="#Links" class="headerlink" title="Links"></a>Links</h2><p><a target="_blank" rel="noopener" href="https://pascal-group.bitbucket.io/teaching.html">official link</a></p>
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 5.4.0"><link rel="alternate" href="/atom.xml" title="K1ose's Space" type="application/atom+xml">
+</head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/Soler6pro.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data is-center"><div class="data-item"><a href="/archives/"><div class="headline">文章</div><div class="length-num">110</div></a></div><div class="data-item"><a href="/tags/"><div class="headline">标签</div><div class="length-num">0</div></a></div><div class="data-item"><a href="/categories/"><div class="headline">分类</div><div class="length-num">58</div></a></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><span> About</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="not-top-img" id="page-header"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">K1ose's Space</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><span> About</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav></header><main class="layout" id="content-inner"><div id="post"><div id="post-info"><h1 class="post-title">static_program_analysis_01_introduction</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2022-01-10T03:15:41.000Z" title="发表于 2022-01-10 11:15:41">2022-01-10</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2022-01-10T11:08:13.854Z" title="更新于 2022-01-10 19:08:13">2022-01-10</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/course/">course</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/course/static-program-analysis/">static_program_analysis</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="static_program_analysis_01_introduction"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div><article class="post-content" id="article-container"><h1 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h1><h2 id="Links"><a href="#Links" class="headerlink" title="Links"></a>Links</h2><p><a target="_blank" rel="noopener" href="https://pascal-group.bitbucket.io/teaching.html">official link</a></p>
 <h2 id="PL-amp-Static-Analysis"><a href="#PL-amp-Static-Analysis" class="headerlink" title="PL &amp; Static Analysis"></a>PL &amp; Static Analysis</h2><h3 id="What-is-Program-Languages"><a href="#What-is-Program-Languages" class="headerlink" title="What is Program Languages"></a>What is Program Languages</h3><ul>
 <li>Theory - 理论<ul>
 <li>Language Design - 语言设计</li>
@@ -245,7 +253,7 @@
 </ul>
 <p>Soundness，所有Input覆盖到的所有路径分支都能被包含。</p>
 <p>以下用一个例子来表述，存在下列代码：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 存在两个处理分支</span></span><br><span class="line"><span class="comment">// 1</span></span><br><span class="line">B b = <span class="keyword">new</span> B();</span><br><span class="line">a.fld = b;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 2</span></span><br><span class="line">C c = <span class="keyword">new</span> C();</span><br><span class="line">a.fld = c;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 当存在一条语句，进行强制类型转换cast</span></span><br><span class="line">B tempb = (B) a.fld;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 存在两个处理分支</span></span><br><span class="line"><span class="comment">// 1</span></span><br><span class="line">B b = <span class="keyword">new</span> B();</span><br><span class="line">a.fld = b;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 2</span></span><br><span class="line">C c = <span class="keyword">new</span> C();</span><br><span class="line">a.fld = c;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 当存在一条语句，进行强制类型转换cast</span></span><br><span class="line">B tempb = (B) a.fld;</span><br></pre></td></tr></table></figure>
 
 <p>当执行处理分支1后，执行<code>B tempb = (B) a.fld;</code>，程序是可以正常执行的。</p>
 <p>当执行处理分支2后，执行<code>B tempb = (B) a.fld;</code>，程序会抛出强制类型转换错误的异常。</p>
@@ -255,7 +263,7 @@
 <li>Soundness is also preferable to other(static-analysis) applications for which soundness is not demanded, e.g., bug detection, as better soundness implies more bugs could be found.</li>
 </ul>
 <p>因此应该尽量保证Sound，可以牺牲一些精度。</p>
-<h3 id="Example"><a href="#Example" class="headerlink" title="Example?"></a>Example?</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(input)</span><br><span class="line">	x = <span class="number">1</span>;</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">	x = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// x = ?</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">1. 结论一：while input is true, x = 1; while input is false, x = 0;</span></span><br><span class="line"><span class="comment">2. 结论二：x = 0 or x = 1;</span></span><br><span class="line"><span class="comment">3. 结论三：x = 0 or x = 1 or x = 2 or x = 3;</span></span><br><span class="line"><span class="comment">4. 结论四：x = -1 or x = 0;</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
+<h3 id="Example"><a href="#Example" class="headerlink" title="Example?"></a>Example?</h3><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(input)</span><br><span class="line">	x = <span class="number">1</span>;</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">	x = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// x = ?</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">1. 结论一：while input is true, x = 1; while input is false, x = 0;</span></span><br><span class="line"><span class="comment">2. 结论二：x = 0 or x = 1;</span></span><br><span class="line"><span class="comment">3. 结论三：x = 0 or x = 1 or x = 2 or x = 3;</span></span><br><span class="line"><span class="comment">4. 结论四：x = -1 or x = 0;</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
 
 <p>上述结论中，结论一、二和三都是正确的，其中结论三是soundness的，虽然其包含了误报，但是也包含了truth，而结论四没有包含truth，因此不是soundness，是错误的。</p>
 <p>结论一、二的区别在于，结论一还需要维护一些条件值，耗费更多，而结论二仅仅给出结果即可，耗费更少；</p>
@@ -290,18 +298,18 @@
 </ul>
 <p>转化函数根据不同程序语句的“分析问题”和“语义”，定义了如何处理计算这些抽象值的规则。</p>
 <p>例如，对于如上的符号规则，可以有如下的transfer functions：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">[+] + [+] = [+]</span><br><span class="line">[-] + [-] = [-]</span><br><span class="line">[0] + [0] = [0]</span><br><span class="line">[+] + [-] = [T]</span><br><span class="line"></span><br><span class="line">[+] / [+] = [+]</span><br><span class="line">[-] / [-] = [+]</span><br><span class="line">[T] / [0] = [⊥]</span><br><span class="line">[+] / [-] = [-]</span><br><span class="line"></span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[+] + [+] = [+]</span><br><span class="line">[-] + [-] = [-]</span><br><span class="line">[0] + [0] = [0]</span><br><span class="line">[+] + [-] = [T]</span><br><span class="line"></span><br><span class="line">[+] / [+] = [+]</span><br><span class="line">[-] / [-] = [+]</span><br><span class="line">[T] / [0] = [⊥]</span><br><span class="line">[+] / [-] = [-]</span><br><span class="line"></span><br><span class="line">...</span><br></pre></td></tr></table></figure>
 
 <p>根据这套规则，现在有一个程序，其中有如下的值：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">x = 10;</span><br><span class="line">y = -1;</span><br><span class="line">z = 0;</span><br><span class="line">a = x+y;</span><br><span class="line">b = z/y;</span><br><span class="line">c = a/b;</span><br><span class="line">p = arr[y];</span><br><span class="line">q = arr[a];</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">x = 10;</span><br><span class="line">y = -1;</span><br><span class="line">z = 0;</span><br><span class="line">a = x+y;</span><br><span class="line">b = z/y;</span><br><span class="line">c = a/b;</span><br><span class="line">p = arr[y];</span><br><span class="line">q = arr[a];</span><br></pre></td></tr></table></figure>
 
 <p>经过抽象后，有：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">x = [+]</span><br><span class="line">y = [-]</span><br><span class="line">z = [0]</span><br><span class="line">a = [T]</span><br><span class="line">b = [0]</span><br><span class="line">c = [⊥] -&gt; 除0错误</span><br><span class="line">p = [⊥] -&gt; 数组索引为负</span><br><span class="line">q = [⊥] -&gt; 过度近似产生误报</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">x = [+]</span><br><span class="line">y = [-]</span><br><span class="line">z = [0]</span><br><span class="line">a = [T]</span><br><span class="line">b = [0]</span><br><span class="line">c = [⊥] -&gt; 除0错误</span><br><span class="line">p = [⊥] -&gt; 数组索引为负</span><br><span class="line">q = [⊥] -&gt; 过度近似产生误报</span><br></pre></td></tr></table></figure>
 
 <p>第6、7行的静态分析是有效的，可以查出确切的错误。</p>
 <p>第8行在a为正数的时候是正确的，a为负数的时候是错误的，所以可能会产生误报。</p>
 <h5 id="Control-Flows"><a href="#Control-Flows" class="headerlink" title="Control Flows"></a>Control Flows</h5><p>程序执行控制流。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">x = 1;</span><br><span class="line">if(input)</span><br><span class="line">	y = 10;</span><br><span class="line">else</span><br><span class="line">	y = -1;</span><br><span class="line">z = x + y;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">x = 1;</span><br><span class="line">if(input)</span><br><span class="line">	y = 10;</span><br><span class="line">else</span><br><span class="line">	y = -1;</span><br><span class="line">z = x + y;</span><br></pre></td></tr></table></figure>
 
 <p>对于这个程序逻辑，当input=true时，会存在<code>x = 1, y = 10</code>，在input=false时，会存在<code>x = 1, y = -1</code>；</p>
 <p>所有程序执行流汇聚的点，必须抽象；</p>
@@ -357,232 +365,49 @@
 <li>How to understand abstraction and over-approximation?</li>
 </ul>
 <h2 id="Footer"><a href="#Footer" class="headerlink" title="Footer"></a>Footer</h2><p>[^1]:Can determine whether P satisfies such non-trivial properties, i.e.,giving exact answer:Yes or No.</p>
-
-        
-            <div id="toc-article">
-                
-  <div class="widget-wrap" id="toc-wrap">
-    <h3 class="widget-title"><i class="fa fa-toc"></i> 文章目录</h3>
-    <div class="widget">
-      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Introduction"><span class="toc-text">Introduction</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Links"><span class="toc-text">Links</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#PL-amp-Static-Analysis"><span class="toc-text">PL &amp; Static Analysis</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#What-is-Program-Languages"><span class="toc-text">What is Program Languages</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Background"><span class="toc-text">Background</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Challenge"><span class="toc-text">Challenge</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Why-we-learn-static-analysis"><span class="toc-text">Why we learn static analysis?</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Application"><span class="toc-text">Application</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Program-Reliability"><span class="toc-text">Program Reliability</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Program-Security"><span class="toc-text">Program Security</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Compiler-Optimization"><span class="toc-text">Compiler Optimization</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Program-Understanding"><span class="toc-text">Program Understanding</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Market-of-Static-Analysis"><span class="toc-text">Market of Static Analysis</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Understanding"><span class="toc-text">Understanding</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#What-is-Static-Analysis"><span class="toc-text">What is Static Analysis?</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Static-Analysis"><span class="toc-text">Static Analysis</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Rice-theority"><span class="toc-text">Rice theority</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Sound-amp-Complete"><span class="toc-text">Sound &amp; Complete</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Necessity-of-Soundness"><span class="toc-text">Necessity of Soundness</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Example"><span class="toc-text">Example?</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#How-to-conclude-Static-Analysis"><span class="toc-text">How to conclude Static Analysis</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Two-aspect"><span class="toc-text">Two aspect</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Example-1"><span class="toc-text">Example?</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Abstraction"><span class="toc-text">Abstraction</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Over-approximation"><span class="toc-text">Over-approximation</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#Transfer-Functions"><span class="toc-text">Transfer Functions</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#Control-Flows"><span class="toc-text">Control Flows</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Teaching-Plan"><span class="toc-text">Teaching Plan</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Coding-Assignment"><span class="toc-text">Coding Assignment</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Important-Point"><span class="toc-text">Important Point</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Footer"><span class="toc-text">Footer</span></a></li></ol></li></ol>
-    </div>
-  </div>
-
-
-            </div>
-        
-        
-          <blockquote id="copyright">
-              <p>原文链接: <a href="https://www.jk404.cn/course/static-program-analysis/static-program-analysis-01-introduction/">https://www.jk404.cn/course/static-program-analysis/static-program-analysis-01-introduction/</a></p>
-              <p>版权声明: 转载请注明出处.</p>
-          </blockquote>
-        
-      
-    </div>
-    <footer class="article-footer">
-      
-        <div class="article-tag-wrap">
-          
-
-          
-          
-
-
-        </div>
-      
-      
-        
-<nav id="article-nav">
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">K1ose</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://www.jk404.cn/course/static-program-analysis/static-program-analysis-01-introduction/">https://www.jk404.cn/course/static-program-analysis/static-program-analysis-01-introduction/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://www.jk404.cn" target="_blank">K1ose's Space</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"></div><div class="post_share"><div class="social-share" data-image="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/course/static-program-analysis/static-program-analysis-02-intermediate-representation/"><img class="prev-cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">static_program_analysis_02_intermediate-representation</div></div></a></div><div class="next-post pull-right"><a href="/PWN/microcorruption/microcorruption-3-Hanoi/"><img class="next-cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">microcorruption-3-Hanoi</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/Soler6pro.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">K1ose</div><div class="author-info__description"></div></div><div class="card-info-data is-center"><div class="card-info-data-item"><a href="/archives/"><div class="headline">文章</div><div class="length-num">110</div></a></div><div class="card-info-data-item"><a href="/tags/"><div class="headline">标签</div><div class="length-num">0</div></a></div><div class="card-info-data-item"><a href="/categories/"><div class="headline">分类</div><div class="length-num">58</div></a></div></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>公告</span></div><div class="announcement_content"></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Introduction"><span class="toc-number">1.</span> <span class="toc-text">Introduction</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Links"><span class="toc-number">1.1.</span> <span class="toc-text">Links</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#PL-amp-Static-Analysis"><span class="toc-number">1.2.</span> <span class="toc-text">PL &amp; Static Analysis</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#What-is-Program-Languages"><span class="toc-number">1.2.1.</span> <span class="toc-text">What is Program Languages</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Background"><span class="toc-number">1.2.2.</span> <span class="toc-text">Background</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Challenge"><span class="toc-number">1.2.3.</span> <span class="toc-text">Challenge</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Why-we-learn-static-analysis"><span class="toc-number">1.3.</span> <span class="toc-text">Why we learn static analysis?</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Application"><span class="toc-number">1.3.1.</span> <span class="toc-text">Application</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Program-Reliability"><span class="toc-number">1.3.1.1.</span> <span class="toc-text">Program Reliability</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Program-Security"><span class="toc-number">1.3.1.2.</span> <span class="toc-text">Program Security</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Compiler-Optimization"><span class="toc-number">1.3.1.3.</span> <span class="toc-text">Compiler Optimization</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Program-Understanding"><span class="toc-number">1.3.1.4.</span> <span class="toc-text">Program Understanding</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Market-of-Static-Analysis"><span class="toc-number">1.3.2.</span> <span class="toc-text">Market of Static Analysis</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Understanding"><span class="toc-number">1.3.3.</span> <span class="toc-text">Understanding</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#What-is-Static-Analysis"><span class="toc-number">1.4.</span> <span class="toc-text">What is Static Analysis?</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Static-Analysis"><span class="toc-number">1.4.1.</span> <span class="toc-text">Static Analysis</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Rice-theority"><span class="toc-number">1.4.2.</span> <span class="toc-text">Rice theority</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Sound-amp-Complete"><span class="toc-number">1.4.3.</span> <span class="toc-text">Sound &amp; Complete</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Necessity-of-Soundness"><span class="toc-number">1.4.4.</span> <span class="toc-text">Necessity of Soundness</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Example"><span class="toc-number">1.4.5.</span> <span class="toc-text">Example?</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#How-to-conclude-Static-Analysis"><span class="toc-number">1.5.</span> <span class="toc-text">How to conclude Static Analysis</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Two-aspect"><span class="toc-number">1.5.1.</span> <span class="toc-text">Two aspect</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Example-1"><span class="toc-number">1.5.2.</span> <span class="toc-text">Example?</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Abstraction"><span class="toc-number">1.5.2.1.</span> <span class="toc-text">Abstraction</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Over-approximation"><span class="toc-number">1.5.2.2.</span> <span class="toc-text">Over-approximation</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#Transfer-Functions"><span class="toc-number">1.5.2.2.1.</span> <span class="toc-text">Transfer Functions</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#Control-Flows"><span class="toc-number">1.5.2.2.2.</span> <span class="toc-text">Control Flows</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Teaching-Plan"><span class="toc-number">1.6.</span> <span class="toc-text">Teaching Plan</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Coding-Assignment"><span class="toc-number">1.7.</span> <span class="toc-text">Coding Assignment</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Important-Point"><span class="toc-number">1.8.</span> <span class="toc-text">Important Point</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Footer"><span class="toc-number">1.9.</span> <span class="toc-text">Footer</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/uncategorized/OS-03-boot-interrupt-exception-syscall/OS-03-boot-interrupt-exception-syscall.drawio/" title="无题">无题</a><time datetime="2022-06-18T06:59:40.970Z" title="发表于 2022-06-18 14:59:40">2022-06-18</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/uncategorized/ctf-susctf2022-happytree/%E6%9C%AA%E5%91%BD%E5%90%8D%E7%BB%98%E5%9B%BE.drawio/" title="无题">无题</a><time datetime="2022-06-18T06:59:40.616Z" title="发表于 2022-06-18 14:59:40">2022-06-18</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/uncategorized/cpp-12-class-and-dynamic-memory-allocation/" title="cpp_12_class_and_dynamic_memory_allocation">cpp_12_class_and_dynamic_memory_allocation</a><time datetime="2022-06-18T05:04:09.000Z" title="发表于 2022-06-18 13:04:09">2022-06-18</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/uncategorized/cpp-11-use-class/" title="cpp_11_use_class">cpp_11_use_class</a><time datetime="2022-06-18T05:03:09.000Z" title="发表于 2022-06-18 13:03:09">2022-06-18</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/uncategorized/cpp-10-object-and-class/" title="cpp_10_object_and_class">cpp_10_object_and_class</a><time datetime="2022-06-18T05:02:33.000Z" title="发表于 2022-06-18 13:02:33">2022-06-18</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By K1ose</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><div class="js-pjax"><script>if (!window.MathJax) {
+  window.MathJax = {
+    tex: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"]],
+      tags: 'ams'
+    },
+    chtml: {
+      scale: 1.2
+    },
+    options: {
+      renderActions: {
+        findScript: [10, doc => {
+          for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+            const display = !!node.type.match(/; *mode=display/)
+            const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display)
+            const text = document.createTextNode('')
+            node.parentNode.replaceChild(text, node)
+            math.start = {node: text, delim: '', n: 0}
+            math.end = {node: text, delim: '', n: 0}
+            doc.math.push(math)
+          }
+        }, ''],
+        insertScript: [200, () => {
+          document.querySelectorAll('mjx-container:not\([display]\)').forEach(node => {
+            const target = node.parentNode
+            if (target.nodeName.toLowerCase() === 'li') {
+              target.parentNode.classList.add('has-jax')
+            } else {
+              target.classList.add('has-jax')
+            }
+          });
+        }, '', false]
+      }
+    }
+  }
   
-    <a href="/course/static-program-analysis/static-program-analysis-02-intermediate-representation/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">newer</strong>
-      <div class="article-nav-title">
-        
-          static_program_analysis_02_intermediate-representation
-        
-      </div>
-    </a>
-  
-  
-    <a href="/PWN/microcorruption/microcorruption-3-Hanoi/" id="article-nav-older" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">older</strong>
-      <div class="article-nav-title">microcorruption-3-Hanoi</div>
-    </a>
-  
-</nav>
-
-      
-      
-        
-
-
-
-
-
-
-
-      
-    </footer>
-  </div>
-</article>
-</section>
-        
-          <aside id="sidebar">
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title"><i class="fa fa-posts"></i> 最新文章</h3>
-    <div class="widget">
-      <ul>
-        
-          <li>
-            <a href="/uncategorized/OS-03-boot-interrupt-exception-syscall/OS-03-boot-interrupt-exception-syscall.drawio/">(no title)</a>
-          </li>
-        
-          <li>
-            <a href="/OS/theory/OS-03-boot-interrupt-exception-syscall/">OS_03_boot_interrupt_exception_syscall</a>
-          </li>
-        
-          <li>
-            <a href="/course/static-program-analysis/static-program-analysis-06-pointer-analysis/">static_program_analysis_06_pointer_analysis</a>
-          </li>
-        
-          <li>
-            <a href="/OS/lab/OS-02-lab-prepare/">OS_02_lab_prepare</a>
-          </li>
-        
-          <li>
-            <a href="/Taichi/Taichi-02-Metaprogramming-and-Object-Oriented/">Taichi_02_Metaprogramming_and_Object_Oriented</a>
-          </li>
-        
-      </ul>
-    </div>
-  </div>
-
-
-  
-    
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title"><i class="fa fa-classify"></i> 分类</h3>
-    <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP-lab/">CSAPP-lab</a><span class="category-list-count">3</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP-lab/bomblab/">bomblab</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP-lab/datalab/">datalab</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP-lab/preparelab/">preparelab</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/">CTF</a><span class="category-list-count">32</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/">PWN</a><span class="category-list-count">32</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/">kernel pwn</a><span class="category-list-count">13</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/FUZZ/">FUZZ</a><span class="category-list-count">3</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/FUZZ/Syzkaller/">Syzkaller</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/FUZZ/Trinity/">Trinity</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/Linux-source/">Linux source</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/cve/">cve</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/knowledge/">knowledge</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/kernel-pwn/wp/">wp</a><span class="category-list-count">3</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/uncategorized/">uncategorized</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/user-space-pwn/">user space pwn</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/user-space-pwn/cve/">cve</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/">wp</a><span class="category-list-count">14</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/asisctf/">asisctf</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/asisctf/asisctf2021/">asisctf2021</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/buuoj/">buuoj</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/l3hctf/">l3hctf</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/pwnable-kr/">pwnable.kr</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/PWN/wp/susctf2022/">susctf2022</a><span class="category-list-count">2</span></li></ul></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/">OS</a><span class="category-list-count">17</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/OS/Prepare/">Prepare</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab/">lab</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/">lab1</a><span class="category-list-count">13</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge1-what-is-make/">challenge1:what is make</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge2-qemu-gdb/">challenge2:qemu&gdb</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge3-go-into-protected-mode/">challenge3:go into protected mode</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge4-load-kernel-elf/">challenge4:load kernel elf</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge5-trace-stackframe/">challenge5:trace stackframe</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/lab1/challenge6-interrupt-handle/">challenge6:interrupt handle</a><span class="category-list-count">3</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/OS/theory/">theory</a><span class="category-list-count">2</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/">PWN</a><span class="category-list-count">6</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/Fuzz/">Fuzz</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/Fuzz/AFL/">AFL</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/cve/">cve</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/PWN/microcorruption/">microcorruption</a><span class="category-list-count">4</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/Taichi/">Taichi</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/UE4/">UE4</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/UE4/LowPoly/">LowPoly</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/course/">course</a><span class="category-list-count">7</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/course/MIT-AI/">MIT-AI</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/course/static-program-analysis/">static_program_analysis</a><span class="category-list-count">6</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/golang/">golang</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/golang/start/">start</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/pwn-college/">pwn.college</a><span class="category-list-count">3</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/pwn-college/Chapter01-Program-interaction/">Chapter01 Program interaction</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/pwn-college/Chapter02-Binary-file/">Chapter02 Binary file</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/pwn-college/Introduciton/">Introduciton</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/study/">study</a><span class="category-list-count">18</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/study/book/">book</a><span class="category-list-count">17</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/">揭秘家用路由器0day漏洞挖掘技术</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/">程序员的自我修养：链接、装载与库</a><span class="category-list-count">7</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/study/daily/">daily</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/tools/">tools</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/welcome/">welcome</a><span class="category-list-count">1</span></li></ul>
-    </div>
-  </div>
-
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title"><i class="fa fa-archive"></i> 归档</h3>
-    <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/">2022年05月</a><span class="archive-list-count">23</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/">2021年12月</a><span class="archive-list-count">73</span></li></ul>
-    </div>
-  </div>
-
-
-  
-    
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title"><i class="fa fa-link"></i> 友情链接</h3>
-    <div class="widget">
-      <ul>
-      
-        <li>
-          <a target="_blank" rel="noopener" href="https://www.jk4u.website">J0yce&#39;s Space</a>
-        </li>
-      
-        <li>
-          <a target="_blank" rel="noopener" href="https://buuoj.com/">buuoj</a>
-        </li>
-      
-        <li>
-          <a target="_blank" rel="noopener" href="https://eternalsakura13.com/">Sakura&#39;s Blog</a>
-        </li>
-      
-        <li>
-          <a target="_blank" rel="noopener" href="https://bestwing.me/">Swing&#39;s Blog</a>
-        </li>
-      
-      </ul>
-    </div>
-  </div>
-
-
-  
-</aside>
-        
-      </div>
-      <a id="totop" href="#top"></a>
-      <footer id="footer">
-  
-  <div class="outer">
-    <div id="footer-info" class="inner">
-      <p>
-        <a href="/about/">联系博主</a>
-      </p>
-      
-        <p>
-          <i class="fa fa-visitors"></i>
-          <i> </i>
-          <i class="fa fa-views"></i>
-        </p>
-      
-      <p>
-        <span>Copyright &copy; 2022 K1ose</span>
-      </p>
-    </div>
-  </div>
-</footer>
-
-    </div>
-    
-<script src="/js/jquery-3.4.1.min.js"></script>
-
-
-<script src="/js/search.json.js"></script>
-
-
-  
-<script src="/fancybox/jquery.fancybox.min.js"></script>
-
-
-
-
-<script src="/js/script.js"></script>
-
-
-
-
-
-
-  
-<script src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  </div>
-</body>
-</html>
+  const script = document.createElement('script')
+  script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js'
+  script.id = 'MathJax-script'
+  script.async = true
+  document.head.appendChild(script)
+} else {
+  MathJax.startup.document.state(0)
+  MathJax.texReset()
+  MathJax.typeset()
+}</script></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
