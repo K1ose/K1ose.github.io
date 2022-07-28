@@ -1,9 +1,9 @@
-<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>router_vuln_analysis_skill | K1ose's Space</title><meta name="author" content="K1ose"><meta name="copyright" content="K1ose"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="路由器漏洞分析技能D-Link&#x2F;DIR-605L修复路由器程序环境 运行程序，定位异常函数 分析函数，编写相同功能函数，伪造流程和数据，封装到新动态库 使用LD_PRELOAD环境变量加载新的动态库来劫持程序中的异常函数，使目标程序执行动态库中的函数  固件分析与调试 固件下载 D-Link官网下载固件，我用IDM下载ftp:&#x2F;&#x2F;ftp2.dlink.com&#x2F;PRODUCTS&#x2F;DIR-605L&#x2F;R">
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>router_vuln_analysis_skill | K1ose's Space</title><meta name="author" content="K1ose"><meta name="copyright" content="K1ose"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="路由器漏洞分析技能 D-Link&#x2F;DIR-605L 修复路由器程序环境  运行程序，定位异常函数 分析函数，编写相同功能函数，伪造流程和数据，封装到新动态库 使用LD_PRELOAD环境变量加载新的动态库来劫持程序中的异常函数，使目标程序执行动态库中的函数  固件分析与调试   固件下载 D-Link官网下载固件，我用IDM下载ftp:&#x2F;&#x2F;ftp2.dlink.com&#x2F;PRODUCTS&#x2F;DIR-6">
 <meta property="og:type" content="article">
 <meta property="og:title" content="router_vuln_analysis_skill">
 <meta property="og:url" content="https://www.jk404.cn/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/router-vuln-analysis-skill/index.html">
 <meta property="og:site_name" content="K1ose&#39;s Space">
-<meta property="og:description" content="路由器漏洞分析技能D-Link&#x2F;DIR-605L修复路由器程序环境 运行程序，定位异常函数 分析函数，编写相同功能函数，伪造流程和数据，封装到新动态库 使用LD_PRELOAD环境变量加载新的动态库来劫持程序中的异常函数，使目标程序执行动态库中的函数  固件分析与调试 固件下载 D-Link官网下载固件，我用IDM下载ftp:&#x2F;&#x2F;ftp2.dlink.com&#x2F;PRODUCTS&#x2F;DIR-605L&#x2F;R">
+<meta property="og:description" content="路由器漏洞分析技能 D-Link&#x2F;DIR-605L 修复路由器程序环境  运行程序，定位异常函数 分析函数，编写相同功能函数，伪造流程和数据，封装到新动态库 使用LD_PRELOAD环境变量加载新的动态库来劫持程序中的异常函数，使目标程序执行动态库中的函数  固件分析与调试   固件下载 D-Link官网下载固件，我用IDM下载ftp:&#x2F;&#x2F;ftp2.dlink.com&#x2F;PRODUCTS&#x2F;DIR-6">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7">
 <meta property="article:published_time" content="2021-12-12T07:22:21.000Z">
@@ -142,120 +142,149 @@
     }
     detectApple()
     })(window)</script><meta name="generator" content="Hexo 5.4.0"><link rel="alternate" href="/atom.xml" title="K1ose's Space" type="application/atom+xml">
-</head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/Soler6pro.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data is-center"><div class="data-item"><a href="/archives/"><div class="headline">文章</div><div class="length-num">111</div></a></div><div class="data-item"><a href="/tags/"><div class="headline">标签</div><div class="length-num">0</div></a></div><div class="data-item"><a href="/categories/"><div class="headline">分类</div><div class="length-num">59</div></a></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><span> About</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="not-top-img" id="page-header"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">K1ose's Space</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><span> About</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav></header><main class="layout" id="content-inner"><div id="post"><div id="post-info"><h1 class="post-title">router_vuln_analysis_skill</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2021-12-12T07:22:21.000Z" title="发表于 2021-12-12 15:22:21">2021-12-12</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2021-12-16T05:54:14.256Z" title="更新于 2021-12-16 13:54:14">2021-12-16</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/study/">study</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/study/book/">book</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/">揭秘家用路由器0day漏洞挖掘技术</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="router_vuln_analysis_skill"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div><article class="post-content" id="article-container"><h1 id="路由器漏洞分析技能"><a href="#路由器漏洞分析技能" class="headerlink" title="路由器漏洞分析技能"></a>路由器漏洞分析技能</h1><h2 id="D-Link-DIR-605L"><a href="#D-Link-DIR-605L" class="headerlink" title="D-Link/DIR-605L"></a>D-Link/DIR-605L</h2><h3 id="修复路由器程序环境"><a href="#修复路由器程序环境" class="headerlink" title="修复路由器程序环境"></a>修复路由器程序环境</h3><ul>
+</head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/Soler6pro.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data is-center"><div class="data-item"><a href="/archives/"><div class="headline">文章</div><div class="length-num">111</div></a></div><div class="data-item"><a href="/tags/"><div class="headline">标签</div><div class="length-num">0</div></a></div><div class="data-item"><a href="/categories/"><div class="headline">分类</div><div class="length-num">59</div></a></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><span> About</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="not-top-img" id="page-header"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">K1ose's Space</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><span> About</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav></header><main class="layout" id="content-inner"><div id="post"><div id="post-info"><h1 class="post-title">router_vuln_analysis_skill</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2021-12-12T07:22:21.000Z" title="发表于 2021-12-12 15:22:21">2021-12-12</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2021-12-16T05:54:14.256Z" title="更新于 2021-12-16 13:54:14">2021-12-16</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/study/">study</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/study/book/">book</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/">揭秘家用路由器0day漏洞挖掘技术</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="router_vuln_analysis_skill"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div><article class="post-content" id="article-container"><h1>路由器漏洞分析技能</h1>
+<h2 id="D-Link-DIR-605L">D-Link/DIR-605L</h2>
+<h3 id="修复路由器程序环境">修复路由器程序环境</h3>
+<ul>
 <li>运行程序，定位异常函数</li>
 <li>分析函数，编写相同功能函数，伪造流程和数据，封装到新动态库</li>
 <li>使用LD_PRELOAD环境变量加载新的动态库来劫持程序中的异常函数，使目标程序执行动态库中的函数</li>
 </ul>
-<h4 id="固件分析与调试"><a href="#固件分析与调试" class="headerlink" title="固件分析与调试"></a>固件分析与调试</h4><ul>
-<li><p>固件下载</p>
-<p>D-Link官网下载固件，我用IDM下载<code>ftp://ftp2.dlink.com/PRODUCTS/DIR-605L/REVA/DIR-605L_FIRMWARE_1.13.ZIP</code>，解压后可以得到：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">~/iot_pwn/D-link/DIR-605L_FIRMWARE_1.13$ ls</span><br><span class="line">DIR-605L_FIRMWARE_1.13.zip  dir605L_FW_113.bin  DIR-605L_RELEASENOTES_1.13B06_EN_US.PDF</span><br></pre></td></tr></table></figure></li>
-<li><p>文件系统提取</p>
-<p>使用binwalk提取文件系统<code>_dir605L_FW_113.bin.extracted</code>；</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">binwalk -e dir605L_FW_113.bin</span><br><span class="line">...</span><br><span class="line"></span><br><span class="line">~/iot_pwn/D-link/DIR-605L_FIRMWARE_1.13$ ls | grep extracted</span><br><span class="line">_dir605L_FW_113.bin.extracted</span><br></pre></td></tr></table></figure></li>
-<li><p>找到目标Web服务器程序<code>boa</code></p>
-<p>其位于<code>_dir605L_FW_113.bin.extracted/squashfs-root-0/bin/boa</code></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">~/iot_pwn/D-link/DIR-605L_FIRMWARE_1.13/_dir605L_FW_113.bin.extracted$ find ./ -name boa</span><br><span class="line">./squashfs-root-0/bin/boa</span><br><span class="line">./squashfs-root-0/etc/boa</span><br></pre></td></tr></table></figure></li>
-<li><p>编写劫持函数动态库</p>
+<h4 id="固件分析与调试">固件分析与调试</h4>
 <ul>
-<li><p>首先拷贝qemu-mips到文件系统根目录</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">cp $(qemu-mips) ./</span><br></pre></td></tr></table></figure></li>
-<li><p>切换根目录并执行</p>
+<li>
+<p>固件下载</p>
+<p>D-Link官网下载固件，我用IDM下载<code>ftp://ftp2.dlink.com/PRODUCTS/DIR-605L/REVA/DIR-605L_FIRMWARE_1.13.ZIP</code>，解压后可以得到：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">~/iot_pwn/D-link/DIR-605L_FIRMWARE_1.13$ ls</span><br><span class="line">DIR-605L_FIRMWARE_1.13.zip  dir605L_FW_113.bin  DIR-605L_RELEASENOTES_1.13B06_EN_US.PDF</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>文件系统提取</p>
+<p>使用binwalk提取文件系统<code>_dir605L_FW_113.bin.extracted</code>；</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">binwalk -e dir605L_FW_113.bin</span><br><span class="line">...</span><br><span class="line"></span><br><span class="line">~/iot_pwn/D-link/DIR-605L_FIRMWARE_1.13$ ls | grep extracted</span><br><span class="line">_dir605L_FW_113.bin.extracted</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>找到目标Web服务器程序<code>boa</code></p>
+<p>其位于<code>_dir605L_FW_113.bin.extracted/squashfs-root-0/bin/boa</code></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">~/iot_pwn/D-link/DIR-605L_FIRMWARE_1.13/_dir605L_FW_113.bin.extracted$ find ./ -name boa</span><br><span class="line">./squashfs-root-0/bin/boa</span><br><span class="line">./squashfs-root-0/etc/boa</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>编写劫持函数动态库</p>
+<ul>
+<li>
+<p>首先拷贝qemu-mips到文件系统根目录</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">cp $(qemu-mips) ./</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>切换根目录并执行</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo chroot ./qemu-mips ./bin/boa</span><br></pre></td></tr></table></figure>
-
 <blockquote>
 <p>结果报错了…😅</p>
 <p>chroot: cannot change root directory to ‘./qemu-mips’: Not a directory</p>
 </blockquote>
 <p>考虑使用</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo chroot . ./qemu-mips ./bin/boa</span><br></pre></td></tr></table></figure>
-
 <blockquote>
 <p>又报错了…😅</p>
 <p>chroot: failed to run command ‘./qemu-mips’: No such file or directory</p>
 </blockquote>
 <p>这次使用<code>qemu-mips-static</code>来执行</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># 安装依赖</span><br><span class="line">sudo apt-get install qemu binfmt-support qemu-user-static</span><br><span class="line"></span><br><span class="line"># 拷贝qemu-mips-static到当前目录</span><br><span class="line">cp $(which qemu-mips-static) ./</span><br><span class="line"></span><br><span class="line"># 执行</span><br><span class="line">sudo chroot . ./qemu-mips-static ./bin/boa</span><br></pre></td></tr></table></figure>
-
 <p>这次成功了，结果如下：</p>
 <blockquote>
-<p>Initialize AP MIB failed!<br>Segmentation fault (core dumped)</p>
+<p>Initialize AP MIB failed!<br>
+Segmentation fault (core dumped)</p>
 </blockquote>
 </li>
-<li><p>接着，使用<code>ida</code>对<code>/bin/boa</code>进行调试分析；</p>
+<li>
+<p>接着，使用<code>ida</code>对<code>/bin/boa</code>进行调试分析；</p>
 <ul>
-<li><p>搜索字符串<code>Initialize AP MIB failed!</code>所在位置，简单说就是<code>ALT+t</code>，输入需要搜索到字符串，选择<code>Find all occurences</code>即可；</p>
-<p><img src="/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/router-vuln-analysis-skill/TextSearch.jpg"></p>
+<li>
+<p>搜索字符串<code>Initialize AP MIB failed!</code>所在位置，简单说就是<code>ALT+t</code>，输入需要搜索到字符串，选择<code>Find all occurences</code>即可；</p>
+<p><img src="/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/router-vuln-analysis-skill/TextSearch.jpg" alt></p>
 </li>
-<li><p>接着找到处在<code>websAspInit</code>函数中的对应字符串位置；</p>
-<p><img src="/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/router-vuln-analysis-skill/HereUR.jpg"></p>
+<li>
+<p>接着找到处在<code>websAspInit</code>函数中的对应字符串位置；</p>
+<p><img src="/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/router-vuln-analysis-skill/HereUR.jpg" alt></p>
 </li>
-<li><p>双击即可；</p>
-<p><img src="/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/router-vuln-analysis-skill/Instruction.jpg"></p>
+<li>
+<p>双击即可；</p>
+<p><img src="/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/router-vuln-analysis-skill/Instruction.jpg" alt></p>
 </li>
-<li><p>在terminal中执行</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo chroot . ./qemu-mips-static -g 6666 ./bin/boa</span><br></pre></td></tr></table></figure></li>
-<li><p>接下来进行断点调试，在该字符串puts的地方下断点，即<code>0x0041823C</code>；</p>
+<li>
+<p>在terminal中执行</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo chroot . ./qemu-mips-static -g 6666 ./bin/boa</span><br></pre></td></tr></table></figure>
 </li>
-<li><p>选择<code>Debugger</code>-&gt;<code>Select debuuger...</code>-&gt;<code>Remote GDB debugger</code>，并在<code>Debugger</code>-&gt;<code>Process options...</code>中设置对应的<code>hostname</code>和<code>port</code>；</p>
-<p><img src="/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/router-vuln-analysis-skill/ProcessOptions.jpg"></p>
+<li>
+<p>接下来进行断点调试，在该字符串puts的地方下断点，即<code>0x0041823C</code>；</p>
 </li>
-<li><p>选择<code>Debugger</code>-&gt;<code>Attach to process...</code>，并选择<code>OK</code>，即可进入到调试界面；</p>
-<p><img src="/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/router-vuln-analysis-skill/AttachToProcess.jpg"></p>
+<li>
+<p>选择<code>Debugger</code>-&gt;<code>Select debuuger...</code>-&gt;<code>Remote GDB debugger</code>，并在<code>Debugger</code>-&gt;<code>Process options...</code>中设置对应的<code>hostname</code>和<code>port</code>；</p>
+<p><img src="/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/router-vuln-analysis-skill/ProcessOptions.jpg" alt></p>
 </li>
-<li><p>选择继续执行，程序执行到断点处时停止，观察执行流的过程</p>
+<li>
+<p>选择<code>Debugger</code>-&gt;<code>Attach to process...</code>，并选择<code>OK</code>，即可进入到调试界面；</p>
+<p><img src="/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/router-vuln-analysis-skill/AttachToProcess.jpg" alt></p>
+</li>
+<li>
+<p>选择继续执行，程序执行到断点处时停止，观察执行流的过程</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">LOAD:0041821C jalr    $t9 ; _apmib_init</span><br><span class="line">LOAD:00418220 nop</span><br><span class="line">LOAD:00418224 lw      $gp, 0x38+var_28($sp)</span><br><span class="line">LOAD:00418228 bnez    $v0, loc_418250					# 跳转指令</span><br><span class="line">LOAD:0041822C nop</span><br><span class="line"></span><br><span class="line">LOAD:00418230 la      $a0, 0x490000</span><br><span class="line">LOAD:00418234 la      $t9, _puts</span><br><span class="line">LOAD:00418238 nop</span><br><span class="line">LOAD:0041823C jalr    $t9 ; _puts</span><br><span class="line">LOAD:00418240 addiu   $a0, (aInitializeApMi - 0x490000)  # &quot;Initialize AP MIB failed!&quot;</span><br></pre></td></tr></table></figure>
-
 <p>可以看到这里进行了一次判断跳转，观察到<code>apmib_init</code>函数的返回值（保存在<code>$v0</code>寄存器中）为0，跳转后执行<code>puts</code>函数，程序崩溃退出；</p>
 </li>
-<li><p>查找关于<code>ampib_init</code>函数的库文件</p>
+<li>
+<p>查找关于<code>ampib_init</code>函数的库文件</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ sudo grep -rn apmib_init</span><br><span class="line">Binary file bin/setfirewall matches</span><br><span class="line">Binary file bin/flash matches</span><br><span class="line">Binary file bin/boa.id0 matches</span><br><span class="line">Binary file bin/boa matches</span><br><span class="line">Binary file etc/boa/core matches</span><br><span class="line">Binary file lib/apmib.so matches</span><br></pre></td></tr></table></figure>
-
 <p>这里看到匹配到了<code>lib/apmib.so</code>文件，将之用ida打开分析，找到对应的<code>ampib_init</code>函数；</p>
-<p><img src="/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/router-vuln-analysis-skill/ApmibInit.jpg"></p>
+<p><img src="/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/router-vuln-analysis-skill/ApmibInit.jpg" alt></p>
 <p>这里仅仅是一小部分的汇编代码，事实上，<code>amplib_init</code>有着比较复杂的函数功能，但是其内部处理流程对模糊测试并没有影响，因此可以尝试伪造<code>amplib_init</code>的值返回为<code>1</code>，使程序执行流能够走向另一个分支，即跳转到<code>0x00418250</code>的地址；</p>
-<p><img src="/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/router-vuln-analysis-skill/Jump.jpg"></p>
+<p><img src="/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/router-vuln-analysis-skill/Jump.jpg" alt></p>
 </li>
-<li><p>如何进行劫持程序流呢？这里需要伪造一个新的<code>amplib_init</code>，以供程序执行；</p>
+<li>
+<p>如何进行劫持程序流呢？这里需要伪造一个新的<code>amplib_init</code>，以供程序执行；</p>
 <figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">// fake_apmib_init.c</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">apmib_init</span><span class="params">(<span class="keyword">void</span>)</span></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
 <p>使用下列命令编译生成动态库，将生成的<code>apmib-ld.so</code>文件放入<code>lib</code>文件夹中；</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mips-linux-gcc -Wall -fPIC -shared fake_apmib_init.c -o apmib-ld.so</span><br></pre></td></tr></table></figure>
-
 <p>当然这里需要注意mips-linux-gcc的全局环境问题；</p>
 </li>
-<li><p>使用<code>LD_PRELOAD</code>环境变量加载<code>apmib-ld.so</code>，劫持<code>apmib.so</code>中的<code>apmib_init()</code>函数，命令如下：</p>
+<li>
+<p>使用<code>LD_PRELOAD</code>环境变量加载<code>apmib-ld.so</code>，劫持<code>apmib.so</code>中的<code>apmib_init()</code>函数，命令如下：</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo chroot . ./qemu-mips-static -E LD_PRELOAD=&quot;/apmib-ld.so&quot; ./bin/boa</span><br></pre></td></tr></table></figure>
-
 <p>得到的是另外一个错误提示。</p>
 <blockquote>
-<p>Create chklist file error!<br>Create chklist file error!<br>Segmentation fault (core dumped)</p>
+<p>Create chklist file error!<br>
+Create chklist file error!<br>
+Segmentation fault (core dumped)</p>
 </blockquote>
 </li>
-<li><p>虽然原先的程序执行流程被修改了，但是新的<code>segmentation fault</code>出现了，于是在此基础上继续进行断点调试；</p>
+<li>
+<p>虽然原先的程序执行流程被修改了，但是新的<code>segmentation fault</code>出现了，于是在此基础上继续进行断点调试；</p>
 <p>显然还得先运行qemu来等待远程gdb的接入：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo chroot . ./qemu-mips-static -E LD_PRELOAD=&quot;/apmib-ld.so&quot; -g 6666 ./bin/boa</span><br></pre></td></tr></table></figure></li>
-<li><p>在<code>_apmib_init</code>处下断点，<code>F8</code>单步执行，可以看到经过劫持动态库到<code>apmib-ld.so</code>后，程序执行流跳转到另外的分支，并且最终在<code>_apmib_get</code>处产生异常；</p>
-<p><img src="/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/router-vuln-analysis-skill/ApmibGet.jpg"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo chroot . ./qemu-mips-static -E LD_PRELOAD=&quot;/apmib-ld.so&quot; -g 6666 ./bin/boa</span><br></pre></td></tr></table></figure>
 </li>
-<li><p>由此还需要劫持<code>_apmib_get</code>函数，需要对该函数功能进行分析，同样使用IDA查看<code>apmib.so</code>文件，找到<code>apmib_get</code>函数的位置，同样进行分析，可以通过程序执行流程图看到函数还是有很复杂的执行逻辑的；</p>
-<p><img src="/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/router-vuln-analysis-skill/ApmibGetHijack.jpg"></p>
+<li>
+<p>在<code>_apmib_init</code>处下断点，<code>F8</code>单步执行，可以看到经过劫持动态库到<code>apmib-ld.so</code>后，程序执行流跳转到另外的分支，并且最终在<code>_apmib_get</code>处产生异常；</p>
+<p><img src="/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/router-vuln-analysis-skill/ApmibGet.jpg" alt></p>
 </li>
-<li><p>最终的劫持代码为：</p>
+<li>
+<p>由此还需要劫持<code>_apmib_get</code>函数，需要对该函数功能进行分析，同样使用IDA查看<code>apmib.so</code>文件，找到<code>apmib_get</code>函数的位置，同样进行分析，可以通过程序执行流程图看到函数还是有很复杂的执行逻辑的；</p>
+<p><img src="/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/router-vuln-analysis-skill/ApmibGetHijack.jpg" alt></p>
+</li>
+<li>
+<p>最终的劫持代码为：</p>
 <figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">// fake_ampib.c</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MIB_IP_ADDR 170</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MIB_HW_VER 0x250</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MIB_CAPTCHA 0x2C1</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">apmib_init</span><span class="params">(<span class="keyword">void</span>)</span></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">fork</span><span class="params">(<span class="keyword">void</span>)</span></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">apmib_get</span><span class="params">(<span class="keyword">int</span> code, <span class="keyword">int</span> *value)</span></span>&#123;</span><br><span class="line">    <span class="keyword">switch</span>(code)&#123;</span><br><span class="line">        <span class="keyword">case</span> MIB_HW_VER:</span><br><span class="line">            *value = <span class="number">0xF1</span>;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> MIP_IP_ADDR:</span><br><span class="line">            *value = <span class="number">0x7F000001</span>;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> MIB_CAPTCHA:</span><br><span class="line">            *value = <span class="number">1</span>;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> ;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
 <p>使用下面的编译命令，并将生成的文件<code>final-apmib-ld.so</code>放在文件系统根目录下；</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mips-linux-gcc -Wall -fPIC -shared final_fake_apmib.c -o final-apmib-ld.so</span><br></pre></td></tr></table></figure></li>
-<li><p>接着执行/bin/boa，看<code>segmentation fault</code>的问题是否解决；</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mips-linux-gcc -Wall -fPIC -shared final_fake_apmib.c -o final-apmib-ld.so</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>接着执行/bin/boa，看<code>segmentation fault</code>的问题是否解决；</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo chroot . ./qemu-mips-static -E LD_PRELOAD=&quot;/final-apmib-ld.so&quot; ./bin/boa</span><br></pre></td></tr></table></figure>
-
 <p>可以看到，问题已经解决，程序可以正常执行，没有崩溃；</p>
 <p><img src="/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/router-vuln-analysis-skill/FinalStatus.jpg" alt="FinalStatus"></p>
 </li>
-<li><p>使用<code>netstat</code>可以看到开启了一个<code>80</code>端口的Web服务，这表示Web服务器boa已经成功运行了；</p>
+<li>
+<p>使用<code>netstat</code>可以看到开启了一个<code>80</code>端口的Web服务，这表示Web服务器boa已经成功运行了；</p>
 <blockquote>
-<p>$ netstat -anto | grep 80<br>tcp        0      0 0.0.0.0:80      0.0.0.0:*     LISTEN      off (0.00/0/0)</p>
+<p>$ netstat -anto | grep 80<br>
+tcp        0      0 0.0.0.0:80      0.0.0.0:*     LISTEN      off (0.00/0/0)</p>
 </blockquote>
 </li>
 </ul>
@@ -263,35 +292,45 @@
 </ul>
 </li>
 </ul>
-<h3 id="IDA反汇编调试"><a href="#IDA反汇编调试" class="headerlink" title="IDA反汇编调试"></a>IDA反汇编调试</h3><h4 id="静态反汇编"><a href="#静态反汇编" class="headerlink" title="静态反汇编"></a>静态反汇编</h4><p>这个不多阐述…</p>
-<h4 id="动态调试"><a href="#动态调试" class="headerlink" title="动态调试"></a>动态调试</h4><ul>
-<li><p>运行IDA Pro界面的计算机为调试器客户端；</p>
+<h3 id="IDA反汇编调试">IDA反汇编调试</h3>
+<h4 id="静态反汇编">静态反汇编</h4>
+<p>这个不多阐述…</p>
+<h4 id="动态调试">动态调试</h4>
+<ul>
+<li>
+<p>运行IDA Pro界面的计算机为调试器客户端；</p>
 </li>
-<li><p>运行Qemu界面的则为调试器服务端；</p>
+<li>
+<p>运行Qemu界面的则为调试器服务端；</p>
 </li>
 </ul>
 <p>这里跟着写一个使用Qemu指令执行模拟器测试的脚本<code>test_busybox.sh</code></p>
 <figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> debug</span></span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash">!/bin/sh</span></span><br><span class="line">INPUT = $1												# 脚本的第一个参数为BusyBox的输入参数</span><br><span class="line">LEN=$(echo -n &quot;$INPUT&quot; | wc -c)							# 计算输入参数的长度</span><br><span class="line">PORT=&quot;6666&quot;												# Qemu调试的端口</span><br><span class="line">if [ &quot;$LEN&quot; == &quot;0&quot; ] || [ &quot;$INPUT&quot; == &quot;-h&quot; ] || [ &quot;$UID&quot; != &quot;0&quot; ]	# 判断参数个数、类型是否正确</span><br><span class="line">then</span><br><span class="line">	echo &quot;\nUsage: sudo $0 \n&quot;</span><br><span class="line">	exit 1</span><br><span class="line">fi</span><br><span class="line">cp $(which qemu-mips-static) ./qemu						# 大端序的qemu-mips指令复制到当前目录，将其更改为qemu</span><br><span class="line"><span class="meta">#</span><span class="bash"> 使用qemu指令模式模拟执行BusyBox，相当于执行chroot . ./qemu -E CONTENT_LENGTH=<span class="variable">$LEN</span> -g 6666 /bin/busybox <span class="variable">$INPUT</span></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> -E指定的环境变量在测试CGI脚本才能发挥实际用处，这里只是举例</span></span><br><span class="line">echo &quot;$INPUT&quot; | chroot . ./qemu -E CONTENT_LENGTH=$LEN -g $PORT /bin/busybox 2&gt;/dev/null</span><br><span class="line">rm -rf ./qemu								# 执行完删除模拟程序</span><br></pre></td></tr></table></figure>
-
 <p>运行后，服务器等待IDA remote gdb debugger的对接；</p>
 <p>在IDA中对接的方法不多介绍，主要是对debugger的一些配置；</p>
-<h3 id="IDA脚本基础"><a href="#IDA脚本基础" class="headerlink" title="IDA脚本基础"></a>IDA脚本基础</h3><p>基于对扩展性的考虑，IDA支持自定义脚本插件；</p>
+<h3 id="IDA脚本基础">IDA脚本基础</h3>
+<p>基于对扩展性的考虑，IDA支持自定义脚本插件；</p>
 <ul>
 <li>IDC：内建的脚本语言，和C语言类似，仅适用于GUI版本的IDA；</li>
 <li>IDAPython：插件，支持Python集成式脚本；</li>
 <li>独立脚本插件</li>
 </ul>
-<h4 id="脚本执行"><a href="#脚本执行" class="headerlink" title="脚本执行"></a>脚本执行</h4><ul>
+<h4 id="脚本执行">脚本执行</h4>
+<ul>
 <li>IDC命令行：<code>File</code>-&gt;<code>IDC Command</code></li>
 <li>独立脚本文件：<code>File</code>-&gt;<code>Script File</code></li>
 <li>Python命令行：<code>File</code>-&gt;<code>Python Command</code></li>
 </ul>
-<h4 id="IDC"><a href="#IDC" class="headerlink" title="IDC"></a>IDC</h4><ul>
-<li><p><code>F1</code>-&gt;<code>Index of IDC Functions</code>可以查看IDC官方文档，支持搜索函数调用等；</p>
-</li>
-<li><p>关于IDC的用法</p>
+<h4 id="IDC">IDC</h4>
 <ul>
-<li><p>变量类型：</p>
+<li>
+<p><code>F1</code>-&gt;<code>Index of IDC Functions</code>可以查看IDC官方文档，支持搜索函数调用等；</p>
+</li>
+<li>
+<p>关于IDC的用法</p>
+<ul>
+<li>
+<p>变量类型：</p>
 <p>没有明确类型，主要有3种：</p>
 <ul>
 <li>整型long</li>
@@ -299,16 +338,22 @@
 <li>浮点型</li>
 </ul>
 </li>
-<li><p>变量环境：</p>
+<li>
+<p>变量环境：</p>
 <p>支持全局和局部变量</p>
 <ul>
-<li><p>全局</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 引入全局变量extern</span></span><br><span class="line"><span class="keyword">extern</span> outval;</span><br><span class="line"><span class="keyword">extern</span> outval = <span class="string">&quot;wrong!&quot;</span>		<span class="comment">// 不合法声明，全局变量不能声明时赋值</span></span><br><span class="line"><span class="keyword">static</span> main()&#123;</span><br><span class="line"><span class="keyword">extern</span> inval;					<span class="comment">// 合法</span></span><br><span class="line">outval = <span class="string">&quot;Global String&quot;</span>;		<span class="comment">// 全局变量赋值</span></span><br><span class="line">inval = <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
-<li><p>局部</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 局部变量的声明</span></span><br><span class="line"><span class="keyword">auto</span> addr, reg, val;</span><br><span class="line"><span class="keyword">auto</span> valinit = <span class="number">0</span>;</span><br></pre></td></tr></table></figure></li>
+<li>
+<p>全局</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 引入全局变量extern</span></span><br><span class="line"><span class="keyword">extern</span> outval;</span><br><span class="line"><span class="keyword">extern</span> outval = <span class="string">&quot;wrong!&quot;</span>		<span class="comment">// 不合法声明，全局变量不能声明时赋值</span></span><br><span class="line"><span class="keyword">static</span> main()&#123;</span><br><span class="line"><span class="keyword">extern</span> inval;					<span class="comment">// 合法</span></span><br><span class="line">outval = <span class="string">&quot;Global String&quot;</span>;		<span class="comment">// 全局变量赋值</span></span><br><span class="line">inval = <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>局部</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 局部变量的声明</span></span><br><span class="line"><span class="keyword">auto</span> addr, reg, val;</span><br><span class="line"><span class="keyword">auto</span> valinit = <span class="number">0</span>;</span><br></pre></td></tr></table></figure>
+</li>
 </ul>
 </li>
-<li><p>表达式</p>
+<li>
+<p>表达式</p>
 <p>IDC的表达式语法与C语言十分相似，但是有几点不同：</p>
 <ul>
 <li>复合赋值运算：不支持<code>op=</code>，如<code>+=</code>，<code>-=</code>；</li>
@@ -316,7 +361,8 @@
 <li>字符串操作不需要调用函数拼接，可以直接使用<code>+</code>来拼接字符串；</li>
 </ul>
 </li>
-<li><p>预处理指令</p>
+<li>
+<p>预处理指令</p>
 <ul>
 <li><code>#include &lt;头文件&gt;</code></li>
 <li><code>#define &lt;宏&gt;</code></li>
@@ -326,7 +372,8 @@
 </li>
 </ul>
 </li>
-<li><p>需要自定义函数时，应当使用<code>File</code>-&gt;<code>Script File</code>独立加载，这时候可以创建独立的IDC程序文件来提供支持；</p>
+<li>
+<p>需要自定义函数时，应当使用<code>File</code>-&gt;<code>Script File</code>独立加载，这时候可以创建独立的IDC程序文件来提供支持；</p>
 <p>应当满足：</p>
 <ul>
 <li>使用自定义函数；</li>
@@ -334,32 +381,39 @@
 <li>文件中必须包含<code>idc.idc</code>头文件;</li>
 </ul>
 <p>下面是一个sample；</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;idc.idc&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> DEBUG</span></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="meta">#<span class="meta-keyword">ifdef</span> DEBUG</span></span><br><span class="line">    Message(<span class="string">&quot;DEBUG MODE\n&quot;</span>);</span><br><span class="line">    <span class="meta">#<span class="meta-keyword">else</span></span></span><br><span class="line">    Message(<span class="string">&quot;RELEASE MODE\n&quot;</span>);</span><br><span class="line">    <span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">	Message(<span class="string">&quot;this is a IDC Script File Sample!\n&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
-<li><p>IDC常用函数</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;idc.idc&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> DEBUG</span></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="meta">#<span class="meta-keyword">ifdef</span> DEBUG</span></span><br><span class="line">    Message(<span class="string">&quot;DEBUG MODE\n&quot;</span>);</span><br><span class="line">    <span class="meta">#<span class="meta-keyword">else</span></span></span><br><span class="line">    Message(<span class="string">&quot;RELEASE MODE\n&quot;</span>);</span><br><span class="line">    <span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">	Message(<span class="string">&quot;this is a IDC Script File Sample!\n&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>IDC常用函数</p>
 <ul>
-<li>数据访问<ul>
+<li>数据访问
+<ul>
 <li>long Byte(long addr)：从虚拟地址addr处读取一个字节的值；</li>
 <li>long Word(long addr)：从虚拟地址addr处读取两个字节（一个字）的值；</li>
 <li>long Dword(long addr)：从虚拟地址addr处读取两个字节（双字）的值；</li>
 </ul>
 </li>
-<li>赋值<ul>
+<li>赋值
+<ul>
 <li>long PatchByte(long addr, long val)：将虚拟地址addr处的一个字节的值赋值为val；</li>
 <li>long PatchWord(long addr, long val)：将虚拟地址addr处的两个字节（一个字）的值赋值为val；</li>
 <li>long PatchDword(long addr, long val)：将虚拟地址addr处的两个字节（双字）的值赋值为val；</li>
 </ul>
 </li>
-<li>检测<ul>
+<li>检测
+<ul>
 <li>bool isLoaded(long addr)：如果虚拟地址addr包含有效数据，则返回1，否则返回0；</li>
 </ul>
 </li>
-<li>打印<ul>
+<li>打印
+<ul>
 <li>void Message(string format,…)</li>
 <li>void print(…)</li>
 <li>void Warning(string format,…)</li>
 </ul>
 </li>
-<li>交互<ul>
+<li>交互
+<ul>
 <li>string AskStr(string default, string prompt)：要求用户在消息框中输入字符串；</li>
 <li>string AskFile(long doSave, string mask, string prompt)：要求用户选择文件；</li>
 <li>string AskYN(long default, string prompt)：获取用户选择的<code>Yes</code>或<code>No</code>；</li>
@@ -367,7 +421,8 @@
 <li>bool Jump(long addr)：跳转到反汇编下的指定addr；</li>
 </ul>
 </li>
-<li>字符串操作<ul>
+<li>字符串操作
+<ul>
 <li>long atol(string val)：十进制-&gt;整型；</li>
 <li>long xtol(string val)：十六进制-&gt;整型；</li>
 <li>string ltoa(long val, long radix)：指定radix进制返回val的字符串的值；</li>
@@ -377,14 +432,16 @@
 <li>string substr(string str, long start, long end)：切片，start-&gt;end-1；</li>
 </ul>
 </li>
-<li>函数操作<ul>
+<li>函数操作
+<ul>
 <li>long GetFuntionAttr(long addr, logn attrib)</li>
 <li>string GetFunctionName(long addr)</li>
 <li>long NextFunction(long addr)</li>
 <li>long PrevFunction(long addr)</li>
 </ul>
 </li>
-<li>**代码交叉引用<ul>
+<li>**代码交叉引用
+<ul>
 <li>long Rfirst(long form)</li>
 <li>long Rnext(long form, long current)</li>
 <li>long XrefType()</li>
@@ -392,7 +449,8 @@
 <li>long RnextB(long to, long current)</li>
 </ul>
 </li>
-<li>**数据交叉引用<ul>
+<li>**数据交叉引用
+<ul>
 <li>long Dfirst(long form)</li>
 <li>long Dnext(long form, long current)</li>
 <li>long XrefType()</li>
@@ -400,7 +458,8 @@
 <li>long DnextB(long to, long current)</li>
 </ul>
 </li>
-<li>数据库名称<ul>
+<li>数据库名称
+<ul>
 <li>string Name(long addr)：返回地址在IDA数据库中的名称，若无则返回空；</li>
 <li>string NameEx(long form, long addr)：返回与addr相关的名称；</li>
 <li>bool MakeNameEx(long addr, string name, long flags)：给addr分配名称name，flags指定属性；</li>
@@ -408,14 +467,16 @@
 <li>long LocByNameEx(long funcaddr, string localname)：在包含funcaddr的函数中指定局部名称localname；</li>
 </ul>
 </li>
-<li>数据库搜索<ul>
+<li>数据库搜索
+<ul>
 <li>long FindCode(long addr, long flags)</li>
 <li>long FindBinary(long addr, long flags, string binary)</li>
 <li>long FindData(long addr, long flags)</li>
 <li>long FindText(long addr, long flags, long row, long column, string text)</li>
 </ul>
 </li>
-<li>数据库操纵<ul>
+<li>数据库操纵
+<ul>
 <li>void MakeUnkn(long addr, long flags)</li>
 <li>long MakeCode(long addr)</li>
 <li>bool MakeByte(long addr) - MakeWord() - MakeDword()</li>
@@ -423,7 +484,8 @@
 <li>bool MakeStr(long start, long end)</li>
 </ul>
 </li>
-<li>反汇编组件<ul>
+<li>反汇编组件
+<ul>
 <li>string GetDisasm(long addr)</li>
 <li>string GetMnem(long addr)：地址的指令的助记符</li>
 <li>string GetOpnd(long addr, long opnum)：指令的指定操作数文本</li>
@@ -437,33 +499,33 @@
 </ul>
 <p>一个小demo，用于搜寻危险函数，保存为<code>scanvuln.idc</code>文件；</p>
 <figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">// scanvuln.idc</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;idc.idc&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="title">flagCalls</span><span class="params">(func_name)</span></span>&#123;			<span class="comment">// func_name 为用户指定的危险函数名称</span></span><br><span class="line">    <span class="keyword">auto</span> count = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">auto</span> func_addr, xref;</span><br><span class="line">    func_addr = LocByName(func_name);</span><br><span class="line">    <span class="keyword">if</span>(func_addr != BADADDR)&#123;</span><br><span class="line">        <span class="keyword">for</span>(xref = RfirstB(func_addr);xref!=BADADDR;xref=RnextB(func_addr, xref))&#123;	<span class="comment">// 代码交叉引用遍历</span></span><br><span class="line">            <span class="comment">// Message(&quot;%x, %x\n&quot;, xref, func_addr)</span></span><br><span class="line">            <span class="comment">// 如果当前RfirstB()或者RnextB()函数返回的交叉引用类型是近调用或者远调用，会在调用位置上加上注释，输出该地址</span></span><br><span class="line">            <span class="keyword">if</span>(XrefType() == fl_CN || XrefType() == fl_CF)&#123;</span><br><span class="line">                MakeComm(xref, <span class="string">&quot;**** AUDIT HERE ****&quot;</span>);</span><br><span class="line">                Message(<span class="string">&quot;Function%d: 0x%x ==&gt; %s\n&quot;</span>, ++count, xref, func_name);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">     <span class="comment">/*</span></span><br><span class="line"><span class="comment">     	// 数据交叉引用遍历</span></span><br><span class="line"><span class="comment">       	for(xref = DirstB(func_addr); xref!=BADADDR; xref = DnextB(func_addr, xref))&#123;</span></span><br><span class="line"><span class="comment">        	if(XrefType() == dr_0)&#123;</span></span><br><span class="line"><span class="comment">        		MakeComm(xref, &quot;**** AUDIT HERE ****&quot;);</span></span><br><span class="line"><span class="comment">                Message(&quot;Function%d: 0x%x ==&gt; %s\n&quot;, ++count, xref, func_name);</span></span><br><span class="line"><span class="comment">        	&#125;</span></span><br><span class="line"><span class="comment">        &#125;</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    Message(<span class="string">&quot;--------------------------------\n&quot;</span>);</span><br><span class="line">    flagCalls(<span class="string">&quot;strcpy&quot;</span>);</span><br><span class="line">    flagCalls(<span class="string">&quot;sprintf&quot;</span>);</span><br><span class="line">    Message(<span class="string">&quot;--------------------------------\n&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
 <p>一个小的测试程序，其实就是之前的编译生成的<code>vuln</code>；</p>
 <figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">vuln</span><span class="params">(<span class="keyword">char</span> *src)</span></span>&#123;</span><br><span class="line">	<span class="keyword">char</span> output[<span class="number">20</span>] = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">    <span class="built_in">strcpy</span>(output, src);		<span class="comment">// 缓冲区溢出</span></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;%s\n&quot;</span>, output);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> *argv[])</span></span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(argc &lt; <span class="number">2</span>)&#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;need more input arguments\n&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    vuln(argv[<span class="number">1</span>]);			<span class="comment">// 参数作为源字符串输入</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
 <ul>
-<li><p>IDA反编译程序vuln，执行脚本文件的方式加载scanvuln.idc（<code>alt+F7</code>），可以看到危险函数<code>strcpy</code>的引用地址被打印出来；</p>
-<p><img src="/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/router-vuln-analysis-skill/strcpy.jpg"></p>
+<li>
+<p>IDA反编译程序vuln，执行脚本文件的方式加载scanvuln.idc（<code>alt+F7</code>），可以看到危险函数<code>strcpy</code>的引用地址被打印出来；</p>
+<p><img src="/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/router-vuln-analysis-skill/strcpy.jpg" alt></p>
 </li>
-<li><p>双击地址后，会自动调到引用处，可以看到被标记上了注释；</p>
-<p><img src="/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/router-vuln-analysis-skill/strcpyaddr.jpg"></p>
+<li>
+<p>双击地址后，会自动调到引用处，可以看到被标记上了注释；</p>
+<p><img src="/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/router-vuln-analysis-skill/strcpyaddr.jpg" alt></p>
 </li>
 </ul>
-<h4 id="IDAPython"><a href="#IDAPython" class="headerlink" title="IDAPython"></a>IDAPython</h4><p>IDApython有更强大的功能（感谢Python），但是比较难找到官方使用文档（但是不乏大佬写的文章），IDA目录中Python子目录里有关于IDAPython的3个模块，可供学习；</p>
+<h4 id="IDAPython">IDAPython</h4>
+<p>IDApython有更强大的功能（感谢Python），但是比较难找到官方使用文档（但是不乏大佬写的文章），IDA目录中Python子目录里有关于IDAPython的3个模块，可供学习；</p>
 <ul>
-<li>idaapi.py：负责访问核心IDA API</li>
-<li>idautils.py：提供大量的使用函数</li>
-<li>idc.py：负责提供IDC中所有函数的功能</li>
+<li><a target="_blank" rel="noopener" href="http://idaapi.py">idaapi.py</a>：负责访问核心IDA API</li>
+<li><a target="_blank" rel="noopener" href="http://idautils.py">idautils.py</a>：提供大量的使用函数</li>
+<li><a target="_blank" rel="noopener" href="http://idc.py">idc.py</a>：负责提供IDC中所有函数的功能</li>
 </ul>
 <p>另外在<a target="_blank" rel="noopener" href="https://www.hex-rays.com/products/ida/supportidapython_docs/index.html">ida自己的文档</a>中有对这三个文件所有可用函数的介绍；</p>
 <p>下面是用IDAPython写的具有查找危险函数功能的脚本<code>scanvuln.py</code>；</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># coding:utf-8</span></span><br><span class="line"><span class="keyword">from</span> idaapi <span class="keyword">import</span> *</span><br><span class="line"><span class="comment"># 根据函数名获取函数地址</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">getFuncAddr</span>(<span class="params">func_name</span>):</span></span><br><span class="line">    <span class="keyword">return</span> LocByName(func_name)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 对危险函数所在的位置进行标注</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">judgeAduit</span>(<span class="params">func_addr</span>):</span></span><br><span class="line">    MakeComm(func_addr, <span class="string">&quot;### AUDIT HERE ###&quot;</span>)</span><br><span class="line">    SetColor(func_addr, CIC_ITEM, <span class="number">0x0000ff</span>)</span><br><span class="line">    </span><br><span class="line"><span class="comment"># 搜寻函数</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">flagCalls</span>(<span class="params">func_name</span>):</span></span><br><span class="line">    count = <span class="number">0</span></span><br><span class="line">    func_addr = getFuncAddr(func_name)</span><br><span class="line">	func = get_func(func_addr)</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> func <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">    	name = Name(func.startEA)</span><br><span class="line">    	items = FuncItems(func.startEA)</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> items:</span><br><span class="line">            <span class="keyword">for</span> xref <span class="keyword">in</span> XrefsTo(i, <span class="number">0</span>):</span><br><span class="line">                <span class="keyword">if</span> xref.<span class="built_in">type</span> == fl_CN <span class="keyword">or</span> xref.<span class="built_in">type</span> == fl_CF:</span><br><span class="line">                    count += <span class="number">1</span></span><br><span class="line">                    Message(<span class="string">&quot;%s[%d] calls 0x%08x from =&gt; %08x\n&quot;</span>%(name, count, xref.frm, i))</span><br><span class="line">                    judgeAduit(func_addr)</span><br><span class="line">                <span class="keyword">else</span>:</span><br><span class="line">                    Warning(<span class="string">&quot;No function named &#x27;%s&#x27; found at location %x&quot;</span> % (func_name, func_addr))</span><br><span class="line">                    </span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">   flagCalls(<span class="string">&#x27;strcpy&#x27;</span>) </span><br></pre></td></tr></table></figure>
-
 <p>执行后会出现如下结果：</p>
-<p><img src="/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/router-vuln-analysis-skill/PythonStrcpy.jpg"></p>
+<p><img src="/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/router-vuln-analysis-skill/PythonStrcpy.jpg" alt></p>
 <p>双击地址即可实现跳转,可以看到strcpy的地址被标红了；</p>
-<p><img src="/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/router-vuln-analysis-skill/MarkRed.jpg"></p>
-</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">K1ose</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://www.jk404.cn/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/router-vuln-analysis-skill/">https://www.jk404.cn/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/router-vuln-analysis-skill/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://www.jk404.cn" target="_blank">K1ose's Space</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"></div><div class="post_share"><div class="social-share" data-image="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/course/MIT-AI/MIT-AI-0x01/"><img class="prev-cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">MIT_AI_0x01</div></div></a></div><div class="next-post pull-right"><a href="/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/router-vuln-environ/"><img class="next-cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">router_vuln_environ</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/Soler6pro.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">K1ose</div><div class="author-info__description"></div></div><div class="card-info-data is-center"><div class="card-info-data-item"><a href="/archives/"><div class="headline">文章</div><div class="length-num">111</div></a></div><div class="card-info-data-item"><a href="/tags/"><div class="headline">标签</div><div class="length-num">0</div></a></div><div class="card-info-data-item"><a href="/categories/"><div class="headline">分类</div><div class="length-num">59</div></a></div></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>公告</span></div><div class="announcement_content"></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%B7%AF%E7%94%B1%E5%99%A8%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90%E6%8A%80%E8%83%BD"><span class="toc-number">1.</span> <span class="toc-text">路由器漏洞分析技能</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#D-Link-DIR-605L"><span class="toc-number">1.1.</span> <span class="toc-text">D-Link&#x2F;DIR-605L</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BF%AE%E5%A4%8D%E8%B7%AF%E7%94%B1%E5%99%A8%E7%A8%8B%E5%BA%8F%E7%8E%AF%E5%A2%83"><span class="toc-number">1.1.1.</span> <span class="toc-text">修复路由器程序环境</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9B%BA%E4%BB%B6%E5%88%86%E6%9E%90%E4%B8%8E%E8%B0%83%E8%AF%95"><span class="toc-number">1.1.1.1.</span> <span class="toc-text">固件分析与调试</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#IDA%E5%8F%8D%E6%B1%87%E7%BC%96%E8%B0%83%E8%AF%95"><span class="toc-number">1.1.2.</span> <span class="toc-text">IDA反汇编调试</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%9D%99%E6%80%81%E5%8F%8D%E6%B1%87%E7%BC%96"><span class="toc-number">1.1.2.1.</span> <span class="toc-text">静态反汇编</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8A%A8%E6%80%81%E8%B0%83%E8%AF%95"><span class="toc-number">1.1.2.2.</span> <span class="toc-text">动态调试</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#IDA%E8%84%9A%E6%9C%AC%E5%9F%BA%E7%A1%80"><span class="toc-number">1.1.3.</span> <span class="toc-text">IDA脚本基础</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%84%9A%E6%9C%AC%E6%89%A7%E8%A1%8C"><span class="toc-number">1.1.3.1.</span> <span class="toc-text">脚本执行</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#IDC"><span class="toc-number">1.1.3.2.</span> <span class="toc-text">IDC</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#IDAPython"><span class="toc-number">1.1.3.3.</span> <span class="toc-text">IDAPython</span></a></li></ol></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/CSAPP/theory/csapp-01-hello-world/" title="csapp_01_hello_world">csapp_01_hello_world</a><time datetime="2022-07-24T10:32:41.000Z" title="发表于 2022-07-24 18:32:41">2022-07-24</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/uncategorized/OS-03-boot-interrupt-exception-syscall/OS-03-boot-interrupt-exception-syscall.drawio/" title="无题">无题</a><time datetime="2022-06-18T06:59:40.970Z" title="发表于 2022-06-18 14:59:40">2022-06-18</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/uncategorized/ctf-susctf2022-happytree/%E6%9C%AA%E5%91%BD%E5%90%8D%E7%BB%98%E5%9B%BE.drawio/" title="无题">无题</a><time datetime="2022-06-18T06:59:40.616Z" title="发表于 2022-06-18 14:59:40">2022-06-18</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/uncategorized/cpp-12-class-and-dynamic-memory-allocation/" title="cpp_12_class_and_dynamic_memory_allocation">cpp_12_class_and_dynamic_memory_allocation</a><time datetime="2022-06-18T05:04:09.000Z" title="发表于 2022-06-18 13:04:09">2022-06-18</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/uncategorized/cpp-11-use-class/" title="cpp_11_use_class">cpp_11_use_class</a><time datetime="2022-06-18T05:03:09.000Z" title="发表于 2022-06-18 13:03:09">2022-06-18</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By K1ose</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><div class="js-pjax"><script>if (!window.MathJax) {
+<p><img src="/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/router-vuln-analysis-skill/MarkRed.jpg" alt></p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">K1ose</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://www.jk404.cn/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/router-vuln-analysis-skill/">https://www.jk404.cn/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/router-vuln-analysis-skill/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://www.jk404.cn" target="_blank">K1ose's Space</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"></div><div class="post_share"><div class="social-share" data-image="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/course/MIT-AI/MIT-AI-0x01/"><img class="prev-cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">MIT_AI_0x01</div></div></a></div><div class="next-post pull-right"><a href="/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/router-vuln-environ/"><img class="next-cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">router_vuln_environ</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/Soler6pro.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">K1ose</div><div class="author-info__description"></div></div><div class="card-info-data is-center"><div class="card-info-data-item"><a href="/archives/"><div class="headline">文章</div><div class="length-num">111</div></a></div><div class="card-info-data-item"><a href="/tags/"><div class="headline">标签</div><div class="length-num">0</div></a></div><div class="card-info-data-item"><a href="/categories/"><div class="headline">分类</div><div class="length-num">59</div></a></div></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>公告</span></div><div class="announcement_content"></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-number">1.</span> <span class="toc-text">路由器漏洞分析技能</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#D-Link-DIR-605L"><span class="toc-number">1.1.</span> <span class="toc-text">D-Link&#x2F;DIR-605L</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BF%AE%E5%A4%8D%E8%B7%AF%E7%94%B1%E5%99%A8%E7%A8%8B%E5%BA%8F%E7%8E%AF%E5%A2%83"><span class="toc-number">1.1.1.</span> <span class="toc-text">修复路由器程序环境</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9B%BA%E4%BB%B6%E5%88%86%E6%9E%90%E4%B8%8E%E8%B0%83%E8%AF%95"><span class="toc-number">1.1.1.1.</span> <span class="toc-text">固件分析与调试</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#IDA%E5%8F%8D%E6%B1%87%E7%BC%96%E8%B0%83%E8%AF%95"><span class="toc-number">1.1.2.</span> <span class="toc-text">IDA反汇编调试</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%9D%99%E6%80%81%E5%8F%8D%E6%B1%87%E7%BC%96"><span class="toc-number">1.1.2.1.</span> <span class="toc-text">静态反汇编</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8A%A8%E6%80%81%E8%B0%83%E8%AF%95"><span class="toc-number">1.1.2.2.</span> <span class="toc-text">动态调试</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#IDA%E8%84%9A%E6%9C%AC%E5%9F%BA%E7%A1%80"><span class="toc-number">1.1.3.</span> <span class="toc-text">IDA脚本基础</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%84%9A%E6%9C%AC%E6%89%A7%E8%A1%8C"><span class="toc-number">1.1.3.1.</span> <span class="toc-text">脚本执行</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#IDC"><span class="toc-number">1.1.3.2.</span> <span class="toc-text">IDC</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#IDAPython"><span class="toc-number">1.1.3.3.</span> <span class="toc-text">IDAPython</span></a></li></ol></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/CSAPP/theory/csapp-01-hello-world/" title="csapp_01_hello_world">csapp_01_hello_world</a><time datetime="2022-07-24T10:32:41.000Z" title="发表于 2022-07-24 18:32:41">2022-07-24</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/uncategorized/OS-03-boot-interrupt-exception-syscall/OS-03-boot-interrupt-exception-syscall.drawio/" title="无题">无题</a><time datetime="2022-06-18T06:59:40.970Z" title="发表于 2022-06-18 14:59:40">2022-06-18</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/uncategorized/ctf-susctf2022-happytree/%E6%9C%AA%E5%91%BD%E5%90%8D%E7%BB%98%E5%9B%BE.drawio/" title="无题">无题</a><time datetime="2022-06-18T06:59:40.616Z" title="发表于 2022-06-18 14:59:40">2022-06-18</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/uncategorized/cpp-12-class-and-dynamic-memory-allocation/" title="cpp_12_class_and_dynamic_memory_allocation">cpp_12_class_and_dynamic_memory_allocation</a><time datetime="2022-06-18T05:04:09.000Z" title="发表于 2022-06-18 13:04:09">2022-06-18</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/uncategorized/cpp-11-use-class/" title="cpp_11_use_class">cpp_11_use_class</a><time datetime="2022-06-18T05:03:09.000Z" title="发表于 2022-06-18 13:03:09">2022-06-18</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By K1ose</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><div class="js-pjax"><script>if (!window.MathJax) {
   window.MathJax = {
     tex: {
       inlineMath: [ ['$','$'], ["\\(","\\)"]],

@@ -1,9 +1,9 @@
-<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>Linux kernel source(1):Directory | K1ose's Space</title><meta name="author" content="K1ose"><meta name="copyright" content="K1ose"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="Linux kernel source(1):Directory目录   目录 描述    arch 特定体系结构的源码   block 块设备I&#x2F;O层   crypto 加密API   Documentation 内核源码文档   drivers 设备驱动程序   firmware 使用某些驱动程序而需要的设备固件   fs VFS和各种文件系统   include 内核头文件   init 内">
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>Linux kernel source(1):Directory | K1ose's Space</title><meta name="author" content="K1ose"><meta name="copyright" content="K1ose"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="Linux kernel source(1):Directory 目录    目录 描述     arch 特定体系结构的源码   block 块设备I&#x2F;O层   crypto 加密API   Documentation 内核源码文档   drivers 设备驱动程序   firmware 使用某些驱动程序而需要的设备固件   fs VFS和各种文件系统   include 内核头文件   ini">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Linux kernel source(1):Directory">
 <meta property="og:url" content="https://www.jk404.cn/CTF/PWN/kernel-pwn/Linux-source/Linux-kernel-source-1-directory/index.html">
 <meta property="og:site_name" content="K1ose&#39;s Space">
-<meta property="og:description" content="Linux kernel source(1):Directory目录   目录 描述    arch 特定体系结构的源码   block 块设备I&#x2F;O层   crypto 加密API   Documentation 内核源码文档   drivers 设备驱动程序   firmware 使用某些驱动程序而需要的设备固件   fs VFS和各种文件系统   include 内核头文件   init 内">
+<meta property="og:description" content="Linux kernel source(1):Directory 目录    目录 描述     arch 特定体系结构的源码   block 块设备I&#x2F;O层   crypto 加密API   Documentation 内核源码文档   drivers 设备驱动程序   firmware 使用某些驱动程序而需要的设备固件   fs VFS和各种文件系统   include 内核头文件   ini">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7">
 <meta property="article:published_time" content="2021-11-23T13:01:24.000Z">
@@ -142,123 +142,130 @@
     }
     detectApple()
     })(window)</script><meta name="generator" content="Hexo 5.4.0"><link rel="alternate" href="/atom.xml" title="K1ose's Space" type="application/atom+xml">
-</head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/Soler6pro.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data is-center"><div class="data-item"><a href="/archives/"><div class="headline">文章</div><div class="length-num">111</div></a></div><div class="data-item"><a href="/tags/"><div class="headline">标签</div><div class="length-num">0</div></a></div><div class="data-item"><a href="/categories/"><div class="headline">分类</div><div class="length-num">59</div></a></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><span> About</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="not-top-img" id="page-header"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">K1ose's Space</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><span> About</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav></header><main class="layout" id="content-inner"><div id="post"><div id="post-info"><h1 class="post-title">Linux kernel source(1):Directory</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2021-11-23T13:01:24.000Z" title="发表于 2021-11-23 21:01:24">2021-11-23</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2021-11-23T13:08:12.846Z" title="更新于 2021-11-23 21:08:12">2021-11-23</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/CTF/">CTF</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/CTF/PWN/">PWN</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/CTF/PWN/kernel-pwn/">kernel pwn</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/CTF/PWN/kernel-pwn/Linux-source/">Linux source</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="Linux kernel source(1):Directory"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div><article class="post-content" id="article-container"><h1 id="Linux-kernel-source-1-Directory"><a href="#Linux-kernel-source-1-Directory" class="headerlink" title="Linux kernel source(1):Directory"></a>Linux kernel source(1):Directory</h1><h2 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h2><table>
+</head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/Soler6pro.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data is-center"><div class="data-item"><a href="/archives/"><div class="headline">文章</div><div class="length-num">111</div></a></div><div class="data-item"><a href="/tags/"><div class="headline">标签</div><div class="length-num">0</div></a></div><div class="data-item"><a href="/categories/"><div class="headline">分类</div><div class="length-num">59</div></a></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><span> About</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="not-top-img" id="page-header"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">K1ose's Space</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><span> About</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav></header><main class="layout" id="content-inner"><div id="post"><div id="post-info"><h1 class="post-title">Linux kernel source(1):Directory</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2021-11-23T13:01:24.000Z" title="发表于 2021-11-23 21:01:24">2021-11-23</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2021-11-23T13:08:12.846Z" title="更新于 2021-11-23 21:08:12">2021-11-23</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/CTF/">CTF</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/CTF/PWN/">PWN</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/CTF/PWN/kernel-pwn/">kernel pwn</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/CTF/PWN/kernel-pwn/Linux-source/">Linux source</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="Linux kernel source(1):Directory"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div><article class="post-content" id="article-container"><h1>Linux kernel source(1):Directory</h1>
+<h2 id="目录">目录</h2>
+<table>
 <thead>
 <tr>
-<th align="center">目录</th>
-<th align="center">描述</th>
+<th style="text-align:center">目录</th>
+<th style="text-align:center">描述</th>
 </tr>
 </thead>
-<tbody><tr>
-<td align="center">arch</td>
-<td align="center">特定体系结构的源码</td>
+<tbody>
+<tr>
+<td style="text-align:center">arch</td>
+<td style="text-align:center">特定体系结构的源码</td>
 </tr>
 <tr>
-<td align="center">block</td>
-<td align="center">块设备I/O层</td>
+<td style="text-align:center">block</td>
+<td style="text-align:center">块设备I/O层</td>
 </tr>
 <tr>
-<td align="center">crypto</td>
-<td align="center">加密API</td>
+<td style="text-align:center">crypto</td>
+<td style="text-align:center">加密API</td>
 </tr>
 <tr>
-<td align="center">Documentation</td>
-<td align="center">内核源码文档</td>
+<td style="text-align:center">Documentation</td>
+<td style="text-align:center">内核源码文档</td>
 </tr>
 <tr>
-<td align="center">drivers</td>
-<td align="center">设备驱动程序</td>
+<td style="text-align:center">drivers</td>
+<td style="text-align:center">设备驱动程序</td>
 </tr>
 <tr>
-<td align="center">firmware</td>
-<td align="center">使用某些驱动程序而需要的设备固件</td>
+<td style="text-align:center">firmware</td>
+<td style="text-align:center">使用某些驱动程序而需要的设备固件</td>
 </tr>
 <tr>
-<td align="center">fs</td>
-<td align="center">VFS和各种文件系统</td>
+<td style="text-align:center">fs</td>
+<td style="text-align:center">VFS和各种文件系统</td>
 </tr>
 <tr>
-<td align="center">include</td>
-<td align="center">内核头文件</td>
+<td style="text-align:center">include</td>
+<td style="text-align:center">内核头文件</td>
 </tr>
 <tr>
-<td align="center">init</td>
-<td align="center">内核引导和初始化</td>
+<td style="text-align:center">init</td>
+<td style="text-align:center">内核引导和初始化</td>
 </tr>
 <tr>
-<td align="center">ipc</td>
-<td align="center">进程间通信代码</td>
+<td style="text-align:center">ipc</td>
+<td style="text-align:center">进程间通信代码</td>
 </tr>
 <tr>
-<td align="center">kernel</td>
-<td align="center">像调度程序这样的核心子系统</td>
+<td style="text-align:center">kernel</td>
+<td style="text-align:center">像调度程序这样的核心子系统</td>
 </tr>
 <tr>
-<td align="center">lib</td>
-<td align="center">通用内核函数</td>
+<td style="text-align:center">lib</td>
+<td style="text-align:center">通用内核函数</td>
 </tr>
 <tr>
-<td align="center">mm</td>
-<td align="center">内存管理子系统和VM</td>
+<td style="text-align:center">mm</td>
+<td style="text-align:center">内存管理子系统和VM</td>
 </tr>
 <tr>
-<td align="center">net</td>
-<td align="center">网络子系统</td>
+<td style="text-align:center">net</td>
+<td style="text-align:center">网络子系统</td>
 </tr>
 <tr>
-<td align="center">samples</td>
-<td align="center">示例，示范代码</td>
+<td style="text-align:center">samples</td>
+<td style="text-align:center">示例，示范代码</td>
 </tr>
 <tr>
-<td align="center">scripts</td>
-<td align="center">编译内核所用的版本</td>
+<td style="text-align:center">scripts</td>
+<td style="text-align:center">编译内核所用的版本</td>
 </tr>
 <tr>
-<td align="center">security</td>
-<td align="center">Linux安全模块</td>
+<td style="text-align:center">security</td>
+<td style="text-align:center">Linux安全模块</td>
 </tr>
 <tr>
-<td align="center">sound</td>
-<td align="center">语音子系统</td>
+<td style="text-align:center">sound</td>
+<td style="text-align:center">语音子系统</td>
 </tr>
 <tr>
-<td align="center">usr</td>
-<td align="center">早期用户空间代码（所谓的initramfs）</td>
+<td style="text-align:center">usr</td>
+<td style="text-align:center">早期用户空间代码（所谓的initramfs）</td>
 </tr>
 <tr>
-<td align="center">tools</td>
-<td align="center">在Linux开发中有用的工具</td>
+<td style="text-align:center">tools</td>
+<td style="text-align:center">在Linux开发中有用的工具</td>
 </tr>
 <tr>
-<td align="center">virt</td>
-<td align="center">虚拟化基础结构</td>
+<td style="text-align:center">virt</td>
+<td style="text-align:center">虚拟化基础结构</td>
 </tr>
-</tbody></table>
-<h2 id="文件"><a href="#文件" class="headerlink" title="文件"></a>文件</h2><table>
+</tbody>
+</table>
+<h2 id="文件-v2">文件</h2>
+<table>
 <thead>
 <tr>
-<th align="center">文件</th>
-<th align="center">描述</th>
+<th style="text-align:center">文件</th>
+<th style="text-align:center">描述</th>
 </tr>
 </thead>
-<tbody><tr>
-<td align="center">COPYING</td>
-<td align="center">内核许可证</td>
+<tbody>
+<tr>
+<td style="text-align:center">COPYING</td>
+<td style="text-align:center">内核许可证</td>
 </tr>
 <tr>
-<td align="center">CREDITS</td>
-<td align="center">开发者列表</td>
+<td style="text-align:center">CREDITS</td>
+<td style="text-align:center">开发者列表</td>
 </tr>
 <tr>
-<td align="center">MAINTAINERS</td>
-<td align="center">维护者列表</td>
+<td style="text-align:center">MAINTAINERS</td>
+<td style="text-align:center">维护者列表</td>
 </tr>
 <tr>
-<td align="center">Makefile</td>
-<td align="center">基本内核的Makefile文件</td>
+<td style="text-align:center">Makefile</td>
+<td style="text-align:center">基本内核的Makefile文件</td>
 </tr>
-</tbody></table>
-</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">K1ose</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://www.jk404.cn/CTF/PWN/kernel-pwn/Linux-source/Linux-kernel-source-1-directory/">https://www.jk404.cn/CTF/PWN/kernel-pwn/Linux-source/Linux-kernel-source-1-directory/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://www.jk404.cn" target="_blank">K1ose's Space</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"></div><div class="post_share"><div class="social-share" data-image="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/CTF/PWN/%E9%9B%B6%E6%95%A3%E7%9F%A5%E8%AF%86%E7%82%B9/"><img class="prev-cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">零散知识点</div></div></a></div><div class="next-post pull-right"><a href="/CTF/PWN/kernel-pwn/Linux-source/Linux-kernel-source-2-kernel-boot/"><img class="next-cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">Linux kernel source(2):Kernel Boot</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/Soler6pro.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">K1ose</div><div class="author-info__description"></div></div><div class="card-info-data is-center"><div class="card-info-data-item"><a href="/archives/"><div class="headline">文章</div><div class="length-num">111</div></a></div><div class="card-info-data-item"><a href="/tags/"><div class="headline">标签</div><div class="length-num">0</div></a></div><div class="card-info-data-item"><a href="/categories/"><div class="headline">分类</div><div class="length-num">59</div></a></div></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>公告</span></div><div class="announcement_content"></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Linux-kernel-source-1-Directory"><span class="toc-number">1.</span> <span class="toc-text">Linux kernel source(1):Directory</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%AE%E5%BD%95"><span class="toc-number">1.1.</span> <span class="toc-text">目录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%96%87%E4%BB%B6"><span class="toc-number">1.2.</span> <span class="toc-text">文件</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/CSAPP/theory/csapp-01-hello-world/" title="csapp_01_hello_world">csapp_01_hello_world</a><time datetime="2022-07-24T10:32:41.000Z" title="发表于 2022-07-24 18:32:41">2022-07-24</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/uncategorized/OS-03-boot-interrupt-exception-syscall/OS-03-boot-interrupt-exception-syscall.drawio/" title="无题">无题</a><time datetime="2022-06-18T06:59:40.970Z" title="发表于 2022-06-18 14:59:40">2022-06-18</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/uncategorized/ctf-susctf2022-happytree/%E6%9C%AA%E5%91%BD%E5%90%8D%E7%BB%98%E5%9B%BE.drawio/" title="无题">无题</a><time datetime="2022-06-18T06:59:40.616Z" title="发表于 2022-06-18 14:59:40">2022-06-18</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/uncategorized/cpp-12-class-and-dynamic-memory-allocation/" title="cpp_12_class_and_dynamic_memory_allocation">cpp_12_class_and_dynamic_memory_allocation</a><time datetime="2022-06-18T05:04:09.000Z" title="发表于 2022-06-18 13:04:09">2022-06-18</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/uncategorized/cpp-11-use-class/" title="cpp_11_use_class">cpp_11_use_class</a><time datetime="2022-06-18T05:03:09.000Z" title="发表于 2022-06-18 13:03:09">2022-06-18</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By K1ose</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><div class="js-pjax"><script>if (!window.MathJax) {
+</tbody>
+</table>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">K1ose</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://www.jk404.cn/CTF/PWN/kernel-pwn/Linux-source/Linux-kernel-source-1-directory/">https://www.jk404.cn/CTF/PWN/kernel-pwn/Linux-source/Linux-kernel-source-1-directory/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://www.jk404.cn" target="_blank">K1ose's Space</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"></div><div class="post_share"><div class="social-share" data-image="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/CTF/PWN/%E9%9B%B6%E6%95%A3%E7%9F%A5%E8%AF%86%E7%82%B9/"><img class="prev-cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">零散知识点</div></div></a></div><div class="next-post pull-right"><a href="/CTF/PWN/kernel-pwn/Linux-source/Linux-kernel-source-2-kernel-boot/"><img class="next-cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">Linux kernel source(2):Kernel Boot</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/Soler6pro.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">K1ose</div><div class="author-info__description"></div></div><div class="card-info-data is-center"><div class="card-info-data-item"><a href="/archives/"><div class="headline">文章</div><div class="length-num">111</div></a></div><div class="card-info-data-item"><a href="/tags/"><div class="headline">标签</div><div class="length-num">0</div></a></div><div class="card-info-data-item"><a href="/categories/"><div class="headline">分类</div><div class="length-num">59</div></a></div></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>公告</span></div><div class="announcement_content"></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-number">1.</span> <span class="toc-text">Linux kernel source(1):Directory</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%AE%E5%BD%95"><span class="toc-number">1.1.</span> <span class="toc-text">目录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%96%87%E4%BB%B6-v2"><span class="toc-number">1.2.</span> <span class="toc-text">文件</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/CSAPP/theory/csapp-01-hello-world/" title="csapp_01_hello_world">csapp_01_hello_world</a><time datetime="2022-07-24T10:32:41.000Z" title="发表于 2022-07-24 18:32:41">2022-07-24</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/uncategorized/OS-03-boot-interrupt-exception-syscall/OS-03-boot-interrupt-exception-syscall.drawio/" title="无题">无题</a><time datetime="2022-06-18T06:59:40.970Z" title="发表于 2022-06-18 14:59:40">2022-06-18</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/uncategorized/ctf-susctf2022-happytree/%E6%9C%AA%E5%91%BD%E5%90%8D%E7%BB%98%E5%9B%BE.drawio/" title="无题">无题</a><time datetime="2022-06-18T06:59:40.616Z" title="发表于 2022-06-18 14:59:40">2022-06-18</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/uncategorized/cpp-12-class-and-dynamic-memory-allocation/" title="cpp_12_class_and_dynamic_memory_allocation">cpp_12_class_and_dynamic_memory_allocation</a><time datetime="2022-06-18T05:04:09.000Z" title="发表于 2022-06-18 13:04:09">2022-06-18</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/uncategorized/cpp-11-use-class/" title="cpp_11_use_class">cpp_11_use_class</a><time datetime="2022-06-18T05:03:09.000Z" title="发表于 2022-06-18 13:03:09">2022-06-18</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By K1ose</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><div class="js-pjax"><script>if (!window.MathJax) {
   window.MathJax = {
     tex: {
       inlineMath: [ ['$','$'], ["\\(","\\)"]],
