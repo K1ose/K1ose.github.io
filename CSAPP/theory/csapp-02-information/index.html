@@ -1,0 +1,370 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>csapp_02_information | K1ose's Space</title><meta name="author" content="K1ose"><meta name="copyright" content="K1ose"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="Information 前言 本章将讲述计算机中信息的存在形式。 由于本人学疏才浅，文章所谈及的知识或许会有出入，还望斧正。 信息表示 在现代计算机中，信息在存储和处理时以二值信号表示，我们也可以称它们为二进制信号，或者二进制，甚至可以用0和1来表示它们。或许你可以理解成低电平和高电平，也可以再通俗一点理解为开关关闭和开关打开。正是这种对立同一的概念构成了数字革命的基础。 可是现实一点，我们在电脑">
+<meta property="og:type" content="article">
+<meta property="og:title" content="csapp_02_information">
+<meta property="og:url" content="https://www.jk404.cn/CSAPP/theory/csapp-02-information/index.html">
+<meta property="og:site_name" content="K1ose&#39;s Space">
+<meta property="og:description" content="Information 前言 本章将讲述计算机中信息的存在形式。 由于本人学疏才浅，文章所谈及的知识或许会有出入，还望斧正。 信息表示 在现代计算机中，信息在存储和处理时以二值信号表示，我们也可以称它们为二进制信号，或者二进制，甚至可以用0和1来表示它们。或许你可以理解成低电平和高电平，也可以再通俗一点理解为开关关闭和开关打开。正是这种对立同一的概念构成了数字革命的基础。 可是现实一点，我们在电脑">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7">
+<meta property="article:published_time" content="2022-07-29T08:47:39.000Z">
+<meta property="article:modified_time" content="2022-09-04T07:01:32.450Z">
+<meta property="article:author" content="K1ose">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://www.jk404.cn/CSAPP/theory/csapp-02-information/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'csapp_02_information',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2022-09-04 15:01:32'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 5.4.0"><link rel="alternate" href="/atom.xml" title="K1ose's Space" type="application/atom+xml">
+</head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/Soler6pro.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data is-center"><div class="data-item"><a href="/archives/"><div class="headline">文章</div><div class="length-num">113</div></a></div><div class="data-item"><a href="/tags/"><div class="headline">标签</div><div class="length-num">0</div></a></div><div class="data-item"><a href="/categories/"><div class="headline">分类</div><div class="length-num">60</div></a></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><span> About</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="not-top-img" id="page-header"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">K1ose's Space</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><span> About</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav></header><main class="layout" id="content-inner"><div id="post"><div id="post-info"><h1 class="post-title">csapp_02_information</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2022-07-29T08:47:39.000Z" title="发表于 2022-07-29 16:47:39">2022-07-29</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2022-09-04T07:01:32.450Z" title="更新于 2022-09-04 15:01:32">2022-09-04</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/CSAPP/">CSAPP</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/CSAPP/theory/">theory</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="csapp_02_information"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div><article class="post-content" id="article-container"><h1>Information</h1>
+<h2 id="前言-v3">前言</h2>
+<p>本章将讲述计算机中信息的存在形式。</p>
+<p>由于本人学疏才浅，文章所谈及的知识或许会有出入，还望斧正。</p>
+<h2 id="信息表示">信息表示</h2>
+<p>在现代计算机中，<code>信息在存储和处理</code>时以二值信号表示，我们也可以称它们为<code>二进制信号</code>，或者<code>二进制</code>，甚至可以用0和1来表示它们。或许你可以理解成<code>低电平</code>和<code>高电平</code>，也可以再通俗一点理解为<code>开关关闭</code>和<code>开关打开</code>。正是这种对立同一的概念构成了数字革命的基础。</p>
+<p>可是现实一点，我们在电脑屏幕上看到的信息并非都是0和1，而是色彩多样的图片和不同的文字、字母。这当然是一个好的问题，但是不要着急，这里面会涉及到许多编码译码等等问题，需要慢慢研究学习。</p>
+<p>既然选择了二进制，我们就需要讨论，为什么是<code>0</code>和<code>1</code>？首先来说说我们所熟知的十进制，它诞生于一千多年前的印度，在十二世纪被阿拉伯数学家改进（这就是为什么它们叫阿拉伯数字），在十三世纪时经过意大利数学家<code>Fibonacci</code>带到了西方世界。我们为什么要用十进制呢？因为我们有十根手指吗？是的，没错🐱。（如果我们只有两根手指，说不定计算机会早几年诞生，不过或许人类会因为无法抓握物品先行灭绝😆）但是对于机器而言呢？如果机器使用二进制能够运行得更高效，比如只判断是是非对错，再加上二值信号能够很容易地被表示、存储和传输。想我之前说的高电平低电平，卡片上有孔无孔。利用二值信号可以设计出可靠而且简单的逻辑电路，将它们集成起来就能够构造乃至数十亿如此般的电路。</p>
+<p>众人拾材火焰高，如果只是简单的一个0或者一个1，看起来自然没有什么作用。但是当我们把它组合起来，再加上人为设定的一些<code>解释(interpretation)</code>，即赋予其一些符合使用环境的含义，就能够使它表示为任何有限集合的元素。</p>
+<p>在这里我们会学习计算机中的三种类型的数字表示，即：</p>
+<ul>
+<li>
+<p><code>无符号(unsigned)</code>编码：表示大于或等于零的数字</p>
+</li>
+<li>
+<p><code>补码(two's-complement)</code>编码：表示有符号整数的最常见方式</p>
+</li>
+<li>
+<p><code>浮点数(floating-point)</code>编码：表示实数的科学记数法的以2为基数</p>
+</li>
+</ul>
+<p>计算机使用上述不同的表示方法进行算术运算，由于计算机用规定数量的位数来表示这些数字，因此当结果太大时，某些运算便会产生溢出(overflow)。</p>
+<p>在这里还需要注意的是：</p>
+<ul>
+<li>整数的表示虽然只能编码一个相对较小的数值范围，但是是精确表示的</li>
+<li>浮点数虽然可以编码一个较大的数值范围，但是是近似的</li>
+</ul>
+<h2 id="信息存储">信息存储</h2>
+<p>大多数计算机使用8位的块，也就是<code>字节(byte)</code>，作为最小的可寻址的内存单位，而不是访问内存中单独的一个bit。对程序而言，内存被视为一个非常大的字节数组，即<code>虚拟内存(virtual memory)</code>，其中的每一个字节由一个唯一的数字来标识，即<code>地址(address)</code>。这些所有地址的集合即为<code>虚拟地址空间(virtual address sapce)</code>。</p>
+<h3 id="十六进制">十六进制</h3>
+<p>上面我们提到，一个字节由八个位组成，即：1 byte = 8 bits。</p>
+<p>在二进制表示中的值域为：$00000000_2 $ ~ $ 11111111_2$，在十进制表示中的值域为：$0_10 $ ~ $ 255_10$</p>
+<p>在<code>十六进制(hexadecimal)</code>表示中，值域为：0x00 ~ 0xFF</p>
+<h3 id="字长">字长</h3>
+<p>每台计算机都有一个<code>字长(word size)</code>，用来指明指针数据的<code>标称大小(normal size)</code>，这是因为虚拟地址是以这样的一个字来编码的，所以字长决定了虚拟地址空间的最大大小。即，对于一个字长为w位的机器而言，虚拟地址空间的范围为：$0$ ~ $2<sup>w-1$，程序最多访问$2</sup>w$个字节。</p>
+<table style="text-align:center">
+    <tr>
+        <td colspan="2">
+            <b>C语言声明</b>
+        </td>
+        <td colspan="2">
+            <b>字节数</b>
+        </td>
+    </tr>
+	<tr>
+        <td>
+            <b>有符号</b>
+        </td>
+        <td>
+            <b>无符号</b>
+        </td>
+        <td>
+            <b>32位</b>
+        </td>
+        <td>
+            <b>64位</b>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            [signed] char
+        </td>
+        <td>
+            unsigned char
+        </td>
+        <td>
+            1
+        </td>
+        <td>
+            1
+        </td>
+    </tr>
+    <tr>
+        <td>
+            short
+        </td>
+        <td>
+            unsigned short
+        </td>
+        <td>
+            2
+        </td>
+        <td>
+            2
+        </td>
+    </tr>
+    <tr>
+        <td>
+            int
+        </td>
+        <td>
+            unsigned
+        </td>
+        <td>
+            4
+        </td>
+        <td>
+            4
+        </td>   
+    </tr>
+    <tr>
+        <td>
+            long
+        </td>
+        <td>
+            unsigned long
+        </td>
+        <td>
+            4
+        </td>
+        <td>
+            8
+        </td>
+    </tr>
+    <tr>
+        <td>
+            int32_t
+        </td>
+        <td>
+            uint32_t
+        </td>
+        <td>
+            4
+        </td>
+        <td>
+            4
+        </td>
+    </tr>
+    <tr>
+        <td>
+            int64_t
+        </td>
+        <td>
+            uint64_t
+        </td>
+        <td>
+            8
+        </td>
+        <td>
+            8
+        </td>
+    </tr>
+    <tr>
+        <td>
+            char *
+        </td>
+        <td>
+        </td>
+        <td>
+            4
+        </td>
+        <td>
+            8
+        </td>
+    </tr>
+    <tr>
+        <td>
+            float
+        </td>
+        <td></td>
+        <td>
+        	4
+        </td>
+        <td>
+            4
+        </td>
+	</tr>
+    <tr>
+        <td>
+            double
+        </td>
+        <td></td>
+        <td>
+            8
+        </td>
+        <td>
+            8
+        </td>
+    </tr>
+</table>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">K1ose</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://www.jk404.cn/CSAPP/theory/csapp-02-information/">https://www.jk404.cn/CSAPP/theory/csapp-02-information/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://www.jk404.cn" target="_blank">K1ose's Space</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"></div><div class="post_share"><div class="social-share" data-image="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/study/book/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD%E7%AE%97%E6%B3%95vol-1/AI-for-humans-v1-01-Introduction-to-AI/"><img class="prev-cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">AI_for_humans_v1_01_Introduction_to_AI</div></div></a></div><div class="next-post pull-right"><a href="/CSAPP/theory/csapp-01-hello-world/"><img class="next-cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">csapp_01_hello_world</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/Soler6pro.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">K1ose</div><div class="author-info__description"></div></div><div class="card-info-data is-center"><div class="card-info-data-item"><a href="/archives/"><div class="headline">文章</div><div class="length-num">113</div></a></div><div class="card-info-data-item"><a href="/tags/"><div class="headline">标签</div><div class="length-num">0</div></a></div><div class="card-info-data-item"><a href="/categories/"><div class="headline">分类</div><div class="length-num">60</div></a></div></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>公告</span></div><div class="announcement_content"></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-number">1.</span> <span class="toc-text">Information</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80-v3"><span class="toc-number">1.1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BF%A1%E6%81%AF%E8%A1%A8%E7%A4%BA"><span class="toc-number">1.2.</span> <span class="toc-text">信息表示</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BF%A1%E6%81%AF%E5%AD%98%E5%82%A8"><span class="toc-number">1.3.</span> <span class="toc-text">信息存储</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8D%81%E5%85%AD%E8%BF%9B%E5%88%B6"><span class="toc-number">1.3.1.</span> <span class="toc-text">十六进制</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AD%97%E9%95%BF"><span class="toc-number">1.3.2.</span> <span class="toc-text">字长</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/study/book/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD%E7%AE%97%E6%B3%95vol-1/AI-for-humans-v1-01-Introduction-to-AI/" title="AI_for_humans_v1_01_Introduction_to_AI">AI_for_humans_v1_01_Introduction_to_AI</a><time datetime="2022-09-15T08:16:23.000Z" title="发表于 2022-09-15 16:16:23">2022-09-15</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/CSAPP/theory/csapp-02-information/" title="csapp_02_information">csapp_02_information</a><time datetime="2022-07-29T08:47:39.000Z" title="发表于 2022-07-29 16:47:39">2022-07-29</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/CSAPP/theory/csapp-01-hello-world/" title="csapp_01_hello_world">csapp_01_hello_world</a><time datetime="2022-07-24T10:32:41.000Z" title="发表于 2022-07-24 18:32:41">2022-07-24</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/uncategorized/OS-03-boot-interrupt-exception-syscall/OS-03-boot-interrupt-exception-syscall.drawio/" title="无题">无题</a><time datetime="2022-06-18T06:59:40.970Z" title="发表于 2022-06-18 14:59:40">2022-06-18</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/uncategorized/ctf-susctf2022-happytree/%E6%9C%AA%E5%91%BD%E5%90%8D%E7%BB%98%E5%9B%BE.drawio/" title="无题">无题</a><time datetime="2022-06-18T06:59:40.616Z" title="发表于 2022-06-18 14:59:40">2022-06-18</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By K1ose</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><div class="js-pjax"><script>if (!window.MathJax) {
+  window.MathJax = {
+    tex: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"]],
+      tags: 'ams'
+    },
+    chtml: {
+      scale: 1.2
+    },
+    options: {
+      renderActions: {
+        findScript: [10, doc => {
+          for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+            const display = !!node.type.match(/; *mode=display/)
+            const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display)
+            const text = document.createTextNode('')
+            node.parentNode.replaceChild(text, node)
+            math.start = {node: text, delim: '', n: 0}
+            math.end = {node: text, delim: '', n: 0}
+            doc.math.push(math)
+          }
+        }, ''],
+        insertScript: [200, () => {
+          document.querySelectorAll('mjx-container:not\([display]\)').forEach(node => {
+            const target = node.parentNode
+            if (target.nodeName.toLowerCase() === 'li') {
+              target.parentNode.classList.add('has-jax')
+            } else {
+              target.classList.add('has-jax')
+            }
+          });
+        }, '', false]
+      }
+    }
+  }
+  
+  const script = document.createElement('script')
+  script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js'
+  script.id = 'MathJax-script'
+  script.async = true
+  document.head.appendChild(script)
+} else {
+  MathJax.startup.document.state(0)
+  MathJax.texReset()
+  MathJax.typeset()
+}</script></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
