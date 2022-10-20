@@ -2,6 +2,177 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://www.jk404.cn/study/course/Taichi/Taichi-02-Metaprogramming-and-Object-Oriented/</loc>
+    
+    <lastmod>2022-10-20</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.jk404.cn/study/course/Taichi/Taichi-01-First-Taichi-Program/</loc>
+    
+    <lastmod>2022-10-20</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.jk404.cn/study/course/Taichi/Taichi-00-introduction/</loc>
+    
+    <lastmod>2022-10-20</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.jk404.cn/study/course/static-program-analysis/Tai-e-A1-LiveVar-Analysis-and-Iterative-Solver/</loc>
+    
+    <lastmod>2022-10-20</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.jk404.cn/study/course/static-program-analysis/Tai-e-A0-Set-up/</loc>
+    
+    <lastmod>2022-10-20</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.jk404.cn/PWN/kernel-pwn/FUZZ/Syzkaller/syzkaller-2-principle/</loc>
+    
+    <lastmod>2022-10-20</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.jk404.cn/PWN/kernel-pwn/FUZZ/Syzkaller/syzkaller-1-environ-build/</loc>
+    
+    <lastmod>2022-10-20</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.jk404.cn/study/course/static-program-analysis/static-program-analysis-05-interprocedural-analysis/</loc>
+    
+    <lastmod>2022-10-20</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.jk404.cn/study/course/static-program-analysis/static-program-analysis-04-data-flow-analysis-foundations/</loc>
+    
+    <lastmod>2022-10-20</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.jk404.cn/study/course/static-program-analysis/static-program-analysis-03-data-flow-analysis/</loc>
+    
+    <lastmod>2022-10-20</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.jk404.cn/study/course/static-program-analysis/static-program-analysis-02-intermediate-representation/</loc>
+    
+    <lastmod>2022-10-20</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.jk404.cn/study/course/static-program-analysis/static-program-analysis-01-introduction/</loc>
+    
+    <lastmod>2022-10-20</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.jk404.cn/study/course/static-program-analysis/static-program-analysis-06-pointer-analysis/</loc>
+    
+    <lastmod>2022-10-20</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.jk404.cn/program-language/python/pyside2/pyside2-04-beautify/</loc>
+    
+    <lastmod>2022-10-18</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.jk404.cn/program-language/python/pyside2/pyside2-03-layout/</loc>
+    
+    <lastmod>2022-10-18</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.jk404.cn/program-language/python/pyside2/pyside2-02-ui/</loc>
+    
+    <lastmod>2022-10-17</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.jk404.cn/program-language/python/pyside2/pyside2-01-helloworld/</loc>
+    
+    <lastmod>2022-10-16</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.jk404.cn/study/course/Missing-Semester/MIT-Missing-Semester-08-metaprogramming/</loc>
+    
+    <lastmod>2022-10-13</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.jk404.cn/study/course/Missing-Semester/MIT-Missing-Semester-04-data-wrangling/</loc>
+    
+    <lastmod>2022-10-13</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://www.jk404.cn/study/course/Missing-Semester/MIT-Missing-Semester-07-Debugging-profiling/</loc>
     
     <lastmod>2022-10-12</lastmod>
@@ -21,15 +192,6 @@
   
   <url>
     <loc>https://www.jk404.cn/study/course/Missing-Semester/MIT-Missing-Semester-05-Commandline-Env/</loc>
-    
-    <lastmod>2022-10-12</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.jk404.cn/study/course/Missing-Semester/MIT-Missing-Semester-04-data-wrangling/</loc>
     
     <lastmod>2022-10-12</lastmod>
     
@@ -236,33 +398,6 @@
   </url>
   
   <url>
-    <loc>https://www.jk404.cn/course/static-program-analysis/Tai-e-A1-LiveVar-Analysis-and-Iterative-Solver/</loc>
-    
-    <lastmod>2022-06-02</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.jk404.cn/course/static-program-analysis/Tai-e-A0-Set-up/</loc>
-    
-    <lastmod>2022-06-02</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.jk404.cn/course/static-program-analysis/static-program-analysis-06-pointer-analysis/</loc>
-    
-    <lastmod>2022-06-02</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
     <loc>https://www.jk404.cn/OS/lab/OS-04-lab-bootloader/</loc>
     
     <lastmod>2022-05-10</lastmod>
@@ -317,51 +452,6 @@
   </url>
   
   <url>
-    <loc>https://www.jk404.cn/Taichi/Taichi-02-Metaprogramming-and-Object-Oriented/</loc>
-    
-    <lastmod>2022-05-04</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.jk404.cn/Taichi/Taichi-01-First-Taichi-Program/</loc>
-    
-    <lastmod>2022-05-04</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.jk404.cn/Taichi/Taichi-00-introduction/</loc>
-    
-    <lastmod>2022-05-04</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.jk404.cn/course/static-program-analysis/static-program-analysis-05-interprocedural-analysis/</loc>
-    
-    <lastmod>2022-05-03</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.jk404.cn/course/static-program-analysis/static-program-analysis-04-data-flow-analysis-foundations/</loc>
-    
-    <lastmod>2022-04-22</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
     <loc>https://www.jk404.cn/CTF/PWN/wp/susctf2022/ctf-susctf2022-happytree/</loc>
     
     <lastmod>2022-04-11</lastmod>
@@ -383,15 +473,6 @@
     <loc>https://www.jk404.cn/CTF/PWN/wp/susctf2022/ctf-susctf2022-rain/</loc>
     
     <lastmod>2022-04-06</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.jk404.cn/course/static-program-analysis/static-program-analysis-03-data-flow-analysis/</loc>
-    
-    <lastmod>2022-03-28</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -500,24 +581,6 @@
     <loc>https://www.jk404.cn/study/daily/talk/</loc>
     
     <lastmod>2022-01-12</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.jk404.cn/course/static-program-analysis/static-program-analysis-02-intermediate-representation/</loc>
-    
-    <lastmod>2022-01-11</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.jk404.cn/course/static-program-analysis/static-program-analysis-01-introduction/</loc>
-    
-    <lastmod>2022-01-10</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -707,24 +770,6 @@
     <loc>https://www.jk404.cn/CTF/PWN/%E9%9B%B6%E6%95%A3%E7%9F%A5%E8%AF%86%E7%82%B9/</loc>
     
     <lastmod>2021-11-26</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.jk404.cn/CTF/PWN/kernel-pwn/FUZZ/Syzkaller/syzkaller-2-principle/</loc>
-    
-    <lastmod>2021-11-25</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.jk404.cn/CTF/PWN/kernel-pwn/FUZZ/Syzkaller/syzkaller-1-environ-build/</loc>
-    
-    <lastmod>2021-11-25</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1138,7 +1183,7 @@
 
   <url>
     <loc>https://www.jk404.cn/</loc>
-    <lastmod>2022-10-12</lastmod>
+    <lastmod>2022-10-20</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
@@ -1147,456 +1192,491 @@
 
   
   <url>
+    <loc>https://www.jk404.cn/categories/CTF/</loc>
+    <lastmod>2022-10-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
     <loc>https://www.jk404.cn/categories/PWN/</loc>
-    <lastmod>2022-10-12</lastmod>
+    <lastmod>2022-10-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://www.jk404.cn/categories/study/</loc>
-    <lastmod>2022-10-12</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.jk404.cn/categories/CTF/</loc>
-    <lastmod>2022-10-12</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.jk404.cn/categories/PWN/Fuzz/</loc>
-    <lastmod>2022-10-12</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.jk404.cn/categories/PWN/cve/</loc>
-    <lastmod>2022-10-12</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.jk404.cn/categories/study/book/</loc>
-    <lastmod>2022-10-12</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.jk404.cn/categories/Website/</loc>
-    <lastmod>2022-10-12</lastmod>
+    <lastmod>2022-10-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://www.jk404.cn/categories/CTF/PWN/</loc>
-    <lastmod>2022-10-12</lastmod>
+    <lastmod>2022-10-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.jk404.cn/categories/PWN/Fuzz/</loc>
+    <lastmod>2022-10-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.jk404.cn/categories/Website/</loc>
+    <lastmod>2022-10-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.jk404.cn/categories/study/book/</loc>
+    <lastmod>2022-10-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.jk404.cn/categories/PWN/cve/</loc>
+    <lastmod>2022-10-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://www.jk404.cn/categories/course/</loc>
-    <lastmod>2022-10-12</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.jk404.cn/categories/PWN/Fuzz/AFL/</loc>
-    <lastmod>2022-10-12</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.jk404.cn/categories/study/course/</loc>
-    <lastmod>2022-10-12</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.jk404.cn/categories/OS/</loc>
-    <lastmod>2022-10-12</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.jk404.cn/categories/study/book/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD%E7%AE%97%E6%B3%95vol-1/</loc>
-    <lastmod>2022-10-12</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.jk404.cn/categories/Taichi/</loc>
-    <lastmod>2022-10-12</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.jk404.cn/categories/Website/FloraX/</loc>
-    <lastmod>2022-10-12</lastmod>
+    <lastmod>2022-10-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://www.jk404.cn/categories/CTF/PWN/kernel-pwn/</loc>
-    <lastmod>2022-10-12</lastmod>
+    <lastmod>2022-10-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>https://www.jk404.cn/categories/CTF/PWN/wp/</loc>
-    <lastmod>2022-10-12</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.jk404.cn/categories/CTF/PWN/uncategorized/</loc>
-    <lastmod>2022-10-12</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.jk404.cn/categories/CSAPP/</loc>
-    <lastmod>2022-10-12</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.jk404.cn/categories/course/MIT-AI/</loc>
-    <lastmod>2022-10-12</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.jk404.cn/categories/study/course/Missing-Semester/</loc>
-    <lastmod>2022-10-12</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.jk404.cn/categories/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/</loc>
-    <lastmod>2022-10-12</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.jk404.cn/categories/cpp/</loc>
-    <lastmod>2022-10-12</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.jk404.cn/categories/OS/theory/</loc>
-    <lastmod>2022-10-12</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.jk404.cn/categories/OS/lab/</loc>
-    <lastmod>2022-10-12</lastmod>
+    <loc>https://www.jk404.cn/categories/study/course/</loc>
+    <lastmod>2022-10-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://www.jk404.cn/categories/CTF/PWN/user-space-pwn/</loc>
-    <lastmod>2022-10-12</lastmod>
+    <lastmod>2022-10-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>https://www.jk404.cn/categories/golang/</loc>
-    <lastmod>2022-10-12</lastmod>
+    <loc>https://www.jk404.cn/categories/PWN/Fuzz/AFL/</loc>
+    <lastmod>2022-10-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>https://www.jk404.cn/categories/welcome/</loc>
-    <lastmod>2022-10-12</lastmod>
+    <loc>https://www.jk404.cn/categories/OS/</loc>
+    <lastmod>2022-10-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>https://www.jk404.cn/categories/git/</loc>
-    <lastmod>2022-10-12</lastmod>
+    <loc>https://www.jk404.cn/categories/Website/FloraX/</loc>
+    <lastmod>2022-10-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>https://www.jk404.cn/categories/OS/Prepare/</loc>
-    <lastmod>2022-10-12</lastmod>
+    <loc>https://www.jk404.cn/categories/study/book/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB%EF%BC%9A%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E5%BA%93/</loc>
+    <lastmod>2022-10-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>https://www.jk404.cn/categories/OS/lab1/</loc>
-    <lastmod>2022-10-12</lastmod>
+    <loc>https://www.jk404.cn/categories/study/book/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD%E7%AE%97%E6%B3%95vol-1/</loc>
+    <lastmod>2022-10-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>https://www.jk404.cn/categories/PWN/microcorruption/</loc>
-    <lastmod>2022-10-12</lastmod>
+    <loc>https://www.jk404.cn/categories/CTF/PWN/uncategorized/</loc>
+    <lastmod>2022-10-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>https://www.jk404.cn/categories/course/static-program-analysis/</loc>
-    <lastmod>2022-10-12</lastmod>
+    <loc>https://www.jk404.cn/categories/CTF/PWN/wp/</loc>
+    <lastmod>2022-10-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>https://www.jk404.cn/categories/pwn-college/</loc>
-    <lastmod>2022-10-12</lastmod>
+    <loc>https://www.jk404.cn/categories/CSAPP/</loc>
+    <lastmod>2022-10-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>https://www.jk404.cn/categories/CSAPP-lab/</loc>
-    <lastmod>2022-10-12</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.jk404.cn/categories/CTF/PWN/kernel-pwn/Linux-source/</loc>
-    <lastmod>2022-10-12</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.jk404.cn/categories/CTF/PWN/wp/buuoj/</loc>
-    <lastmod>2022-10-12</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.jk404.cn/categories/CTF/PWN/wp/asisctf/</loc>
-    <lastmod>2022-10-12</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.jk404.cn/categories/CTF/PWN/kernel-pwn/wp/</loc>
-    <lastmod>2022-10-12</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.jk404.cn/categories/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/</loc>
-    <lastmod>2022-10-12</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.jk404.cn/categories/CSAPP/CSAPP-lab/</loc>
-    <lastmod>2022-10-12</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.jk404.cn/categories/CTF/PWN/kernel-pwn/cve/</loc>
-    <lastmod>2022-10-12</lastmod>
+    <loc>https://www.jk404.cn/categories/course/MIT-AI/</loc>
+    <lastmod>2022-10-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://www.jk404.cn/categories/CTF/PWN/kernel-pwn/knowledge/</loc>
-    <lastmod>2022-10-12</lastmod>
+    <lastmod>2022-10-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>https://www.jk404.cn/categories/CTF/PWN/kernel-pwn/FUZZ/</loc>
-    <lastmod>2022-10-12</lastmod>
+    <loc>https://www.jk404.cn/categories/CTF/PWN/kernel-pwn/wp/</loc>
+    <lastmod>2022-10-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>https://www.jk404.cn/categories/tools/</loc>
-    <lastmod>2022-10-12</lastmod>
+    <loc>https://www.jk404.cn/categories/study/course/Missing-Semester/</loc>
+    <lastmod>2022-10-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>https://www.jk404.cn/categories/study/daily/</loc>
-    <lastmod>2022-10-12</lastmod>
+    <loc>https://www.jk404.cn/categories/CTF/PWN/kernel-pwn/cve/</loc>
+    <lastmod>2022-10-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>https://www.jk404.cn/categories/CSAPP/theory/</loc>
-    <lastmod>2022-10-12</lastmod>
+    <loc>https://www.jk404.cn/categories/cpp/</loc>
+    <lastmod>2022-10-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://www.jk404.cn/categories/CTF/PWN/user-space-pwn/cve/</loc>
-    <lastmod>2022-10-12</lastmod>
+    <lastmod>2022-10-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.jk404.cn/categories/OS/theory/</loc>
+    <lastmod>2022-10-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.jk404.cn/categories/OS/lab/</loc>
+    <lastmod>2022-10-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.jk404.cn/categories/golang/</loc>
+    <lastmod>2022-10-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.jk404.cn/categories/welcome/</loc>
+    <lastmod>2022-10-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.jk404.cn/categories/git/</loc>
+    <lastmod>2022-10-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.jk404.cn/categories/OS/lab1/</loc>
+    <lastmod>2022-10-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.jk404.cn/categories/PWN/microcorruption/</loc>
+    <lastmod>2022-10-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.jk404.cn/categories/OS/Prepare/</loc>
+    <lastmod>2022-10-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.jk404.cn/categories/CSAPP-lab/</loc>
+    <lastmod>2022-10-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.jk404.cn/categories/study/course/static-program-analysis/</loc>
+    <lastmod>2022-10-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.jk404.cn/categories/pwn-college/</loc>
+    <lastmod>2022-10-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.jk404.cn/categories/CTF/PWN/kernel-pwn/Linux-source/</loc>
+    <lastmod>2022-10-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.jk404.cn/categories/study/course/Taichi/</loc>
+    <lastmod>2022-10-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.jk404.cn/categories/program-language/</loc>
+    <lastmod>2022-10-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.jk404.cn/categories/CTF/PWN/wp/asisctf/</loc>
+    <lastmod>2022-10-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.jk404.cn/categories/CSAPP/CSAPP-lab/</loc>
+    <lastmod>2022-10-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.jk404.cn/categories/CSAPP/theory/</loc>
+    <lastmod>2022-10-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://www.jk404.cn/categories/CTF/PWN/wp/susctf2022/</loc>
-    <lastmod>2022-10-12</lastmod>
+    <lastmod>2022-10-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://www.jk404.cn/categories/golang/start/</loc>
-    <lastmod>2022-10-12</lastmod>
+    <lastmod>2022-10-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://www.jk404.cn/categories/CTF/PWN/wp/l3hctf/</loc>
-    <lastmod>2022-10-12</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.jk404.cn/categories/pwn-college/Introduciton/</loc>
-    <lastmod>2022-10-12</lastmod>
+    <lastmod>2022-10-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://www.jk404.cn/categories/CSAPP-lab/preparelab/</loc>
-    <lastmod>2022-10-12</lastmod>
+    <lastmod>2022-10-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.jk404.cn/categories/pwn-college/Introduciton/</loc>
+    <lastmod>2022-10-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://www.jk404.cn/categories/pwn-college/Chapter02-Binary-file/</loc>
-    <lastmod>2022-10-12</lastmod>
+    <lastmod>2022-10-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://www.jk404.cn/categories/CTF/PWN/wp/pwnable-kr/</loc>
-    <lastmod>2022-10-12</lastmod>
+    <lastmod>2022-10-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://www.jk404.cn/categories/pwn-college/Chapter01-Program-interaction/</loc>
-    <lastmod>2022-10-12</lastmod>
+    <lastmod>2022-10-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.jk404.cn/categories/program-language/python/</loc>
+    <lastmod>2022-10-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://www.jk404.cn/categories/CTF/PWN/wp/asisctf/asisctf2021/</loc>
-    <lastmod>2022-10-12</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.jk404.cn/categories/OS/lab1/challenge2-qemu-gdb/</loc>
-    <lastmod>2022-10-12</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.jk404.cn/categories/CTF/PWN/kernel-pwn/FUZZ/Syzkaller/</loc>
-    <lastmod>2022-10-12</lastmod>
+    <lastmod>2022-10-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://www.jk404.cn/categories/OS/lab1/challenge1-what-is-make/</loc>
-    <lastmod>2022-10-12</lastmod>
+    <lastmod>2022-10-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>https://www.jk404.cn/categories/CTF/PWN/kernel-pwn/FUZZ/Trinity/</loc>
-    <lastmod>2022-10-12</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.jk404.cn/categories/OS/lab1/challenge4-load-kernel-elf/</loc>
-    <lastmod>2022-10-12</lastmod>
+    <loc>https://www.jk404.cn/categories/OS/lab1/challenge2-qemu-gdb/</loc>
+    <lastmod>2022-10-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://www.jk404.cn/categories/OS/lab1/challenge3-go-into-protected-mode/</loc>
-    <lastmod>2022-10-12</lastmod>
+    <lastmod>2022-10-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>https://www.jk404.cn/categories/OS/lab1/challenge6-interrupt-handle/</loc>
-    <lastmod>2022-10-12</lastmod>
+    <loc>https://www.jk404.cn/categories/OS/lab1/challenge4-load-kernel-elf/</loc>
+    <lastmod>2022-10-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://www.jk404.cn/categories/OS/lab1/challenge5-trace-stackframe/</loc>
-    <lastmod>2022-10-12</lastmod>
+    <lastmod>2022-10-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.jk404.cn/categories/OS/lab1/challenge6-interrupt-handle/</loc>
+    <lastmod>2022-10-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.jk404.cn/categories/program-language/python/pyside2/</loc>
+    <lastmod>2022-10-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.jk404.cn/categories/CTF/PWN/wp/buuoj/</loc>
+    <lastmod>2022-10-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.jk404.cn/categories/study/book/%E6%8F%AD%E7%A7%98%E5%AE%B6%E7%94%A8%E8%B7%AF%E7%94%B1%E5%99%A80day%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%8A%80%E6%9C%AF/</loc>
+    <lastmod>2022-10-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.jk404.cn/categories/PWN/kernel-pwn/</loc>
+    <lastmod>2022-10-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.jk404.cn/categories/study/daily/</loc>
+    <lastmod>2022-10-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.jk404.cn/categories/tools/</loc>
+    <lastmod>2022-10-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.jk404.cn/categories/PWN/kernel-pwn/FUZZ/</loc>
+    <lastmod>2022-10-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.jk404.cn/categories/CTF/PWN/kernel-pwn/FUZZ/</loc>
+    <lastmod>2022-10-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.jk404.cn/categories/PWN/kernel-pwn/FUZZ/Syzkaller/</loc>
+    <lastmod>2022-10-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.jk404.cn/categories/CTF/PWN/kernel-pwn/FUZZ/Trinity/</loc>
+    <lastmod>2022-10-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
