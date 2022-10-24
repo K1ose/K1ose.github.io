@@ -6,7 +6,7 @@
   <link href="https://www.jk404.cn/atom.xml" rel="self"/>
   
   <link href="https://www.jk404.cn/"/>
-  <updated>2022-10-24T04:22:19.137Z</updated>
+  <updated>2022-10-24T04:31:14.519Z</updated>
   <id>https://www.jk404.cn/</id>
   
   <author>
@@ -21,9 +21,9 @@
     <link href="https://www.jk404.cn/study/course/data-structure/data-structure-02-linear-list/"/>
     <id>https://www.jk404.cn/study/course/data-structure/data-structure-02-linear-list/</id>
     <published>2022-10-24T03:48:44.000Z</published>
-    <updated>2022-10-24T04:22:19.137Z</updated>
+    <updated>2022-10-24T04:31:14.519Z</updated>
     
-    <content type="html"><![CDATA[<h1>线性表</h1><p>重点内容：</p><ul><li>线性表的定义和基本操作</li><li>线性表的实现：顺序存储、链式存储、线性表的应用</li></ul><p>知识框架：</p><p><img src="/study/course/data-structure/data-structure-02-linear-list/figure01.jpg" alt></p>]]></content>
+    <content type="html"><![CDATA[<h1>线性表</h1><p>重点内容：</p><ul><li>线性表的定义和基本操作</li><li>线性表的实现：顺序存储、链式存储、线性表的应用</li></ul><p>知识框架：</p><p><img src="/study/course/data-structure/data-structure-02-linear-list/figure01.jpg" alt></p><h2 id="定义和基本操作">定义和基本操作</h2>]]></content>
     
     
       
