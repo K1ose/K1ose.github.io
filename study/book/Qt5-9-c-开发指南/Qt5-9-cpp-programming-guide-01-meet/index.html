@@ -1,0 +1,275 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>Qt5.9_cpp_programming_guide_01_meet | K1ose's Space</title><meta name="author" content="K1ose"><meta name="copyright" content="K1ose"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="认识Qt Qt是一套应用程序开发类库，和MFC不同，Qt是跨平台的。Qt支持PC和服务器的平台，包括Windows、Linux、macOS等，还支持移动和嵌入式操作系统，比如iOS、Embedded Linux、Android、WinRT等。跨平台意味着只需要一次编程，在不同平台上无需改动或只需少许改动后再编译，就可以形成在不同平台上运行的版本。 获取与安装 许可类型  商业许可 开源许可  LG">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Qt5.9_cpp_programming_guide_01_meet">
+<meta property="og:url" content="https://www.jk404.cn/study/book/Qt5-9-c-%E5%BC%80%E5%8F%91%E6%8C%87%E5%8D%97/Qt5-9-cpp-programming-guide-01-meet/index.html">
+<meta property="og:site_name" content="K1ose&#39;s Space">
+<meta property="og:description" content="认识Qt Qt是一套应用程序开发类库，和MFC不同，Qt是跨平台的。Qt支持PC和服务器的平台，包括Windows、Linux、macOS等，还支持移动和嵌入式操作系统，比如iOS、Embedded Linux、Android、WinRT等。跨平台意味着只需要一次编程，在不同平台上无需改动或只需少许改动后再编译，就可以形成在不同平台上运行的版本。 获取与安装 许可类型  商业许可 开源许可  LG">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7">
+<meta property="article:published_time" content="2022-10-31T21:50:06.000Z">
+<meta property="article:modified_time" content="2022-11-01T01:33:06.981Z">
+<meta property="article:author" content="K1ose">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://www.jk404.cn/study/book/Qt5-9-c-%E5%BC%80%E5%8F%91%E6%8C%87%E5%8D%97/Qt5-9-cpp-programming-guide-01-meet/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Qt5.9_cpp_programming_guide_01_meet',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2022-11-01 09:33:06'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 5.4.0"><link rel="alternate" href="/atom.xml" title="K1ose's Space" type="application/atom+xml">
+</head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/Soler6pro.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data is-center"><div class="data-item"><a href="/archives/"><div class="headline">文章</div><div class="length-num">133</div></a></div><div class="data-item"><a href="/tags/"><div class="headline">标签</div><div class="length-num">0</div></a></div><div class="data-item"><a href="/categories/"><div class="headline">分类</div><div class="length-num">69</div></a></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><span> About</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="not-top-img" id="page-header"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">K1ose's Space</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><span> About</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav></header><main class="layout" id="content-inner"><div id="post"><div id="post-info"><h1 class="post-title">Qt5.9_cpp_programming_guide_01_meet</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2022-10-31T21:50:06.000Z" title="发表于 2022-11-01 05:50:06">2022-11-01</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2022-11-01T01:33:06.981Z" title="更新于 2022-11-01 09:33:06">2022-11-01</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/study/">study</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/study/book/">book</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/study/book/Qt5-9-c-%E5%BC%80%E5%8F%91%E6%8C%87%E5%8D%97/">Qt5.9 c++ 开发指南</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="Qt5.9_cpp_programming_guide_01_meet"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div><article class="post-content" id="article-container"><h1>认识Qt</h1>
+<p>Qt是一套应用程序开发类库，和MFC不同，Qt是跨平台的。Qt支持PC和服务器的平台，包括Windows、Linux、macOS等，还支持移动和嵌入式操作系统，比如iOS、Embedded Linux、Android、WinRT等。跨平台意味着只需要一次编程，在不同平台上无需改动或只需少许改动后再编译，就可以形成在不同平台上运行的版本。</p>
+<h2 id="获取与安装">获取与安装</h2>
+<h3 id="许可类型">许可类型</h3>
+<ul>
+<li>商业许可</li>
+<li>开源许可
+<ul>
+<li>LGPLV3</li>
+<li>GPLV2/GPLV3</li>
+</ul>
+</li>
+</ul>
+<p>商业许可 - 允许开发者不公开项目的源代码，其Qt版本包含更多的模块（这些模块只存在于商业许可的版本），并能够获得Qt公司的计数支持。需要向Qt购买商业许可才能获得。</p>
+<p>开源许可 - 无需支付，但是需要遵守相关规定。</p>
+<h3 id="版本">版本</h3>
+<p>Qt版本更新很快，且版本更新时会新增一些类或停止维护一些以前版本的类，Qt 5和Qt 4就有较大区别，如果不是为了维护旧版本编写的程序，一定要选用最新版本的Qt进行开发。</p>
+<h3 id="下载和安装">下载和安装</h3>
+<p>从Qt官网可以下载最新版本的Qt软件，根据开发项目不同，Qt分为桌面和移动设备应用开发、嵌入式设备开发 两大类不同的安装包。</p>
+<ul>
+<li>桌面和移动设备应用开发 - PC、服务器、手机、平板电脑上运行的程序，免费下载使用</li>
+<li>嵌入式设备开发 - 物联网设备、汽车电子设备等特定的嵌入式设备</li>
+</ul>
+<p>需要注册用户后才可以下载Qt安装程序，安装包分为在线和离线两种，为便于重复安装，最好下载离线安装包。</p>
+<p>安装时需要选择想要安装的组件，其中有：</p>
+<ul>
+<li>MinGW - Minimalist GNU for Windows 的缩写，是Windows平台上使用的GNU工具集导入库的集合</li>
+<li>用于UWP编译的模块 - Universal Windows Platform 的缩写，有不同编译器类型的UWP</li>
+<li>用于Windows平台上的MSVC编译器模块 - 如 msvc2015 32-bit 等，要安装 MSVC 编译器的模块，需要计算机上安装相应版本的Visual Studio</li>
+<li>用于Android平台的模块 - 如 Android x86 和 Android ARMv7</li>
+<li>Sources - Qt源程序</li>
+<li>Qt Charts - 二位图标模块，用于绘制各类型二位图标</li>
+<li>Qt Data Visualization - 三维数据图表模块</li>
+<li>Qt Purchasing、QtWebEngine、Qt Network Auth(TP)</li>
+<li>Qt Script(Deprecated) - 已经过时的脚本模块</li>
+</ul>
+<h2 id="初步使用">初步使用</h2>
+<h3 id="设置">设置</h3>
+<p>[Tools] - [Options]</p>
+<ul>
+<li>Environment 可切换语言</li>
+<li>Kits中可以设置编译工具</li>
+</ul>
+<p><a target="_blank" rel="noopener" href="https://developer.microsoft.com/zh-cn/windows/downloads/sdk-archive/">Windows Software Development Kit</a></p>
+<h2 id="第一个程序">第一个程序</h2>
+<h3 id="项目创建流程">项目创建流程</h3>
+<p>[File] - [New FIle or Project]</p>
+<p>Qt Creator中可以创建多种项目：</p>
+<ul>
+<li>Qt Widgets Application 支持桌面平台的有图形用户界面(Graphic User Interface,GUI)</li>
+<li>Qt Console Application 控制台应用程序，无GUI界面</li>
+<li>Qt Quick Application 创建可部署的Qt Quick 2应用程序，界面采用QML语言，程序采用C++，可以设计出非常炫酷的用户界面，一般用于移动设备或嵌入设备上无边框的应用程序设计</li>
+<li>Qt Quick Controls 2 Application 创建基于Qt Quick Controls 2组件的可部署的Qt Quick 2应用程序</li>
+<li>Qt Canvas 3D Application 创建Qt Canvas 3D QML项目，支持3D画布</li>
+</ul>
+<p>在这里选择项目类型为 Qt Widgets Application，选择目录，再设置项目名称，这样在该目录下会创建一个项目文件夹。</p>
+<p>选择编译工具，在编译项目时可以选择一个作为当前使用的编译工具，编译生成不同版本的可执行程序。</p>
+<p>选择基类(base class)，三种类型可以选择：</p>
+<ul>
+<li>QMainWindow 是主窗口类，带有主菜单栏、工具栏和状态栏；</li>
+<li>QWidget 是所有具有可视界面类的基类，选择QWidget创建的界面对各种界面组件都可以支持；</li>
+<li>QDialog 是对话框类，可建立一个基于对话框的界面；</li>
+</ul>
+<h3 id="项目文件组成和管理">项目文件组成和管理</h3>
+<p>在项目名称节点下，分组管理着项目内的各种源文件，分别为：</p>
+<ul>
+<li>
+<p><a target="_blank" rel="noopener" href="http://xxx.pro">xxx.pro</a> 项目管理文件，包括一些对项目的设置项；</p>
+</li>
+<li>
+<p>Headers分组，该节点下是项目内所有头文件(.h)；</p>
+</li>
+<li>
+<p>Sources分组，该节点下是项目内的所有C++源文件(.cpp)，mainwindow.cpp是主窗口类的实现文件，main.cpp是主函数文件，也是程序的入口；</p>
+</li>
+<li>
+<p>Forms分组，该节点下是项目内的所有界面文件(.ui)，是用XML语言描述的。</p>
+</li>
+</ul>
+<p>在下拉栏里，有如下的几个分组：</p>
+<p><img src="/study/book/Qt5-9-c-%E5%BC%80%E5%8F%91%E6%8C%87%E5%8D%97/Qt5-9-cpp-programming-guide-01-meet/Qt5-9-cpp-programming-guide-01-meet%5Cfigure_01.jpg" alt></p>
+<p>其中 Class View 可以显示项目内所有的类结构，便于快速切换和浏览；</p>
+<p>双击 mainwindow.ui 会出现窗体设计界面，实际上是继承的 Qt Designer。</p>
+<h3 id="编译、调试和执行">编译、调试和执行</h3>
+<p>[Projects] - [Build&amp;Run] 选择哪一个编译器用于编译项目，选择[Shadow build] 会在编译后在项目同级目录下建立一个编译后的目录，如果不选择此项，会在目录下建立 [Debug] 和 [Release] 子目录。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">K1ose</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://www.jk404.cn/study/book/Qt5-9-c-%E5%BC%80%E5%8F%91%E6%8C%87%E5%8D%97/Qt5-9-cpp-programming-guide-01-meet/">https://www.jk404.cn/study/book/Qt5-9-c-%E5%BC%80%E5%8F%91%E6%8C%87%E5%8D%97/Qt5-9-cpp-programming-guide-01-meet/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://www.jk404.cn" target="_blank">K1ose's Space</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"></div><div class="post_share"><div class="social-share" data-image="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/study/book/Qt5-9-c-%E5%BC%80%E5%8F%91%E6%8C%87%E5%8D%97/Qt5-9-cpp-programming-guide-02-GUI-Base/"><img class="prev-cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">Qt5.9_cpp_programming_guide_02_GUI_Base</div></div></a></div><div class="next-post pull-right"><a href="/study/book/The-Go-Programming-Language/Gopl-02-introduction/"><img class="next-cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">Gopl_02_introduction</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/Soler6pro.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">K1ose</div><div class="author-info__description"></div></div><div class="card-info-data is-center"><div class="card-info-data-item"><a href="/archives/"><div class="headline">文章</div><div class="length-num">133</div></a></div><div class="card-info-data-item"><a href="/tags/"><div class="headline">标签</div><div class="length-num">0</div></a></div><div class="card-info-data-item"><a href="/categories/"><div class="headline">分类</div><div class="length-num">69</div></a></div></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>公告</span></div><div class="announcement_content"></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-number">1.</span> <span class="toc-text">认识Qt</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%8E%B7%E5%8F%96%E4%B8%8E%E5%AE%89%E8%A3%85"><span class="toc-number">1.1.</span> <span class="toc-text">获取与安装</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%B8%E5%8F%AF%E7%B1%BB%E5%9E%8B"><span class="toc-number">1.1.1.</span> <span class="toc-text">许可类型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%89%88%E6%9C%AC"><span class="toc-number">1.1.2.</span> <span class="toc-text">版本</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%8B%E8%BD%BD%E5%92%8C%E5%AE%89%E8%A3%85"><span class="toc-number">1.1.3.</span> <span class="toc-text">下载和安装</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%9D%E6%AD%A5%E4%BD%BF%E7%94%A8"><span class="toc-number">1.2.</span> <span class="toc-text">初步使用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%BE%E7%BD%AE"><span class="toc-number">1.2.1.</span> <span class="toc-text">设置</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E4%B8%AA%E7%A8%8B%E5%BA%8F"><span class="toc-number">1.3.</span> <span class="toc-text">第一个程序</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%A1%B9%E7%9B%AE%E5%88%9B%E5%BB%BA%E6%B5%81%E7%A8%8B"><span class="toc-number">1.3.1.</span> <span class="toc-text">项目创建流程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%A1%B9%E7%9B%AE%E6%96%87%E4%BB%B6%E7%BB%84%E6%88%90%E5%92%8C%E7%AE%A1%E7%90%86"><span class="toc-number">1.3.2.</span> <span class="toc-text">项目文件组成和管理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BC%96%E8%AF%91%E3%80%81%E8%B0%83%E8%AF%95%E5%92%8C%E6%89%A7%E8%A1%8C"><span class="toc-number">1.3.3.</span> <span class="toc-text">编译、调试和执行</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/study/book/Linux-Kernel-Development/Linux-kernel-development-01-intro/" title="Linux_kernel_development_01_intro">Linux_kernel_development_01_intro</a><time datetime="2022-11-02T17:32:37.000Z" title="发表于 2022-11-03 01:32:37">2022-11-03</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/study/book/Qt5-9-c-%E5%BC%80%E5%8F%91%E6%8C%87%E5%8D%97/Qt5-9-cpp-programming-guide-02-GUI-Base/" title="Qt5.9_cpp_programming_guide_02_GUI_Base">Qt5.9_cpp_programming_guide_02_GUI_Base</a><time datetime="2022-10-31T23:59:39.000Z" title="发表于 2022-11-01 07:59:39">2022-11-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/study/book/Qt5-9-c-%E5%BC%80%E5%8F%91%E6%8C%87%E5%8D%97/Qt5-9-cpp-programming-guide-01-meet/" title="Qt5.9_cpp_programming_guide_01_meet">Qt5.9_cpp_programming_guide_01_meet</a><time datetime="2022-10-31T21:50:06.000Z" title="发表于 2022-11-01 05:50:06">2022-11-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/study/book/The-Go-Programming-Language/Gopl-02-introduction/" title="Gopl_02_introduction">Gopl_02_introduction</a><time datetime="2022-10-24T18:28:23.000Z" title="发表于 2022-10-25 02:28:23">2022-10-25</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/study/book/The-Go-Programming-Language/Gopl-01-preface/" title="Gopl_01_preface">Gopl_01_preface</a><time datetime="2022-10-24T17:31:40.000Z" title="发表于 2022-10-25 01:31:40">2022-10-25</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By K1ose</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><div class="js-pjax"><script>if (!window.MathJax) {
+  window.MathJax = {
+    tex: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"]],
+      tags: 'ams'
+    },
+    chtml: {
+      scale: 1.2
+    },
+    options: {
+      renderActions: {
+        findScript: [10, doc => {
+          for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+            const display = !!node.type.match(/; *mode=display/)
+            const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display)
+            const text = document.createTextNode('')
+            node.parentNode.replaceChild(text, node)
+            math.start = {node: text, delim: '', n: 0}
+            math.end = {node: text, delim: '', n: 0}
+            doc.math.push(math)
+          }
+        }, ''],
+        insertScript: [200, () => {
+          document.querySelectorAll('mjx-container:not\([display]\)').forEach(node => {
+            const target = node.parentNode
+            if (target.nodeName.toLowerCase() === 'li') {
+              target.parentNode.classList.add('has-jax')
+            } else {
+              target.classList.add('has-jax')
+            }
+          });
+        }, '', false]
+      }
+    }
+  }
+  
+  const script = document.createElement('script')
+  script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js'
+  script.id = 'MathJax-script'
+  script.async = true
+  document.head.appendChild(script)
+} else {
+  MathJax.startup.document.state(0)
+  MathJax.texReset()
+  MathJax.typeset()
+}</script></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
