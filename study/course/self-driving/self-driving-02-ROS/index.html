@@ -1,0 +1,316 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>self-driving_02_ROS | K1ose's Space</title><meta name="author" content="K1ose"><meta name="copyright" content="K1ose"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="ROS ROS: The Robot Operating System 相关概念 为什么使用ROS：  点对点设计 分布式设计 多语言 轻量级 免费且开源 社区完善  ROS 不是传统意义上的操作系统，而是一种系统软件框架，使用了流行的面向服务SOA的软件技术，通过网络协议将节点间数据通信解耦，以集成不同语言不同功能的代码。 ROS 不是编程语言，是一个函数库，除包含客户端外，还包含一个中心服务器">
+<meta property="og:type" content="article">
+<meta property="og:title" content="self-driving_02_ROS">
+<meta property="og:url" content="https://www.jk404.cn/study/course/self-driving/self-driving-02-ROS/index.html">
+<meta property="og:site_name" content="K1ose&#39;s Space">
+<meta property="og:description" content="ROS ROS: The Robot Operating System 相关概念 为什么使用ROS：  点对点设计 分布式设计 多语言 轻量级 免费且开源 社区完善  ROS 不是传统意义上的操作系统，而是一种系统软件框架，使用了流行的面向服务SOA的软件技术，通过网络协议将节点间数据通信解耦，以集成不同语言不同功能的代码。 ROS 不是编程语言，是一个函数库，除包含客户端外，还包含一个中心服务器">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7">
+<meta property="article:published_time" content="2022-11-12T08:30:29.000Z">
+<meta property="article:modified_time" content="2022-11-14T08:13:22.581Z">
+<meta property="article:author" content="K1ose">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://www.jk404.cn/study/course/self-driving/self-driving-02-ROS/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'self-driving_02_ROS',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2022-11-14 16:13:22'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 5.4.0"><link rel="alternate" href="/atom.xml" title="K1ose's Space" type="application/atom+xml">
+</head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/Soler6pro.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data is-center"><div class="data-item"><a href="/archives/"><div class="headline">文章</div><div class="length-num">139</div></a></div><div class="data-item"><a href="/tags/"><div class="headline">标签</div><div class="length-num">0</div></a></div><div class="data-item"><a href="/categories/"><div class="headline">分类</div><div class="length-num">74</div></a></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><span> About</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="not-top-img" id="page-header"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">K1ose's Space</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><span> About</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav></header><main class="layout" id="content-inner"><div id="post"><div id="post-info"><h1 class="post-title">self-driving_02_ROS</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2022-11-12T08:30:29.000Z" title="发表于 2022-11-12 16:30:29">2022-11-12</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2022-11-14T08:13:22.581Z" title="更新于 2022-11-14 16:13:22">2022-11-14</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/study/">study</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/study/course/">course</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/study/course/self-driving/">self-driving</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="self-driving_02_ROS"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div><article class="post-content" id="article-container"><h1>ROS</h1>
+<p>ROS: The Robot Operating System</p>
+<h2 id="相关概念">相关概念</h2>
+<p>为什么使用ROS：</p>
+<ul>
+<li>点对点设计</li>
+<li>分布式设计</li>
+<li>多语言</li>
+<li>轻量级</li>
+<li>免费且开源</li>
+<li>社区完善</li>
+</ul>
+<p>ROS 不是传统意义上的操作系统，而是一种系统软件框架，使用了流行的面向服务SOA的软件技术，通过网络协议将节点间数据通信解耦，以集成不同语言不同功能的代码。</p>
+<p>ROS 不是编程语言，是一个函数库，除包含客户端外，还包含一个中心服务器、一系列命令行工具、图形化界面工具以及编译环境。</p>
+<p>ROS也不是集成开发环境。</p>
+<p>Talker&amp;Listener模型</p>
+<ul>
+<li>消息以一种publish/subscribe的方式传递</li>
+<li>节点可以在给定的主体中发布/订阅消息</li>
+<li>一个节点可以订阅/发布多个不同的主题</li>
+<li>允许多个节点订阅/发布同一个主题</li>
+<li>订阅节点和发布节点并不知道相互之间的存在</li>
+</ul>
+<p>Catkin</p>
+<ul>
+<li>ROS的一个最简单最常见的编译系统</li>
+<li>ROS对CMake进行了扩展</li>
+<li>适合ROS进行大型项目，多包，多节点的场景下进行批量编译</li>
+<li>操作简单，一次配置，多次使用</li>
+<li>跨依赖项目编译</li>
+</ul>
+<p>抽象程度为：catkin_ws-&gt;CMakeLists.txt-&gt;Makefile</p>
+<p>由此，Cmake编译单个节点，catkin可以定义节点与节点之间的依赖关系。</p>
+<p>Packages &amp; Catkin Workspaces</p>
+<ul>
+<li>Package是ROS系统中最底层最基本的在组织，存放各种文件：库、工具、可执行文件等</li>
+<li>Catkkin workspaces，包的顶层工作目录，一个catkin workspace包含一个工程下面多个ros package</li>
+</ul>
+<p>Package.xml</p>
+<ul>
+<li>每个包的描述文件，都需要放置在包的根目录下，对包的名字/版本/作者/维护者/依赖关系进行说明</li>
+</ul>
+<p>CmakeList.txt</p>
+<ul>
+<li>定义一个包的编译指令</li>
+<li>cmake不会找package.xml文件，依据cmakelists.txt文件编译需要清晰指出头文件和库文件的指向</li>
+<li>catkin_package(CATKIN_DEPENDS roscpp)声明依赖本包同时需要的其他ros包</li>
+<li>find_package(catkin REQUIRED COMPONENTS…)声明编译本包所需要的其他ros包</li>
+<li>add_executable声明编译本包生成的可执行文件</li>
+<li>target_link_libraries 链接可执行文件和依赖库</li>
+</ul>
+<p>ROS NODE</p>
+<ul>
+<li>一个节点是ROS程序包的一个可执行文件</li>
+<li>ROS节点可以使用ROS客户库与其他节点通信</li>
+<li>节点可以发布或者接受一个话题</li>
+<li>节点可以提供或使用某项服务</li>
+<li>常用命令
+<ul>
+<li>rosnode list 查看当前注册到ros master的所有节点</li>
+<li>Rosnode info 查看某个节点的具体信息</li>
+</ul>
+</li>
+</ul>
+<p>ROS TOPIC</p>
+<ul>
+<li>节点之间通过一个ROS topic来互相通信</li>
+<li>通过publisher声明所发布topic名称</li>
+<li>通过subscriber声明所需要监听的topic名称</li>
+<li>常用命令
+<ul>
+<li>Topic list 查看当前注册到ros master的所有topic列表</li>
+<li>rostopic echo 把当前topic输出到控制台</li>
+</ul>
+</li>
+</ul>
+<p>ROS PARAM</p>
+<ul>
+<li>Rosparam命令允许在ROS参数服务器上从存储和赋值数据，参数服务器可以存储浮点型、整型、布尔值、字典和列表值</li>
+<li>小型KV库</li>
+<li>常用命令
+<ul>
+<li>rosparam set 设置参数</li>
+<li>rosparam get 获取参数</li>
+<li>rosparam list 查看当前服务器上的参数</li>
+</ul>
+</li>
+</ul>
+<p>安装&amp;配置</p>
+<ul>
+<li>
+<p>在<a target="_blank" rel="noopener" href="https://wiki.ros.org/kinetic/Installation/Ubuntu">这里</a>安装Ubuntu1604所对应的kinetic版本的ROS。</p>
+</li>
+<li>
+<p>ROS Workspace</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">mkdir -p ~/catkin_ws/src</span><br><span class="line">cd ~/catkin_ws</span><br><span class="line">catkin_make</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash">在~/.bashrc中添加</span></span><br><span class="line">source /home/klose/catkin_ws/devel/setup.bash</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="code">code</h2>
+<ul>
+<li>flora_talker</li>
+<li>flora_listener</li>
+<li>flora_msg</li>
+</ul>
+<h3 id="flora-talker">flora_talker</h3>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> ~/catkin_ws/src</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> catkin_create_pkg flora_say std_msg roscpp</span></span><br></pre></td></tr></table></figure>
+<p>生成了flora_say文件夹</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// flora_say/src/ 中新建 flora_say_node.cpp 文件</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;ros/ros.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;std_msgs/String.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;sstream&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;flora_msgs/FloraMsg.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> **argv)</span></span>&#123;</span><br><span class="line">    ros::<span class="built_in">init</span>(argc, argv, <span class="string">&quot;flora_talker&quot;</span>);</span><br><span class="line">    ros::NodeHandle n;</span><br><span class="line">    ros::Publisher flora_pub = n.advertise&lt;std_msgs::String&gt;(<span class="string">&quot;/flora_topic&quot;</span>, <span class="number">10</span>);</span><br><span class="line">    ros::Publisher flora_pub_new = n.advertise&lt;flora_msgs::FloraMsg&gt;(<span class="string">&quot;/flora_topic_new&quot;</span>, <span class="number">10</span>);</span><br><span class="line">    <span class="function">ros::Rate <span class="title">loop_rate</span><span class="params">(<span class="number">10</span>)</span></span>;</span><br><span class="line">    <span class="keyword">int</span> count = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span>(ros::<span class="built_in">ok</span>())&#123;</span><br><span class="line">        std_msgs::String msg;</span><br><span class="line">        std::stringstream ss;</span><br><span class="line">        ss &lt;&lt; <span class="string">&quot;hello, flora&quot;</span> &lt;&lt; count;</span><br><span class="line">        count ++;</span><br><span class="line">        msg.data = ss.<span class="built_in">str</span>();</span><br><span class="line">        flora_pub.<span class="built_in">publish</span>(msg);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 参数中心</span></span><br><span class="line">        std::string param_string;</span><br><span class="line">        n.param&lt;std::string&gt;(<span class="string">&quot;myparam&quot;</span>, param_string,<span class="string">&quot;love you, flora&quot;</span>);</span><br><span class="line"></span><br><span class="line">        flora_msgs::FloraMsg floraMsg;</span><br><span class="line">        floraMsg.id = count;</span><br><span class="line">        floraMsg.detail = param_string;</span><br><span class="line"></span><br><span class="line">        flora_pub_new.<span class="built_in">publish</span>(floraMsg);</span><br><span class="line"></span><br><span class="line">        loop_rate.<span class="built_in">sleep</span>();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>修改 CMakeLists.txt ：</p>
+<figure class="highlight makefile"><table><tr><td class="code"><pre><span class="line">cmake_minimum_required(VERSION 3.0.2)</span><br><span class="line">project(flora_say)</span><br><span class="line"></span><br><span class="line"><span class="comment">## Compile as C++11, supported in ROS Kinetic and newer</span></span><br><span class="line"><span class="comment"># add_compile_options(-std=c++11)</span></span><br><span class="line"></span><br><span class="line"><span class="comment">## Find catkin macros and libraries</span></span><br><span class="line"><span class="comment">## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)</span></span><br><span class="line"><span class="comment">## is used, also find other catkin packages</span></span><br><span class="line">find_package(catkin REQUIRED COMPONENTS</span><br><span class="line">  roscpp</span><br><span class="line">  std_msgs</span><br><span class="line">        flora_msgs</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">...</span><br><span class="line"></span><br><span class="line"><span class="comment">###################################</span></span><br><span class="line"><span class="comment">## catkin specific configuration ##</span></span><br><span class="line"><span class="comment">###################################</span></span><br><span class="line"><span class="comment">## The catkin_package macro generates cmake config files for your package</span></span><br><span class="line"><span class="comment">## Declare things to be passed to dependent projects</span></span><br><span class="line"><span class="comment">## INCLUDE_DIRS: uncomment this if your package contains header files</span></span><br><span class="line"><span class="comment">## LIBRARIES: libraries you create in this project that dependent projects also need</span></span><br><span class="line"><span class="comment">## CATKIN_DEPENDS: catkin_packages dependent projects also need</span></span><br><span class="line"><span class="comment">## DEPENDS: system dependencies of this project that dependent projects also need</span></span><br><span class="line">catkin_package(</span><br><span class="line">  <span class="comment">#INCLUDE_DIRS include</span></span><br><span class="line">  <span class="comment">#LIBRARIES flora_say</span></span><br><span class="line">  CATKIN_DEPENDS roscpp std_msgs flora_msgs</span><br><span class="line">  <span class="comment">#DEPENDS system_lib</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment">###########</span></span><br><span class="line"><span class="comment">## Build ##</span></span><br><span class="line"><span class="comment">###########</span></span><br><span class="line"></span><br><span class="line"><span class="comment">## Specify additional locations of header files</span></span><br><span class="line"><span class="comment">## Your package locations should be listed before other locations</span></span><br><span class="line">include_directories(</span><br><span class="line"><span class="comment"># include</span></span><br><span class="line">  $&#123;catkin_INCLUDE_DIRS&#125;</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment">## Declare a C++ library</span></span><br><span class="line"><span class="comment"># add_library($&#123;PROJECT_NAME&#125;</span></span><br><span class="line"><span class="comment">#   src/$&#123;PROJECT_NAME&#125;/flora_say.cpp</span></span><br><span class="line"><span class="comment"># )</span></span><br><span class="line"></span><br><span class="line"><span class="comment">## Add cmake target dependencies of the library</span></span><br><span class="line"><span class="comment">## as an example, code may need to be generated before libraries</span></span><br><span class="line"><span class="comment">## either from message generation or dynamic reconfigure</span></span><br><span class="line"><span class="comment"># add_dependencies($&#123;PROJECT_NAME&#125; $&#123;$&#123;PROJECT_NAME&#125;_EXPORTED_TARGETS&#125; $&#123;catkin_EXPORTED_TARGETS&#125;)</span></span><br><span class="line"></span><br><span class="line"><span class="comment">## Declare a C++ executable</span></span><br><span class="line"><span class="comment">## With catkin_make all packages are built within a single CMake context</span></span><br><span class="line"><span class="comment">## The recommended prefix ensures that target names across packages don&#x27;t collide</span></span><br><span class="line">add_executable($&#123;PROJECT_NAME&#125;_node src/flora_say_node.cpp)</span><br><span class="line"></span><br><span class="line"><span class="comment">## Rename C++ executable without prefix</span></span><br><span class="line"><span class="comment">## The above recommended prefix causes long target names, the following renames the</span></span><br><span class="line"><span class="comment">## target back to the shorter version for ease of user use</span></span><br><span class="line"><span class="comment">## e.g. &quot;rosrun someones_pkg node&quot; instead of &quot;rosrun someones_pkg someones_pkg_node&quot;</span></span><br><span class="line"><span class="comment"># set_target_properties($&#123;PROJECT_NAME&#125;_node PROPERTIES OUTPUT_NAME node PREFIX &quot;&quot;)</span></span><br><span class="line"></span><br><span class="line"><span class="comment">## Add cmake target dependencies of the executable</span></span><br><span class="line"><span class="comment">## same as for the library above</span></span><br><span class="line">add_dependencies($&#123;PROJECT_NAME&#125;_node $&#123;$&#123;PROJECT_NAME&#125;_EXPORTED_TARGETS&#125; $&#123;catkin_EXPORTED_TARGETS&#125;)</span><br><span class="line"></span><br><span class="line"><span class="comment">## Specify libraries to link a library or executable target against</span></span><br><span class="line">target_link_libraries(</span><br><span class="line">        $&#123;PROJECT_NAME&#125;_node</span><br><span class="line">        $&#123;catkin_LIBRARIES&#125;</span><br><span class="line">)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>修改 package.xml，引入依赖</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line">...</span><br><span class="line">  <span class="comment">&lt;!-- Use build_depend for packages you need at compile time: --&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">build_depend</span>&gt;</span>message_generation<span class="tag">&lt;/<span class="name">build_depend</span>&gt;</span></span><br><span class="line">  <span class="comment">&lt;!-- Use build_export_depend for packages you need in order to build against this package: --&gt;</span></span><br><span class="line">  <span class="comment">&lt;!--   &lt;build_export_depend&gt;message_generation&lt;/build_export_depend&gt; --&gt;</span></span><br><span class="line">  <span class="comment">&lt;!-- Use buildtool_depend for build tool packages: --&gt;</span></span><br><span class="line">  <span class="comment">&lt;!--   &lt;buildtool_depend&gt;catkin&lt;/buildtool_depend&gt; --&gt;</span></span><br><span class="line">  <span class="comment">&lt;!-- Use exec_depend for packages you need at runtime: --&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">exec_depend</span>&gt;</span>message_runtime<span class="tag">&lt;/<span class="name">exec_depend</span>&gt;</span></span><br><span class="line">  <span class="comment">&lt;!-- Use test_depend for packages you need only for testing: --&gt;</span></span><br><span class="line">  <span class="comment">&lt;!--   &lt;test_depend&gt;gtest&lt;/test_depend&gt; --&gt;</span></span><br><span class="line">  <span class="comment">&lt;!-- Use doc_depend for packages you need only for building documentation: --&gt;</span></span><br><span class="line">  <span class="comment">&lt;!--   &lt;doc_depend&gt;doxygen&lt;/doc_depend&gt; --&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">buildtool_depend</span>&gt;</span>catkin<span class="tag">&lt;/<span class="name">buildtool_depend</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">build_depend</span>&gt;</span>roscpp<span class="tag">&lt;/<span class="name">build_depend</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">build_depend</span>&gt;</span>std_msgs<span class="tag">&lt;/<span class="name">build_depend</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">build_depend</span>&gt;</span>flora_msgs<span class="tag">&lt;/<span class="name">build_depend</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">build_export_depend</span>&gt;</span>roscpp<span class="tag">&lt;/<span class="name">build_export_depend</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">build_export_depend</span>&gt;</span>std_msgs<span class="tag">&lt;/<span class="name">build_export_depend</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">exec_depend</span>&gt;</span>roscpp<span class="tag">&lt;/<span class="name">exec_depend</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">exec_depend</span>&gt;</span>std_msgs<span class="tag">&lt;/<span class="name">exec_depend</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">exec_depend</span>&gt;</span>flora_msgs<span class="tag">&lt;/<span class="name">exec_depend</span>&gt;</span></span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<p>回到catkin_ws文件夹执行<code>catkin_make</code></p>
+<h3 id="flora-listener">flora_listener</h3>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;ros/ros.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;std_msgs/String.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">floraCallback</span><span class="params">(<span class="keyword">const</span> std_msgs::String::ConstPtr&amp; msg)</span></span>&#123;</span><br><span class="line">    <span class="built_in">ROS_INFO</span>(<span class="string">&quot;I heard %s&quot;</span>, msg-&gt;data.<span class="built_in">c_str</span>());</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> **argv)</span></span>&#123;</span><br><span class="line">    ros::<span class="built_in">init</span>(argc, argv, <span class="string">&quot;flora_listener&quot;</span>);</span><br><span class="line">    ros::NodeHandle n;</span><br><span class="line">    ros::Subscriber sub = n.<span class="built_in">subscribe</span>(<span class="string">&quot;/flora_topic&quot;</span>, <span class="number">10</span>, floraCallback);</span><br><span class="line">    ros::<span class="built_in">spin</span>();</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>修改 CMakeLists.txt ：</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cmake_minimum_required</span>(VERSION <span class="number">3.0</span><span class="number">.2</span>)</span><br><span class="line"><span class="built_in">project</span>(flora_listen)</span><br><span class="line"></span><br><span class="line">## Compile as C++<span class="number">11</span>, supported in ROS Kinetic <span class="keyword">and</span> newer</span><br><span class="line"># <span class="built_in">add_compile_options</span>(-std=c++<span class="number">11</span>)</span><br><span class="line"></span><br><span class="line">## Find catkin macros <span class="keyword">and</span> libraries</span><br><span class="line">#<span class="meta"># <span class="meta-keyword">if</span> COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)</span></span><br><span class="line">#<span class="meta"># is used, also find other catkin packages</span></span><br><span class="line"><span class="built_in">find_package</span>(catkin REQUIRED COMPONENTS</span><br><span class="line">  roscpp</span><br><span class="line">  std_msgs</span><br><span class="line">)</span><br><span class="line">    <span class="built_in">catkin_package</span>(</span><br><span class="line">#  INCLUDE_DIRS include</span><br><span class="line">#  LIBRARIES flora_listen</span><br><span class="line">  CATKIN_DEPENDS roscpp std_msgs</span><br><span class="line">#  DEPENDS system_lib</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">###########</span><br><span class="line">## Build ##</span><br><span class="line">###########</span><br><span class="line"></span><br><span class="line">## Specify additional locations of header files</span><br><span class="line">## <span class="function">Your package locations should be listed before other locations</span></span><br><span class="line"><span class="function"><span class="title">include_directories</span><span class="params">(</span></span></span><br><span class="line"><span class="params"><span class="function"># include</span></span></span><br><span class="line"><span class="params"><span class="function">  $&#123;catkin_INCLUDE_DIRS&#125;</span></span></span><br><span class="line"><span class="params"><span class="function">)</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function">## Declare a C++ library</span></span><br><span class="line"><span class="function"># <span class="title">add_library</span><span class="params">($&#123;PROJECT_NAME&#125;</span></span></span><br><span class="line"><span class="params"><span class="function">#   src/$&#123;PROJECT_NAME&#125;/flora_listen_node.cpp</span></span></span><br><span class="line"><span class="params"><span class="function"># )</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function">## Add cmake target dependencies of the library</span></span><br><span class="line"><span class="function">#<span class="meta"># as an example, code may need to be generated before libraries</span></span></span><br><span class="line"><span class="function">#<span class="meta"># either from message generation or dynamic reconfigure</span></span></span><br><span class="line"><span class="function"># <span class="title">add_dependencies</span><span class="params">($&#123;PROJECT_NAME&#125; $&#123;$&#123;PROJECT_NAME&#125;_EXPORTED_TARGETS&#125; $&#123;catkin_EXPORTED_TARGETS&#125;)</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function">## Declare a C++ executable</span></span><br><span class="line"><span class="function">## With catkin_make all packages are built within a single CMake context</span></span><br><span class="line"><span class="function">## The recommended prefix ensures that target names across packages don&#x27;t collide</span></span><br><span class="line"><span class="function"> <span class="title">add_executable</span><span class="params">($&#123;PROJECT_NAME&#125;_node src/flora_listen_node.cpp)</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function">## Rename C++ executable without prefix</span></span><br><span class="line"><span class="function">## The above recommended prefix causes <span class="keyword">long</span> target names, the following renames the</span></span><br><span class="line"><span class="function">#<span class="meta"># target back to the shorter version for ease of user use</span></span></span><br><span class="line"><span class="function">#<span class="meta"># e.g. <span class="meta-string">&quot;rosrun someones_pkg node&quot;</span> instead of <span class="meta-string">&quot;rosrun someones_pkg someones_pkg_node&quot;</span></span></span></span><br><span class="line"><span class="function"># <span class="title">set_target_properties</span><span class="params">($&#123;PROJECT_NAME&#125;_node PROPERTIES OUTPUT_NAME node PREFIX <span class="string">&quot;&quot;</span>)</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function">## Add cmake target dependencies of the executable</span></span><br><span class="line"><span class="function">#<span class="meta"># same as for the library above</span></span></span><br><span class="line"><span class="function"> <span class="title">add_dependencies</span><span class="params">($&#123;PROJECT_NAME&#125;_node $&#123;$&#123;PROJECT_NAME&#125;_EXPORTED_TARGETS&#125; $&#123;catkin_EXPORTED_TARGETS&#125;)</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function">## Specify libraries to link a library <span class="keyword">or</span> executable target against</span></span><br><span class="line"><span class="function"> <span class="title">target_link_libraries</span><span class="params">($&#123;PROJECT_NAME&#125;_node</span></span></span><br><span class="line"><span class="params"><span class="function">   $&#123;catkin_LIBRARIES&#125;</span></span></span><br><span class="line"><span class="params"><span class="function"> )</span></span></span><br><span class="line"><span class="function"></span></span><br></pre></td></tr></table></figure>
+<h3 id="flora-msg">flora_msg</h3>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> ~/catkin_ws</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> cat src/flora_msgs/msg/FloraMsg.msg</span> </span><br><span class="line">string detail</span><br><span class="line">int32 id</span><br></pre></td></tr></table></figure>
+<h3 id="运行发布">运行发布</h3>
+<p>ros master</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">roscore</span><br></pre></td></tr></table></figure>
+<p>ros node</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">rosnode list</span><br><span class="line">rosrun flora_say flora_say_node</span><br></pre></td></tr></table></figure>
+<p>ros topic</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">rostopic list</span><br><span class="line">rostopic echo /flora_say</span><br></pre></td></tr></table></figure>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">K1ose</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://www.jk404.cn/study/course/self-driving/self-driving-02-ROS/">https://www.jk404.cn/study/course/self-driving/self-driving-02-ROS/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://www.jk404.cn" target="_blank">K1ose's Space</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"></div><div class="post_share"><div class="social-share" data-image="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/docker/docker-01-intro/"><img class="prev-cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">docker_01_intro</div></div></a></div><div class="next-post pull-right"><a href="/study/course/self-driving/self-driving-01-intro/"><img class="next-cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">self-driving_01_intro</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/Soler6pro.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">K1ose</div><div class="author-info__description"></div></div><div class="card-info-data is-center"><div class="card-info-data-item"><a href="/archives/"><div class="headline">文章</div><div class="length-num">139</div></a></div><div class="card-info-data-item"><a href="/tags/"><div class="headline">标签</div><div class="length-num">0</div></a></div><div class="card-info-data-item"><a href="/categories/"><div class="headline">分类</div><div class="length-num">74</div></a></div></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>公告</span></div><div class="announcement_content"></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-number">1.</span> <span class="toc-text">ROS</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%B8%E5%85%B3%E6%A6%82%E5%BF%B5"><span class="toc-number">1.1.</span> <span class="toc-text">相关概念</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#code"><span class="toc-number">1.2.</span> <span class="toc-text">code</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#flora-talker"><span class="toc-number">1.2.1.</span> <span class="toc-text">flora_talker</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#flora-listener"><span class="toc-number">1.2.2.</span> <span class="toc-text">flora_listener</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#flora-msg"><span class="toc-number">1.2.3.</span> <span class="toc-text">flora_msg</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%90%E8%A1%8C%E5%8F%91%E5%B8%83"><span class="toc-number">1.2.4.</span> <span class="toc-text">运行发布</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/docker/docker-01-intro/" title="docker_01_intro">docker_01_intro</a><time datetime="2022-11-14T08:23:07.000Z" title="发表于 2022-11-14 16:23:07">2022-11-14</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/study/course/self-driving/self-driving-02-ROS/" title="self-driving_02_ROS">self-driving_02_ROS</a><time datetime="2022-11-12T08:30:29.000Z" title="发表于 2022-11-12 16:30:29">2022-11-12</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/study/course/self-driving/self-driving-01-intro/" title="self-driving_01_intro">self-driving_01_intro</a><time datetime="2022-11-12T04:01:58.000Z" title="发表于 2022-11-12 12:01:58">2022-11-12</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/study/course/data-structure/data-structure-03-stack-queue/" title="data_structure_03_stack_queue">data_structure_03_stack_queue</a><time datetime="2022-11-09T01:40:05.000Z" title="发表于 2022-11-09 09:40:05">2022-11-09</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/study/course/CS-61A-Structure-and-Interpretation-of-Computer-Programs/lab/CS61A-lab-00-intro/" title="CS61A_lab_00_intro">CS61A_lab_00_intro</a><time datetime="2022-11-04T12:00:05.000Z" title="发表于 2022-11-04 20:00:05">2022-11-04</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By K1ose</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><div class="js-pjax"><script>if (!window.MathJax) {
+  window.MathJax = {
+    tex: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"]],
+      tags: 'ams'
+    },
+    chtml: {
+      scale: 1.2
+    },
+    options: {
+      renderActions: {
+        findScript: [10, doc => {
+          for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+            const display = !!node.type.match(/; *mode=display/)
+            const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display)
+            const text = document.createTextNode('')
+            node.parentNode.replaceChild(text, node)
+            math.start = {node: text, delim: '', n: 0}
+            math.end = {node: text, delim: '', n: 0}
+            doc.math.push(math)
+          }
+        }, ''],
+        insertScript: [200, () => {
+          document.querySelectorAll('mjx-container:not\([display]\)').forEach(node => {
+            const target = node.parentNode
+            if (target.nodeName.toLowerCase() === 'li') {
+              target.parentNode.classList.add('has-jax')
+            } else {
+              target.classList.add('has-jax')
+            }
+          });
+        }, '', false]
+      }
+    }
+  }
+  
+  const script = document.createElement('script')
+  script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js'
+  script.id = 'MathJax-script'
+  script.async = true
+  document.head.appendChild(script)
+} else {
+  MathJax.startup.document.state(0)
+  MathJax.texReset()
+  MathJax.typeset()
+}</script></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
