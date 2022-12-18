@@ -6,7 +6,7 @@
   <link href="https://www.jk404.cn/atom.xml" rel="self"/>
   
   <link href="https://www.jk404.cn/"/>
-  <updated>2022-12-17T17:12:52.781Z</updated>
+  <updated>2022-12-18T04:31:22.211Z</updated>
   <id>https://www.jk404.cn/</id>
   
   <author>
@@ -15,6 +15,35 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Linux_kernel_development_02_kernel_intro</title>
+    <link href="https://www.jk404.cn/study/book/Linux-Kernel-Development/Linux-kernel-development-02-kernel-intro/"/>
+    <id>https://www.jk404.cn/study/book/Linux-Kernel-Development/Linux-kernel-development-02-kernel-intro/</id>
+    <published>2022-12-18T04:21:37.000Z</published>
+    <updated>2022-12-18T04:31:22.211Z</updated>
+    
+    <content type="html"><![CDATA[<h1>从内核出发</h1><p>第二章介绍内核源码获取、编译、安装以及内核程序和用户态程序的差别。</p><h2 id="获取内核源码">获取内核源码</h2><p><a href="http://www.kernel.org">http://www.kernel.org</a></p><p><a href="https://mirrors.edge.kernel.org/pub/linux/kernel/">https://mirrors.edge.kernel.org/pub/linux/kernel/</a></p><ul><li><p>使用Git：git clone git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git</p></li><li><p>安装内核源代码：<code>tar xvjf linux-x.y.z.tar.bz2</code> or <code>tar xvzf linux-x.y.z.tar.gz</code></p><p>内核源码一般安装在<code>/usr/src/linux</code>下，，不要把这个源码树用于开发，因为编译用的内核版本就链接到这棵树。不要用root身份对内核进行修改，应当建立自己的主目录，仅以root身份安装内核，且安装新内核时，<code>/usr/src/linux</code>目录都应当原封不动。</p></li><li><p>使用补丁：<code>patch -p1 &lt; ../patch-x.y.z</code></p></li></ul><h2 id="内核源码树">内核源码树</h2><ul><li><code>arch</code> - 特定体系结构的源码</li><li><code>block</code> - 块设备I/O层</li><li><code>crypto</code> - 加密API</li><li><code>Documentation</code> - 内核源码文档</li><li><code>drivers</code> - 设备驱动程序</li><li><code>firmware</code> - 使用某些驱动程序而需要的设备固件</li><li><code>fs</code> - VFS和各种文件系统</li><li><code>include</code> - 内核头文件</li><li><code>init</code> - 内核引导和初始化</li><li><code>ipc</code> - 进程间通信代码</li><li><code>kernel</code> - 核心子系统</li><li><code>lib</code> - 通用内核函数</li><li><code>mm</code> - 内存管理子系统和VM</li><li><code>net</code> - 网络子系统</li><li><code>samples</code> - 示例代码</li><li><code>scripts</code> - 编译内核所用的脚本</li><li><code>security</code> - 安全模块</li><li><code>sound</code> - 语音子系统</li><li><code>usr</code> - 早期用户空间代码，所谓的initramfs</li><li><code>tools</code> - 开发工具</li><li><code>virt</code> - 虚拟化基础结构</li></ul><h2 id="编译内核">编译内核</h2><h3 id="内核配置">内核配置</h3><p>可以配置的各种选项，以<code>CONFIG_FEATURE</code>形式表示，其前缀为<code>CONFIG</code>。</p><p>选项的选择一般有两种：</p><ul><li><code>yes</code> or <code>no</code>：yes表示把代码编译进主内核印象中，而不是作为模块</li><li><code>yes</code> or <code>no</code> or <code>module</code>：驱动程序一般都用三选一的配置项，module意味着配置项被选定了，以独立代码段的模块形式编译安装。</li></ul>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;h1&gt;从内核出发&lt;/h1&gt;
+&lt;p&gt;第二章介绍内核源码获取、编译、安装以及内核程序和用户态程序的差别。&lt;/p&gt;
+&lt;h2 id=&quot;获取内核源码&quot;&gt;获取内核源码&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&quot;http://www.kernel.org&quot;&gt;http://www.kernel.org</summary>
+      
+    
+    
+    
+    <category term="study" scheme="https://www.jk404.cn/categories/study/"/>
+    
+    <category term="book" scheme="https://www.jk404.cn/categories/study/book/"/>
+    
+    <category term="Linux Kernel Development" scheme="https://www.jk404.cn/categories/study/book/Linux-Kernel-Development/"/>
+    
+    
+  </entry>
   
   <entry>
     <title></title>
@@ -572,32 +601,6 @@
     <category term="python" scheme="https://www.jk404.cn/categories/program-language/python/"/>
     
     <category term="pyside2" scheme="https://www.jk404.cn/categories/program-language/python/pyside2/"/>
-    
-    
-  </entry>
-  
-  <entry>
-    <title>MIT_Missing_Semester_08_metaprogramming</title>
-    <link href="https://www.jk404.cn/study/course/Missing-Semester/MIT-Missing-Semester-08-metaprogramming/"/>
-    <id>https://www.jk404.cn/study/course/Missing-Semester/MIT-Missing-Semester-08-metaprogramming/</id>
-    <published>2022-10-13T06:35:09.000Z</published>
-    <updated>2022-10-13T11:39:50.991Z</updated>
-    
-    <content type="html"><![CDATA[<p>我们这里说的 “元编程（metaprogramming）” 是什么意思呢？好吧，对于本文要介绍的这些内容，这是我们能够想到的最能概括它们的词。因为我们今天要讲的东西，更多是关于 <em>流程</em> ，而不是写代码或更高效的工作。本节课我们会学习构建系统、代码测试以及依赖管理。在您还是学生的时候，这些东西看上去似乎对您来说没那么重要，不过当您开始实习或走进社会的时候，您将会接触到大型的代码库，本节课讲授的这些东西也会变得随处可见。必须要指出的是，“元编程” 也有<a href="https://en.wikipedia.org/wiki/Metaprogramming">用于操作程序的程序</a>” 之含义，这和我们今天讲座所介绍的概念是完全不同的。</p><h1>构建系统</h1><p>如果您使用 LaTeX 来编写论文，您需要执行哪些命令才能编译出您想要的论文呢？执行基准测试、绘制图表然后将其插入论文的命令又有哪些？或者，如何编译本课程提供的代码并执行测试呢？</p><p>对于大多数系统来说，不论其是否包含代码，都会包含一个“构建过程”。有时，您需要执行一系列操作。通常，这一过程包含了很多步骤，很多分支。执行一些命令来生成图表，然后执行另外的一些命令生成结果，然后再执行其他的命令来生成最终的论文。有很多事情需要我们完成，您并不是第一个因此感到苦恼的人，幸运的是，有很多工具可以帮助我们完成这些操作。</p><p>这些工具通常被称为 “构建系统”，而且这些工具还不少。如何选择工具完全取决于您当前手头上要完成的任务以及项目的规模。从本质上讲，这些工具都是非常类似的。您需要定义<em>依赖</em>、<em>目标</em>和<em>规则</em>。您必须告诉构建系统您具体的构建目标，系统的任务则是找到构建这些目标所需要的依赖，并根据规则构建所需的中间产物，直到最终目标被构建出来。理想的情况下，如果目标的依赖没有发生改动，并且我们可以从之前的构建中复用这些依赖，那么与其相关的构建规则并不会被执行。</p><p><code>make</code> 是最常用的构建系统之一，您会发现它通常被安装到了几乎所有基于UNIX的系统中。<code>make</code>并不完美，但是对于中小型项目来说，它已经足够好了。当您执行 <code>make</code> 时，它会去参考当前目录下名为 <code>Makefile</code> 的文件。所有构建目标、相关依赖和规则都需要在该文件中定义，它看上去是这样的：</p><figure class="highlight makefile"><table><tr><td class="code"><pre><span class="line"><span class="section">paper.pdf: paper.tex plot-data.png</span></span><br><span class="line">pdflatex paper.tex</span><br><span class="line"></span><br><span class="line"><span class="section">plot-%.png: %.dat plot.py</span></span><br><span class="line">./plot.py -i <span class="variable">$*</span>.dat -o <span class="variable">$@</span></span><br></pre></td></tr></table></figure>]]></content>
-    
-    
-      
-      
-    <summary type="html">&lt;p&gt;我们这里说的 “元编程（metaprogramming）” 是什么意思呢？好吧，对于本文要介绍的这些内容，这是我们能够想到的最能概括它们的词。因为我们今天要讲的东西，更多是关于 &lt;em&gt;流程&lt;/em&gt; ，而不是写代码或更高效的工作。本节课我们会学习构建系统、代码测试以及依赖</summary>
-      
-    
-    
-    
-    <category term="study" scheme="https://www.jk404.cn/categories/study/"/>
-    
-    <category term="course" scheme="https://www.jk404.cn/categories/study/course/"/>
-    
-    <category term="Missing Semester" scheme="https://www.jk404.cn/categories/study/course/Missing-Semester/"/>
     
     
   </entry>
