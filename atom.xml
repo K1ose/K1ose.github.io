@@ -6,7 +6,7 @@
   <link href="https://www.jk404.cn/atom.xml" rel="self"/>
   
   <link href="https://www.jk404.cn/"/>
-  <updated>2023-05-11T01:57:12.541Z</updated>
+  <updated>2023-06-13T12:45:20.906Z</updated>
   <id>https://www.jk404.cn/</id>
   
   <author>
@@ -21,15 +21,16 @@
     <link href="https://www.jk404.cn/program-language/python/pyside6/pyside6-01-environment/"/>
     <id>https://www.jk404.cn/program-language/python/pyside6/pyside6-01-environment/</id>
     <published>2023-05-11T01:55:52.000Z</published>
-    <updated>2023-05-11T01:57:12.541Z</updated>
+    <updated>2023-06-13T12:45:20.906Z</updated>
     
-    <content type="html"><![CDATA[<h1>Environment</h1>]]></content>
+    <content type="html"><![CDATA[<h1>Environment</h1><h2 id="Getting-Started-on-Windows">Getting Started on Windows</h2><p>The Qt library has to be built with the same version of MSVC as Python and PySide, this can be selected when using the online installer.</p><h3 id="Requirements">Requirements</h3><ul><li><a href="https://visualstudio.microsoft.com/downloads/">MSVC2022</a> or (MSVC2019) for Python 3 on Windows.</li><li><a href="https://sourceforge.net/projects/openssl/">OpenSSL</a> (optional for SSL support, Qt must have been configured using the same SSL library).</li><li><code>sphinx</code> package for the documentation (optional).</li></ul><blockquote><p>Python 3.8.0 was missing some API required for PySide/Shiboken so it’s not possible to use it for a Windows build.</p></blockquote>]]></content>
     
     
       
       
     <summary type="html">&lt;h1&gt;Environment&lt;/h1&gt;
-</summary>
+&lt;h2 id=&quot;Getting-Started-on-Windows&quot;&gt;Getting Started on Windows&lt;/h2&gt;
+&lt;p&gt;The Qt library has to be built with the same ver</summary>
       
     
     
