@@ -2,6 +2,24 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://www.jk404.cn/Android-tutorial/android-tutorial-02-Android-Basics-with-Compose/</loc>
+    
+    <lastmod>2023-10-19</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.jk404.cn/Android-tutorial/android-tutorial-01-helloworld/</loc>
+    
+    <lastmod>2023-10-19</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://www.jk404.cn/program-language/python/pyside6/pyside6-01-environment/</loc>
     
     <lastmod>2023-06-13</lastmod>
@@ -1900,6 +1918,13 @@
   
   <url>
     <loc>https://www.jk404.cn/categories/PWN/kernel-pwn/FUZZ/Syzkaller/</loc>
+    <lastmod>2023-10-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.jk404.cn/categories/Android-tutorial/</loc>
     <lastmod>2023-10-19</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
