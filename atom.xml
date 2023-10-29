@@ -6,7 +6,7 @@
   <link href="https://www.jk404.cn/atom.xml" rel="self"/>
   
   <link href="https://www.jk404.cn/"/>
-  <updated>2023-10-20T07:00:55.145Z</updated>
+  <updated>2023-10-29T00:56:05.827Z</updated>
   <id>https://www.jk404.cn/</id>
   
   <author>
@@ -17,14 +17,40 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
-    <title>android-basic-with-compose-02-building-app-ui</title>
-    <link href="https://www.jk404.cn/uncategorized/android-basic-with-compose-02-building-app-ui/"/>
-    <id>https://www.jk404.cn/uncategorized/android-basic-with-compose-02-building-app-ui/</id>
+    <title>electron-01-tutorial</title>
+    <link href="https://www.jk404.cn/uncategorized/electron-01-tutorial/"/>
+    <id>https://www.jk404.cn/uncategorized/electron-01-tutorial/</id>
+    <published>2023-10-29T00:56:05.000Z</published>
+    <updated>2023-10-29T00:56:05.827Z</updated>
+    
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>Unit2 - Building App UI</title>
+    <link href="https://www.jk404.cn/Android/Android-Basic-with-Compose/android-basic-with-compose-02-building-app-ui/"/>
+    <id>https://www.jk404.cn/Android/Android-Basic-with-Compose/android-basic-with-compose-02-building-app-ui/</id>
     <published>2023-10-20T07:00:55.000Z</published>
-    <updated>2023-10-20T07:00:55.145Z</updated>
+    <updated>2023-10-20T08:50:12.477Z</updated>
+    
+    <content type="html"><![CDATA[<h1>Unit 2: Building App UI</h1><p>Continue learning the fundamentals of Kotlin, and start building more interactive apps.</p><h2 id="Kotlin-fundamentals">Kotlin fundamentals</h2><h3 id="Write-conditionals">Write conditionals</h3><p>In Kotlin, when you deal with multiple branches, you can use the <code>when</code> statement instead of the <code>if/else</code> statement because it improves readability, which refers to how easy it is for human readers, typically developers, to read the code. It’s very important to consider readability when you write your code because it’s likely that other developers need to review and modify your code throughout its lifetime. Good readability ensures that developers can correctly understand your code and don’t inadvertently introduce bugs into it.</p><p><code>when</code> statements are preferred when there are more than two branches to consider.</p><img src="/Android/Android-Basic-with-Compose/android-basic-with-compose-02-building-app-ui/when.png" height="300" width="500"><center><i>when statement</i></center><p>Now, we have an example about traffic light color.</p><figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">val</span> trafficLightColor = <span class="string">&quot;Black&quot;</span></span><br><span class="line">    <span class="keyword">when</span>(trafficLightColor)&#123;</span><br><span class="line">        <span class="string">&quot;Red&quot;</span> -&gt; println(<span class="string">&quot;Stop&quot;</span>)</span><br><span class="line">        <span class="string">&quot;Yello&quot;</span> -&gt; println(<span class="string">&quot;Slow&quot;</span>)</span><br><span class="line">        <span class="string">&quot;Green&quot;</span> -&gt; println(<span class="string">&quot;Go&quot;</span>)</span><br><span class="line">        <span class="keyword">else</span> -&gt; println(<span class="string">&quot;Invalid traffic light color.&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>And more examples…</p><figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">val</span> x: Any = <span class="number">14</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">when</span> (x) &#123;</span><br><span class="line">        <span class="number">2</span>, <span class="number">3</span>, <span class="number">5</span>, <span class="number">7</span> -&gt; println(<span class="string">&quot;x is a prime number between 1 and 10.&quot;</span>)</span><br><span class="line">        <span class="keyword">in</span> <span class="number">1.</span><span class="number">.10</span> -&gt; println(<span class="string">&quot;x is a number between 1 and 10, but not a prime number.&quot;</span>)</span><br><span class="line">        <span class="keyword">is</span> <span class="built_in">Int</span> -&gt; println(<span class="string">&quot;x is an integer number, but not between 1 and 10.&quot;</span>)</span><br><span class="line">        <span class="keyword">else</span> -&gt; println(<span class="string">&quot;x isn&#x27;t an integer number.&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h3 id="Use-nullability">Use nullability</h3><p>In Kotlin, there’s a distinction between nullable and non-nullable types:</p><ul><li>Nullable types are variables that <em>can</em> hold <code>null</code>.</li><li>Non-null types are variables that <em>can’t</em> hold <code>null</code>.</li></ul><p>A type is only nullable if you explicitly let it hold <code>null</code>. As the error message says, the <code>String</code> data type is a non-nullable type, so you can’t reassign the variable to <code>null</code>.</p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;h1&gt;Unit 2: Building App UI&lt;/h1&gt;
+&lt;p&gt;Continue learning the fundamentals of Kotlin, and start building more interactive apps.&lt;/p&gt;
+&lt;h2 id=&quot;Kotl</summary>
+      
     
     
     
+    <category term="Android" scheme="https://www.jk404.cn/categories/Android/"/>
+    
+    <category term="Android Basic with Compose" scheme="https://www.jk404.cn/categories/Android/Android-Basic-with-Compose/"/>
     
     
   </entry>
@@ -554,33 +580,6 @@
 &lt;li&gt;可视化设计的UI界面文件的原理和运行机制&lt;/li&gt;
 &lt;li&gt;信号与槽的使用方法&lt;/li&gt;
 &lt;</summary>
-      
-    
-    
-    
-    <category term="study" scheme="https://www.jk404.cn/categories/study/"/>
-    
-    <category term="book" scheme="https://www.jk404.cn/categories/study/book/"/>
-    
-    <category term="Qt5.9 c++ 开发指南" scheme="https://www.jk404.cn/categories/study/book/Qt5-9-c-%E5%BC%80%E5%8F%91%E6%8C%87%E5%8D%97/"/>
-    
-    
-  </entry>
-  
-  <entry>
-    <title>Qt5.9_cpp_programming_guide_01_meet</title>
-    <link href="https://www.jk404.cn/study/book/Qt5-9-c-%E5%BC%80%E5%8F%91%E6%8C%87%E5%8D%97/Qt5-9-cpp-programming-guide-01-meet/"/>
-    <id>https://www.jk404.cn/study/book/Qt5-9-c-%E5%BC%80%E5%8F%91%E6%8C%87%E5%8D%97/Qt5-9-cpp-programming-guide-01-meet/</id>
-    <published>2022-10-31T21:50:06.000Z</published>
-    <updated>2022-11-01T01:33:06.981Z</updated>
-    
-    <content type="html"><![CDATA[<h1>认识Qt</h1><p>Qt是一套应用程序开发类库，和MFC不同，Qt是跨平台的。Qt支持PC和服务器的平台，包括Windows、Linux、macOS等，还支持移动和嵌入式操作系统，比如iOS、Embedded Linux、Android、WinRT等。跨平台意味着只需要一次编程，在不同平台上无需改动或只需少许改动后再编译，就可以形成在不同平台上运行的版本。</p><h2 id="获取与安装">获取与安装</h2><h3 id="许可类型">许可类型</h3><ul><li>商业许可</li><li>开源许可<ul><li>LGPLV3</li><li>GPLV2/GPLV3</li></ul></li></ul><p>商业许可 - 允许开发者不公开项目的源代码，其Qt版本包含更多的模块（这些模块只存在于商业许可的版本），并能够获得Qt公司的计数支持。需要向Qt购买商业许可才能获得。</p><p>开源许可 - 无需支付，但是需要遵守相关规定。</p><h3 id="版本">版本</h3><p>Qt版本更新很快，且版本更新时会新增一些类或停止维护一些以前版本的类，Qt 5和Qt 4就有较大区别，如果不是为了维护旧版本编写的程序，一定要选用最新版本的Qt进行开发。</p><h3 id="下载和安装">下载和安装</h3><p>从Qt官网可以下载最新版本的Qt软件，根据开发项目不同，Qt分为桌面和移动设备应用开发、嵌入式设备开发 两大类不同的安装包。</p><ul><li>桌面和移动设备应用开发 - PC、服务器、手机、平板电脑上运行的程序，免费下载使用</li><li>嵌入式设备开发 - 物联网设备、汽车电子设备等特定的嵌入式设备</li></ul><p>需要注册用户后才可以下载Qt安装程序，安装包分为在线和离线两种，为便于重复安装，最好下载离线安装包。</p><p>安装时需要选择想要安装的组件，其中有：</p><ul><li>MinGW - Minimalist GNU for Windows 的缩写，是Windows平台上使用的GNU工具集导入库的集合</li><li>用于UWP编译的模块 - Universal Windows Platform 的缩写，有不同编译器类型的UWP</li><li>用于Windows平台上的MSVC编译器模块 - 如 msvc2015 32-bit 等，要安装 MSVC 编译器的模块，需要计算机上安装相应版本的Visual Studio</li><li>用于Android平台的模块 - 如 Android x86 和 Android ARMv7</li><li>Sources - Qt源程序</li><li>Qt Charts - 二位图标模块，用于绘制各类型二位图标</li><li>Qt Data Visualization - 三维数据图表模块</li><li>Qt Purchasing、QtWebEngine、Qt Network Auth(TP)</li><li>Qt Script(Deprecated) - 已经过时的脚本模块</li></ul><h2 id="初步使用">初步使用</h2><h3 id="设置">设置</h3><p>[Tools] - [Options]</p><ul><li>Environment 可切换语言</li><li>Kits中可以设置编译工具</li></ul><p><a href="https://developer.microsoft.com/zh-cn/windows/downloads/sdk-archive/">Windows Software Development Kit</a></p><h2 id="第一个程序">第一个程序</h2><h3 id="项目创建流程">项目创建流程</h3><p>[File] - [New FIle or Project]</p><p>Qt Creator中可以创建多种项目：</p><ul><li>Qt Widgets Application 支持桌面平台的有图形用户界面(Graphic User Interface,GUI)</li><li>Qt Console Application 控制台应用程序，无GUI界面</li><li>Qt Quick Application 创建可部署的Qt Quick 2应用程序，界面采用QML语言，程序采用C++，可以设计出非常炫酷的用户界面，一般用于移动设备或嵌入设备上无边框的应用程序设计</li><li>Qt Quick Controls 2 Application 创建基于Qt Quick Controls 2组件的可部署的Qt Quick 2应用程序</li><li>Qt Canvas 3D Application 创建Qt Canvas 3D QML项目，支持3D画布</li></ul><p>在这里选择项目类型为 Qt Widgets Application，选择目录，再设置项目名称，这样在该目录下会创建一个项目文件夹。</p><p>选择编译工具，在编译项目时可以选择一个作为当前使用的编译工具，编译生成不同版本的可执行程序。</p><p>选择基类(base class)，三种类型可以选择：</p><ul><li>QMainWindow 是主窗口类，带有主菜单栏、工具栏和状态栏；</li><li>QWidget 是所有具有可视界面类的基类，选择QWidget创建的界面对各种界面组件都可以支持；</li><li>QDialog 是对话框类，可建立一个基于对话框的界面；</li></ul><h3 id="项目文件组成和管理">项目文件组成和管理</h3><p>在项目名称节点下，分组管理着项目内的各种源文件，分别为：</p><ul><li><p><a href="http://xxx.pro">xxx.pro</a> 项目管理文件，包括一些对项目的设置项；</p></li><li><p>Headers分组，该节点下是项目内所有头文件(.h)；</p></li><li><p>Sources分组，该节点下是项目内的所有C++源文件(.cpp)，mainwindow.cpp是主窗口类的实现文件，main.cpp是主函数文件，也是程序的入口；</p></li><li><p>Forms分组，该节点下是项目内的所有界面文件(.ui)，是用XML语言描述的。</p></li></ul><p>在下拉栏里，有如下的几个分组：</p><p><img src="/study/book/Qt5-9-c-%E5%BC%80%E5%8F%91%E6%8C%87%E5%8D%97/Qt5-9-cpp-programming-guide-01-meet/Qt5-9-cpp-programming-guide-01-meet%5Cfigure_01.jpg" alt></p><p>其中 Class View 可以显示项目内所有的类结构，便于快速切换和浏览；</p><p>双击 mainwindow.ui 会出现窗体设计界面，实际上是继承的 Qt Designer。</p><h3 id="编译、调试和执行">编译、调试和执行</h3><p>[Projects] - [Build&amp;Run] 选择哪一个编译器用于编译项目，选择[Shadow build] 会在编译后在项目同级目录下建立一个编译后的目录，如果不选择此项，会在目录下建立 [Debug] 和 [Release] 子目录。</p>]]></content>
-    
-    
-      
-      
-    <summary type="html">&lt;h1&gt;认识Qt&lt;/h1&gt;
-&lt;p&gt;Qt是一套应用程序开发类库，和MFC不同，Qt是跨平台的。Qt支持PC和服务器的平台，包括Windows、Linux、macOS等，还支持移动和嵌入式操作系统，比如iOS、Embedded Linux、Android、WinRT等。跨平台意味着只</summary>
       
     
     
