@@ -65,16 +65,7 @@
   </url>
   
   <url>
-    <loc>https://www.jk404.cn/program-language/cpp/cpp-04-compound-type/</loc>
-    
-    <lastmod>2023-05-11</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.jk404.cn/program-language/python/pyside2/pyside2-01-helloworld/</loc>
+    <loc>https://www.jk404.cn/program-language/python/pyside2/pyside2-03-layout/</loc>
     
     <lastmod>2023-05-11</lastmod>
     
@@ -92,7 +83,16 @@
   </url>
   
   <url>
-    <loc>https://www.jk404.cn/program-language/python/pyside2/pyside2-03-layout/</loc>
+    <loc>https://www.jk404.cn/program-language/python/pyside2/pyside2-01-helloworld/</loc>
+    
+    <lastmod>2023-05-11</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.jk404.cn/program-language/cpp/cpp-04-compound-type/</loc>
     
     <lastmod>2023-05-11</lastmod>
     
